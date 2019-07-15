@@ -167,7 +167,8 @@ function do_error($page = array())
 function do_auth($group = null)
 {
 
-if(stripos($_SERVER['environment'], 'dev')) {
+//if(stripos($_SERVER['environment'], 'dev')) {
+if(true) {
     ?>
 
     <?php
