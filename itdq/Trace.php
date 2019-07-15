@@ -165,32 +165,42 @@ class Trace extends Log{
 
 	static function setTraceControls(){
 
-		$sql = "SELECT * FROM " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$TRACE_CONTROL ;
-		$rs = DB2_EXEC($_SESSION['conn'],$sql);
-		if(!$rs)
-			{
-			echo "<BR>Error: " . db2_stmt_error();
-			echo "<BR>Msg: " . db2_stmt_errormsg() . "<BR>";
-			exit("Error in: " . __METHOD__ .  __LINE__ . "<BR>running: $sql");
-		}
-		$anyExcludes = FALSE;
-		$_SESSION['methodInclude'] = array();  // Allows you to make changes, by reseting the array before setting specific values later.
-		$_SESSION['methodExclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-		$_SESSION['methodTimings'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-		$_SESSION['classInclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-		$_SESSION['classExclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-		$_SESSION['classTimings'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-		unset($_SESSION['trace']);
+	    echo "<pre>";
+	    var_dump($_SESSION['conn']);
 
-		while($row = db2_fetch_assoc($rs)){
-			if(trim($row['TRACE_CONTROL_TYPE'])=='methodExclude' or trim($row['TRACE_CONTROL_TYPE'])=='classExclude'){
-				$anyExcludes = TRUE;
-			}
-			$_SESSION[trim($row['TRACE_CONTROL_TYPE'])][trim($row['TRACE_CONTROL_VALUE'])] = 'On';
-		}
-		if($anyExcludes){
-			$_SESSION['trace']='Log';
-		}
+	    if(isset($_SESSION['conn'])){
+	        $sql = "SELECT * FROM " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$TRACE_CONTROL ;
+	        $rs = DB2_EXEC($_SESSION['conn'],$sql);
+	        if(!$rs)
+	        {
+	            echo "<BR>Error: " . db2_stmt_error();
+	            echo "<BR>Msg: " . db2_stmt_errormsg() . "<BR>";
+	            exit("Error in: " . __METHOD__ .  __LINE__ . "<BR>running: $sql");
+	        }
+	        $anyExcludes = FALSE;
+	        $_SESSION['methodInclude'] = array();  // Allows you to make changes, by reseting the array before setting specific values later.
+	        $_SESSION['methodExclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+	        $_SESSION['methodTimings'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+	        $_SESSION['classInclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+	        $_SESSION['classExclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+	        $_SESSION['classTimings'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+	        unset($_SESSION['trace']);
+
+	        while($row = db2_fetch_assoc($rs)){
+	            if(trim($row['TRACE_CONTROL_TYPE'])=='methodExclude' or trim($row['TRACE_CONTROL_TYPE'])=='classExclude'){
+	                $anyExcludes = TRUE;
+	            }
+	            $_SESSION[trim($row['TRACE_CONTROL_TYPE'])][trim($row['TRACE_CONTROL_VALUE'])] = 'On';
+	        }
+	        if($anyExcludes){
+	            $_SESSION['trace']='Log';
+	        }
+
+	    } else {
+	        echo "<br/>Not connected to DB2.";
+	    }
+
+
 	}
 
 	static function pageOpening($file=null,$tracePost = true,$traceRequest = false, $debugBacktrace=false){

@@ -25,66 +25,47 @@ $trace          = new NavbarOption('View Trace','pi_trace.php','accessCdi');
 $traceControl   = new NavbarOption('Trace Control','pi_traceControl.php','accessCdi');
 $traceDelete    = new NavbarOption('Trace Deletion', 'pi_traceDelete.php','accessCdi');
 $test           = new NavbarOption('Test', 'CDI_Test.php','accessCdi');
-$claim          = new NavbarOption('Claim Upload', 'cdi_upload.php','accessCdi');
 $cdiAdmin->addOption($trace);
 $cdiAdmin->addOption($traceControl);
 $cdiAdmin->addOption($traceDelete);
 $cdiAdmin->addOption($test);
-$cdiAdmin->addOption($claim);
 
-$admin          = new NavBarMenu("Rates Admin");
-$psRate         = new NavBarOption('P S Rate Table','pa_psRate.php','accessCdi accessResponder');
-$dayRates       = new NavBarOption('Day Rates Table','pa_dayRates.php','accessCdi accessResponder');
-$listRfs        = new NavbarOption('List RFS','p_listRfs.php','accessCdi accessResponder');
-$admin->addOption($psRate);
-$admin->addOption($dayRates);
-$admin->addOption($listRfs);
+$admin          = new NavBarMenu("uPES Admin");
+$contracts      = new NavBarOption('Manage contracts','pa_manageContracts.php','accessCdi accessPesTeam');
+$tracker        = new NavBarOption('Tracker','pa_tracker.php','accessCdi accessPesTeam');
 
-$subcoAdmin     = new NavBarMenu("Subco Admin",'accessCdi accessSubcoAdmin' );
-$subcoBoard     = new NavBarOption('Board','pa_subcoBoard.php','accessCdi accessSubcoAdmin');
-$subcoList      = new NavBarOption('List','pa_subcoList.php','accessCdi accessSubcoAdmin');
-$subcoAdmin->addOption($subcoBoard);
-$subcoAdmin->addOption($subcoList);
+$admin->addOption($contracts);
+$admin->addOption($tracker);
 
-$requestMenu      = new NavbarMenu('Rate Requests');
-$requestRate      = new NavbarOption('Request Rate','p_requestRate.php','accessCdi accessRequestor');
-$listRequests     = new NavbarOption('List Requests','p_listRateRequests.php','accessCdi accessResponder accessRequestor');
-$determineRate    = new NavbarOption('Determine Rate','p_determineRate.php','accessCdi accessResponder');
-
-$requestMenu->addOption($requestRate);
-$requestMenu->addOption($listRequests);
-$requestMenu->addOption($determineRate);
-
-$reportMenu    = new NavbarMenu('Reports');
-$resUtil       = new NavbarOption('RFS Rates Extract','pr_rfsRatesExtract.php', 'accessCdi accessResponder');
-$reportMenu->addOption($resUtil);
-
+$user          = new NavBarMenu("uPES",'accessCdi accessPesTeam accessUser' );
+$userBoard     = new NavBarOption('Board','pu_userBoard.php','accessCdi accessPesTeam accessUser');
+$userStatus    = new NavBarOption('Status ','pa_userStatus.php','accessCdi accessSubcoAdmin');
+$user->addOption($userBoard);
+$user->addOption($userStatus);
 
 
 $navbar->addMenu($cdiAdmin);
-$navbar->addMenu($subcoAdmin);
 $navbar->addMenu($admin);
-$navbar->addMenu($requestMenu);
-$navbar->addMenu($reportMenu);
+$navbar->addMenu($user);
 
-$outages = new NavbarOption($plannedOutagesLabel, 'ppo_PlannedOutages.php','accessCdi accessResponder accessRequestor');
+$outages = new NavbarOption($plannedOutagesLabel, 'ppo_PlannedOutages.php','accessCdi accessPesTeam accessUser');
 $navbar->addOption($outages);
 
 $navbar->createNavbar($page);
 
 $isCdi       = employee_in_group($_SESSION['cdiBg'],  $_SESSION['ssoEmail']) ? ".not('.accessCdi')" : null;
-$isResponder = employee_in_group($_SESSION['responderBg'],  $_SESSION['ssoEmail']) ? ".not('.accessResponder')" : null;
-$isRequestor = employee_in_group($_SESSION['requestorBg'],  $_SESSION['ssoEmail']) ? ".not('.accessRequestor')" : null;
+$isPesTeam   = employee_in_group($_SESSION['pesTeamBg'],  $_SESSION['ssoEmail']) ? ".not('.accessPesTeam')" : null;
+$isUser      = ".not('.accessUser')";
 
 
 $isCdi        = stripos($_SERVER['environment'], 'dev') ? ".not('.accessCdi')"        : $isCdi;
-$isResponder  = stripos($_SERVER['environment'], 'dev')  ? ".not('.accessResponder')" : $isResponder;
-//$isRequestor  = stripos($_SERVER['environment'], 'dev')  ? ".not('.accessRequestor')" : $isRequestor;
+$isPesTeam    = stripos($_SERVER['environment'], 'dev')  ? ".not('.accessPesTeam')"   : $isPesTeam;
+$isUser       = stripos($_SERVER['environment'], 'dev')  ? ".not('.accessUser')"      : $isUser;
 
 
-$_SESSION['isCdi']       = !empty($isCdi)  ? true : false;
-$_SESSION['isResponder'] = !empty($isResponder) ? true : false;
-$_SESSION['isRequestor'] = !empty($isRequestor) ? true : false;
+$_SESSION['isCdi']       = !empty($isCdi)     ? true : false;
+$_SESSION['isPesTeam']   = !empty($isPesTeam) ? true : false;
+$_SESSION['isUser']      = !empty($isUser)    ? true : false;
 
 $plannedOutagesId = str_replace(" ","_",$plannedOutagesLabel);
 
@@ -93,7 +74,7 @@ $plannedOutagesId = str_replace(" ","_",$plannedOutagesLabel);
 
 
 
-$('.navbarMenuOption')<?=$isCdi?><?=$isResponder?><?=$isRequestor?>.remove();
+$('.navbarMenuOption')<?=$isCdi?><?=$isPesTeam?><?=$isUser?>.remove();
 $('.navbarMenu').not(':has(li)').remove();
 
 $('li[data-pagename="<?=$page;?>"]').addClass('active').closest('li.dropdown').addClass('active');
@@ -103,15 +84,7 @@ $('li[data-pagename="<?=$page;?>"]').addClass('active').closest('li.dropdown').a
 
 if($page != "index.php" && substr($page,0,3)!='cdi'){
     ?>
-
-    console.log('<?=$page;?>');
-
-	var pageAllowed = $('li[data-pagename="<?=$page;?>"]').length;
-
-    console.log('li[data-pagename="<?=$page;?>"]');
-    console.log($('li[data-pagename="<?=$page;?>"]'));
-
-
+    var pageAllowed = $('li[data-pagename="<?=$page;?>"]').length;
 
 	if(pageAllowed==0 ){
 		window.location.replace('index.php');
@@ -124,11 +97,11 @@ if($page != "index.php" && substr($page,0,3)!='cdi'){
 
 $(document).ready(function () {
 
-    $('button.accessRestrict')<?=$isCdi?><?=$isRequestor?><?=$isResponder?>.remove();
+    $('button.accessRestrict')<?=$isCdi?><?=$isPesTeam?><?=$isUser?>.remove();
 
 
-    <?=!empty($isRequestor) ? '$("#userLevel").html("Requestor");console.log("Requestor");' : null;?>
-    <?=!empty($isResponder) ? '$("#userLevel").html("Responder");console.log("Responder");' : null;?>
+    <?=!empty($isPesTeam)   ? '$("#userLevel").html("Pes Team");' : null;?>
+    <?=!empty($isUser)      ? '$("#userLevel").html("User");' : null;?>
     <?=!empty($isCdi)       ? '$("#userLevel").html("CDI");console.log("CDI");' : null;?>
 
     var poContent = $('#<?=$plannedOutagesId?> a').html();

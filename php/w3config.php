@@ -4,7 +4,7 @@
 
 // # these settings control aspects of the site
 // # content (look and feel)
-$_SESSION['SITE_NAME'] = 'UPES';
+$_SESSION['SITE_NAME'] = 'uPES';
 
 
 $site = array(
