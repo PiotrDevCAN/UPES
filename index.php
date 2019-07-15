@@ -1,21 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>PHP Starter Application</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" href="style.css" />
-</head>
-<body>
-	<table>
-		<tr>
-			<td style='width: 30%;'>
-				<img class = 'newappIcon' src='images/newapp-icon.png'>
-			</td>
-			<td>
-				<h1 id = "message"><?php echo "Hello World!"; ?></h1>
-				<p class='description'></p> Thanks for creating a <span class="blue">PHP Starter Application - Modified.</span>.
-			</td>
-		</tr>
-	</table>
-</body>
-</html>
+<?php
+
+use itdq\Trace;
+
+Trace::pageOpening($_SERVER['PHP_SELF']);
+?>
+
+
+
+<style type="text/css" class="init">
+body {
+	background: url('./images/Retina Display-0100244_Oppermann_PE.jpg')
+		no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+</style>
+
+
+<div class="container">
+	<div class="jumbotron">
+		<h1 id='welcomeJumotron'><em>uPES</em> Uki Pre-Employment Screening </h1>
+	</div>
+</div>
+
+<?php
+Trace::pageLoadComplete($_SERVER['PHP_SELF']);
+ ?>

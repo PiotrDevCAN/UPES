@@ -1,0 +1,13 @@
+{
+	"name" : "upes/upes",
+	"require" : {
+		"ext-ldap" : "*",
+		"phpoffice/phpspreadsheet" : "~1.6",
+		"php" : "7.1.2"
+	},
+	"repositories" : [{
+			"type" : "composer",
+			"url" : "https://packagist.org/"
+		}
+	]
+}
