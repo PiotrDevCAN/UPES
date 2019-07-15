@@ -1,16 +1,5 @@
 <?php
-
 use itdq\Trace;
-
-echo "<pre>";
-
-print_r(scandir('.'));
-print_r(scandir('..'));
-
-print_r(scandir('../'));
-print_r(scandir('../../'));
-
-
 
 Trace::pageOpening($_SERVER['PHP_SELF']);
 ?>
