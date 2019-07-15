@@ -1,5 +1,5 @@
 {
-	"name" : "upes/upes",
+	"name" : "cord/cord",
 	"require" : {
 		"ext-ldap" : "*",
 		"phpoffice/phpspreadsheet" : "~1.6",

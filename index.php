@@ -2,6 +2,7 @@
 use itdq\Trace;
 
 Trace::pageOpening($_SERVER['PHP_SELF']);
+
 ?>
 
 
