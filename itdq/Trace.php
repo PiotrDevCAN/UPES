@@ -164,10 +164,6 @@ class Trace extends Log{
 	}
 
 	static function setTraceControls(){
-
-	    echo "<pre>";
-	    var_dump($_SESSION['conn']);
-
 	    if(isset($_SESSION['conn'])){
 	        $sql = "SELECT * FROM " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$TRACE_CONTROL ;
 	        $rs = DB2_EXEC($_SESSION['conn'],$sql);
