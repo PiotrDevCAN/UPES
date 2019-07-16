@@ -1,5 +1,6 @@
 <?php
-namespace cord;
+namespace upes;
+
 
 /**
  * Provides a list of public static properties that define the specific table names used in the application.
@@ -8,8 +9,12 @@ namespace cord;
  *
  *
  */
-class allTables
+class AllTables
 {
+    public static $ACCOUNT            = 'ACCOUNT';
+
+    public static $CONTRACT           = 'CONTRACT';
+
     public static $DB2_ERRORS         = 'DB2_ERRORS';
 
     public static $TRACE              = 'TRACE';
