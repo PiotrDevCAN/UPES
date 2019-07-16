@@ -6,7 +6,7 @@ Trace::pageOpening($_SERVER['PHP_SELF']);
 ?>
 <style type="text/css" class="init">
 body {
-	background: url('./images/187222950.187222953.jpg')
+	background: url('./images/SIM_IMG_503987.jpg')
 		no-repeat center center fixed;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
