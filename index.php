@@ -18,7 +18,7 @@ body {
 
 <div class="container">
 	<div class="jumbotron">
-		<h5 id='welcomeJumotron'><small></small><em>uPES</em> UKI Pre-Employment Screening</small></h5>
+		<h5 id='welcomeJumotron'><em>uPES</em> UKI Pre-Employment Screening</h5>
 	</div>
 </div>
 
