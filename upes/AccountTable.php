@@ -26,6 +26,45 @@ use itdq\DbTable;
 class AccountTable extends DbTable
 {
 
+    function returnAsArray($predicate=null,$withButtons=true){
+        $sql  = " SELECT '' as ACTION, A.* ";
+        $sql .= " FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName. " as A ";
+        $sql .= " WHERE 1=1 " ;
+        $sql .= !empty($predicate) ? " AND  $predicate " : null ;
+
+        $resultSet = $this->execute($sql);
+        $resultSet ? null : die("SQL Failed");
+        $allData = null;
+
+        while(($row = db2_fetch_assoc($resultSet))==true){
+            $testJson = json_encode($row);
+            if(!$testJson){
+                die('Failed JSON Encode');
+                break; // It's got invalid chars in it that will be a problem later.
+            }
+            if($withButtons){
+                $this->addGlyphicons($row);
+            }
+            $allData[]  = $row;
+        }
+        return $allData ;
+    }
+
+
+    function addGlyphicons(&$row){
+        $accountId = trim($row['ACCOUNT_ID']);
+        $account   = trim($row['ACCOUNT']);
+
+        $row['ACTION'] = "<button type='button' class='btn btn-primary btn-xs ' aria-label='Left Align' data-toggle='tooltip' title='Edit Account Name' >
+              <span class='glyphicon glyphicon-edit editAccountName'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'   ></span>
+              </button>";
+        $row['ACTION'].= "&nbsp;";
+        $row['ACTION'].= "<button type='button' class='btn btn-warning btn-xs ' aria-label='Left Align'  data-toggle='tooltip' title='Delete Account'>
+              <span class='glyphicon glyphicon-trash deleteAccount' aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "' ></span>
+              </button>";
+    }
+
+
 
 }
 
