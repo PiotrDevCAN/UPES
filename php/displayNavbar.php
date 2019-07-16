@@ -31,9 +31,10 @@ $cdiAdmin->addOption($traceDelete);
 $cdiAdmin->addOption($test);
 
 $admin          = new NavBarMenu("uPES Admin");
+$accounts       = new NavBarOption('Manage Accounts','pa_manageAccounts.php','accessCdi accessPesTeam');
 $contracts      = new NavBarOption('Manage contracts','pa_manageContracts.php','accessCdi accessPesTeam');
 $tracker        = new NavBarOption('Tracker','pa_tracker.php','accessCdi accessPesTeam');
-
+$admin->addOption($accounts);
 $admin->addOption($contracts);
 $admin->addOption($tracker);
 
@@ -100,8 +101,8 @@ $(document).ready(function () {
     $('button.accessRestrict')<?=$isCdi?><?=$isPesTeam?><?=$isUser?>.remove();
 
 
-    <?=!empty($isPesTeam)   ? '$("#userLevel").html("Pes Team");' : null;?>
-    <?=!empty($isUser)      ? '$("#userLevel").html("User");' : null;?>
+    <?=!empty($isPesTeam)   ? '$("#userLevel").html("Pes Team");console.log("pes");' : null;?>
+    <?=!empty($isUser)      ? '$("#userLevel").html("User");console.log("user");' : null;?>
     <?=!empty($isCdi)       ? '$("#userLevel").html("CDI");console.log("CDI");' : null;?>
 
     var poContent = $('#<?=$plannedOutagesId?> a').html();
