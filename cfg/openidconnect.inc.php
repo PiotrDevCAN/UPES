@@ -1,12 +1,24 @@
 <?php
 $config_openidconnect = new stdClass();
-$config_openidconnect->authorize_url = "https://w3id.alpha.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/authorize";
-$config_openidconnect->token_url = "https://w3id.alpha.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/token";
-$config_openidconnect->introspect_url = "https://w3id.alpha.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/introspect";
 
-$config_openidconnect->client_id['upes'] = "ZThiZDg1M2ItZGFiMi00";
-$config_openidconnect->client_secret['upes'] = "NjMzODZkNWUtZjMyMi00";
-$config_openidconnect->redirect_url['upes'] = "https://upes.w3ibm.mybluemix.net/auth/index.php";
+
+switch (strtolower($_SERVER['environment'])) {
+    case 'upes':
+        $config_openidconnect->authorize_url  = "https://w3id.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/authorize";
+        $config_openidconnect->token_url      = "https://w3id.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/token";
+        $config_openidconnect->introspect_url = "https://w3id.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/introspect";
+        $config_openidconnect->client_id = "ZThiZDg1M2ItZGFiMi00";
+        $config_openidconnect->client_secret = "NjMzODZkNWUtZjMyMi00";
+        $config_openidconnect->redirect_url = "https://upes.w3ibm.mybluemix.net/auth/index.php";
+        break;
+
+    default:
+        ;
+    break;
+}
+
+
+
 
 // $config_openidconnect->client_id['cord_ut'] = "YTRiMGI3OTQtMjU0OC00";
 // $config_openidconnect->client_secret['cord_ut'] = "OGZkNDFlYmQtMGMwZC00";
