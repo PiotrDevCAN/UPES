@@ -65,6 +65,7 @@ class BluePages {
 
 
 	static function getDetailsFromIntranetId($intranetId){
+	    $details = array();
 		if(empty($intranetId)){
 			return FALSE;
 		}
@@ -81,7 +82,6 @@ class BluePages {
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
 
-		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
@@ -112,9 +112,9 @@ class BluePages {
 		set_time_limit(120);
 		$url = "http://bluepages.ibm.com/BpHttpApisv3/wsapi?allByNotesIDLite=NOTES_ID_HERE%25";
 
-	$sp = strpos($notesId,'/O=IBM');
+	    $sp = strpos($notesId,'/O=IBM');
 
-		if($sp != FALSE){
+		if($sp){
 			$amendIbm2 = urlencode(trim($notesId));
 		} else {
 			$amendIbm = str_replace("/IBM","xxxxx",$notesId);
@@ -147,14 +147,12 @@ class BluePages {
 
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
-		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
 			$pattern = "/[\n:]/";
 			$matches = preg_split ( $pattern, $results [0] );
 			for($cellOffset = 0; $cellOffset < count ( $matches ); $cellOffset ++) {
-				$next = $cellOffset+1;
 				switch ($matches [$cellOffset]) {
 
 					case 'CNUM' :
@@ -175,7 +173,6 @@ class BluePages {
 					case 'NOTESID':
 						$notesId = trim ( $matches [$cellOffset+1]);
 					default :
-						;
 						break;
 				}
 			}
@@ -202,7 +199,7 @@ class BluePages {
 
 	$sp = strpos($notesId,'/O=IBM');
 
-		if($sp != FALSE){
+		if($sp){
 			$amendIbm2 = urlencode(trim($notesId));
 		} else {
 			$amendIbm = str_replace("/IBM","xxxxx",$notesId);
@@ -221,7 +218,6 @@ class BluePages {
 
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
-		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
@@ -245,7 +241,6 @@ class BluePages {
 					case 'MGRCC':
 					case 'NOTESID':
 					default :
-						;
 						break;
 				}
 			}
@@ -266,7 +261,7 @@ class BluePages {
 
 	    $sp = strpos($notesId,'/O=IBM');
 
-		if($sp != FALSE){
+		if($sp){
 			$amendIbm2 = urlencode(trim($notesId));
 		} else {
 			$amendIbm = str_replace("/IBM","xxxxx",$notesId);
@@ -284,7 +279,6 @@ class BluePages {
 
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
-		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
@@ -312,7 +306,6 @@ class BluePages {
 //						print_r($matches);
 						$internetId = trim ( $matches [$cellOffset+1]);
 					default :
-						;
 						break;
 				}
 			}
@@ -345,7 +338,6 @@ class BluePages {
 
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
-		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
@@ -369,7 +361,6 @@ class BluePages {
 					case 'MGRCC':
 					case 'NOTESID':
 					default :
-						;
 						break;
 				}
 			}
@@ -382,8 +373,6 @@ class BluePages {
 
 	function lookup($cnum) {
 		$this->CNUM = $cnum;
-		$dept = null;
-
 		$ch = curl_init ( str_replace('CNUM_HERE',$this->CNUM,$this->url) );
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
 
@@ -441,8 +430,6 @@ class BluePages {
 							$this->person [trim ( $matches [$cellOffset] )] = $stripAt ;
 						}
 					default :
-						;
-						break;
 				}
 			}
 
@@ -462,6 +449,7 @@ class BluePages {
 
 	function saveDeptToDb() {
 		if (isset ( $this->dept )) {
+		    $data = array();
 		//	$sql = " INSERT INTO " . $_SESSION ['prefix'] . "." . $this->table . " ( NAME, SERIAL, COUNTRY_CODE, LOCATION, MGR_SERIAL, MGR_CTRY_CODE, REG_OR_SUBCO, INTERNET, EMPTYPE, HRACTIVE, HREMPLOYEETYPE, DEPT, HRFAMILYNAME, NOTESID, JOBRESPONSIB) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)  ";
 
 		//	$preparedInsert = db2_prepare ( $_SESSION ['conn'], $sql );
@@ -486,14 +474,14 @@ class BluePages {
 				$data[12] = $this->dept['HRFAMILYNAME'][$key];
 				$data[13] = $this->dept['NOTESID'][$key];
 				$data[14] = $this->dept['JOBRESPONSIB'][$key];
-				if ((stripos ( $data [0], '*FUN' ) === false)) { // Don't record the Functional Ids.
+				if (stripos ( $data [0], '*FUN')=== false) { // Don't record the Functional Ids.
 					$rs = db2_execute ( $this->preparedInsert, $data );
 					if (! $rs) {
 						echo "<BR>" . db2_stmt_error ();
 						echo "<BR>" . db2_stmt_errormsg () . "<BR>";
 						echo "<BR> Data :";
 						print_r ( $data );
-						exit ( "Unable to Execute $sql" );
+						exit ( "Unable to Execute prepared SQL Insert" );
 					}
 					if($this->online){
 						echo "<BR>" . $data [0];
@@ -518,6 +506,7 @@ class BluePages {
 
 	function savePersonToDb() {
 			$actual = 0;
+			$data = array();
 			$data [0] = substr ( $this->person  ['NAME'], 0, 50 );	 	// Name from BP
 			$data [1] = substr ( $this->person  ['EMPNUM'], 0, 6 );		// 6 Digit Serial
 			$data [2] = substr ( $this->person  ['EMPCC'], 0, 3 ); 		// 3 Digit Country Code
@@ -537,18 +526,17 @@ class BluePages {
 			$data[12] = $this->person['HRFAMILYNAME'];
 			$data[13] = $this->person['NOTESID'];
 			$data[14] = $this->person['JOBRESPONSIB'];
-			if ((stripos ( $data [0], '*FUN' ) === false)) { // Don't record the Functional Ids.
+			if (stripos ( $data [0], '*FUN' ) === false) { // Don't record the Functional Ids.
 				$rs = db2_execute ( $this->preparedInsert, $data );
 				if (! $rs) {
 					echo "<BR>" . db2_stmt_error ();
 					echo "<BR>" . db2_stmt_errormsg () . "<BR>";
 					echo "<BR> Data :";
 					print_r ( $data );
-					exit ( "Unable to Execute $sql" );
+					exit ( "Unable to Execute prepared Insert" );
 				}
 				$actual++ ;
 			}
-			$data = null;
 			if($this->online){
 				echo "<H2>Saved Details for : " . $this->CNUM . " " . $this->person  ['NAME'] . "</H2>";
 			}
@@ -562,6 +550,7 @@ class BluePages {
 		}
 
 	static function processDetails($ch){
+	    $details = array();
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
 		$m = curl_exec ( $ch );
 
@@ -570,7 +559,6 @@ class BluePages {
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
 
-		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;

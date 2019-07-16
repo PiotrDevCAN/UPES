@@ -116,8 +116,9 @@ class DbRecord extends FormClass {
 	 * @return array
 	 */
 	function getValues() {
+	    $values = array();
 		Trace::traceComment(null,__METHOD__);
-		foreach ( $this as $key => $value ) {
+		foreach ( $this as $value ) {
 			$values [] = $value;
 		}
 		return $values;
@@ -129,6 +130,7 @@ class DbRecord extends FormClass {
 	 * @return array
 	 */
 	function getKeyValues() {
+	    $values = array();
 		Trace::traceComment(null,__METHOD__);
 		foreach ( $this->keyColumns as $key ) {
 			$values [] = $this->$key;
@@ -145,7 +147,7 @@ class DbRecord extends FormClass {
 	function getValuesForCsv() {
 		$string = null;
 		Trace::traceComment(null,__METHOD__);
-		foreach ( $this as $key => $value ) {
+		foreach ( $this as $value ) {
 			$string .= $value .",";
 		}
 		return substr($string,0,strlen($string)-1);
@@ -190,6 +192,7 @@ class DbRecord extends FormClass {
 	 */
 	function getAssoc() {
 		Trace::traceComment(null,__METHOD__);
+		$assoc = array();
 		foreach ( $this as $key => $value ) {
 			if ($key == strtoupper ( $key )) { // only return Properties defined in UpperCase - to distinguish columns in the data from other properties.
 				$assoc [$key] = $value;
@@ -206,6 +209,7 @@ class DbRecord extends FormClass {
 	 * @return string|boolean	Array of data or False if none of the columns
 	 */
 	function getValidColumns($columns) {
+	    $valid = array();
 		Trace::traceComment(null,__METHOD__);
 		foreach ( $columns as $key => $value ) {
 			if (property_exists ( $this, self::toColumnName ( $value ) )) {
@@ -225,6 +229,7 @@ class DbRecord extends FormClass {
 	 * @return array
 	 */
 	function getNonNullColumns() {
+	    $columns = array();
 		Trace::traceComment(null,__METHOD__);
 		foreach ( $this as $key => $value ) {
 			if ($key == strtoupper ( $key ) && isset ( $this->$key )) { // Check it's a property that is also a column - else we're not interested.
@@ -425,7 +430,7 @@ class DbRecord extends FormClass {
 							//$this->$key = trim($value);
 						} else {
 							$valid = FALSE;
-							echo "<BR/>Field: $key Value:'$value'  length " . strlen ( trim($value) ) . " exceeds max length of " . $table->getColumnLength ( $colName ) . " for column $colname and Autotruncate is off.<BR/>";
+							echo "<BR/>Field: $key Value:'$value'  length " . strlen ( trim($value) ) . " exceeds max length of " . $table->getColumnLength ( $colName ) . " for column $colName and Autotruncate is off.<BR/>";
 						}
 			//		} else {
 					}
@@ -588,7 +593,7 @@ class DbRecord extends FormClass {
 		$mm = strpos ( $format, 'mm' );
 		$y4 = strpos ( $format, 'yyyy' );
 		$y2 = strpos ( $format, 'yy' );
-		$tt = strpos ($format, 'bf');
+// 		$tt = strpos ($format, 'bf');
 
 		// echo "<BR/>Y4:$y4 Y2:$y2 DD:$dd MM:$mm TT:$tt";
 
