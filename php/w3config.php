@@ -50,9 +50,8 @@ $site = array(
     'csvPrefix' => $_SERVER['environment'],
 
     'cdiBg'       => 'ventus_cdi',
-    'responderBg' => 'upes_Responders',
-    'requestorBg' => 'upes_Requestors',
-    'nullBg' => null,
+    'pesTeamBg'   => 'vbac_pes',
+    'nullBg'      => null,
 
     'email' => false,
     'emailId' => 'DoNotReply_upes@uk.ibm.com',

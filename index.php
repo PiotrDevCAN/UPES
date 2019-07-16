@@ -4,12 +4,9 @@ use itdq\Trace;
 Trace::pageOpening($_SERVER['PHP_SELF']);
 
 ?>
-
-
-
 <style type="text/css" class="init">
 body {
-	background: url('./images/Retina Display-0100244_Oppermann_PE.jpg')
+	background: url('./images/187222950.187222953.jpg')
 		no-repeat center center fixed;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -21,7 +18,7 @@ body {
 
 <div class="container">
 	<div class="jumbotron">
-		<h1 id='welcomeJumotron'><em>uPES</em> Uki Pre-Employment Screening </h1>
+		<h5 id='welcomeJumotron'><small></small><em>uPES</em> UKI Pre-Employment Screening</small></h5>
 	</div>
 </div>
 
