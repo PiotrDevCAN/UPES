@@ -30,8 +30,8 @@ $allAccounts = $loader->load('ACCOUNT',AllTables::$ACCOUNT);
 $accountsRecord = new AccountRecord();
 $accountsRecord->displayForm(itdq\FormClass::$modeDEFINE);
 
-
 include_once 'includes/modalError.html';
+include_once 'includes/modalDeleteAccountConfirm.html';
 
 ?>
 </div>
@@ -87,6 +87,7 @@ console.log(accounts);
 	                $('.modal-body').addClass('bg-danger');
 	                $('#modalError').modal('show');
 				}
+	      		$('#ACCOUNT').css("background-color","white");
  	    	    accountTable.ajax.reload();
           	},
 	      	fail: function(response){
@@ -134,6 +135,15 @@ console.log(accounts);
 	});
 
 
+	$(document).on('click','.deleteAccount',function(e){
+		console.log(e);
+ 		var account = $(e.target).data('account');
+ 		var accountId = $(e.target).data('accountid');
+ 		$('#confirmDeleteAccountName').html($(e.target).data('account'));
+ 		$('#confirmDeleteAccountId').val(accountId);
+        $('#modalDeleteAccountConfirm').modal('show');
+	});
+
 	$(document).on('click','.editAccountName',function(e){
  		var button = $(e.target).parent('button').addClass('spinning');
  		var account = $(e.target).data('account');
@@ -143,6 +153,55 @@ console.log(accounts);
 		$(button).removeClass('spinning');
 	});
 
+
+	$(document).on('click','.confirmAccountDelete',function(e){
+ 		var accountid = $('#confirmDeleteAccountId').val();
+ 		console.log(accountid);
+
+		var submitBtn = $(e.target).find('input[name="Submit"]').addClass('spinning');
+		var url = 'ajax/deleteAccountRecord.php';
+
+		$.ajax({
+			type:'post',
+		  	url: url,
+		  	data:{
+			  	accountid:accountid
+			  	},
+		  	context: document.body,
+	      	success: function(response) {
+	      		var responseObj = JSON.parse(response);
+	      		if(!responseObj.success){
+		    	    $('#accountsForm').trigger("reset");
+	                $('.modal-body').html(responseObj.Messages);
+	                $('.modal-body').addClass('bg-danger');
+	                $('#modalError').modal('show');
+				}
+ 	    	    accountTable.ajax.reload();
+          	},
+	      	fail: function(response){
+					console.log('Failed');
+					console.log(response);
+	                $('.modal-body').html("<h2>Json call to delete record Failed.</h2><br>Tell Rob");
+	                $('.modal-body').addClass('bg-warning');
+	                $('#modalError').modal('show');
+	                $(submitBtn).removeClass('spinning').attr('disabled',false);
+				},
+	      	error: function(error){
+	        		console.log('Ajax error');
+	        		console.log(error.statusText);
+	                $('.modal-body').html("<h2>Json call to delete record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('.modal-body').addClass('bg-warning');
+	                $('#modalError').modal('show');
+	                $(submitBtn).removeClass('spinning').attr('disabled',false);
+	        	},
+	      	always: function(){
+	        		console.log('--- saved resource request ---');
+	      		}
+			});
+
+
+
+	});
 
 	$('#ACCOUNT').on('keyup',function(e){
 		var newAccount = $(this).val().trim().toLowerCase();

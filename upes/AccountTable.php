@@ -55,11 +55,11 @@ class AccountTable extends DbTable
         $accountId = trim($row['ACCOUNT_ID']);
         $account   = trim($row['ACCOUNT']);
 
-        $row['ACTION'] = "<button type='button' class='btn btn-primary btn-xs ' aria-label='Left Align' data-toggle='tooltip' title='Edit Account Name' >
+        $row['ACTION'] = "<button type='button' class='btn btn-primary btn-xs editAccountName ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-toggle='tooltip' title='Edit Account Name' >
               <span class='glyphicon glyphicon-edit editAccountName'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'   ></span>
               </button>";
         $row['ACTION'].= "&nbsp;";
-        $row['ACTION'].= "<button type='button' class='btn btn-warning btn-xs ' aria-label='Left Align'  data-toggle='tooltip' title='Delete Account'>
+        $row['ACTION'].= "<button type='button' class='btn btn-warning btn-xs deleteAccount ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'   data-toggle='tooltip' title='Delete Account'>
               <span class='glyphicon glyphicon-trash deleteAccount' aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "' ></span>
               </button>";
     }

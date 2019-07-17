@@ -2,9 +2,14 @@
 
 use itdq\DbTable;
 use itdq\FormClass;
+use itdq\Trace;
 use upes\AccountRecord;
 use upes\AccountTable;
 use upes\AllTables;
+
+
+
+Trace::pageOpening($_SERVER['PHP_SELF']);
 
 set_time_limit(0);
 ob_start();
@@ -39,3 +44,5 @@ $response = array('success'=>$success,'accountId' => $accountId, 'saveResponse' 
 
 ob_clean();
 echo json_encode($response);
+
+Trace::pageLoadComplete($_SERVER['PHP_SELF']);
