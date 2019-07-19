@@ -2,6 +2,7 @@
 namespace upes;
 
 use itdq\DbTable;
+use itdq\Loader;
 
 /*
  *
@@ -58,6 +59,58 @@ class ContractTable extends DbTable
     }
 
 
+    static function prepareArrayForContractDropDown(){
+        $loader = new Loader();
+        $allAccounts = $loader->loadIndexed('ACCOUNT','ACCOUNT_ID',AllTables::$ACCOUNT);
+        $allContracts = $loader->loadIndexed('CONTRACT','CONTRACT_ID',AllTables::$CONTRACT);
+        $allContractAccountMapping = $loader->loadIndexed('ACCOUNT_ID','CONTRACT_ID',AllTables::$CONTRACT);
 
+        $contractsAgainstAccount = array();
+
+        foreach ($allContractAccountMapping as $contractId => $accountId) {
+            $contractsAgainstAccount[$allAccounts[$accountId]][$contractId] = $allContracts[$contractId];
+        }
+
+        ksort($contractsAgainstAccount);
+
+        foreach ($contractsAgainstAccount as $account => $arrayOfContracts) {
+            asort($contractsAgainstAccount[$account]);
+        }
+        return $contractsAgainstAccount;
+    }
+
+    static function prepareJsonObjectForContractsSelect(){
+//         {
+//             "text": "Group 1",
+//             "children" : [
+//             {
+//                 "id": 1,
+//                 "text": "Option 1.1"
+//             },
+//             {
+//                 "id": 2,
+//                 "text": "Option 1.2"
+//             }
+//             ]
+//         },
+        $contractsAgainstAccount = self::prepareArrayForContractDropDown();
+
+        $selectObjects = array();
+        foreach ($contractsAgainstAccount as $account => $contractsArray) {
+            $accountContracts = array();
+            foreach ($contractsArray as $contractId => $contract) {
+                $option = new \stdClass();
+                $option->id = $contractId;
+                $option->text = $contract;
+                $accountContracts[] = $option;
+            }
+
+            $accountObj = new \stdClass();
+            $accountObj->text = $account;
+            $accountObj->children = $accountContracts;
+            $selectObjects[] = $accountObj;
+        }
+        return json_encode($selectObjects);
+    }
 }
 

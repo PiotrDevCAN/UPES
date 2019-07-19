@@ -15,7 +15,7 @@ $(document).ready(function(){
 		        var dataObject = $.map(data.results, function(obj) {
 					//console.log(obj.mail);
 					 var mail = typeof(obj.mail)=='undefined' ? 'unknown' : obj.mail[0];
-			         return { value: obj.nameFull, role: obj.role, preferredIdentity: obj.preferredIdentity, cnum:obj.id, notesEmail:obj.notesEmail, mail:mail }; });
+			         return { value: obj.nameFull, role: obj.role, preferredIdentity: obj.preferredIdentity, cnum:obj.id, notesEmail:obj.notesEmail, mail:mail, country:obj.address_business_country }; });
 		        console.log(dataObject);
 			    return dataObject;
 		      },
@@ -33,7 +33,7 @@ $(document).ready(function(){
 		    filter: function(data) {
 
 		        var dataObject = $.map(data.results, function(obj) {
-					//console.log(obj.mail);
+					//  console.log(obj);
 					 var mail = typeof(obj.mail)=='undefined' ? 'unknown' : obj.mail[0];
 					 return { value: obj.notesEmail, role: obj.role, preferredIdentity: obj.preferredIdentity, cnum:obj.id, notesEmail:obj.notesEmail, mail:mail }; });
 		        console.log(dataObject);
