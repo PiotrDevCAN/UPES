@@ -1,0 +1,23 @@
+<!-- Modal -->
+<div id="modalDeletePesLevelConfirm" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Confirm Delete</h4>
+      </div>
+      <div class="modal-body" >
+      <p>Deleting the Pes Level <span id='confirmDeletePesLevel' style=' font-weight: bold;font-size:18px;'></span> for <span id='confirmDeletePesLevelAccount' style=' font-weight: bold;font-size:18px;'></span> cannot be reversed.</p>
+      <p>Only confirm if you're sure that's what you need to do.</p>
+      <input type='hidden' id='confirmDeletePesLevelRef' />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-warning modalButton confirmPesLevelDelete" data-dismiss="modal">Confirm</button>
+        <button type="button" class="btn btn-default modalButton" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,48 +1,34 @@
 <?php
-
-
-use itdq\FormClass;
 use itdq\Trace;
-use upes\AccountTable;
-use upes\AllTables;
-use upes\AccountRecord;
 use itdq\Loader;
-use itdq\JavaScript;
+use itdq\FormClass;
+use upes\AllTables;
+use upes\ContractRecord;
+use upes\PesLevelTable;
+use upes\PesLevelRecord;
 
 Trace::pageOpening($_SERVER['PHP_SELF']);
 ?>
 <div class='container'>
-<h2>Manage Accounts</h2>
-<?php
-$loader = new Loader();
-$allAccounts = $loader->load('ACCOUNT',AllTables::$ACCOUNT);
+<h2>Manage Accounts Pes Levels</h2>
 
-?><script type="text/javascript">
-  var accounts = [];
-  <?php
-  foreach ($allAccounts as $account) {
-      ?>accounts.push("<?=strtolower(trim($account));?>");<?php
-  }?>
-  console.log(accounts);
-  </script>
 <?php
-
-$accountsRecord = new AccountRecord();
-$accountsRecord->displayForm(itdq\FormClass::$modeDEFINE);
+$pesLevelRecord = new PesLevelRecord();
+$pesLevelRecord->displayForm(itdq\FormClass::$modeDEFINE);
 
 include_once 'includes/modalError.html';
-include_once 'includes/modalDeleteAccountConfirm.html';
+include_once 'includes/modalDeletePesLevelConfirm.html';
 
 ?>
 </div>
 
 <div class='container'>
 
-<div class='col-sm-6 col-sm-offset-1'>
+<div class='col-sm-7 col-sm-offset-1'>
 
-<table id='accountTable' class='table table-responsive table-striped' >
+<table id='pesLevelTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Action</th><th>Account Id</th><th class='searchable' >Account</th></tr>
+<tr><th>Action</th><th>Pes Level Ref</th><th>Account</th><th class='searchable' >PES Level</th><th class='searchable' >PES Level Description</th></tr>
 </thead>
 </table>
 </div>
@@ -51,23 +37,26 @@ include_once 'includes/modalDeleteAccountConfirm.html';
 
 <script>
 
-var accountTable;
+var contractTable;
 
 $(document).ready(function(){
 
-console.log(accounts);
+	$('#ACCOUNT_ID').select2({
+		placeholder: 'Select Account',
+		width: '100%'
+	});
 
 
-	$('#accountsForm').submit(function(e){
+	$('#pesLevelForm').submit(function(e){
 		console.log(e);
 		e.preventDefault();
 
 		var submitBtn = $(e.target).find('input[name="Submit"]').addClass('spinning');
-		var url = 'ajax/saveAccountRecord.php';
+		var url = 'ajax/savePesLevelRecord.php';
 
 		var disabledFields = $(':disabled');
 		$(disabledFields).removeAttr('disabled');
-		var formData = $("#accountsForm").serialize();
+		var formData = $("#pesLevelForm").serialize();
 		$(disabledFields).attr('disabled',true);
 
 		$.ajax({
@@ -79,30 +68,30 @@ console.log(accounts);
 	      		var responseObj = JSON.parse(response);
 	      		if(responseObj.success){
 		    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
-		    	    $('#accountsForm').trigger("reset");
+		    	    $('#pesLevelForm').trigger("reset");
+		    	    $('#ACCOUNT_ID').trigger('change');
 				} else {
      	    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
-		    	    $('#accountsForm').trigger("reset");
+		    	    $('#pesLevelForm').trigger("reset");
 	                $('.modal-body').html(responseObj.Messages);
 	                $('.modal-body').addClass('bg-danger');
 	                $('#modalError').modal('show');
 				}
-	      		$('#ACCOUNT').css("background-color","white");
- 	    	    accountTable.ajax.reload();
+ 	    	    pesLevelTable.ajax.reload();
           	},
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
-	                $('#modalError .modal-body').addClass('bg-warning');
+	                $('.modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
+	                $('.modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
 				},
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
-	                $('#modalError .modal-body').addClass('bg-warning');
+	                $('.modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('.modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
 	        	},
@@ -112,9 +101,9 @@ console.log(accounts);
 			});
 		});
 
-	accountTable = $('#accountTable').DataTable({
+	pesLevelTable = $('#pesLevelTable').DataTable({
     	ajax: {
-            url: 'ajax/populateAccountsTable.php',
+            url: 'ajax/populatePesLevelsTable.php',
         }	,
     	autoWidth: true,
     	processing: true,
@@ -128,55 +117,58 @@ console.log(accounts);
        columns:
                   [{ data: "ACTION"
                   },{
-                    data: "ACCOUNT_ID"
+                    data: "PES_LEVEL_REF"
                   },{
                     data: "ACCOUNT"
+                  },{
+                    data: "PES_LEVEL"
+                  },{
+                    data: "PES_LEVEL_DESCRIPTION"
                   }]
 	});
 
 
-	$(document).on('click','.deleteAccount',function(e){
+	$(document).on('click','.deletePesLevel',function(e){
 		console.log(e);
- 		var account = $(e.target).data('account');
- 		var accountId = $(e.target).data('accountid');
- 		$('#confirmDeleteAccountName').html($(e.target).data('account'));
- 		$('#confirmDeleteAccountId').val(accountId);
-        $('#modalDeleteAccountConfirm').modal('show');
+ 		$('#confirmDeletePesLevel').html($(e.target).data('peslevel'));
+ 		$('#confirmDeletePesLevelRef').val($(e.target).data('peslevelref'));
+ 		$('#confirmDeletePesLevelAccount').html($(e.target).data('peslevelaccount'));
+        $('#modalDeletePesLevelConfirm').modal('show');
 	});
 
-	$(document).on('click','.editAccountName',function(e){
+	$(document).on('click','.editPesLevel',function(e){
  		var button = $(e.target).parent('button').addClass('spinning');
- 		var account = $(e.target).data('account');
- 		$('#ACCOUNT').val($(e.target).data('account'));
- 		$('#ACCOUNT_ID').val($(e.target).data('accountid'));
+ 		$('#PES_LEVEL').val($(e.target).data('peslevel'));
+ 		$('#PES_LEVEL_REF').val($(e.target).data('peslevelref'));
+ 		$('#ACCOUNT_ID').val($(e.target).data('accountId'));
 		$('#mode').val('<?=FormClass::$modeEDIT?>');
 		$(button).removeClass('spinning');
 	});
 
 
-	$(document).on('click','.confirmAccountDelete',function(e){
- 		var accountid = $('#confirmDeleteAccountId').val();
- 		console.log(accountid);
+	$(document).on('click','.confirmPesLevelDelete',function(e){
+ 		var peslevelref = $('#confirmDeletePesLevelRef').val();
+ 		console.log(peslevelref);
 
 		var submitBtn = $(e.target).find('input[name="Submit"]').addClass('spinning');
-		var url = 'ajax/deleteAccountRecord.php';
+		var url = 'ajax/deletePesLevelRecord.php';
 
 		$.ajax({
 			type:'post',
 		  	url: url,
 		  	data:{
-			  	accountid:accountid
+		  		peslevelref:peslevelref
 			  	},
 		  	context: document.body,
 	      	success: function(response) {
 	      		var responseObj = JSON.parse(response);
 	      		if(!responseObj.success){
-		    	    $('#accountsForm').trigger("reset");
+		    	    $('#pesLevelForm').trigger("reset");
 	                $('#modalError .modal-body').html(responseObj.Messages);
 	                $('#modalError .modal-body').addClass('bg-danger');
 	                $('#modalError').modal('show');
 				}
- 	    	    accountTable.ajax.reload();
+	      		pesLevelTable.ajax.reload();
           	},
 	      	fail: function(response){
 					console.log('Failed');
@@ -198,36 +190,10 @@ console.log(accounts);
 	        		console.log('--- saved resource request ---');
 	      		}
 			});
-
-
-
 	});
-
-	$('#ACCOUNT').on('keyup',function(e){
-		var newAccount = $(this).val().trim().toLowerCase();
-		var allreadyExists = ($.inArray(newAccount, accounts) >= 0 );
-
-
-		if(allreadyExists){ // comes back with Position in array(true) or false is it's NOT in the array.
-			$('#Submit').attr('disabled',true);
-			$(this).css("background-color","LightPink");
-			alert('Account already defined');
-		} else {
-			$(this).css("background-color","LightGreen");
-			$('#Submit').attr('disabled',false);
-		};
-	});
-
-
 
 });
 </script>
 
-
-
-
-
-
 <?php
 Trace::pageLoadComplete($_SERVER['PHP_SELF']);
-?>

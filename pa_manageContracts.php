@@ -82,8 +82,8 @@ $(document).ready(function(){
 				} else {
      	    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
 		    	    $('#contractsForm').trigger("reset");
-	                $('.modal-body').html(responseObj.Messages);
-	                $('.modal-body').addClass('bg-danger');
+	                $('#modalError .modal-body').html(responseObj.Messages);
+	                $('#modalError .modal-body').addClass('bg-danger');
 	                $('#modalError').modal('show');
 				}
 	      		$('#CONTRACT').css("background-color","white");
@@ -92,16 +92,16 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('.modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
-	                $('.modal-body').addClass('bg-warning');
+	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
+	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
 				},
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('.modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
-	                $('.modal-body').addClass('bg-warning');
+	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
 	        	},
@@ -170,8 +170,8 @@ $(document).ready(function(){
 	      		var responseObj = JSON.parse(response);
 	      		if(!responseObj.success){
 		    	    $('#contractsForm').trigger("reset");
-	                $('.modal-body').html(responseObj.Messages);
-	                $('.modal-body').addClass('bg-danger');
+	                $('#modalError .modal-body').html(responseObj.Messages);
+	                $('#modalError .modal-body').addClass('bg-danger');
 	                $('#modalError').modal('show');
 				}
  	    	    contractTable.ajax.reload();
@@ -179,16 +179,16 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('.modal-body').html("<h2>Json call to delete record Failed.</h2><br>Tell Rob");
-	                $('.modal-body').addClass('bg-warning');
+	                $('#modalError .modal-body').html("<h2>Json call to delete record Failed.</h2><br>Tell Rob");
+	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
 				},
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('.modal-body').html("<h2>Json call to delete record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
-	                $('.modal-body').addClass('bg-warning');
+	                $('#modalError .modal-body').html("<h2>Json call to delete record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
 	        	},
