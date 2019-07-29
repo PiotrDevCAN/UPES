@@ -17,6 +17,8 @@ class AllTables
 
     public static $DB2_ERRORS         = 'DB2_ERRORS';
 
+    public static $PERSON             = 'PERSON';
+
     public static $PES_LEVELS         = 'PES_LEVELS';
 
     public static $TRACE              = 'TRACE';

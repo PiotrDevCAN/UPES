@@ -11,6 +11,7 @@ use itdq\JavaScript;
 use upes\PersonRecord;
 use upes\ContractTable;
 use upes\PesLevelTable;
+use upes\PersonTable;
 
 Trace::pageOpening($_SERVER['PHP_SELF']);
 
@@ -18,6 +19,7 @@ $pesLevelTable = new PesLevelTable(AllTables::$PES_LEVELS);
 $pesLevelByAccount  = PesLevelTable::prepareJsonArraysForPesSelection();
 $allContractAccountMapping = ContractTable::prepareJsonObjectMappingContractToAccount();
 $accountIdLookup = AccountTable::prepareJsonAccountIdLookup();
+$knownEmailLookup = PersonTable::prepareJsonKnownEmailLookup();
 
 ?>
 <div class='container'>
@@ -94,21 +96,6 @@ $(document).ready(function(){
  		$('#EMAIL_ADDRESS').val(suggestion.mail).attr('disabled',true).css('background-color','lightgreen');
  		$('#FULL_NAME').val(suggestion.value);
  		$('#COUNTRY').val(suggestion.country).trigger('change');
-
- 		var newCnum = suggestion.cnum;
- 		console.log(newCnum);
- 		var allreadyExists = ($.inArray(newCnum, knownCnum) >= 0 );
-
- 		console.log(allreadyExists);
- 		if(allreadyExists){ // comes back with Position in array(true) or false is it's NOT in the array.
- 			$('#savePerson').attr('disabled',true);
- 			$('#ibmer').css("background-color","LightPink");
- 			alert('Person already defined to VBAC');
- 			return false;
- 		} else {
- 			$('#ibmer').css("background-color","LightGreen");
- 			$('#savePerson').attr('disabled',false);
- 		}
 	});
 
 
@@ -142,11 +129,27 @@ $(document).ready(function(){
 	            $('#EMAIL_ADDRESS').val('');
 	            $('#EMAIL_ADDRESS').css('background-color','inherit');
 			}
+
+	 		var newEmail = suggestion.mail;
+	 		console.log(newCnum);
+	 		var allreadyExists = ($.inArray(newCnum, knownCnum) >= 0 );
+
+	 		console.log(allreadyExists);
+	 		if(allreadyExists){ // comes back with Position in array(true) or false is it's NOT in the array.
+	 			$('#savePerson').attr('disabled',true);
+	 			$('#ibmer').css("background-color","LightPink");
+	 			alert('Person already defined to VBAC');
+	 			return false;
+	 		} else {
+	 			$('#ibmer').css("background-color","LightGreen");
+	 			$('#savePerson').attr('disabled',false);
+	 		}
+
+
+
 		}
 
 	});
-
-
 
 	$('#personForm').submit(function(e){
 		console.log(e);
@@ -170,7 +173,15 @@ $(document).ready(function(){
 	      		if(responseObj.success){
 		    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
 		    	    $('#personForm').trigger("reset");
-				} else {
+		    	    $('#COUNTRY').val('').trigger('change');
+		    	    $('#CONTRACT_ID').val('').trigger('change');
+		    	    $('#EMAIL_ADDRESS').css('background-color','White').trigger('change');
+		            $("#PES_LEVEL").select2("destroy");
+		            $("#PES_LEVEL").html("<option><option>");
+		        	$('#PES_LEVEL').select2({width: '100%'})
+		        	    .attr('disabled',false)
+		                .attr('required',true);
+		    	} else {
      	    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
 		    	    $('#personForm').trigger("reset");
 	                $('.modal-body').html(responseObj.Messages);
