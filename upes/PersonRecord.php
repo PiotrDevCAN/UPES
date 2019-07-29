@@ -79,11 +79,6 @@ class PersonRecord extends DbRecord
         	<div class='col-md-3'>
         		<select id='PES_LEVEL' class='form-group select2' name='PES_LEVEL' <?=$notEditable?> data-placeholder='Select Pes Level'>
         		<option value=''></option>
-        		<?php
-        		foreach ($this->pesLevels as $pesLevel){
-        		  ?><option value='<?=$pesLevel;?>'><?=$pesLevel?></option><?php
-        		}
-        		?>
         		</select>
             </div>
         </div>
