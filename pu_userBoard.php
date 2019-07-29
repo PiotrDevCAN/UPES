@@ -40,6 +40,7 @@ var countryCodes =[ { "text":"India", "id":"IN"},{ "text":"United Kingdom of Gre
 var pesLevelByAccount = <?=json_encode($pesLevelByAccount);?>;
 var accountContractLookup = <?=json_encode($allContractAccountMapping); ?>;
 var accountIdLookup = <?=json_encode($accountIdLookup); ?>;
+var knownEmail = <?= json_encode($knownEmailLookup); ?>;
 
 function changePesLevels(dataCategory){
     $("#PES_LEVEL").select2({
@@ -50,6 +51,20 @@ function changePesLevels(dataCategory){
     .attr('required',true);
 
 };
+
+function checkIfEmailKnown(){
+		var newEmail = $('#EMAIL_ADDRESS').val().trim().toLowerCase();
+		var allreadyExists = ($.inArray(newEmail, knownEmail) >= 0 );
+		if(allreadyExists){ // comes back with Position in array(true) or false is it's NOT in the array.
+			$('#savePerson').attr('disabled',true);
+			$('#EMAIL_ADDRESS').css("background-color","LightPink");
+			alert('Person already defined to uPES');
+			return false;
+		} else {
+			$('#EMAIL_ADDRESS').css("background-color","LightGreen");
+			$('#savePerson').attr('disabled',false);
+		}
+}
 
 
 $(document).ready(function(){
@@ -96,6 +111,7 @@ $(document).ready(function(){
  		$('#EMAIL_ADDRESS').val(suggestion.mail).attr('disabled',true).css('background-color','lightgreen');
  		$('#FULL_NAME').val(suggestion.value);
  		$('#COUNTRY').val(suggestion.country).trigger('change');
+		checkIfEmailKnown();
 	});
 
 
@@ -114,7 +130,8 @@ $(document).ready(function(){
 			$('#CNUM').val('');
 
 			if(emailReg.test(emailAddress)){
-				$('#EMAIL_ADDRESS').css('background-color','LightGreen');
+				$('#EMAIL_ADDRESS').css('background-color','LightGreen')	;
+				checkIfEmailKnown();
 			} else {
 				$('#EMAIL_ADDRESS').css('background-color','LightPink');
 			};
@@ -129,21 +146,6 @@ $(document).ready(function(){
 	            $('#EMAIL_ADDRESS').val('');
 	            $('#EMAIL_ADDRESS').css('background-color','inherit');
 			}
-
-	 		var newEmail = suggestion.mail;
-	 		console.log(newCnum);
-	 		var allreadyExists = ($.inArray(newCnum, knownCnum) >= 0 );
-
-	 		console.log(allreadyExists);
-	 		if(allreadyExists){ // comes back with Position in array(true) or false is it's NOT in the array.
-	 			$('#savePerson').attr('disabled',true);
-	 			$('#ibmer').css("background-color","LightPink");
-	 			alert('Person already defined to VBAC');
-	 			return false;
-	 		} else {
-	 			$('#ibmer').css("background-color","LightGreen");
-	 			$('#savePerson').attr('disabled',false);
-	 		}
 
 
 

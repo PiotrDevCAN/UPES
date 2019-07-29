@@ -12,8 +12,10 @@ class PersonTable extends DbTable
 {
 
     function returnAsArray($predicate=null,$withButtons=true){
-        $sql  = " SELECT '' as ACTION, P.* ";
+        $sql  = " SELECT '' as ACTION, P.*, PL.PES_LEVEL as PES_LEVEL_TXT, PL.PES_LEVEL_DESCRIPTION ";
         $sql .= " FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName. " as P ";
+        $sql .= " LEFT JOIN " .  $_SESSION['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
+        $sql .= " ON P.PES_LEVEL = PL.PES_LEVEL_REF ";
         $sql .= " WHERE 1=1 " ;
         $sql .= !empty($predicate) ? " AND  $predicate " : null ;
 
@@ -37,6 +39,10 @@ class PersonTable extends DbTable
 
 
     function addGlyphicons(&$row){
+        $row['PES_LEVEL'] = $row['PES_LEVEL_TXT'];
+        unset($row['PES_LEVEL_TXT']);
+        unset($row['PES_LEVEL_DESCRIPTION']);
+
 //         $accountId = trim($row['ACCOUNT_ID']);
 //         $account   = trim($row['ACCOUNT']);
 
@@ -50,8 +56,15 @@ class PersonTable extends DbTable
     }
 
     static function prepareJsonKnownEmailLookup(){
-        $loader = new Loader();
-        return $loader->loadIndexed('EMAIL_ADDRESS','UPES_REF',AllTables::$PERSON);
+        $allEmail =  array();
+
+        $sql = " Select distinct lower(EMAIL_ADDRESS) as EMAIL_ADDRESS from " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON;
+        $rs = db2_exec($_SESSION['conn'], $sql);
+
+        while(($row=db2_fetch_assoc($rs))==true){
+            $allEmail[] = trim($row['EMAIL_ADDRESS']);
+        }
+        return $allEmail;
     }
 
 
