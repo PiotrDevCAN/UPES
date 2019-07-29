@@ -65,6 +65,7 @@ class PesLevelTable extends DbTable
         $pesLevels = $loader->loadIndexed('PES_LEVEL','PES_LEVEL_REF',AllTables::$PES_LEVELS);
         $pesDesc   = $loader->loadIndexed('PES_LEVEL_DESCRIPTION','PES_LEVEL_REF',AllTables::$PES_LEVELS);
         $pesByAccount = $loader->loadIndexed('ACCOUNT_ID','PES_LEVEL_REF',AllTables::$PES_LEVELS);
+        $accounts     = $loader->loadIndexed('ACCOUNT_ID','ACCOUNT',AllTables::$ACCOUNT);
         $detailedPesLevels = array();
         $pesLevelByAccount = array();
 
@@ -81,11 +82,7 @@ class PesLevelTable extends DbTable
             }
         }
 
-        ?>
-        <script>
-		var pesLevelByAccount = <?=json_encode($pesLevelByAccount);?>
-        </script>
-        <?php
+        return $pesLevelByAccount;
     }
 
 }

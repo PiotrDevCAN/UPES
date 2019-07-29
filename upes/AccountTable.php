@@ -2,6 +2,7 @@
 namespace upes;
 
 use itdq\DbTable;
+use itdq\Loader;
 
 
 /*
@@ -62,6 +63,11 @@ class AccountTable extends DbTable
         $row['ACTION'].= "<button type='button' class='btn btn-warning btn-xs deleteAccount ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'   data-toggle='tooltip' title='Delete Account'>
               <span class='glyphicon glyphicon-trash deleteAccount' aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "' ></span>
               </button>";
+    }
+
+    static function prepareJsonAccountIdLookup(){
+        $loader = new Loader();
+        return $loader->loadIndexed('ACCOUNT','ACCOUNT_ID',AllTables::$ACCOUNT);
     }
 
 
