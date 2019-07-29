@@ -112,5 +112,18 @@ class ContractTable extends DbTable
         }
         return json_encode($selectObjects);
     }
+
+    static function prepareJsonObjectMappingContractToAccount(){
+        $loader = new Loader();
+        $allContractAccountMapping = $loader->loadIndexed('ACCOUNT_ID','CONTRACT_ID',AllTables::$CONTRACT);
+        ?>
+        <script>
+		var accountContractLookup - <?=json_encode($allContractAccountMapping); ?>;
+        </script>
+        <?php
+
+
+
+    }
 }
 
