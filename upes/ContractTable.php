@@ -59,15 +59,20 @@ class ContractTable extends DbTable
     }
 
 
-    static function prepareArrayForContractDropDown(){
+    static function prepareArrayForContractDropDown($upesref){
         $loader = new Loader();
         $allAccounts = $loader->loadIndexed('ACCOUNT','ACCOUNT_ID',AllTables::$ACCOUNT);
         $allContracts = $loader->loadIndexed('CONTRACT','CONTRACT_ID',AllTables::$CONTRACT);
         $allContractAccountMapping = $loader->loadIndexed('ACCOUNT_ID','CONTRACT_ID',AllTables::$CONTRACT);
 
+        $predicate = !empty($upesref) ? " UPES_REF='" . db2_escape_string($upesref) . "' " : null;
+        $allAccountsForPerson = $loader->loadIndexed('ACCOUNT_ID','UPES_REF',AllTables::$ACCOUNT_PERSON, $predicate );
+
+        $filteredContracts = !empty($upesref) ?  array_diff($allContractAccountMapping, $allAccountsForPerson) : $allContractAccountMapping;
+
         $contractsAgainstAccount = array();
 
-        foreach ($allContractAccountMapping as $contractId => $accountId) {
+        foreach ($filteredContracts as $contractId => $accountId) {
             $contractsAgainstAccount[$allAccounts[$accountId]][$contractId] = $allContracts[$contractId];
         }
 
@@ -79,7 +84,7 @@ class ContractTable extends DbTable
         return $contractsAgainstAccount;
     }
 
-    static function prepareJsonObjectForContractsSelect(){
+    static function prepareJsonObjectForContractsSelect($upesRef = null){
 //         {
 //             "text": "Group 1",
 //             "children" : [
@@ -93,7 +98,7 @@ class ContractTable extends DbTable
 //             }
 //             ]
 //         },
-        $contractsAgainstAccount = self::prepareArrayForContractDropDown();
+        $contractsAgainstAccount = self::prepareArrayForContractDropDown($upesRef);
 
         $selectObjects = array();
         foreach ($contractsAgainstAccount as $account => $contractsArray) {
@@ -110,7 +115,8 @@ class ContractTable extends DbTable
             $accountObj->children = $accountContracts;
             $selectObjects[] = $accountObj;
         }
-        return json_encode($selectObjects);
+
+        return json_encode(array('results'=>$selectObjects));
     }
 
     static function prepareJsonObjectMappingContractToAccount(){

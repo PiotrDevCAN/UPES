@@ -3,29 +3,29 @@
 use itdq\DbTable;
 use itdq\FormClass;
 use itdq\Trace;
+use itdq\Loader;
 use upes\AllTables;
 use upes\PersonTable;
 use upes\PersonRecord;
-
-
+use upes\AccountPersonRecord;
+use upes\AccountPersonTable;
 
 Trace::pageOpening($_SERVER['PHP_SELF']);
 
 set_time_limit(0);
 ob_start();
 
+$loader = new Loader();
+$allAccounts = $loader->loadIndexed('ACCOUNT','ACCOUNT_ID',AllTables::$ACCOUNT);
+
 
 try {
-    $personRecord = new PersonRecord();
-    $personTable = new PersonTable(AllTables::$PERSON);
-    $personRecordRecordData = array_map('trim', $_POST);
+    $accountPersonRecord = new AccountPersonRecord();
+    $accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+    $accountPersonRecordData = array_map('trim', $_POST);
+    $accountPersonRecord->setFromArray($accountPersonRecordData);
 
-    $personRecordRecordData['UPES_REF'] = $_POST['mode']==FormClass::$modeDEFINE ? null : $personRecordRecordData['UPES_REF'];
-
-    $personRecord->setFromArray($personRecordRecordData);
-
-    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $personTable->insert($personRecord) : $personTable->update($personRecord);
-    $upesRef  = $_POST['mode']==FormClass::$modeDEFINE ? $personTable->lastId() : $personRecordRecordData['UPES_REF'];
+    $saveRecord = $accountPersonTable->insert($accountPersonRecord); // Only used to save NEW accountPersonRecords
 
 } catch (Exception $e) {
     echo $e->getCode();
@@ -36,7 +36,7 @@ try {
 $messages = ob_get_clean();
 $success = empty($messages);
 if($success){
-    $messages = " Person: " . $personRecordData['EMAIL_ADDRESS'] . "<br/> uPES Ref:" . $upesRef . "<br/>";
+    $messages = " Person: " . $accountPersonRecordData['FULL_NAME'] . "<br/> Will be PES Cleared for :" . $allAccounts[$accountPersonRecordData['ACCOUNT_ID']] . "<br/>";
     $messages.= $_POST['mode']==FormClass::$modeDEFINE ? "Created" : "Updated" ;
 }
 

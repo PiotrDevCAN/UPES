@@ -31,7 +31,7 @@ $accountPersonRecord = new AccountPersonRecord();
 $accountPersonRecord->displayForm(itdq\FormClass::$modeDEFINE);
 
 include_once 'includes/modalError.html';
-$contractSelectObj = ContractTable::prepareJsonObjectForContractsSelect();
+// $contractSelectObj = ContractTable::prepareJsonObjectForContractsSelect();
 ?>
 </div>
 
@@ -40,7 +40,8 @@ $contractSelectObj = ContractTable::prepareJsonObjectForContractsSelect();
 function changePesLevels(dataCategory){
     $("#PES_LEVEL").select2({
         data:dataCategory,
-        placeholder:'Select Pes Level'
+        placeholder:'Select Pes Level',
+		width: '100%'
     })
     .attr('disabled',false)
     .attr('required',true);
@@ -48,12 +49,10 @@ function changePesLevels(dataCategory){
 };
 
 $(document).ready(function(){
-	var contractsSelect = <?=$contractSelectObj;?>;
 	var pesLevelByAccount = <?=json_encode($pesLevelByAccount);?>;
 	var accountContractLookup = <?=json_encode($allContractAccountMapping); ?>;
 	var accountIdLookup = <?=json_encode($accountIdLookup); ?>;
 	var upesrefToNameMapping = <?= json_encode($upesrefToNameMapping); ?>;
-
 
 	$('#PES_LEVEL').select2({
 		width: '100%'
@@ -64,27 +63,54 @@ $(document).ready(function(){
 		placeholder:'Select Email'
 	});
 
-	$('#CONTRACT_ID').change(function(e){
+	$('#contract_id').change(function(e){
 		console.log(e);
-		var contractId = $('#CONTRACT_ID').val();
+		var contractId = $('#contract_id').val();
+		console.log(contractId);
+
+		$('#ACCOUNT_ID').val(accountContractLookup[contractId]);
         $("#PES_LEVEL").select2("destroy");
         $("#PES_LEVEL").html("<option><option>");
         changePesLevels(pesLevelByAccount[accountContractLookup[contractId]]);
 	});
 
-	$('#CONTRACT_ID').select2({
+	$('#contract_id').select2({
 		placeholder: 'Select Contract',
 		width: '100%',
-		data : contractsSelect,
-		dataType : 'json'
+// 		data : contractsSelect,
+// 		dataType : 'json',
+		 ajax: {
+			    url: 'ajax/prepareContractsDropdown.php',
+			    dataType: 'json',
+			    type: 'POST',
+			    data: function (params) {
+				    var upesref = $('#UPES_REF').val();
+			        var query = {
+			          search: params.term,
+			          upesref: upesref
+			        }
+			        // Query parameters will be ?search=[term]&type=public
+			        return query;
+			    }
+		 }
 	});
 
 	$('#UPES_REF').change(function(e){
-		console.log(e);
 		var upesRef = $('#UPES_REF').val();
-		console.log(upesRef);
 		var fullName = upesrefToNameMapping[upesRef];
 		$('#FULL_NAME').val(fullName);
+		if($('#UPES_REF').val() != ''){
+			$('#contract_id').attr('disabled',false).trigger('change');
+		} else {
+			$('#contract_id').attr('disabled',true).trigger('change');
+		}
+
+
+console.log($('#contract_id'));
+console.log($('#contract_id>optgroup'));
+console.log($('#contract_id>optgroup>option'));
+console.log($("#contract_id>optgroup>option[value='55']"));
+
 	});
 
 
@@ -95,7 +121,7 @@ $(document).ready(function(){
 		e.preventDefault();
 
 		var submitBtn = $(e.target).find('input[name="Submit"]').addClass('spinning');
-		var url = 'ajax/boardPersonToAccountRecord.php';
+		var url = 'ajax/boardPersonToAccount.php';
 
 		var disabledFields = $(':disabled');
 		$(disabledFields).removeAttr('disabled');
@@ -111,17 +137,28 @@ $(document).ready(function(){
 	      		var responseObj = JSON.parse(response);
 	      		if(responseObj.success){
 		    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
-		    	    $('#personForm').trigger("reset");
+		    	    $('#accountPersonForm').trigger("reset");
+		    	    $("#contract_id").trigger("change");
+		    	    $("#UPES_REF").trigger("change");
+		    	    $('#ACCOUNT_ID').val('');
 		            $("#PES_LEVEL").select2("destroy");
 		            $("#PES_LEVEL").html("<option><option>");
 		        	$('#PES_LEVEL').select2({width: '100%'})
 		        	    .attr('disabled',false)
 		                .attr('required',true);
+	                $('.modal-body').html(responseObj.Messages);
+	                $('.modal-body').addClass('bg-success').removeClass('bg-danger');
+	                $('.modal-title').html('Response Message');
+	                $('#modalError').modal('show');
 		    	} else {
      	    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
-		    	    $('#personForm').trigger("reset");
+		    	    $('#accountPersonForm').trigger("reset");
+		    	    $("#contract_id").trigger("change");
+		    	    $("#UPES_REF").trigger("change");
+		    	    $('#ACCOUNT_ID').val('');
 	                $('.modal-body').html(responseObj.Messages);
-	                $('.modal-body').addClass('bg-danger');
+	                $('.modal-body').addClass('bg-danger').removeClass('bg-success');
+	                $('.modal-title').html('Error Message');
 	                $('#modalError').modal('show');
 				}
           	},
