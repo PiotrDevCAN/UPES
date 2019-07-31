@@ -41,8 +41,10 @@ $admin->addOption($pesLevels);
 $admin->addOption($tracker);
 
 $user          = new NavBarMenu("uPES",'accessCdi accessPesTeam accessUser' );
-$userBoard     = new NavBarOption('Board','pu_userBoard.php','accessCdi accessPesTeam accessUser');
-$userStatus    = new NavBarOption('Status ','pa_userStatus.php','accessCdi accessSubcoAdmin');
+$userAdd       = new NavBarOption('Add to PES','pu_userAdd.php','accessCdi accessPesTeam accessUser');
+$userBoard     = new NavBarOption('Board to Contract','pu_userBoard.php','accessCdi accessPesTeam accessUser');
+$userStatus    = new NavBarOption('Person Table','pa_userStatus.php','accessCdi accessSubcoAdmin');
+$user->addOption($userAdd);
 $user->addOption($userBoard);
 $user->addOption($userStatus);
 

@@ -43,16 +43,6 @@ class PersonTable extends DbTable
         unset($row['PES_LEVEL_TXT']);
         unset($row['PES_LEVEL_DESCRIPTION']);
 
-//         $accountId = trim($row['ACCOUNT_ID']);
-//         $account   = trim($row['ACCOUNT']);
-
-//         $row['ACTION'] = "<button type='button' class='btn btn-primary btn-xs editAccountName ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-toggle='tooltip' title='Edit Account Name' >
-//               <span class='glyphicon glyphicon-edit editAccountName'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'   ></span>
-//               </button>";
-//         $row['ACTION'].= "&nbsp;";
-//         $row['ACTION'].= "<button type='button' class='btn btn-warning btn-xs deleteAccount ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'   data-toggle='tooltip' title='Delete Account'>
-//               <span class='glyphicon glyphicon-trash deleteAccount' aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "' ></span>
-//               </button>";
     }
 
     static function prepareJsonKnownEmailLookup(){
@@ -67,6 +57,17 @@ class PersonTable extends DbTable
         return $allEmail;
     }
 
+    static function prepareJsonUpesrefToNameMapping(){
+        $allNames =  array();
+
+        $sql = " Select distinct UPES_REF, FULL_NAME from " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON;
+        $rs = db2_exec($_SESSION['conn'], $sql);
+
+        while(($row=db2_fetch_assoc($rs))==true){
+            $allNames[$row['UPES_REF']] = trim($row['FULL_NAME']);
+        }
+        return $allNames;
+    }
 
 
 }

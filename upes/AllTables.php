@@ -12,6 +12,7 @@ namespace upes;
 class AllTables
 {
     public static $ACCOUNT            = 'ACCOUNT';
+    public static $ACCOUNT_PERSON     = 'ACCOUNT_PERSON';
 
     public static $CONTRACT           = 'CONTRACT';
 
