@@ -237,7 +237,7 @@ class PesTrackerTable extends DbTable{
             </div>
             </td>
             <td class='nonSearchable'><?=AccountPersonRecord::getPesStatusWithButtons($row)?></td>
-            <td class='pesCommentsTd'><textarea rows="3" cols="20"  data-upesref='<?=$upesref?>'></textarea><br/>
+            <td class='pesCommentsTd'><textarea rows="3" cols="20"  data-upesref='<?=$upesref?>' data-accountid='<?=$accountId?>'></textarea><br/>
             <button class='btn btn-default btn-xs btnPesSaveComment accessPes accessCdi' data-setpesto='Yes' data-toggle="tooltip" data-placement="top" title="Save Comment" ><span class="glyphicon glyphicon-save" ></span></button>
             <div class='pesComments' data-upesref='<?=$upesref?>'><small><?=$row['COMMENT']?></small></div>
             </td>

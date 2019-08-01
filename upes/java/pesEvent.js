@@ -200,9 +200,10 @@ function pesEvent() {
   this.listenForSavePesComment = function() {
 	  $(document).on('click','.btnPesSaveComment', function(){
 		  
-		  var cnum =  $(this).siblings('textarea').data('cnum');
-		  var comment = $(this).siblings('textarea').val();
-		  var button = $(this);
+		  var upesref   =  $(this).siblings('textarea').data('upesref');
+		  var accountid =  $(this).siblings('textarea').data('accountid');
+		  var comment   = $(this).siblings('textarea').val();
+		  var button    = $(this);
 		  
 		  console.log(button.siblings('div'));
 		  console.log(button.siblings('div.pesComments'));
@@ -211,7 +212,8 @@ function pesEvent() {
 		  $.ajax({
 			  	url: "ajax/savePesComment.php",
 			  	type: 'POST',
-			  	data : { cnum: cnum,
+			  	data : { upesref: upesref,
+			  		   accountid:accountid, 
 			  		     comment: comment,
 			  			},
 			  	success: function(result){
