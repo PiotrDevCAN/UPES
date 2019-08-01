@@ -35,10 +35,12 @@ $accounts       = new NavBarOption('Manage Accounts','pa_manageAccounts.php','ac
 $contracts      = new NavBarOption('Manage contracts','pa_manageContracts.php','accessCdi accessPesTeam');
 $pesLevels      = new NavBarOption('Manage Pes Levels','pa_managePesLevels.php','accessCdi accessPesTeam');
 $tracker        = new NavBarOption('Tracker','pa_tracker.php','accessCdi accessPesTeam');
+$tracker2       = new NavBarOption('Tracker2','pc_pesTracker.php','accessCdi accessPesTeam');
 $admin->addOption($accounts);
 $admin->addOption($contracts);
 $admin->addOption($pesLevels);
 $admin->addOption($tracker);
+$admin->addOption($tracker2);
 
 $user          = new NavBarMenu("uPES",'accessCdi accessPesTeam accessUser' );
 $userAdd       = new NavBarOption('Add to PES','pu_userAdd.php','accessCdi accessPesTeam accessUser');

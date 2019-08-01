@@ -13,10 +13,14 @@ DROP TABLE UPES_DEV.ACCOUNT_PERSON;
 CREATE TABLE UPES_DEV.ACCOUNT_PERSON ( ACCOUNT_ID INTEGER NOT NULL, UPES_REF INTEGER NOT NULL, PES_LEVEL CHAR(5), PES_DATE_REQUESTED DATE NOT NULL WITH DEFAULT CURRENT DATE, PES_REQUESTOR CHAR(75) NOT NULL, PES_STATUS CHAR(50) NOT NULL WITH DEFAULT 'Request Created', PES_STATUS_DETAILS CLOB(1048576), PES_CLEARED_DATE DATE, PES_RECHECK_DATE CHAR(5)
                                        , CONSENT CHAR(10),RIGHT_TO_WORK CHAR(10),PROOF_OF_ID CHAR(10),PROOF_OF_RESIDENCY CHAR(10),CREDIT_CHECK CHAR(10),FINANCIAL_SANCTIONS CHAR(10),CRIMINAL_RECORDS_CHECK CHAR(10)
                                        , PROOF_OF_ACTIVITY CHAR(10),QUALIFICATIONS CHAR(10),DIRECTORS CHAR(10),MEDIA CHAR(10),MEMBERSHIP CHAR(10)
+                                       , PROCESSING_STATUS CHAR(20), PROCESSING_STATUS_CHANGED TIMESTAMP
+                                       , DATE_LAST_CHASED DATE, COMMENT VARCHAR(8192), PRIORITY CHAR(10)
                                        , SYSTEM_START_TIME TIMESTAMP(12) NOT NULL GENERATED ALWAYS AS ROW BEGIN, SYSTEM_END_TIME TIMESTAMP(12) NOT NULL GENERATED ALWAYS AS ROW END, TRANS_ID TIMESTAMP(12) GENERATED ALWAYS AS TRANSACTION START ID, PERIOD SYSTEM_TIME(SYSTEM_START_TIME,SYSTEM_END_TIME) );
 CREATE TABLE UPES_DEV.ACCOUNT_PERSON_HIST ( ACCOUNT_ID INTEGER NOT NULL, UPES_REF INTEGER NOT NULL , PES_LEVEL CHAR(5), PES_DATE_REQUESTED DATE NOT NULL, PES_REQUESTOR CHAR(75) NOT NULL,  PES_STATUS CHAR(50) NOT NULL, PES_STATUS_DETAILS CLOB(1048576), PES_CLEARED_DATE DATE, PES_RECHECK_DATE CHAR(5)
                                        , CONSENT CHAR(10),RIGHT_TO_WORK CHAR(10),PROOF_OF_ID CHAR(10),PROOF_OF_RESIDENCY CHAR(10),CREDIT_CHECK CHAR(10),FINANCIAL_SANCTIONS CHAR(10),CRIMINAL_RECORDS_CHECK CHAR(10)
                                        , PROOF_OF_ACTIVITY CHAR(10),QUALIFICATIONS CHAR(10),DIRECTORS CHAR(10),MEDIA CHAR(10),MEMBERSHIP CHAR(10)
+                                       , PROCESSING_STATUS CHAR(20), PROCESSING_STATUS_CHANGED TIMESTAMP
+                                       , DATE_LAST_CHASED DATE, COMMENT VARCHAR(8192), PRIORITY CHAR(10)
                                        , SYSTEM_START_TIME TIMESTAMP(12) NOT NULL, SYSTEM_END_TIME TIMESTAMP(12) NOT NULL, TRANS_ID TIMESTAMP(12) );
 ALTER TABLE UPES_DEV.ACCOUNT_PERSON ADD VERSIONING USE HISTORY TABLE UPES_DEV.ACCOUNT_PERSON_HIST;
 
@@ -156,6 +160,123 @@ class AccountPersonRecord extends DbRecord
   		</div>
 	</form>
     <?php
+    }
+
+
+
+    static function getPesStatusWithButtons($row){
+        $email   = trim($row['EMAIL_ADDRESS']);
+        $upesRef = trim($row['UPES_REF']);
+        $status  = trim($row['PES_STATUS']);
+        $boarder = stripos(trim($row['PES_STATUS_DETAILS']),'Boarded as')!== false ;
+        $passportFirst   = array_key_exists('PASSPORT_FIRST_NAME', $row) ? $row['PASSPORT_FIRST_NAME'] : null;
+        $passportLastname = array_key_exists('PASSPORT_LAST_NAME', $row)    ? $row['PASSPORT_LAST_NAME'] : null;
+
+        $pesStatusWithButton = '';
+        $pesStatusWithButton.= "<span class='pesStatusField' data-upesref='" . $upesRef . "'>" .  $status . "</span><br/>";
+        switch (true) {
+            case $boarder:
+                // Don't add buttons if this is a boarded - pre-boarder record.
+                break;
+            case $status == AccountPersonRecord::PES_STATUS_TBD && !$_SESSION['isPesTeam']:
+                $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesInitiate accessRestrict accessPmo accessFm' ";
+                $pesStatusWithButton.= "aria-label='Left Align' ";
+                $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
+                $pesStatusWithButton.= " data-pesstatus='$status' ";
+                $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='Initiate PES Request'";
+                $pesStatusWithButton.= " > ";
+                $pesStatusWithButton.= "<span class='glyPesInitiate glyphicon glyphicon-plane ' aria-hidden='true'></span>";
+                $pesStatusWithButton.= "</button>&nbsp;";
+                break;
+            case $status == AccountPersonRecord::PES_STATUS_PES_REQUESTED && $_SESSION['isPesTeam'] ;
+            $emailAddress = trim($row['EMAIL_ADDRESS']);
+            $fullName    = trim($row['FULL_NAME']);
+            $country      = trim($row['COUNTRY']);
+            $cnum         = trim($row['CNUM']);
+
+            $missing = !empty($emailAddress) ? '' : ' Email Address';
+            $missing.= !empty($fullName) ? '' : ' Full Name';
+            $missing.= !empty($country) ? '' : ' Country';
+
+            $valid = empty(trim($missing));
+
+            $disabled = $valid ? '' : 'disabled';
+            $tooltip = $valid ? 'Confirm PES Email details' : "Missing $missing";
+
+
+            $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnSendPesEmail accessRestrict accessPmo accessFm' ";
+            $pesStatusWithButton.= "aria-label='Left Align' ";
+            $pesStatusWithButton.= " data-emailaddress='$emailAddress' ";
+            $pesStatusWithButton.= " data-fullnamee='$fullName' ";
+            $pesStatusWithButton.= " data-country='$country' ";
+            $pesStatusWithButton.= " data-upesref='$upesRef' ";
+            $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='$tooltip'";
+            $pesStatusWithButton.= " $disabled  ";
+            $pesStatusWithButton.= " > ";
+            $pesStatusWithButton.= "<span class='glyphicon glyphicon-send ' aria-hidden='true' ></span>";
+
+            $pesStatusWithButton.= "</button>&nbsp;";
+            case $status == AccountPersonRecord::PES_STATUS_REQUESTED && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_CLEARED && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_EXCEPTION && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_DECLINED && $_SESSION['isPesTeam'] ;
+            case $status == AccountPersonRecord::PES_STATUS_FAILED && $_SESSION['isPesTeam'] ;
+            case $status == AccountPersonRecord::PES_STATUS_REMOVED && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_REVOKED && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_LEFT_IBM && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_PROVISIONAL && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_TBD && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
+                $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesStatus' aria-label='Left Align' ";
+                $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
+                $pesStatusWithButton.= " data-email='" . $email . "' ";
+                $pesStatusWithButton.= " data-pesdaterequested='" .trim($row['PES_DATE_REQUESTED']) . "' ";
+                $pesStatusWithButton.= " data-pesrequestor='" .trim($row['PES_REQUESTOR']) . "' ";
+                $pesStatusWithButton.= " data-pesstatus='" .$status . "' ";
+                $pesStatusWithButton.= array_key_exists('PASSPORT_FIRST_NAME', $row) ?  " data-passportfirst='" .$passportFirst . "' " : null;
+                $pesStatusWithButton.= array_key_exists('PASSPORT_LAST_NAME', $row) ? " data-passportlastname='" .$passportLastname . "' " : null;
+                $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='Amend PES Status'";
+                $pesStatusWithButton.= " > ";
+                $pesStatusWithButton.= "<span class='glyphicon glyphicon-edit ' aria-hidden='true'></span>";
+                $pesStatusWithButton.= "</button>";
+                break;
+            case $status == AccountPersonRecord::PES_STATUS_EVI_REQUESTED && !$_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && !$_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_PES_REQUESTED && !$_SESSION['isPesTeam'] ;
+            $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesCancel accessRestrict accessFm' aria-label='Left Align' ";
+            $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
+            $pesStatusWithButton.= " data-email='" . $email . "' ";
+            $pesStatusWithButton.= " data-pesdaterequested='" .trim($row['PES_DATE_REQUESTED']) . "' ";
+            $pesStatusWithButton.= " data-pesrequestor='" .trim($row['PES_REQUESTOR']) . "' ";
+            $pesStatusWithButton.= " data-pesstatus='" .$status . "' ";
+            $pesStatusWithButton.= array_key_exists('PASSPORT_FIRST_NAME', $row) ?  " data-passportfirst='" .$passportFirst . "' " : null;
+            $pesStatusWithButton.= array_key_exists('PASSPORT_LAST_NAME', $row) ? " data-passportlastname='" .$passportLastname . "' " : null;
+            $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='Cancel PES Request'";
+            $pesStatusWithButton.= " > ";
+            $pesStatusWithButton.= "<span class='glyphicon glyphicon-erase ' aria-hidden='true' ></span>";
+            $pesStatusWithButton.= "</button>";
+            break;
+            case $status == AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED && $_SESSION['isPesTeam'] :
+            default:
+                break;
+        }
+
+        if(isset($row['PROCESSING_STATUS']) && ( $row['PES_STATUS']== AccountPersonRecord::PES_STATUS_EVI_REQUESTED || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_PES_REQUESTED || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_RECHECK_REQ ) ){
+            $pesStatusWithButton .= "&nbsp;<button type='button' class='btn btn-default btn-xs btnTogglePesTrackerStatusDetails' aria-label='Left Align' data-toggle='tooltip' data-placement='top' title='See PES Tracker Status' >";
+            $pesStatusWithButton .= !empty($row['PROCESSING_STATUS']) ? "&nbsp;<small>" . $row['PROCESSING_STATUS'] . "</small>&nbsp;" : null;
+            $pesStatusWithButton .= "<span class='glyphicon glyphicon-search  ' aria-hidden='true' ></span>";
+            $pesStatusWithButton .= "</button>";
+
+            $pesStatusWithButton .= "<div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' style='display:none' >";
+            ob_start();
+            \vbac\pesTrackerTable::formatProcessingStatusCell($row);
+            $pesStatusWithButton .= ob_get_clean();
+            $pesStatusWithButton .= "</div>";
+        }
+
+        return $pesStatusWithButton;
+
     }
 
 
