@@ -47,7 +47,7 @@ class PesTrackerTable extends DbTable{
 
 
 
-    const PES_TRACKER_STAGES =  array('CONSENT','RtW','ID','RESIDENCY','CC','FIN','CRC','ACTIVITY','QUALIFICATIONS','DIRECTORS','MEDIA','MEMBERSHIP');
+    const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF_OF_RESIDENCY','CREDIT_CHECK','FINANCIAL_SANCTIONS','CRIMINAL_RECORDS_CHECK','PROOF_OF_ACTIVITY','QUALIFICATIONS','DIRECTORS','MEDIA','MEMBERSHIP');
 
 
     static function returnPesEventsTable($records='Active',$returnResultsAs='array'){
@@ -77,6 +77,8 @@ class PesTrackerTable extends DbTable{
         $sql = " SELECT P.CNUM ";
         $sql.= ", P.UPES_REF ";
         $sql.= ", P.EMAIL_ADDRESS ";
+        $sql.= ", A.ACCOUNT ";
+        $sql.= ", A.ACCOUNT_ID ";
         $sql.= ", P.PASSPORT_FIRST_NAME ";
         $sql.= ", P.PASSPORT_LAST_NAME ";
         $sql.= ", case when P.PASSPORT_FIRST_NAME is null then P.FULL_NAME else P.PASSPORT_FIRST_NAME CONCAT ' ' CONCAT P.PASSPORT_LAST_NAME end as FULL_NAME  ";
@@ -91,6 +93,11 @@ class PesTrackerTable extends DbTable{
         $sql.= ", AP.FINANCIAL_SANCTIONS ";
         $sql.= ", AP.CRIMINAL_RECORDS_CHECK ";
         $sql.= ", AP.PROOF_OF_ACTIVITY ";
+        $sql.= ", AP.QUALIFICATIONS ";
+        $sql.= ", AP.DIRECTORS ";
+        $sql.= ", AP.MEDIA ";
+        $sql.= ", AP.MEMBERSHIP ";
+
         $sql.= ", AP.PROCESSING_STATUS ";
         $sql.= ", AP.PROCESSING_STATUS_CHANGED ";
         $sql.= ", AP.DATE_LAST_CHASED ";
@@ -102,6 +109,8 @@ class PesTrackerTable extends DbTable{
         $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . allTables::$PERSON . " as P ";
         $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
         $sql.= " ON P.UPES_REF = AP.UPES_REF ";
+        $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
         $sql.= " WHERE 1=1 ";
         $sql.= " and (AP.UPES_REF is not null or ( AP.UPES_REF is null  AND AP.PES_STATUS_DETAILS is null )) "; // it has a tracker record
         $sql.= " AND " . $pesStatusPredicate;
@@ -142,7 +151,7 @@ class PesTrackerTable extends DbTable{
         ?>
         <table id='pesTrackerTable' class='table table-striped table-bordered table-condensed '  style='width:100%'>
 		<thead>
-		<tr class='' ><th>Email Address</th><th>Requestor</th><th>Country</th>
+		<tr class='' ><th>Email Address</th><th>Account</th><th>Requestor</th><th>Country</th>
 		<th width="5px">Consent Form</th>
 		<th width="5px">Proof or Right to Work</th>
 		<th width="5px">Proof of ID</th>
@@ -151,6 +160,10 @@ class PesTrackerTable extends DbTable{
 		<th width="5px">Financial Sanctions</th>
 		<th width="5px">Criminal Records Check</th>
 		<th width="5px">Proof of Activity</th>
+		<th width="5px">Qualifications</th>
+		<th width="5px">Directors</th>
+		<th width="5px">Media</th>
+		<th width="5px">Membership</th>
 		<th>Process Status</th><th>PES Status</th><th>Comment</th></tr>
 		<tr class='searchingRow wrap'><td>Email Address</td><td>Requestor</td><td>Country</td>
 		<td>Consent</td>
@@ -172,6 +185,7 @@ class PesTrackerTable extends DbTable{
             $age  = !empty($row['PES_DATE_REQUESTED']) ?  $date->diff($today)->format('%R%a days') : null ;
             // $age = !empty($row['PES_DATE_REQUESTED']) ? $interval->format('%R%a days') : null;
             $upesref = $row['UPES_REF'];
+            $accountId = $row['ACCOUNT_ID'];
             $fullName = trim($row['FULL_NAME']);
             $emailaddress = trim($row['EMAIL_ADDRESS']);
             $requestor = trim($row['PES_REQUESTOR']);
@@ -183,6 +197,7 @@ class PesTrackerTable extends DbTable{
             <td class='formattedEmailTd'>
             <div class='formattedEmailDiv'><?=$formattedIdentityField;?></div>
             </td>
+            <td><?=$row['ACCOUNT']?></td>
             <td><?=$row['PES_REQUESTOR']?><br/><small><?=$row['PES_DATE_REQUESTED']?><br/><?=$age?></small></td>
             <td><?=trim($row['COUNTRY'])?></td>
 
@@ -192,14 +207,14 @@ class PesTrackerTable extends DbTable{
                 $stageAlertValue    = self::getAlertClassForPesStage($stageValue);
                 ?>
                 <td class='nonSearchable'>
-            	<?=self::getButtonsForPesStage($stageValue, $stageAlertValue, $stage, $upesref);?>
+            	<?=self::getButtonsForPesStage($stageValue, $stageAlertValue, $stage, $upesref, $accountId);?>
                 </td>
                 <?php
             }
         ?>
             <td class='nonSearchable'>
             <div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' ><?=self::formatProcessingStatusCell($row);?></div>
-            <div class='text-center personDetails '   data-upesref='<?=$upesref;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$requestor;?>'   >
+            <div class='text-center personDetails '   data-upesref='<?=$upesref;?>' data-accountid='<?=$accountId;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$requestor;?>'   >
             <span style='white-space:nowrap' >
             <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='PES' data-toggle="tooltip" data-placement="top" title="With PES Team" ><i class="fas fa-users"></i></a>
             <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='User' data-toggle="tooltip" data-placement="top" title="With Applicant" ><i class="fas fa-user"></i></a>
@@ -396,10 +411,10 @@ class PesTrackerTable extends DbTable{
 
 
 
-    static function getButtonsForPesStage($value, $alertClass, $stage, $cnum){
+    static function getButtonsForPesStage($value, $alertClass, $stage, $upesref, $accountid){
         ?>
         <div class='alert <?=$alertClass;?> text-center pesStageDisplay' role='alert' ><?=$value;?></div>
-        <div class='text-center' data-pescolumn='<?=$stage?>' data-cnum='<?=$cnum?>'>
+        <div class='text-center' data-pescolumn='<?=$stage?>' data-upesref='<?=$upesref?>' data-accountid='<?=$accountid?>'>
         <span style='white-space:nowrap' >
         <button class='btn btn-success btn-xs btnPesStageValueChange accessPes accessCdi' data-setpesto='Yes' data-toggle="tooltip" data-placement="top" title="Cleared" ><span class="glyphicon glyphicon-ok-sign" ></span></button>
   		<button class='btn btn-warning btn-xs btnPesStageValueChange accessPes accessCdi'  data-setpesto='Prov' data-toggle="tooltip"  title="Stage Cleared Provisionally"><span class="glyphicon glyphicon-alert" ></span></button>

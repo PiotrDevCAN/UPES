@@ -229,7 +229,8 @@ function pesEvent() {
 	  $(document).on('click','.btnPesStageValueChange', function(){  
 		  var setPesTo = $(this).data('setpesto');	
 		  var column   = $(this).parents('div').data('pescolumn');		  
-		  var cnum     = $(this).parents('div').data('cnum');
+		  var upesref  = $(this).parents('div').data('upesref');
+		  var accountid= $(this).parents('div').data('accountid');
 		  
 		  var pesevent = new pesEvent();
 		  var alertClass = pesevent.getAlertClassForPesStage(setPesTo);
@@ -243,8 +244,9 @@ function pesEvent() {
 		   $.ajax({
 			   url: "ajax/savePesStageValue.php",
 		       type: 'POST',
-		       data : {cnum:cnum,
+		       data : {upesref:upesref,
 		    	   	   stageValue:setPesTo,
+		    	       accountid:accountid, 
 		    	   	   stage:column,
 		    	   	   },
 		       success: function(result){

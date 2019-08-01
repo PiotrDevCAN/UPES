@@ -12,7 +12,7 @@ class AuditTable extends DbTable {
 
     static function audit($statement,$type='Details'){
         if(property_exists('itdq\AllItdqTables','AUDIT')){
-            $sql = " INSERT INTO " . $_SESSION[DB2_SCHEMA] . "." . \itdq\AllItdqTables::$AUDIT;
+            $sql = " INSERT INTO " . $_SESSION['Db2Schema'] . "." . \itdq\AllItdqTables::$AUDIT;
             $sql.= " ('TIMESTAMP','EMAIL_ADDRESS','DATA','TYPE') ";
             $sql.= " VALUES ";
             $sql.= " ( CURRENT TIMESTAMP, '" . db2_escape_string($_SESSION['ssoEmail']) . "','" . db2_escape_string($statement) . "','" . db2_escape_string($type) . "' )";
@@ -30,7 +30,7 @@ class AuditTable extends DbTable {
             $auditLifeSpan = empty($auditLifeSpan) ? $_SESSION['AuditLife'] : $auditLifeSpan;
             $detailsLifeSpan = empty($detailsLifeSpan) ? $_SESSION['AuditDetailsLife'] : $detailsLifeSpan;
 
-            $sql  = " DELETE FROM " . $_SESSION[DB2_SCHEMA] . "." . AllItdqTables::$AUDIT ;
+            $sql  = " DELETE FROM " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$AUDIT ;
             $sql .= " WHERE " ;
             $sql .= " (TYPE='" . self::RECORD_TYPE_AUDIT . "' AND \"TIMESTAMP\" < ( CURRENT TIMESTAMP - " . db2_escape_string($auditLifeSpan) . " )) ";
             $sql .= " OR " ;

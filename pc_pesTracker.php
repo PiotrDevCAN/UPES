@@ -43,8 +43,8 @@ $(document).ready(function(){
 
  	var pesevent = new pesEvent();
 	pesevent.populatePesTracker('<?=PesTrackerTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>');
-// 	pesevent.listenForBtnRecordSelection();
-// 	pesevent.listenForPesStageValueChange();
+ 	pesevent.listenForBtnRecordSelection();
+ 	pesevent.listenForPesStageValueChange();
 // 	pesevent.listenForSavePesComment();
 // 	pesevent.listenForPesProcessStatusChange();
 // 	pesevent.listenForPesPriorityChange();
