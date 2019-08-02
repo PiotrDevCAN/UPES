@@ -45,7 +45,7 @@ $(document).ready(function(){
  	pesevent.listenForBtnRecordSelection();
  	pesevent.listenForPesStageValueChange();
  	pesevent.listenForSavePesComment();
-// 	pesevent.listenForPesProcessStatusChange();
+ 	pesevent.listenForPesProcessStatusChange();
  	pesevent.listenForPesPriorityChange();
  	pesevent.listenForFilterPriority();
 // 	pesevent.listenForFilterProcess();

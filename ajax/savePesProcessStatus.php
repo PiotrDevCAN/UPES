@@ -5,7 +5,7 @@ use upes\AccountPersonTable;
 use upes\AllTables;
 
 ob_start();
-AuditTable::audit("Invoked:<b>" . __FILE__ . "</b>Parms:<pre>" . print_r($_POST,true) . "</b>",AuditTable::RECORD_TYPE_DETAILS);
+//AuditTable::audit("Invoked:<b>" . __FILE__ . "</b>Parms:<pre>" . print_r($_POST,true) . "</b>",AuditTable::RECORD_TYPE_DETAILS);
 $response = array();
 $upesref = trim($_POST['upesref']);
 $accountid = trim($_POST['accountid']);
@@ -16,17 +16,16 @@ $requestor = trim($_POST['requestor']);
 
 try {
 //*    $pesEmailObj = new pesEmail();
+    $response['emailResponse']='dummy'; // Remove this when using emailobj
 
 
     $pesTracker = new AccountPersonTable( AllTables::$ACCOUNT_PERSON );
-    $pesTracker->setPesProcessStatus($_POST['upesref'], $_POST['accountid'],$_POST['processStatus']);
+    $pesTracker->setPesProcessStatus($upesref, $accountid,$_POST['processStatus']);
 
-    $comment = $pesTracker->savePesComment($_POST['cnum'],"Process Status set to " . $_POST['processStatus']);
-
+    $comment = $pesTracker->savePesComment($upesref, $accountid,"Process Status set to " . $_POST['processStatus']);
 
     $messages  = ob_get_clean();
     $success   = empty($messages);
-
 
     if($success){
         // Some Status Changes - we notify the subject, so they know what's happening.
@@ -34,11 +33,11 @@ try {
             case 'CRC':
             case 'PES':
             //*    $emailResponse = $pesEmailObj->sendPesProcessStatusChangedConfirmation($upesref,$accountid,  $fullname, $emailAddress, trim($_POST['processStatus']), $requestor);
-                $response['emailResponse'] = $emailResponse;
+            //*    $response['emailResponse'] = $emailResponse;
             break;
             case 'User':
             //*    $emailResponse = $pesEmailObj->sendPesProcessStatusChangedConfirmation($cnum, $firstName, $lastName, $requestor, trim($_POST['processStatus']));
-                $response['emailResponse'] = $emailResponse;
+           //*     $response['emailResponse'] = $emailResponse;
 
             default:
                 ;
@@ -49,10 +48,10 @@ try {
 
 
     $now = new DateTime();
-    $row = array('CNUM'=>$_POST['cnum'],'PROCESSING_STATUS'=>$_POST['processStatus'],'PROCESSING_STATUS_CHANGED'=>$now->format('Y-m-d H:i:s'));
+    $row = array('UPOS_REF'=>$upesref, 'ACCOUNT_ID'=>$accountid, 'PROCESSING_STATUS'=>$_POST['processStatus'],'PROCESSING_STATUS_CHANGED'=>$now->format('Y-m-d H:i:s'));
 
     ob_start();
-    pesTrackerTable::formatProcessingStatusCell($row);
+    AccountPersonTable::formatProcessingStatusCell($row);
     $formattedStatusField = ob_get_clean();
 
 } catch (Exception $e){

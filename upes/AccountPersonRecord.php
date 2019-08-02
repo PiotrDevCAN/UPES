@@ -78,6 +78,7 @@ class AccountPersonRecord extends DbRecord
     const PES_EVENT_MEDIA          = 'Media';
     const PES_EVENT_MEMBERSHIP     = 'Membership';
 
+    const PES_STATUS_NOT_REQUESTED = 'Not Requested';
     const PES_STATUS_CLEARED       = 'Cleared';
     const PES_STATUS_CLEARED_PERSONAL= 'Cleared - Personal Reference';
     const PES_STATUS_DECLINED      = 'Declined';
@@ -87,11 +88,12 @@ class AccountPersonRecord extends DbRecord
     const PES_STATUS_PES_REQUESTED = 'Pes Requested';
     const PES_STATUS_EVI_REQUESTED = 'Evidence Requested';
     const PES_STATUS_REMOVED       = 'Removed';
+    const PES_STATUS_REVOKED       = 'Revoked';
     const PES_STATUS_CANCEL_REQ     = 'Cancel Requested';
     const PES_STATUS_CANCEL_CONFIRMED = 'Cancel Confirmed';
     const PES_STATUS_TBD           = 'TBD';
-
-
+    const PES_STATUS_RECHECK_REQ   = 'Recheck Req';
+    const PES_STATUS_LEFT_IBM      = 'Left IBM';
 
     static public $pesEvents = array('Consent Form','Right to Work','Proof of Id','Residency','Credit Check','Financial Sanctions','Criminal Records Check','Activity','Qualifications','Directors','Media','Membership');
 

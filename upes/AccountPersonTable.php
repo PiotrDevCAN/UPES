@@ -499,6 +499,40 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         <?php
     }
 
+    function prepareProcessStatusUpdate(){
+        if(!empty($_SESSION['preparedProcessStatusUpdate'] )) {
+            return $_SESSION['prepareProcessStatusUpdate'];
+        }
+        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql.= " SET PROCESSING_STATUS =?, PROCESSING_STATUS_CHANGED = current timestamp ";
+        $sql.= " WHERE UPES_REF=? AND ACCOUNT_ID=?";
+
+        $this->preparedSelectSQL = $sql;
+
+        $preparedStmt = db2_prepare($_SESSION['conn'], $sql);
+
+        if($preparedStmt){
+            $_SESSION['prepareProcessStatusUpdate'] = $preparedStmt;
+        }
+
+        return $preparedStmt;
+    }
+
+
+    function setPesProcessStatus($upesref, $accountid,$processStatus){
+        $preparedStmt = $this->prepareProcessStatusUpdate();
+        $data = array($processStatus,$upesref,$accountid);
+
+        $rs = db2_execute($preparedStmt,$data);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
+            throw new \Exception("Failed to update PES Process Status $processStatus for $cnum");
+        }
+
+        return true;
+    }
+
 
 
 
