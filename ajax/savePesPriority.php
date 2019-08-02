@@ -9,8 +9,8 @@ ob_start();
 try {
 
     $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON   );
-    $pesTracker->savePesPriority($_POST['upesRef'],$_POST['accountid'],$_POST['pespriority']);
-    $comment = $pesTracker->savePesComment($_POST['upesRef'],$_POST['accountid'],"Priority set to : " . $_POST['pespriority']);
+    $pesTracker->savePesPriority($_POST['upesref'],$_POST['accountid'],$_POST['pespriority']);
+    $comment = $pesTracker->savePesComment($_POST['upesref'],$_POST['accountid'],"Priority set to : " . $_POST['pespriority']);
 
     $messages  = ob_get_clean();
     $success   = empty($messages);

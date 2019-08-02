@@ -406,7 +406,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
         $sql.= " SET PRIORITY=";
         $sql.= !empty($pesPriority) ? "'" . db2_escape_string($pesPriority) . "' " : " null, ";
-        $sql.= " WHERE UPES_REF='" . db2_escape_string($upesRef) . "', ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
+        $sql.= " WHERE UPES_REF='" . db2_escape_string($upesRef) . "' and ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
 
         $rs = db2_exec($_SESSION['conn'],$sql);
 
