@@ -1,9 +1,9 @@
 {
-	"name" : "cord/cord",
+	"name" : "upes",
 	"require" : {
-		"ext-ldap" : "*",
-		"phpoffice/phpspreadsheet" : "~1.6",
-		"php" : "7.1.2"
+	    "ext-ldap" : "*",
+    	"phpoffice/phpspreadsheet" : "~1.8",
+    	"php": "7.1.2" 
 	},
 	"repositories" : [{
 			"type" : "composer",

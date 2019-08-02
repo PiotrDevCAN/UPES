@@ -1,8 +1,7 @@
 <?php
 
 use upes\allTables;
-use upes\PesTrackerTable;
-use upes\PersonRecord;
+use upes\AccountPersonTable;
 
 ?>
 <div class='container'>
@@ -19,8 +18,8 @@ use upes\PersonRecord;
 
 <div class='container-fluid'>
 <?php
-$pesTrackerTable = new PesTrackerTable(\upes\AllTables::$ACCOUNT_PERSON);
-$pesTrackerTable->displayTable(PesTrackerTable::PES_TRACKER_RECORDS_ACTIVE);
+$pesTrackerTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+$pesTrackerTable->displayTable(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE);
 
 // $person = new personRecord();
 // $person->amendPesStatusModal();
@@ -42,12 +41,12 @@ $(document).ready(function(){
 // 	person.listenforConfirmSendPesEmail();
 
  	var pesevent = new pesEvent();
-	pesevent.populatePesTracker('<?=PesTrackerTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>');
+	pesevent.populatePesTracker('<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>');
  	pesevent.listenForBtnRecordSelection();
  	pesevent.listenForPesStageValueChange();
  	pesevent.listenForSavePesComment();
 // 	pesevent.listenForPesProcessStatusChange();
-// 	pesevent.listenForPesPriorityChange();
+ 	pesevent.listenForPesPriorityChange();
 // 	pesevent.listenForFilterPriority();
 // 	pesevent.listenForFilterProcess();
 // 	pesevent.listenForBtnChaser();

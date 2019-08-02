@@ -1,11 +1,11 @@
 <?php
-use upes\PesTrackerTable;
 use upes\allTables;
+use upes\AccountPersonTable;
 
 set_time_limit(0);
 ob_start();
 
-$pesTrackerTable = new PesTrackerTable(\upes\AllTables::$ACCOUNT_PERSON);
+$pesTrackerTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 $table = $pesTrackerTable->buildTable($_REQUEST['records']);
 
 $dataJsonAble = json_encode($table);

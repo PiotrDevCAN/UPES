@@ -4,6 +4,7 @@ namespace upes;
 use itdq\DbRecord;
 use itdq\Loader;
 use itdq\FormClass;
+use upes\AccountPersonTable;
 
 /*
 
@@ -270,7 +271,7 @@ class AccountPersonRecord extends DbRecord
 
             $pesStatusWithButton .= "<div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' style='display:none' >";
             ob_start();
-            \vbac\pesTrackerTable::formatProcessingStatusCell($row);
+            pesTrackerTable::formatProcessingStatusCell($row);
             $pesStatusWithButton .= ob_get_clean();
             $pesStatusWithButton .= "</div>";
         }

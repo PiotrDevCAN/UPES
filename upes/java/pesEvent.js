@@ -289,20 +289,22 @@ function pesEvent() {
 		  var buttonObj = $(this);
 		  var processStatus = $(this).data('processstatus');	
 		  var dataDiv       = $(this).parents('td').children('.personDetails').first();
-		  var cnum          = $(dataDiv).data('cnum');
+		  var upesref       = $(dataDiv).data('upesref');
+		  var accountid     = $(dataDiv).data('accountid');
 		  var fullname      = $(dataDiv).data('fullname');
 		  var emailaddress  = $(dataDiv).data('emailaddress');
-		  var requestor     = $(dataDiv).data('emailaddress');
+		  var requestor     = $(dataDiv).data('requestor');
 //		  $(this).parents('div').prev('div.pesProcessStatusDisplay').html(processStatus);
 		  $(this).addClass('spinning');
 		   $.ajax({
 			   url: "ajax/savePesProcessStatus.php",
 		       type: 'POST',
-		       data : {cnum:cnum,
+		       data : {      upesref:upesref,
+		    	           accountid:accountid, 
 		    	       processStatus:processStatus,
-		    	       fullname : fullname,
+		    	           fullname : fullname,
 		    	       emailaddress : emailaddress,
-		    	       requestor : requestor
+		    	          requestor : requestor
 		    	   	   },
 		       success: function(result){
 		           var resultObj = JSON.parse(result);
@@ -319,15 +321,17 @@ function pesEvent() {
   
   this.listenForPesPriorityChange = function(){
 	  $(document).on('click','.btnPesPriority', function(){  
-		  var buttonObj = $(this);
+		  var buttonObj   = $(this);
 		  var pespriority = $(this).data('pespriority');					  
-		  var cnum        = $(this).data('cnum');
+		  var upesref     = $(this).data('upesref');
+		  var accountid   = $(this).data('accountid');
 //		  $(this).parents('div').prev('div.pesProcessStatusDisplay').html(processStatus);
 		  $(this).addClass('spinning');
 		   $.ajax({
 			   url: "ajax/savePesPriority.php",
 		       type: 'POST',
-		       data : {cnum:cnum,
+		       data : {    upesref:upesref,
+		    	         accountid:accountid,
 		    	       pespriority:pespriority,
 		    	   	   },
 		       success: function(result){
