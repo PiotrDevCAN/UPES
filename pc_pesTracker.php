@@ -48,7 +48,7 @@ $(document).ready(function(){
  	pesevent.listenForPesProcessStatusChange();
  	pesevent.listenForPesPriorityChange();
  	pesevent.listenForFilterPriority();
-// 	pesevent.listenForFilterProcess();
+ 	pesevent.listenForFilterProcess();
 // 	pesevent.listenForBtnChaser();
 });
 </script>
