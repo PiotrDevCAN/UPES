@@ -47,7 +47,7 @@ $(document).ready(function(){
  	pesevent.listenForSavePesComment();
 // 	pesevent.listenForPesProcessStatusChange();
  	pesevent.listenForPesPriorityChange();
-// 	pesevent.listenForFilterPriority();
+ 	pesevent.listenForFilterPriority();
 // 	pesevent.listenForFilterProcess();
 // 	pesevent.listenForBtnChaser();
 });
