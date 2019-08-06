@@ -70,5 +70,37 @@ class PersonTable extends DbTable
     }
 
 
+    static function getEmailFromUpesref($upesref){
+        $sql = " SELECT EMAIL_ADDRESS FROM " . $_SESSION['Db2Schema'] . "." . allTables::$PERSON;
+        $sql.= " WHERE UPESREF = '" . db2_escape_string(strtoupper(trim($upesref))) . "' ";
+        $sql.= " FETCH FIRST 1 ROW ONLY ";
+
+        $resultSet = db2_exec($_SESSION['conn'], $sql);
+        if(!$resultSet){
+            DbTable::displayErrorMessage($resultSet, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+
+        $row = db2_fetch_assoc($resultSet);
+        return $row['EMAIL_ADDRESS'];
+    }
+
+    static function getNamesFromUpesref($upesref){
+        $sql = " SELECT case when P.PASSPORT_FIRST_NAME is null then P.FULL_NAME else P.PASSPORT_FIRST_NAME concat ' ' concat P.PASSPORT_LAST_NAME end as FULL_NAME ";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . allTables::$PERSON . " as P ";
+        $sql.= " WHERE P.UPESREF = '" . db2_escape_string(strtoupper(trim($upesref))) . "' ";
+
+        $resultSet = db2_exec($_SESSION['conn'], $sql);
+        if(!$resultSet){
+            DbTable::displayErrorMessage($resultSet, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+        $row = array();
+        $row = db2_fetch_assoc($resultSet);
+        $names = array_map('trim', $row);
+
+        return $names;
+    }
+
 }
 

@@ -199,42 +199,38 @@ class pesEmail {
 
     }
 
-    function sendPesEmailChaser($cnum, $emailAddress, $chaserLevel){
+    function sendPesEmailChaser($upesref, $account, $emailAddress, $chaserLevel){
 
         $pesEmailPattern = array(); // Will be overridden when we include_once from emailBodies later.
         $pesEmail = null;          // Will be overridden when we include_once from emailBodies later.
-        $names = personTable::getNamesFromCnum($cnum);
-        $firstName = $names['FIRST_NAME'];
-        $lastName = $names['LAST_NAME'];
+        $names = personTable::getNamesFromUpesref($upesref);
+        $fullName = $names['FULL_NAME'];
         $requestor = trim($_POST['requestor']);
 
         $emailBodyFileName = 'chaser' . trim($chaserLevel) . ".php";
-        $replacements = array($firstName);
+        $replacements = array($fullName,$account);
 
         include_once 'emailBodies/' . $emailBodyFileName;
         $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
 
-        $sendResponse = BlueMail::send_mail(array($emailAddress), "Reminder- Pre Employment Screening - $cnum : $firstName, $lastName", $emailBody,'LBGVETPR@uk.ibm.com',array($requestor));
+        $sendResponse = BlueMail::send_mail(array($emailAddress), "PES Reminder - $fullName($upesref) on $account", $emailBody,'LBGVETPR@uk.ibm.com',array($requestor));
         return $sendResponse;
 
 
     }
 
-    function sendPesProcessStatusChangedConfirmation($cnum, $firstName, $lastName, $emailAddress, $processStatus, $requestor=null){
+    function sendPesProcessStatusChangedConfirmation($upesref, $account,  $fullname, $emailAddress, $processStatus, $requestor=null){
 
         $pesEmailPattern = array(); // Will be overridden when we include_once from emailBodies later.
         $pesEmail = null;          // Will be overridden when we include_once from emailBodies later.
 
         $emailBodyFileName = 'processStatus' . trim($processStatus) . ".php";
-        $replacements = array($firstName);
+        $replacements = array($fullname, $account);
 
         include_once 'emailBodies/' . $emailBodyFileName;
         $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
 
-        $sendResponse = BlueMail::send_mail(array($emailAddress), "Status Change - Pre Employment Screening - $cnum : $firstName, $lastName", $emailBody,'LBGVETPR@uk.ibm.com', array($requestor));
-        return $sendResponse;
-
-
+        return BlueMail::send_mail(array($emailAddress), "PES Status Change - $fullname($upesref) : $account", $emailBody,'LBGVETPR@uk.ibm.com', array($requestor));
     }
 
 

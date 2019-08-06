@@ -49,7 +49,7 @@ $(document).ready(function(){
  	pesevent.listenForPesPriorityChange();
  	pesevent.listenForFilterPriority();
  	pesevent.listenForFilterProcess();
-// 	pesevent.listenForBtnChaser();
+ 	pesevent.listenForBtnChaser();
 });
 </script>
 <style>

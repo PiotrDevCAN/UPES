@@ -70,7 +70,9 @@ function pesEvent() {
 	  $(document).on('click','.btnChaser', function(){
 		  var chaser = $(this).data('chaser');
 		  var details = $(this).parent('span').parents('td').children('.personDetails').first();
-		  var cnum = $(details).data('cnum');	
+		  var upesref = $(details).data('upesref');
+		  var accountid = $(details).data('accountid');
+		  var account   = $(details).data('account');
 		  var fullName = $(details).data('fullname');
 		  var requestor = $(details).data('requestor');
 		  
@@ -81,7 +83,9 @@ function pesEvent() {
 		  $.ajax({
 			  	url: "ajax/sendPesEmailChaser.php",
 			  	type: 'POST',
-			  	data : { cnum: cnum,
+			  	data : { upesref: upesref,
+			  		     account:account,
+			  		     accountid:accountid,
 			  		     chaser: chaser,
 			  		     fullName : fullName,
 			  		     requestor : requestor
@@ -291,6 +295,7 @@ function pesEvent() {
 		  var dataDiv       = $(this).parents('td').children('.personDetails').first();
 		  var upesref       = $(dataDiv).data('upesref');
 		  var accountid     = $(dataDiv).data('accountid');
+		  var account       = $(dataDiv).data('account');
 		  var fullname      = $(dataDiv).data('fullname');
 		  var emailaddress  = $(dataDiv).data('emailaddress');
 		  var requestor     = $(dataDiv).data('requestor');
@@ -300,7 +305,8 @@ function pesEvent() {
 			   url: "ajax/savePesProcessStatus.php",
 		       type: 'POST',
 		       data : {      upesref:upesref,
-		    	           accountid:accountid, 
+		    	           accountid:accountid,
+                             account: account, 
 		    	       processStatus:processStatus,
 		    	           fullname : fullname,
 		    	       emailaddress : emailaddress,

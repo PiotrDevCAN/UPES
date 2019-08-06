@@ -15,7 +15,7 @@ $requestor = trim($_POST['requestor']);
 
 
 try {
-//*    $pesEmailObj = new pesEmail();
+    $pesEmailObj = new pesEmail();
     $response['emailResponse']='dummy'; // Remove this when using emailobj
 
 
@@ -32,15 +32,13 @@ try {
         switch (trim($_POST['processStatus'])) {
             case 'CRC':
             case 'PES':
-            //*    $emailResponse = $pesEmailObj->sendPesProcessStatusChangedConfirmation($upesref,$accountid,  $fullname, $emailAddress, trim($_POST['processStatus']), $requestor);
-            //*    $response['emailResponse'] = $emailResponse;
+                  $emailResponse = $pesEmailObj->sendPesProcessStatusChangedConfirmation($upesref,$account,  $fullname, $emailAddress, trim($_POST['processStatus']), $requestor);
+                  $response['emailResponse'] = $emailResponse;
             break;
             case 'User':
-            //*    $emailResponse = $pesEmailObj->sendPesProcessStatusChangedConfirmation($cnum, $firstName, $lastName, $requestor, trim($_POST['processStatus']));
-           //*     $response['emailResponse'] = $emailResponse;
-
+                  $emailResponse = $pesEmailObj->sendPesProcessStatusChangedConfirmation($upesref,$account,  $fullname, $requestor, trim($_POST['processStatus']));
+                  $response['emailResponse'] = $emailResponse;
             default:
-                ;
             break;
         }
 
