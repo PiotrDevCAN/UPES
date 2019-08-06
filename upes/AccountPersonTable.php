@@ -485,6 +485,25 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         return $alertClass;
     }
 
+    static function getAlertClassForPesChasedDate($pesChasedDate){
+        $today = new \DateTime();
+        $date = DateTime::createFromFormat('Y-m-d', $pesChasedDate);
+        $age  = $date->diff($today)->d;
+
+        switch (true) {
+            case $age < 7 :
+                $alertClass = ' alert-success ';
+                break;
+            case $age < 14:
+                $alertClass = ' alert-warning ';
+                break;
+            default:
+                $alertClass = ' alert-danger ';
+                break;
+        }
+        return $alertClass;
+    }
+
     static function getButtonsForPesStage($value, $alertClass, $stage, $upesref, $accountid){
         ?>
         <div class='alert <?=$alertClass;?> text-center pesStageDisplay' role='alert' ><?=$value;?></div>
@@ -550,6 +569,8 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
         return true;
     }
+
+
 
 
 

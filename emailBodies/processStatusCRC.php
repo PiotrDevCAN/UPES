@@ -5,4 +5,4 @@ $pesEmail.= '<p>Please note that this can take up to 15 working days.</p>';
 $pesEmail.= '<p>Many Thanks for your cooperation,</p>';
 $pesEmail.= '<h3>&&accountname&& PES Team</h3>';
 
-$pesEmailPattern = array('/&&firstName&&/','/&&accountname&&/');
+$pesEmailPattern = array('/&&fullname&&/','/&&accountname&&/');

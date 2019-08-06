@@ -4,4 +4,4 @@ $pesEmail.= '<p>I confirm that the PES team have received your documents/informa
 $pesEmail.= '<p>Many Thanks for your cooperation,</p>';
 $pesEmail.= '<h3>&&accountname&& PES Team</h3>';
 
-$pesEmailPattern = array('/&&firstName&&/','&&accountname&&');
+$pesEmailPattern = array('/&&fullname&&/','/&&accountname&&/');

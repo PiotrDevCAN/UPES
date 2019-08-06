@@ -68,14 +68,14 @@ function pesEvent() {
   
   this.listenForBtnChaser = function() {
 	  $(document).on('click','.btnChaser', function(){
-		  var chaser = $(this).data('chaser');
+		  var chaser = $(this).data('chaser').trim();
 		  var details = $(this).parent('span').parents('td').children('.personDetails').first();
-		  var upesref = $(details).data('upesref');
-		  var accountid = $(details).data('accountid');
-		  var account   = $(details).data('account');
-		  var emailaddress   = $(details).data('emailaddress');
-		  var fullName = $(details).data('fullname');
-		  var requestor = $(details).data('requestor');
+		  var upesref = $(details).data('upesref').trim();
+		  var accountid = $(details).data('accountid').trim();
+		  var account   = $(details).data('account').trim();
+		  var emailaddress   = $(details).data('emailaddress').trim();
+		  var fullName = $(details).data('fullname').trim();
+		  var requestor = $(details).data('requestor').trim();
 		  
 		  var buttonObj = $(this);
 		  buttonObj.addClass('spinning');
@@ -206,9 +206,9 @@ function pesEvent() {
   this.listenForSavePesComment = function() {
 	  $(document).on('click','.btnPesSaveComment', function(){
 		  
-		  var upesref   =  $(this).siblings('textarea').data('upesref');
-		  var accountid =  $(this).siblings('textarea').data('accountid');
-		  var comment   = $(this).siblings('textarea').val();
+		  var upesref   =  $(this).siblings('textarea').data('upesref').trim();
+		  var accountid =  $(this).siblings('textarea').data('accountid').trim();
+		  var comment   = $(this).siblings('textarea').val().trim();
 		  var button    = $(this);
 		  
 		  console.log(button.siblings('div'));
@@ -236,9 +236,9 @@ function pesEvent() {
   this.listenForPesStageValueChange = function(){
 	  $(document).on('click','.btnPesStageValueChange', function(){  
 		  var setPesTo = $(this).data('setpesto');	
-		  var column   = $(this).parents('div').data('pescolumn');		  
-		  var upesref  = $(this).parents('div').data('upesref');
-		  var accountid= $(this).parents('div').data('accountid');
+		  var column   = $(this).parents('div').data('pescolumn').trim();		  
+		  var upesref  = $(this).parents('div').data('upesref').trim();
+		  var accountid= $(this).parents('div').data('accountid').trim();
 		  
 		  var pesevent = new pesEvent();
 		  var alertClass = pesevent.getAlertClassForPesStage(setPesTo);
@@ -297,10 +297,10 @@ function pesEvent() {
 		  var dataDiv       = $(this).parents('td').children('.personDetails').first();
 		  var upesref       = $(dataDiv).data('upesref');
 		  var accountid     = $(dataDiv).data('accountid');
-		  var account       = $(dataDiv).data('account');
-		  var fullname      = $(dataDiv).data('fullname');
-		  var emailaddress  = $(dataDiv).data('emailaddress');
-		  var requestor     = $(dataDiv).data('requestor');
+		  var account       = $(dataDiv).data('account').trim();
+		  var fullname      = $(dataDiv).data('fullname').trim();
+		  var emailaddress  = $(dataDiv).data('emailaddress').trim();
+		  var requestor     = $(dataDiv).data('requestor').trim();
 //		  $(this).parents('div').prev('div.pesProcessStatusDisplay').html(processStatus);
 		  $(this).addClass('spinning');
 		   $.ajax({
@@ -330,9 +330,9 @@ function pesEvent() {
   this.listenForPesPriorityChange = function(){
 	  $(document).on('click','.btnPesPriority', function(){  
 		  var buttonObj   = $(this);
-		  var pespriority = $(this).data('pespriority');					  
-		  var upesref     = $(this).data('upesref');
-		  var accountid   = $(this).data('accountid');
+		  var pespriority = $(this).data('pespriority').trim();					  
+		  var upesref     = $(this).data('upesref').trim();
+		  var accountid   = $(this).data('accountid').trim();
 //		  $(this).parents('div').prev('div.pesProcessStatusDisplay').html(processStatus);
 		  $(this).addClass('spinning');
 		   $.ajax({
