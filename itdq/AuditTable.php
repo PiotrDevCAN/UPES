@@ -13,10 +13,9 @@ class AuditTable extends DbTable {
     static function audit($statement,$type='Details'){
         if(property_exists('itdq\AllItdqTables','AUDIT')){
             $sql = " INSERT INTO " . $_SESSION['Db2Schema'] . "." . \itdq\AllItdqTables::$AUDIT;
-            $sql.= " ('TIMESTAMP','EMAIL_ADDRESS','DATA','TYPE') ";
+            $sql.= " (TIMESTAMP,EMAIL_ADDRESS,DATA,TYPE) ";
             $sql.= " VALUES ";
             $sql.= " ( CURRENT TIMESTAMP, '" . db2_escape_string($_SESSION['ssoEmail']) . "','" . db2_escape_string($statement) . "','" . db2_escape_string($type) . "' )";
-
             $rs = db2_exec($_SESSION['conn'],$sql);
 
             if(!$rs){

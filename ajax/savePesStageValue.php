@@ -5,7 +5,7 @@ use upes\AccountPersonTable;
 use itdq\Loader;
 
 ob_start();
-// AuditTable::audit("Invoked:<b>" . __FILE__ . "</b>Parms:<pre>" . print_r($_POST,true) . "</pre>",AuditTable::RECORD_TYPE_DETAILS);
+AuditTable::audit("Invoked:<b>" . __FILE__ . "</b>Parms:<pre>" . print_r($_POST,true) . "</pre>",AuditTable::RECORD_TYPE_DETAILS);
 try {
     $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON   );
     $pesTracker->setPesStageValue($_POST['upesref'],$_POST['accountid'], $_POST['stage'], $_POST['stageValue']);

@@ -73,6 +73,7 @@ function pesEvent() {
 		  var upesref = $(details).data('upesref');
 		  var accountid = $(details).data('accountid');
 		  var account   = $(details).data('account');
+		  var emailaddress   = $(details).data('emailaddress');
 		  var fullName = $(details).data('fullname');
 		  var requestor = $(details).data('requestor');
 		  
@@ -86,6 +87,7 @@ function pesEvent() {
 			  	data : { upesref: upesref,
 			  		     account:account,
 			  		     accountid:accountid,
+			  		     emailaddress:emailaddress, 
 			  		     chaser: chaser,
 			  		     fullName : fullName,
 			  		     requestor : requestor

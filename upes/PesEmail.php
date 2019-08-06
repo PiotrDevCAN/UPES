@@ -1,5 +1,5 @@
 <?php
-namespace vbac;
+namespace upes;
 
 use itdq\DbTable;
 use vbac\allTables;
@@ -7,7 +7,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use itdq\BlueMail;
 
-class pesEmail {
+class PesEmail {
 
     private function getLloydsGlobalApplicationForm(){
         // LLoyds Global Application Form v1.4.doc
