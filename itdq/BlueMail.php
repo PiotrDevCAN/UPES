@@ -200,7 +200,6 @@ class BlueMail
         $sql.= !empty($cc) ? " ,? " : null ;
         $sql.= !empty($bcc) ? " ,? " : null ;
         $sql.= " ); ";
-
         $preparedStatement = db2_prepare($_SESSION['conn'], $sql);
         $data = array(serialize($to),$subject,$message,$data_json);
 

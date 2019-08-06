@@ -5,7 +5,8 @@ use upes\PersonTable;
 use upes\AllTables;
 use itdq\AuditTable;
 use upes\AccountPersonTable;
-use epes\personRecord;
+use upes\PersonRecord;
+use upes\AccountPersonRecord;
 
 ob_start();
 
@@ -13,6 +14,7 @@ AuditTable::audit("Invoked:<b>" . __FILE__ . "</b>Parms:<pre>" . print_r($_POST,
 
 $upesref= $_POST['upesref'];
 $account= $_POST['account'];
+$accountId= $_POST['accountid'];
 $emailAddress = $_POST['emailaddress'];
 
 $pesEmailObj = new pesEmail();
@@ -26,16 +28,14 @@ $response = array();
 $response['success'] = $success;
 $response['messages'] = $messages;
 $response['emailResponse'] = $emailResponse;
-$response['pesStatus'] = personRecord::PES_STATUS_REQUESTED;
-
-
+$response['pesStatus'] = AccountPersonRecord::PES_STATUS_EVI_REQUESTED;
 
 if($success){
-    $pesTracker = new pesTrackerTable(allTables::$PES_TRACKER   );
+    $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 
     $dateObj = new DateTime();
     $dateLastChased = $dateObj->format('Y-m-d');
-    $pesTracker->setPesDateLastChased($cnum, $dateLastChased);
+    $pesTracker->setPesDateLastChased($upesref, $accountId, $dateLastChased);
 
     $messages = ob_get_contents();
     $success = strlen($messages)==0;
@@ -45,10 +45,10 @@ if($success){
     $response['lastChased'] = $dateObj->format('d M Y');;
 
     try {
-        $pesTracker->savePesComment($cnum,"Automated PES Chaser Level " . $_POST['chaser'] . " sent to " . $_POST['emailaddress']);
-        $pesTracker->savePesComment($cnum,"Automated PES Chaser Email Status :  " . $emailStatus);
+        $pesTracker->savePesComment($upesref, $accountId, "Automated PES Chaser Level " . $_POST['chaser'] . " sent to " . $_POST['emailaddress']);
+        $pesTracker->savePesComment($upesref, $accountId, "Automated PES Chaser Email Status :  " . $emailStatus);
 
-        $comment = $pesTracker->getPesComment($cnum);
+        $comment = $pesTracker->getPesComment($upesref, $accountId);
         $response['comment'] = $comment;
 
     } catch (Exception $e) {
@@ -58,8 +58,8 @@ if($success){
 
 } else {
     try {
-        $pesTracker->savePesComment($cnum,"Error trying to send automated PES Chaser Level " . $_POST['chaser'] . " to " .  $_POST['emailaddress']);
-        $pesTracker->savePesComment($cnum,"Automated PES Email Status :  " . $emailStatus);
+        $pesTracker->savePesComment($upesref, $accountId,"Error trying to send automated PES Chaser Level " . $_POST['chaser'] . " to " .  $_POST['emailaddress']);
+        $pesTracker->savePesComment($upesref, $accountId,"Automated PES Email Status :  " . $emailStatus);
     } catch (Exception $e) {
         // Don't give up just because we didn't save the comment.
         echo $e->getMessage();

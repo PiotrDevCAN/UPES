@@ -338,8 +338,8 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
     }
 
 
-    function savePesComment($uposref, $account_id,$comment){
-        $existingComment = $this->getPesComment($uposref, $account_id);
+    function savePesComment($upesref, $account_id,$comment){
+        $existingComment = $this->getPesComment($upesref, $account_id);
         $now = new \DateTime();
 
         $newComment = trim($comment) . "<br/><small>" . $_SESSION['ssoEmail'] . ":" . $now->format('Y-m-d H:i:s') . "</small><br/>" . $existingComment;
@@ -355,13 +355,13 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
         $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
         $sql.= " SET COMMENT='" . db2_escape_string($newComment) . "' ";
-        $sql.= " WHERE UPES_REF='" . db2_escape_string($uposref) . "' AND ACCOUNT_ID='" . db2_escape_string($account_id) . "' ";
+        $sql.= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($account_id) . "' ";
 
         $rs = db2_exec($_SESSION['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
-            throw new \Exception("Failed to update PES Comment for $cnum. Comment was " . $comment);
+            throw new \Exception("Failed to update PES Comment for $upesref Account: $account_id. Comment was " . $comment);
         }
 
         return $newComment;
@@ -534,6 +534,22 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         return true;
     }
 
+
+    function setPesDateLastChased($upesref, $accountId, $dateLastChased){
+
+        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql.= " SET DATE_LAST_CHASED=DATE('" . db2_escape_string($dateLastChased) . "') ";
+        $sql.= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountId)  . "' ";
+
+        $rs = db2_exec($_SESSION['conn'],$sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
+            throw new \Exception("Failed to update Date Last Chased to : $dateLastChased for $upesref / $accountId");
+        }
+
+        return true;
+    }
 
 
 
