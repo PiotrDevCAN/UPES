@@ -171,12 +171,14 @@ class AccountPersonRecord extends DbRecord
         $email   = trim($row['EMAIL_ADDRESS']);
         $upesRef = trim($row['UPES_REF']);
         $status  = trim($row['PES_STATUS']);
+        $account  = trim($row['ACCOUNT']);
+        $accountid  = trim($row['ACCOUNT_ID']);
         $boarder = stripos(trim($row['PES_STATUS_DETAILS']),'Boarded as')!== false ;
         $passportFirst   = array_key_exists('PASSPORT_FIRST_NAME', $row) ? $row['PASSPORT_FIRST_NAME'] : null;
         $passportLastname = array_key_exists('PASSPORT_LAST_NAME', $row)    ? $row['PASSPORT_LAST_NAME'] : null;
 
         $pesStatusWithButton = '';
-        $pesStatusWithButton.= "<span class='pesStatusField' data-upesref='" . $upesRef . "'>" .  $status . "</span><br/>";
+        $pesStatusWithButton.= "<span class='pesStatusField' data-upesref='" . $upesRef . "' data-account='" . $account . "'data-accountid='" . $accountid . "'  >" .  $status . "</span><br/>";
         switch (true) {
             case $boarder:
                 // Don't add buttons if this is a boarded - pre-boarder record.
@@ -185,6 +187,8 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesInitiate accessRestrict accessPmo accessFm' ";
                 $pesStatusWithButton.= "aria-label='Left Align' ";
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
+                $pesStatusWithButton.= " data-account='" .$account . "' ";
+                $pesStatusWithButton.= " data-accountid='" .$accountid . "' ";
                 $pesStatusWithButton.= " data-pesstatus='$status' ";
                 $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='Initiate PES Request'";
                 $pesStatusWithButton.= " > ";
@@ -195,7 +199,6 @@ class AccountPersonRecord extends DbRecord
             $emailAddress = trim($row['EMAIL_ADDRESS']);
             $fullName    = trim($row['FULL_NAME']);
             $country      = trim($row['COUNTRY']);
-            $cnum         = trim($row['CNUM']);
 
             $missing = !empty($emailAddress) ? '' : ' Email Address';
             $missing.= !empty($fullName) ? '' : ' Full Name';
@@ -210,6 +213,8 @@ class AccountPersonRecord extends DbRecord
             $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnSendPesEmail accessRestrict accessPmo accessFm' ";
             $pesStatusWithButton.= "aria-label='Left Align' ";
             $pesStatusWithButton.= " data-emailaddress='$emailAddress' ";
+            $pesStatusWithButton.= " data-account='" . $account . "' ";
+            $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
             $pesStatusWithButton.= " data-fullnamee='$fullName' ";
             $pesStatusWithButton.= " data-country='$country' ";
             $pesStatusWithButton.= " data-upesref='$upesRef' ";
@@ -233,7 +238,9 @@ class AccountPersonRecord extends DbRecord
             case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesStatus' aria-label='Left Align' ";
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
-                $pesStatusWithButton.= " data-email='" . $email . "' ";
+                $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";
+                $pesStatusWithButton.= " data-account='" . $account . "' ";
+                $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
                 $pesStatusWithButton.= " data-pesdaterequested='" .trim($row['PES_DATE_REQUESTED']) . "' ";
                 $pesStatusWithButton.= " data-pesrequestor='" .trim($row['PES_REQUESTOR']) . "' ";
                 $pesStatusWithButton.= " data-pesstatus='" .$status . "' ";
@@ -249,7 +256,9 @@ class AccountPersonRecord extends DbRecord
             case $status == AccountPersonRecord::PES_STATUS_PES_REQUESTED && !$_SESSION['isPesTeam'] ;
             $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesCancel accessRestrict accessFm' aria-label='Left Align' ";
             $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
-            $pesStatusWithButton.= " data-email='" . $email . "' ";
+            $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";
+            $pesStatusWithButton.= " data-account='" . $account . "' ";
+            $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
             $pesStatusWithButton.= " data-pesdaterequested='" .trim($row['PES_DATE_REQUESTED']) . "' ";
             $pesStatusWithButton.= " data-pesrequestor='" .trim($row['PES_REQUESTOR']) . "' ";
             $pesStatusWithButton.= " data-pesstatus='" .$status . "' ";
@@ -281,6 +290,192 @@ class AccountPersonRecord extends DbRecord
         return $pesStatusWithButton;
 
     }
+
+
+    function amendPesStatusModal(){
+        $now = new \DateTime();
+        ?>
+       <!-- Modal -->
+    <div id="amendPesStatusModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+            <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Amend PES Status</h4>
+            </div>
+          <div class="modal-body" >
+          <form id='psmForm' class="form-horizontal"  method='post'>
+
+          <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Employee Details</h3>
+          </div>
+        <div class="panel-body">
+            <div class='row'>
+              <div class='form-group' >
+                <div class='col-sm-6'>
+                    <input class="form-control" id="psm_emailaddress" name="psm_emailaddress" value="" type="text" disabled>
+                    <input class="form-control" id="psm_upesref" name="psm_upesref" value="" type="hidden" >
+                </div>
+                <div class='col-sm-6'>
+                    <input class="form-control" id="psm_account" name="psm_account" value="" type="text" disabled>
+                    <input class="form-control" id="psm_accountid" name="psm_accountid" value="" type="hidden" >
+                </div>
+             </div>
+           </div>
+           <div class='row' id='passportNameDetails' >
+              <div class='form-group' >
+                <div class='col-sm-6'>
+                    <input class="form-control" id="psm_passportFirst" name="psm_passportFirst" value="" type="text" placeholder='Passport First Name' disabled >
+                </div>
+                <div class='col-sm-6'>
+                    <input class="form-control" id="psm_passportSurname" name="psm_passportSurname" value="" type="text" placeholder='Passport Surname'>
+               </div>
+             </div>
+           </div>
+
+         </div>
+          </div>
+
+          <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">PES Status</h3>
+          </div>
+        <div class="panel-body">
+           <div class='row'>
+              <div class='form-group required' >
+                <label for='psm_status' class='col-md-2 control-label '>Status</label>
+                <div class='col-md-4'>
+                      <select class='form-control select' id='psm_status'
+                                name='psm_status'
+                                required='required'
+                                data-tags="true" data-placeholder="Status" data-allow-clear="true"
+                               >
+                    <option value=''>Status</option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_CLEARED;?>'><?=AccountPersonRecord::PES_STATUS_CLEARED;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_DECLINED;?>'><?=AccountPersonRecord::PES_STATUS_DECLINED;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_EXCEPTION;?>'><?=AccountPersonRecord::PES_STATUS_EXCEPTION;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_FAILED;?>'><?=AccountPersonRecord::PES_STATUS_FAILED;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_EVI_REQUESTED;?>'><?=AccountPersonRecord::PES_STATUS_EVI_REQUESTED;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_PES_REQUESTED;?>'><?=AccountPersonRecord::PES_STATUS_PES_REQUESTED;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_PROVISIONAL;?>'><?=AccountPersonRecord::PES_STATUS_PROVISIONAL;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_REMOVED;?>'><?=AccountPersonRecord::PES_STATUS_REMOVED;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_REVOKED;?>'><?=AccountPersonRecord::PES_STATUS_REVOKED;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_CANCEL_REQ;?>'><?=AccountPersonRecord::PES_STATUS_CANCEL_REQ;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED;?>'><?=AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_TBD;?>'><?=AccountPersonRecord::PES_STATUS_TBD;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_RECHECK_REQ;?>'><?=AccountPersonRecord::PES_STATUS_RECHECK_REQ;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_LEFT_IBM;?>'><?=AccountPersonRecord::PES_STATUS_LEFT_IBM;?></option>
+
+                       </select>
+                 </div>
+                 <label for='pes_date' class='col-md-1 control-label '>Date</label>
+                 <div class='col-md-3'>
+                  <input class="form-control" id="pes_date" value="<?=$now->format('d M Y')?>" type="text" placeholder='Pes Status Changed' data-toggle='tooltip' title='PES Date Responded'>
+                  <input class="form-control" id="pes_date_db2"  value="<?=$now->format('Y-m-d')?>" name="PES_DATE_RESPONDED" type='hidden' >
+                 </div>
+                </div>
+              </div>
+
+           <div class='row'>
+              <div class='form-group required' >
+                <label for='psm_detail' class='col-md-2 control-label '>Detail</label>
+                  <div class='col-md-8' id='pesDateDiv'>
+                  <input class="form-control" id="psm_detail" name="psm_detail" value="" type="text"  >
+                     </div>
+                </div>
+             </div>
+           </div>
+          </div>
+          <div class="modal-footer">
+          <?php
+          $allButtons = null;
+          $submitButton = $this->formButton('submit','Submit','savePesStatus',null,'Submit','btn-primary');
+          $allButtons[] = $submitButton;
+          $this->formBlueButtons($allButtons);
+          ?>
+
+           <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    </div>
+        <?php
+
+    }
+
+
+    function confirmSendPesEmailModal(){
+        ?>
+       <!-- Modal -->
+    <div id="confirmSendPesEmailModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+          <div class="modal-content">
+          <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Confirm PES Email Details</h4>
+            </div>
+             <div class="modal-body" >
+             <div class="panel panel-default">
+  <div class="panel-heading">Applicant Details</div>
+  <div class="panel-body">
+  <form>
+    <input type='hidden' id='pesEmailCnum' name='pesEmailCnum' >
+    <div class="form-group">
+    <label for="pesEmailFirstName">First Name</label>
+    <input type="text" class="form-control" id="pesEmailFirstName" name="pesEmailFirstName" disabled >
+  </div>
+    <div class="form-group">
+    <label for="pesEmailLastName">Last Name</label>
+    <input type="text" class="form-control" id="pesEmailLastName" name="pesEmailLastName" disabled >
+  </div>
+    <div class="form-group">
+    <label for="pesEmailOpenSeat">Open Seat</label>
+    <input type="text" class="form-control" id="pesEmailOpenSeat" name="pesEmailOpenSeat" disabled >
+  </div>
+  <div class="form-group">
+    <label for="pesEmailAddress">Email address</label>
+    <input type="text" class="form-control" id="pesEmailAddress" name="pesEmailAddress" disabled >
+  </div>
+  <div class="form-group">
+    <label for="pesEmailCountry">Country</label>
+    <input type="text" class="form-control" id="pesEmailCountry" name="pesEmailCountry" disabled >
+  </div>
+  <div class="form-group">
+    <label for="pesEmailFilename">Filename</label>
+    <input type="text" class="form-control" id="pesEmailFilename" name="pesEmailFilename" disabled >
+  </div>
+
+  <div class="form-group">
+    <label for="pesEmailAttachments">Attachments</label>
+    <textarea class="form-control" id="pesEmailAttachments" name="pesEmailAttachments" disabled ></textarea>
+  </div>
+
+
+
+</form>
+</div>
+</div>
+            </div>
+             <div class='modal-footer'>
+                    <?php
+                    $allButtons = null;
+                    $submitButton = $this->formButton('submit','confirmSendPesEmail','confirmSendPesEmail',null,'Confirm','btn-primary');
+                    $allButtons[] = $submitButton;
+                    $this->formBlueButtons($allButtons);
+                    ?>
+              <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+             </div>
+            </div>
+        </div>
+      </div>
+    <?php
+    }
+
 
 
 

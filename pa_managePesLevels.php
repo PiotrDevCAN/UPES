@@ -28,7 +28,7 @@ include_once 'includes/modalDeletePesLevelConfirm.html';
 
 <table id='pesLevelTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Action</th><th>Pes Level Ref</th><th>Account</th><th class='searchable' >PES Level</th><th class='searchable' >PES Level Description</th></tr>
+<tr><th>Action</th><th>Account</th><th class='searchable' >PES Level</th><th class='searchable' >PES Level Description</th><th class='searchable' >Recheck Years</th></tr>
 </thead>
 </table>
 </div>
@@ -117,13 +117,13 @@ $(document).ready(function(){
        columns:
                   [{ data: "ACTION"
                   },{
-                    data: "PES_LEVEL_REF"
-                  },{
                     data: "ACCOUNT"
                   },{
                     data: "PES_LEVEL"
                   },{
                     data: "PES_LEVEL_DESCRIPTION"
+                  },{
+                    data: "RECHECK_YEARS"
                   }]
 	});
 
@@ -140,7 +140,9 @@ $(document).ready(function(){
  		var button = $(e.target).parent('button').addClass('spinning');
  		$('#PES_LEVEL').val($(e.target).data('peslevel'));
  		$('#PES_LEVEL_REF').val($(e.target).data('peslevelref'));
- 		$('#ACCOUNT_ID').val($(e.target).data('accountId'));
+ 		$('#ACCOUNT_ID').val($(e.target).data('peslevelaccountid')).trigger('change');
+ 		$('#PES_LEVEL_DESCRIPTION').val($(e.target).data('pesleveldescription'));
+ 		$('#RECHECK_YEARS').val($(e.target).data('recheckyears'));
 		$('#mode').val('<?=FormClass::$modeEDIT?>');
 		$(button).removeClass('spinning');
 	});

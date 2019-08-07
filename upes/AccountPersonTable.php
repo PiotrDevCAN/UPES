@@ -570,7 +570,97 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         return true;
     }
 
+    function setPesStatus($upesref=null,$accountid= null, $status=null,$requestor=null){
+        if(!$upesref or !$accountid){
+            throw new \Exception('No UPESREF/ACCOUNTID provided in ' . __METHOD__);
+        }
 
+        $status = empty($status) ? AccountPersonRecord::PES_STATUS_NOT_REQUESTED : $status;
+        $requestor = empty($requestor) ? $_SESSION['ssoEmail'] : $requestor;
+
+        switch ($status) {
+            case AccountPersonRecord::PES_STATUS_PES_REQUESTED:
+            case AccountPersonRecord::PES_STATUS_RECHECK_REQ:
+                $requestor = empty($requestor) ? 'Unknown' : $requestor;
+                $dateField = 'PES_DATE_REQUESTED';
+                break;
+            case AccountPersonRecord::PES_STATUS_EVI_REQUESTED:
+                $dateField = 'PES_DATE_EVIDENCE';
+                break;
+            case AccountPersonRecord::PES_STATUS_CLEARED:
+            case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
+                $dateField = 'PES_CLEARED_DATE';
+                self::setPesRescheckDate($upesref,$accountid, $requestor);
+                break;
+            case AccountPersonRecord::PES_STATUS_PROVISIONAL:
+            default:
+                $dateField = 'PES_DATE_RESPONDED';
+                break;
+        }
+        $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql .= " SET $dateField = current date, PES_STATUS='" . db2_escape_string($status)  . "' ";
+        $sql .= trim($status)==AccountPersonRecord::PES_STATUS_INITIATED ? ", PES_REQUESTOR='" . db2_escape_string($requestor) . "' " : null;
+        $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' and ACCOUNT_ID='" . db2_escape_string($accountid)  . "' ";
+
+        $result = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$result){
+            DbTable::displayErrorMessage($result, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+
+        $pesTracker = new pesTrackerTable(allTables::$PES_TRACKER);
+        $pesTracker->savePesComment($upesref, $accountid,  "PES_STATUS set to :" . $status );
+
+        AuditTable::audit("PES Status set for:" . $upesref . "/" . $accountid ." To : " . $status . " By:" . $requestor,AuditTable::RECORD_TYPE_AUDIT);
+
+        return true;
+    }
+
+    function setPesRescheckDate($upesref=null,$accountid=null, $requestor=null){
+        if(!$upesref or !$accountid){
+            throw new \Exception('No UPESREF/ACCOUNTID provided in ' . __METHOD__);
+        }
+
+        $requestor = empty($requestor) ? $_SESSION['ssoEmail'] : $requestor;
+
+        $loader = new Loader();
+        $predicate = " UPES_REF='" . db2_escape_string(trim($upesref)) . "' AND ACCOUNT_ID = '" . db2_escape_string($accountid) . "' ";
+        $pesLevels = $loader->loadIndexed('PES_LEVEL','UPES_REF',allTables::$PERSON,$predicate);
+
+        $pesLevel = isset($pesLevels[trim($upesref)]) ? $pesLevels[trim($upesref)]  : self::PES_LEVEL_DEFAULT ;
+        $pesRecheckPeriod = isset(self::$pesRecheckPeriods[$pesLevel]) ? self::$pesRecheckPeriods[$pesLevel] : self::$pesRecheckPeriods[self::PES_LEVEL_DEFAULT];
+
+        $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql .= " SET PES_RECHECK_DATE = current date + " . $pesRecheckPeriod ;
+        $sql .= " WHERE CNUM='" . db2_escape_string($cnum) . "' ";
+
+        $result = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$result){
+            DbTable::displayErrorMessage($result, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+
+        $sql  = " SELECT PES_RECHECK_DATE FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql .= " WHERE CNUM='" . db2_escape_string($cnum) . "' ";
+
+        $res = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$res){
+            DbTable::displayErrorMessage($result, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+
+        $row = db2_fetch_assoc($res);
+
+        $pesTracker = new pesTrackerTable(allTables::$PES_TRACKER);
+        $pesTracker->savePesComment($cnum, "PES_RECHECK_DATE set to :" .  $row['PES_RECHECK_DATE'] );
+
+        AuditTable::audit("PES_RECHECK_DATE set to :  "  . $row['PES_RECHECK_DATE'] . " by " . $requestor,AuditTable::RECORD_TYPE_AUDIT);
+
+        return true;
+    }
 
 
 

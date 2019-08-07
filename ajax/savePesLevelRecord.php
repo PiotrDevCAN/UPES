@@ -27,6 +27,7 @@ try {
     $pesLevelRecord->setFromArray($pesLevelRecordData);
 
     $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $pesLevelRecordTable->insert($pesLevelRecord) : $pesLevelRecordTable->update($pesLevelRecord);
+
     $pesLevelRef  = $_POST['mode']==FormClass::$modeDEFINE ? $pesLevelRecordTable->lastId() : $pesLevelRecordData['PES_LEVEL_REF'];
 
 } catch (Exception $e) {
@@ -42,7 +43,7 @@ if($success){
     $messages.= $_POST['mode']==FormClass::$modeDEFINE ? "Created" : "Updated" ;
 }
 
-$response = array('success'=>$success,'peslevelref' => $pesLevelRef, 'saveResponse' => $saveRecord, 'Messages'=>$messages);
+$response = array('success'=>$success,'peslevelref' => $pesLevelRef, 'saveResponse' => $saveRecord, 'Messages'=>$messages, 'pesLevelRecord'=>print_r($pesLevelRecord,true));
 
 ob_clean();
 echo json_encode($response);

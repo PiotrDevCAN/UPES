@@ -2,6 +2,8 @@
 
 use upes\allTables;
 use upes\AccountPersonTable;
+use upes\PersonRecord;
+use upes\AccountPersonRecord;
 
 ?>
 <div class='container'>
@@ -21,9 +23,9 @@ use upes\AccountPersonTable;
 $pesTrackerTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 $pesTrackerTable->displayTable(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE);
 
-// $person = new personRecord();
-// $person->amendPesStatusModal();
-// $person->confirmSendPesEmailModal();
+$person = new AccountPersonRecord();
+$person->amendPesStatusModal();
+//$person->confirmSendPesEmailModal();
 
 
 
@@ -32,10 +34,10 @@ $pesTrackerTable->displayTable(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE);
 <script>
 $(document).ready(function(){
  	var pesevent = new pesEvent();
-// 	var person = new personRecord();
+ 	var person = new personRecord();
 
-// 	person.listenForEditPesStatus();
-// 	person.listenForSavePesStatus();
+ 	person.listenForEditPesStatus();
+ 	person.listenForSavePesStatus();
 // 	person.listenForInitiatePesFromPortal();
 // 	person.listenforSendPesEmail();
 // 	person.listenforConfirmSendPesEmail();

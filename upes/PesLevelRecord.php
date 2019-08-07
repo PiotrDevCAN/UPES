@@ -13,6 +13,7 @@ class PesLevelRecord extends DbRecord
     protected $ACCOUNT_ID;
     protected $PES_LEVEL;
     protected $PES_LEVEL_DESCRIPTION;
+    protected $RECHECK_YEARS;
 
 
     function displayForm($mode){
@@ -49,6 +50,13 @@ class PesLevelRecord extends DbRecord
 				<input id='PES_LEVEL_DESCRIPTION' name='PES_LEVEL_DESCRIPTION' class='form-control' maxlength="50" <?=$notEditable;?> />
             </div>
         </div>
+        <div class="form-group required" >
+            <label for='RECHECK_YEARS' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract Name'>Pes Recheck Period(Years)</label>
+        	<div class='col-md-3'>
+				<input id='RECHECK_YEARS' name='RECHECK_YEARS' class='form-control' type="number" <?=$notEditable;?> />
+            </div>
+        </div>
+
 
    		<div class='form-group'>
    		<div class='col-sm-offset-2 -col-md-3'>
@@ -63,6 +71,7 @@ class PesLevelRecord extends DbRecord
   		?>
   		</div>
   		</div>
+  		<input id='PES_LEVEL_REF' name='PES_LEVEL_REF' type="hidden" />
 	</form>
     <?php
     }
