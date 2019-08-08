@@ -52,6 +52,16 @@ $(document).ready(function(){
 // 	person.listenforSendPesEmail();
 // 	person.listenforConfirmSendPesEmail();
 
+    console.log($('button[name=pesRecordFilter]:checked'));
+    console.log($('button[name=pesRecordFilter]:checked').val());
+    console.log($('button[name=pesRecordFilter]:checked').data('pesRecords'));
+
+    console.log($('.btnRecordSelection'));
+    console.log($('.btnRecordSelection:checked'));
+
+
+
+
 
 });
 </script>

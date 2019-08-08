@@ -54,6 +54,10 @@ function pesEvent() {
 		  $('.btnRecordSelection').removeClass('active');
 		  $(this).addClass('active');
 		  
+		  console.log($('.btnRecordSelection'));
+		  console.log($('.btnRecordSelection.active'));
+		  console.log($('.btnRecordSelection.active').data('pesRecords'));
+		  
 		  var pesevent = new pesEvent();
 		  pesevent.populatePesTracker($(this).data('pesrecords'));
 	  });
@@ -483,9 +487,6 @@ function pesEvent() {
   this.listenForSavePesStatus = function(){
 	    $(this).attr('disabled',true);
 	    $('#psmForm').submit(function(e){
-	    	console.log(pesevent);	    	
-	    	console.log(pesevent.table);
-	    	
 	    	$('#savePesStatus').attr('disabled',true).addClass('spinning');
 	        var form = document.getElementById('psmForm');
 	        var formValid = form.checkValidity();
@@ -504,7 +505,8 @@ function pesEvent() {
 	                var resultObj = JSON.parse(result);
 	                $('#savePesStatus').attr('disabled',false).removeClass('spinning');	                
 	                var success = resultObj.success;
-	                pesevent.populatePesTracker();
+	      		    var currentReportRecords = $('.btnRecordSelection.active').data('pesRecords');                
+	                pesevent.populatePesTracker(currentReportRecords);
 	                if(!success){
 	                	alert('Save PES Status, may not have been successful');
 	                	alert(resultObj.messages + resultObj.emailResponse);

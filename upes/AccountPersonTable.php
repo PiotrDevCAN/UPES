@@ -70,10 +70,10 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
                 break;
             case self::PES_TRACKER_RECORDS_NOT_ACTIVE :
                 $pesStatusPredicate = " AP.PES_STATUS not in ('" . AccountPersonRecord::PES_STATUS_PES_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_EVI_REQUESTED. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "')  ";
-                $pesStatusPredicate.= " AND AP.PROCESSING_STATUS_CHANGED > current timestamp - 31 days AND AP.CNUM is not null ";
+                $pesStatusPredicate.= " AND AP.PROCESSING_STATUS_CHANGED > current timestamp - 31 days  ";
                 break;
             case self::PES_TRACKER_RECORDS_ALL :
-                $pesStatusPredicate = " AP.CNUM is not null ";
+                $pesStatusPredicate = "  ";
                 break;
             default:
                 $pesStatusPredicate = 'pass a parm muppet ';
@@ -165,7 +165,11 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 		<th width="5px">Media</th>
 		<th width="5px">Membership</th>
 		<th>Process Status</th><th>PES Status</th><th>Comment</th></tr>
-		<tr class='searchingRow wrap'><td>Email Address</td><td>Requestor</td><td>Country</td>
+		<tr class='searchingRow wrap'>
+		<td>Email Address</td>
+		<td>Account</td>
+		<td>Requestor</td>
+		<td>Country</td>
 		<td>Consent</td>
 		<td>Right to Work</td>
 		<td>ID</td>
@@ -174,6 +178,10 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 		<td>Financial Sanctions</td>
 		<td>Criminal Records Check</td>
 		<td>Proof of Activity</td>
+		<td>Qualifications</td>
+		<td>Directors</td>
+		<td>Media</td>
+		<td>Membership</td>
 		<td>Process Status</td><td>PES Status</td><td>Comment</td></tr>
 		</thead>
 		<tbody>
@@ -272,10 +280,10 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
     			<label class="control-label col-sm-1" for="pesRecordFilter">Records:</label>
     			<div class="col-sm-4" >
     			<div class="btn-group" role="group" aria-label="Record Selection">
-  					<button type="button" role='button'  class="btn btn-info btnRecordSelection active" data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>'    data-toggle='tooltip'  title='Active Record in Initiated or Requested status'     >Requested</button>
-					<button type="button" role='button'  class="btn btn-info btnRecordSelection "       data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_PROVISIONAL?>'  data-toggle='tooltip'  title='Active Records in Provisional Clearance status' >Provisional</button>
-  					<button type="button" role='button'  class="btn btn-info btnRecordSelection "       data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE?>'              data-toggle='tooltip'  title='Active Records'     >Active</button>
-  					<button type="button" role='button'  class="btn btn-info btnRecordSelection"        data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_NOT_ACTIVE?>'          data-toggle='tooltip'  title='Recently Closed'  >Recent</button>
+  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-info btnRecordSelection active" data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>'    data-toggle='tooltip'  title='Active Record in Initiated or Requested status'     >Requested</button>
+					<button type="button" role='button' name='pesRecordFilter' class="btn btn-info btnRecordSelection "       data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_PROVISIONAL?>'  data-toggle='tooltip'  title='Active Records in Provisional Clearance status' >Provisional</button>
+  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-info btnRecordSelection "       data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE?>'              data-toggle='tooltip'  title='Active Records'     >Active</button>
+  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-info btnRecordSelection"        data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_NOT_ACTIVE?>'          data-toggle='tooltip'  title='Recently Closed'  >Recent</button>
 				</div>
 				</div>
 
