@@ -602,7 +602,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
                 $dateField = 'PES_DATE_REQUESTED';
                 break;
             case AccountPersonRecord::PES_STATUS_EVI_REQUESTED:
-                $dateField = 'PES_DATE_EVIDENCE';
+                $dateField = 'PES_EVIDENCE_DATE';
                 break;
             case AccountPersonRecord::PES_STATUS_CLEARED:
 //            case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:

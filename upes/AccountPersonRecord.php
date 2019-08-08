@@ -45,7 +45,8 @@ class AccountPersonRecord extends DbRecord
     protected $PES_REQUESTOR;
     protected $PES_STATUS;
     protected $PES_STATUS_DETAILS;
-    protected $PES_DATE_EVIDENCE;
+    protected $PES_DATE_RESPONDED;
+    protected $PES_EVIDENCE_DATE;
     protected $PES_CLEARED_DATE;
     protected $PES_RECHECK_DATE;
 
@@ -189,21 +190,17 @@ class AccountPersonRecord extends DbRecord
 
 
     static function getPesStatusWithButtons($row){
-        $email   = trim($row['EMAIL_ADDRESS']);
+        $emailAddress   = trim($row['EMAIL_ADDRESS']);
         $upesRef = trim($row['UPES_REF']);
         $status  = trim($row['PES_STATUS']);
         $account  = trim($row['ACCOUNT']);
         $accountid  = trim($row['ACCOUNT_ID']);
-        $boarder = stripos(trim($row['PES_STATUS_DETAILS']),'Boarded as')!== false ;
         $passportFirst   = array_key_exists('PASSPORT_FIRST_NAME', $row) ? $row['PASSPORT_FIRST_NAME'] : null;
         $passportLastname = array_key_exists('PASSPORT_LAST_NAME', $row)    ? $row['PASSPORT_LAST_NAME'] : null;
 
         $pesStatusWithButton = '';
         $pesStatusWithButton.= "<span class='pesStatusField' data-upesref='" . $upesRef . "' data-account='" . $account . "'data-accountid='" . $accountid . "'  >" .  $status . "</span><br/>";
         switch (true) {
-            case $boarder:
-                // Don't add buttons if this is a boarded - pre-boarder record.
-                break;
             case $status == AccountPersonRecord::PES_STATUS_TBD && !$_SESSION['isPesTeam']:
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesInitiate accessRestrict accessPmo accessFm' ";
                 $pesStatusWithButton.= "aria-label='Left Align' ";
@@ -245,7 +242,7 @@ class AccountPersonRecord extends DbRecord
             $pesStatusWithButton.= "<span class='glyphicon glyphicon-send ' aria-hidden='true' ></span>";
 
             $pesStatusWithButton.= "</button>&nbsp;";
-            case $status == AccountPersonRecord::PES_STATUS_REQUESTED && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_EVI_REQUESTED && $_SESSION['isPesTeam'] :
 //            case $status == AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_CLEARED && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_EXCEPTION && $_SESSION['isPesTeam'] :
@@ -519,14 +516,14 @@ class AccountPersonRecord extends DbRecord
                 $pattern   = self::$pesClearedEmailPattern;
                 $emailBody = self::$pesClearedEmail;
                 $replacements = array($fullName,$this->PES_CLEARED_DATE,self::$pesTaskId[0], $account);
-                $title = 'PES Status Change';
+                $title = "PES($account) Status Change";
                 !empty($emailAddress) ? $to[] = $emailAddress : null;
                 !empty($requestor)    ? $to[] = $requestor : null;
                 break;
             case self::PES_STATUS_CANCEL_REQ:
                 $pattern   = self::$pesCancelPesEmailPattern;
                 $emailBody = self::$pesCancelPesEmail;
-                $title = 'PES Cancel Request';
+                $title = "PES($account) Cancel Request";
                 $replacements = array($fullName,$this->UPES_REF, $_SESSION['ssoEmail'], $account);
                 $to[] = personRecord::$pesTaskId[0];
                 !empty($requestor) ? $cc[] = $requestor : null;
