@@ -96,6 +96,11 @@ $(document).ready(function(){
 		width: '100%'
 	});
 
+	$('#IBM_STATUS').select2({
+		placeholder: 'Select Status',
+		width: '100%'
+	});
+
 
 	$('#CONTRACT_ID').change(function(e){
 		console.log(e);
@@ -178,6 +183,7 @@ $(document).ready(function(){
 		    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
 		    	    $('#personForm').trigger("reset");
 		    	    $('#COUNTRY').val('').trigger('change');
+		    	    $('#IBM_STATUS').val('').trigger('change');
 		    	    $('#CONTRACT_ID').val('').trigger('change');
 		    	    $('#EMAIL_ADDRESS').css('background-color','White').trigger('change');
 		            $("#PES_LEVEL").select2("destroy");
