@@ -32,17 +32,11 @@ $person->amendPesStatusModal();
 ?>
 </div>
 <script>
+var pesevent = new pesEvent();
+var person = new personRecord();
+
 $(document).ready(function(){
- 	var pesevent = new pesEvent();
- 	var person = new personRecord();
 
- 	person.listenForEditPesStatus();
- 	person.listenForSavePesStatus();
-// 	person.listenForInitiatePesFromPortal();
-// 	person.listenforSendPesEmail();
-// 	person.listenforConfirmSendPesEmail();
-
- 	var pesevent = new pesEvent();
 	pesevent.populatePesTracker('<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>');
  	pesevent.listenForBtnRecordSelection();
  	pesevent.listenForPesStageValueChange();
@@ -52,6 +46,13 @@ $(document).ready(function(){
  	pesevent.listenForFilterPriority();
  	pesevent.listenForFilterProcess();
  	pesevent.listenForBtnChaser();
+ 	pesevent.listenForEditPesStatus();
+ 	pesevent.listenForSavePesStatus();
+// 	person.listenForInitiatePesFromPortal();
+// 	person.listenforSendPesEmail();
+// 	person.listenforConfirmSendPesEmail();
+
+
 });
 </script>
 <style>

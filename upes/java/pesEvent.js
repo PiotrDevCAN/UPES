@@ -10,11 +10,6 @@ $.expr[":"].contains = $.expr.createPseudo(function(arg) {
     };
 });
 
-
-
-
-
-
 function searchTable(){
 	  var filter = $('#pesTrackerTableSearch').val().toUpperCase();
 
@@ -34,8 +29,6 @@ function searchTable(){
 }
 
 function pesEvent() {
-	
-  var table;
 
   this.init = function(){
     console.log('+++ Function +++ pesEvent.init');
@@ -119,11 +112,12 @@ function pesEvent() {
   
   
   this.populatePesTracker = function(records){
+ 
 	  var buttons = $('.btnRecordSelection');	  
   
 	  $('#pesTrackerTableDiv').html('<i class="fa fa-spinner fa-spin" style="font-size:68px"></i>');
 
-	  pesEvent.table = $.ajax({
+	  pesTrackerTable = $.ajax({
 		  	url: "ajax/populatePesTrackerTable.php",
 		  	type: 'POST',
 		  	data : { records: records,
@@ -149,12 +143,10 @@ function pesEvent() {
 		    		
 		    	} else {
 		    		$('#pesTrackerTableDiv').html(resultObj.messages);
-		    	}
-		    	
+		    	}		    	
 		    }
 	  });
-	  
-	    // Apply the search
+      // Apply the search
     
 	        $(document).on( 'keyup change', '.firstInput', function (e) {
 	        	var searchFor = this.value;
@@ -206,9 +198,9 @@ function pesEvent() {
   this.listenForSavePesComment = function() {
 	  $(document).on('click','.btnPesSaveComment', function(){
 		  
-		  var upesref   =  $(this).siblings('textarea').data('upesref').trim();
-		  var accountid =  $(this).siblings('textarea').data('accountid').trim();
-		  var comment   = $(this).siblings('textarea').val().trim();
+		  var upesref   =  $(this).siblings('textarea').data('upesref');
+		  var accountid =  $(this).siblings('textarea').data('accountid');
+		  var comment   = $(this).siblings('textarea').val();
 		  var button    = $(this);
 		  
 		  console.log(button.siblings('div'));
@@ -235,11 +227,12 @@ function pesEvent() {
   
   this.listenForPesStageValueChange = function(){
 	  $(document).on('click','.btnPesStageValueChange', function(){  
+		  var personDetails = $(this).parents('.personDetails');
 		  var setPesTo = $(this).data('setpesto');	
-		  var column   = $(this).parents('div').data('pescolumn').trim();		  
-		  var upesref  = $(this).parents('div').data('upesref').trim();
-		  var accountid= $(this).parents('div').data('accountid').trim();
-		  
+		  var column   = $(this).parents('.columnDetails').first().data('pescolumn');		  
+		  var upesref  = $(personDetails).data('upesref');
+		  var accountid= $(personDetails).data('accountid');
+
 		  var pesevent = new pesEvent();
 		  var alertClass = pesevent.getAlertClassForPesStage(setPesTo);
 		  		  
@@ -297,10 +290,10 @@ function pesEvent() {
 		  var dataDiv       = $(this).parents('td').children('.personDetails').first();
 		  var upesref       = $(dataDiv).data('upesref');
 		  var accountid     = $(dataDiv).data('accountid');
-		  var account       = $(dataDiv).data('account').trim();
-		  var fullname      = $(dataDiv).data('fullname').trim();
-		  var emailaddress  = $(dataDiv).data('emailaddress').trim();
-		  var requestor     = $(dataDiv).data('requestor').trim();
+		  var account       = $(dataDiv).data('account');
+		  var fullname      = $(dataDiv).data('fullname');
+		  var emailaddress  = $(dataDiv).data('emailaddress');
+		  var requestor     = $(dataDiv).data('requestor');
 //		  $(this).parents('div').prev('div.pesProcessStatusDisplay').html(processStatus);
 		  $(this).addClass('spinning');
 		   $.ajax({
@@ -330,9 +323,9 @@ function pesEvent() {
   this.listenForPesPriorityChange = function(){
 	  $(document).on('click','.btnPesPriority', function(){  
 		  var buttonObj   = $(this);
-		  var pespriority = $(this).data('pespriority').trim();					  
-		  var upesref     = $(this).data('upesref').trim();
-		  var accountid   = $(this).data('accountid').trim();
+		  var pespriority = $(this).data('pespriority');					  
+		  var upesref     = $(this).data('upesref');
+		  var accountid   = $(this).data('accountid');
 //		  $(this).parents('div').prev('div.pesProcessStatusDisplay').html(processStatus);
 		  $(this).addClass('spinning');
 		   $.ajax({
@@ -441,7 +434,93 @@ function pesEvent() {
 		  $(".pesProcessStatusDisplay:contains('" + pesprocess + "')").parents('tr').show();
 		  $('th').parent('tr').show();			  
 	  });
-  }
+  },
+  
+  this.listenForEditPesStatus = function(){
+	    $(document).on('click','.btnPesStatus', function(e){
+   	
+	           var upesref = ($(this).data('upesref'));
+	           var account = ($(this).data('account'));
+	           var accountid = ($(this).data('accountid'));
+	           var emailaddress = ($(this).data('emailaddress'));
+	           
+	           console.log($(this).data('passportfirst'));
+	           
+	           if(typeof($(this).data('passportfirst'))!='undefined'){
+	        	   var passportFirst = $(this).data('passportfirst');
+	        	   var passportSurname = $(this).data('passportsurname');
+	               $('#psm_passportFirst').val($.trim(passportFirst));
+	               $('#psm_passportSurname').val($.trim(passportSurname));
+	        	   $('#psm_passportFirst').prop('disabled',false);
+	        	   $('#psm_passportSurname').prop('disabled',false);
+	           } else {
+	        	   $('#passportNameDetails').hide();
+	        	   $('#psm_passportFirst').prop('disabled',true);
+	        	   $('#psm_passportSurname').prop('disabled',true);
+	           }
+	           
+	           var status  = ($(this).data('pesstatus'));
+	           
+	           $('#psm_accountid').val(accountid);
+	           $('#psm_account').val(account);
+	           $('#psm_upesref').val(upesref);
+	           $('#psm_emailaddress').val(emailaddress);
+
+	           $('#amendPesStatusModal').on('shown.bs.modal', { status: status}, function (e) {
+	               $('#psm_status').select2();
+	               $('#psm_status').val(e.data.status).trigger('change');
+	               $('#psm_detail').val('');
+	               $('#pes_date').datepicker({ dateFormat: 'dd M yy',
+	            	   						   altField: '#pes_date_db2',
+	               							   altFormat: 'yy-mm-dd' ,
+	               							   maxDate:0 }
+	               							  );
+	           });
+	           $('#amendPesStatusModal').modal('show');
+	      });
+	  },
+  
+  this.listenForSavePesStatus = function(){
+	    $(this).attr('disabled',true);
+	    $('#psmForm').submit(function(e){
+	    	console.log(pesevent);	    	
+	    	console.log(pesevent.table);
+	    	
+	    	$('#savePesStatus').attr('disabled',true).addClass('spinning');
+	        var form = document.getElementById('psmForm');
+	        var formValid = form.checkValidity();
+	        if(formValid){
+	          var allDisabledFields = ($("input:disabled"));
+	          $(allDisabledFields).not('#psm_passportFirst').not('#psm_passportSurname').attr('disabled',false);
+	          var formData = $('#amendPesStatusModal form').serialize();
+	          console.log(formData);
+	          $(allDisabledFields).attr('disabled',true);
+	          $.ajax({
+	              url: "ajax/savePesStatus.php",
+	              data : formData,
+	              type: 'POST',
+	              success: function(result){
+	                console.log(result);
+	                var resultObj = JSON.parse(result);
+	                $('#savePesStatus').attr('disabled',false).removeClass('spinning');	                
+	                var success = resultObj.success;
+	                pesevent.populatePesTracker();
+	                if(!success){
+	                	alert('Save PES Status, may not have been successful');
+	                	alert(resultObj.messages + resultObj.emailResponse);
+	                } else {                    
+	                    $('#amendPesStatusModal').modal('hide');
+	                }
+              	
+	              }
+	            });
+
+	        };
+	        return false;
+	      });
+	  }
+
+  
   
 }
 

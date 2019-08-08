@@ -71,6 +71,11 @@ class AccountTable extends DbTable
     }
 
 
-
+    static function getAccountNameFromId($accountId){
+        $sql = " SELECT ACCOUNT FROM " . $_SESSION['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT . " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
+        $rs = db2_exec($_SESSION['conn'], $sql);
+        $row = db2_fetch_assoc($rs);
+        return trim($row['ACCOUNT']);
+    }
 }
 

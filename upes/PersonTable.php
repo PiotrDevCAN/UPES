@@ -72,7 +72,7 @@ class PersonTable extends DbTable
 
     static function getEmailFromUpesref($upesref){
         $sql = " SELECT EMAIL_ADDRESS FROM " . $_SESSION['Db2Schema'] . "." . allTables::$PERSON;
-        $sql.= " WHERE UPESREF = '" . db2_escape_string(strtoupper(trim($upesref))) . "' ";
+        $sql.= " WHERE UPES_REF = '" . db2_escape_string(strtoupper(trim($upesref))) . "' ";
         $sql.= " FETCH FIRST 1 ROW ONLY ";
 
         $resultSet = db2_exec($_SESSION['conn'], $sql);
@@ -101,6 +101,27 @@ class PersonTable extends DbTable
 
         return $names;
     }
+
+    function setPesPassportNames($upesref,$passportFirstname=null,$passportSurname=null){
+
+        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql.= " SET PASSPORT_FIRST_NAME=";
+        $sql.= !empty($passportFirstname) ? "'" . db2_escape_string($passportFirstname) . "', " : " null, ";
+        $sql.= " PASSPORT_SURNAME=";
+        $sql.= !empty($passportSurname) ? "'" . db2_escape_string($passportSurname) . "'  " : " null ";
+        $sql.= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' ";
+
+        $rs = db2_exec($_SESSION['conn'],$sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
+            throw new \Exception("Failed to update Passport Names: $passportFirstname  / $passportSurname for $cnum");
+        }
+
+        return true;
+    }
+
+
 
 }
 

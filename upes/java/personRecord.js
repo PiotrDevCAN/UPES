@@ -20,106 +20,91 @@ function personRecord() {
     console.log('--- Function --- personRecord.init');
   },
   
-  this.listenForEditPesStatus = function(){
-	    $(document).on('click','.btnPesStatus', function(e){
-	    	
-	    	console.log(this);
-	    	
-	    	
-	           var upesref = ($(this).data('upesref'));
-	           
-	           var account = ($(this).data('account'));
-	           var accountid = ($(this).data('accountid'));
-	           var emailaddress = ($(this).data('emailaddress'));
-	           
-	           console.log($(this).data('passportfirst'));
-	           
-	           if(typeof($(this).data('passportfirst'))!='undefined'){
-	        	   var passportFirst = $(this).data('passportfirst');
-	        	   var passportSurname = $(this).data('passportsurname');
-	               $('#psm_passportFirst').val($.trim(passportFirst));
-	               $('#psm_passportSurname').val($.trim(passportSurname));
-	        	   $('#psm_passportFirst').prop('disabled',false);
-	        	   $('#psm_passportSurname').prop('disabled',false);
-	           } else {
-	        	   $('#passportNameDetails').hide();
-	        	   $('#psm_passportFirst').prop('disabled',true);
-	        	   $('#psm_passportSurname').prop('disabled',true);
-	           }
-	           
-	           var status  = ($(this).data('pesstatus'));
-	           
-	           $('#psm_accountid').val(accountid);
-	           $('#psm_account').val(account);
-	           $('#psm_upesref').val(upesref);
-	           $('#psm_emailaddress').val(emailaddress);
+//  this.listenForEditPesStatus = function(){
+//	    $(document).on('click','.btnPesStatus', function(e){
+//	    	
+//	    	console.log(this);
+//	    	
+//	    	
+//	           var upesref = ($(this).data('upesref'));
+//	           
+//	           var account = ($(this).data('account'));
+//	           var accountid = ($(this).data('accountid'));
+//	           var emailaddress = ($(this).data('emailaddress'));
+//	           
+//	           console.log($(this).data('passportfirst'));
+//	           
+//	           if(typeof($(this).data('passportfirst'))!='undefined'){
+//	        	   var passportFirst = $(this).data('passportfirst');
+//	        	   var passportSurname = $(this).data('passportsurname');
+//	               $('#psm_passportFirst').val($.trim(passportFirst));
+//	               $('#psm_passportSurname').val($.trim(passportSurname));
+//	        	   $('#psm_passportFirst').prop('disabled',false);
+//	        	   $('#psm_passportSurname').prop('disabled',false);
+//	           } else {
+//	        	   $('#passportNameDetails').hide();
+//	        	   $('#psm_passportFirst').prop('disabled',true);
+//	        	   $('#psm_passportSurname').prop('disabled',true);
+//	           }
+//	           
+//	           var status  = ($(this).data('pesstatus'));
+//	           
+//	           $('#psm_accountid').val(accountid);
+//	           $('#psm_account').val(account);
+//	           $('#psm_upesref').val(upesref);
+//	           $('#psm_emailaddress').val(emailaddress);
+//
+//	           $('#amendPesStatusModal').on('shown.bs.modal', { status: status}, function (e) {
+//	               $('#psm_status').select2();
+//	               $('#psm_status').val(e.data.status).trigger('change');
+//	               $('#psm_detail').val('');
+//	               $('#pes_date').datepicker({ dateFormat: 'dd M yy',
+//	            	   						   altField: '#pes_date_db2',
+//	               							   altFormat: 'yy-mm-dd' ,
+//	               							   maxDate:0 }
+//	               							  );
+//	           });
+//	           $('#amendPesStatusModal').modal('show');
+//	      });
+//	  },
 
-	           $('#amendPesStatusModal').on('shown.bs.modal', { status: status}, function (e) {
-	               $('#psm_status').select2();
-	               $('#psm_status').val(e.data.status).trigger('change');
-	               $('#psm_detail').val('');
-	               $('#pes_date').datepicker({ dateFormat: 'dd M yy',
-	            	   						   altField: '#pes_date_db2',
-	               							   altFormat: 'yy-mm-dd' ,
-	               							   maxDate:0 }
-	               							  );
-	           });
-	           $('#amendPesStatusModal').modal('show');
-	      });
-	  },
-
-	  this.listenForSavePesStatus = function(){
-	    $(this).attr('disabled',true);
-	    $('#psmForm').submit(function(e){
-	    	$('#savePesStatus').attr('disabled',true).addClass('spinning');
-	        var form = document.getElementById('psmForm');
-	        var formValid = form.checkValidity();
-	        if(formValid){
-	          var allDisabledFields = ($("input:disabled"));
-	          $(allDisabledFields).not('#psm_passportFirst').not('#psm_passportSurname').attr('disabled',false);
-	          var formData = $('#amendPesStatusModal form').serialize();
-	          console.log(formData);
-	          $(allDisabledFields).attr('disabled',true);
-	          $.ajax({
-	              url: "ajax/savePesStatus.php",
-	              data : formData,
-	              type: 'POST',
-	              success: function(result){
-	                console.log(result);
-	                var resultObj = JSON.parse(result);
-	                $('#savePesStatus').attr('disabled',false).removeClass('spinning');
-	                
-	                var success = resultObj.success;
-	                
-	                if(!success){
-	                	alert('Save PES Status, may not have been successful');
-	                	alert(resultObj.messages + resultObj.emailResponse);
-	                	if(typeof( personWithSubPRecord.table) != 'undefined'){
-	                        // We came from the PERSON PORTAL
-	                		 personWithSubPRecord.table.ajax.reload();	
-	                	}
-	                	
-	                } else {
-	                    if(typeof( personWithSubPRecord.table) != 'undefined'){
-	                        // We came from the PERSON PORTAL
-	                    	 personWithSubPRecord.table.ajax.reload();	
-	                    }  else {
-	                    	// We came from the PES TRACKER
-	                    	console.log('find and amend the email details');
-	                    	var cnum = resultObj.cnum;
-	                    	var formattedEmail = resultObj.formattedEmailField;
-	                    	$('#pesTrackerTable tr.' + cnum).children('.formattedEmailTd:first').children('.formattedEmailDiv:first').html(formattedEmail);                	
-	                    }             
-	                    
-	                    $('#amendPesStatusModal').modal('hide');
-	                }
-	              }
-	            });
-
-	        };
-	        return false;
-	      });
-	  },
+//	  this.listenForSavePesStatus = function(){
+//	    $(this).attr('disabled',true);
+//	    $('#psmForm').submit(function(e){
+//	    	console.log(pesevent);
+//	    	$('#savePesStatus').attr('disabled',true).addClass('spinning');
+//	        var form = document.getElementById('psmForm');
+//	        var formValid = form.checkValidity();
+//	        if(formValid){
+//	          var allDisabledFields = ($("input:disabled"));
+//	          $(allDisabledFields).not('#psm_passportFirst').not('#psm_passportSurname').attr('disabled',false);
+//	          var formData = $('#amendPesStatusModal form').serialize();
+//	          console.log(formData);
+//	          $(allDisabledFields).attr('disabled',true);
+//	          $.ajax({
+//	              url: "ajax/savePesStatus.php",
+//	              data : formData,
+//	              type: 'POST',
+//	              success: function(result){
+//	                console.log(result);
+//	                var resultObj = JSON.parse(result);
+//	                $('#savePesStatus').attr('disabled',false).removeClass('spinning');	                
+//	                var success = resultObj.success;
+//	                pesevent.table.ajax.reload();
+//	                if(!success){
+//	                	alert('Save PES Status, may not have been successful');
+//	                	alert(resultObj.messages + resultObj.emailResponse);
+//	                } else {                    
+//	                    $('#amendPesStatusModal').modal('hide');
+//	                }
+//                	
+//	              }
+//	            });
+//
+//	        };
+//	        return false;
+//	      });
+//	  },
 	  
 	  
 	  this.listenForCancelPes = function(){
@@ -147,17 +132,7 @@ function personRecord() {
 		                 console.log(result);
 		                 var resultObj = JSON.parse(result);
 		                 $('#savePesStatus').attr('disabled',false);
-		                
-		                 if(typeof( personWithSubPRecord.table) != 'undefined'){
-		                     // We came from the PERSON PORTAL
-		                	 personWithSubPRecord.table.ajax.reload();	
-		                 }  else {
-		                 	// We came from the PES TRACKER
-		                 	var cnum = resultObj.cnum;
-		                 	var formattedEmail = resultObj.formattedEmailField;
-		                 	$('#pesTrackerTable tr.' + cnum).children('.formattedEmailTd:first').children('.formattedEmailDiv:first').html(formattedEmail);                	
-		                 }             
-		                 
+		                 pesevent.table.ajax.reload();	
 		                 $('#amendPesStatusModal').modal('hide');
 		               }
 		             });

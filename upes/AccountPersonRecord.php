@@ -5,19 +5,20 @@ use itdq\DbRecord;
 use itdq\Loader;
 use itdq\FormClass;
 use upes\AccountPersonTable;
+use itdq\AuditTable;
 
 /*
 
 DROP TABLE UPES_DEV.ACCOUNT_PERSON;
 
 
-CREATE TABLE UPES_DEV.ACCOUNT_PERSON ( ACCOUNT_ID INTEGER NOT NULL, UPES_REF INTEGER NOT NULL, PES_LEVEL CHAR(5), PES_DATE_REQUESTED DATE NOT NULL WITH DEFAULT CURRENT DATE, PES_REQUESTOR CHAR(75) NOT NULL, PES_STATUS CHAR(50) NOT NULL WITH DEFAULT 'Request Created', PES_STATUS_DETAILS CLOB(1048576), PES_CLEARED_DATE DATE, PES_RECHECK_DATE CHAR(5)
+CREATE TABLE UPES_DEV.ACCOUNT_PERSON ( ACCOUNT_ID INTEGER NOT NULL, UPES_REF INTEGER NOT NULL, PES_LEVEL CHAR(5), PES_DATE_REQUESTED DATE NOT NULL WITH DEFAULT CURRENT DATE, PES_REQUESTOR CHAR(75) NOT NULL, PES_STATUS CHAR(50) NOT NULL WITH DEFAULT 'Request Created', PES_STATUS_DETAILS CLOB(1048576), PES_DATE_RESPONDED DATE,PES_EVIDENCE_DATE DATE, PES_CLEARED_DATE DATE, PES_RECHECK_DATE DATE
                                        , CONSENT CHAR(10),RIGHT_TO_WORK CHAR(10),PROOF_OF_ID CHAR(10),PROOF_OF_RESIDENCY CHAR(10),CREDIT_CHECK CHAR(10),FINANCIAL_SANCTIONS CHAR(10),CRIMINAL_RECORDS_CHECK CHAR(10)
                                        , PROOF_OF_ACTIVITY CHAR(10),QUALIFICATIONS CHAR(10),DIRECTORS CHAR(10),MEDIA CHAR(10),MEMBERSHIP CHAR(10)
                                        , PROCESSING_STATUS CHAR(20), PROCESSING_STATUS_CHANGED TIMESTAMP
                                        , DATE_LAST_CHASED DATE, COMMENT VARCHAR(8192), PRIORITY CHAR(10)
                                        , SYSTEM_START_TIME TIMESTAMP(12) NOT NULL GENERATED ALWAYS AS ROW BEGIN, SYSTEM_END_TIME TIMESTAMP(12) NOT NULL GENERATED ALWAYS AS ROW END, TRANS_ID TIMESTAMP(12) GENERATED ALWAYS AS TRANSACTION START ID, PERIOD SYSTEM_TIME(SYSTEM_START_TIME,SYSTEM_END_TIME) );
-CREATE TABLE UPES_DEV.ACCOUNT_PERSON_HIST ( ACCOUNT_ID INTEGER NOT NULL, UPES_REF INTEGER NOT NULL , PES_LEVEL CHAR(5), PES_DATE_REQUESTED DATE NOT NULL, PES_REQUESTOR CHAR(75) NOT NULL,  PES_STATUS CHAR(50) NOT NULL, PES_STATUS_DETAILS CLOB(1048576), PES_CLEARED_DATE DATE, PES_RECHECK_DATE CHAR(5)
+CREATE TABLE UPES_DEV.ACCOUNT_PERSON_HIST ( ACCOUNT_ID INTEGER NOT NULL, UPES_REF INTEGER NOT NULL , PES_LEVEL CHAR(5), PES_DATE_REQUESTED DATE NOT NULL, PES_REQUESTOR CHAR(75) NOT NULL,  PES_STATUS CHAR(50) NOT NULL, PES_STATUS_DETAILS CLOB(1048576), PES_DATE_RESPONDED DATE, PES_EVIDENCE_DATE DATE,PES_CLEARED_DATE DATE, PES_RECHECK_DATE DATE
                                        , CONSENT CHAR(10),RIGHT_TO_WORK CHAR(10),PROOF_OF_ID CHAR(10),PROOF_OF_RESIDENCY CHAR(10),CREDIT_CHECK CHAR(10),FINANCIAL_SANCTIONS CHAR(10),CRIMINAL_RECORDS_CHECK CHAR(10)
                                        , PROOF_OF_ACTIVITY CHAR(10),QUALIFICATIONS CHAR(10),DIRECTORS CHAR(10),MEDIA CHAR(10),MEMBERSHIP CHAR(10)
                                        , PROCESSING_STATUS CHAR(20), PROCESSING_STATUS_CHANGED TIMESTAMP
@@ -26,6 +27,8 @@ CREATE TABLE UPES_DEV.ACCOUNT_PERSON_HIST ( ACCOUNT_ID INTEGER NOT NULL, UPES_RE
 ALTER TABLE UPES_DEV.ACCOUNT_PERSON ADD VERSIONING USE HISTORY TABLE UPES_DEV.ACCOUNT_PERSON_HIST;
 
 ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD CONSTRAINT "AccPer_PK" PRIMARY KEY ("ACCOUNT_ID","UPES_REF" ) ENFORCED;
+ALTER TABLE "UPES_UT"."ACCOUNT_PERSON" ALTER COLUMN "PES_RECHECK_DATE" SET DATA TYPE DATE;
+
 
 
  *
@@ -42,6 +45,7 @@ class AccountPersonRecord extends DbRecord
     protected $PES_REQUESTOR;
     protected $PES_STATUS;
     protected $PES_STATUS_DETAILS;
+    protected $PES_DATE_EVIDENCE;
     protected $PES_CLEARED_DATE;
     protected $PES_RECHECK_DATE;
 
@@ -80,7 +84,7 @@ class AccountPersonRecord extends DbRecord
 
     const PES_STATUS_NOT_REQUESTED = 'Not Requested';
     const PES_STATUS_CLEARED       = 'Cleared';
-    const PES_STATUS_CLEARED_PERSONAL= 'Cleared - Personal Reference';
+//    const PES_STATUS_CLEARED_PERSONAL= 'Cleared - Personal Reference'; - if this is coming back - need to handle the EMAIL when set to this status
     const PES_STATUS_DECLINED      = 'Declined';
     const PES_STATUS_EXCEPTION     = 'Exception';
     const PES_STATUS_PROVISIONAL   = 'Provisional Clearance';
@@ -96,6 +100,23 @@ class AccountPersonRecord extends DbRecord
     const PES_STATUS_LEFT_IBM      = 'Left IBM';
 
     static public $pesEvents = array('Consent Form','Right to Work','Proof of Id','Residency','Credit Check','Financial Sanctions','Criminal Records Check','Activity','Qualifications','Directors','Media','Membership');
+
+    private static $pesClearedEmail = 'Hello &&candidate&&,
+                                              <br/>I can confirm that you have successfully passed &&accountName&& PES Screening, effective from &&effectiveDate&&
+                                              <br/>If you need any more information regarding your PES clearance, please contact the taskid &&taskid&&.
+                                              <br/>Please contact your manager or account project office for details of the next step in boarding to the account.
+                                              <br/>Many Thanks for your cooperation,';
+    private static $pesClearedEmailPattern = array('/&&candidate&&/','/&&effectiveDate&&/','/&&taskid&&/','/&&accountName&&/');
+
+    private static $pesCancelPesEmail = 'PES Team,
+                                              <br/>Please stop processing the PES Clearance for : &&candidate&& UPES_REF:( &&upesref&& ) on Account : &&account&&
+                                              <br/>This action has been requested by  &&requestor&&.';
+    private static $pesCancelPesEmailPattern = array('/&&candidate&&/','/&&upesref&&/','/&&requestor&&/','/&&account&&/');
+
+    public static $pesTaskId = array('lbgvetpr@uk.ibm.com'); // Only first entry will be used as the "contact" in the PES status emails.
+
+
+
 
     function displayForm($mode)
     {
@@ -390,14 +411,10 @@ class AccountPersonRecord extends DbRecord
            </div>
           </div>
           <div class="modal-footer">
-          <?php
-          $allButtons = null;
-          $submitButton = $this->formButton('submit','Submit','savePesStatus',null,'Submit','btn-primary');
-          $allButtons[] = $submitButton;
-          $this->formBlueButtons($allButtons);
-          ?>
-
-           <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+	          <div class="button-blue submitButtonDiv" style="display: block ">
+        		<input class="btn btn-primary" type="submit" name="Submit" id="savePesStatus" value="Submit">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        	  </div>
           </div>
           </form>
         </div>
@@ -475,6 +492,64 @@ class AccountPersonRecord extends DbRecord
       </div>
     <?php
     }
+
+
+    function sendPesStatusChangedEmail(){
+
+        $personTable = new PersonTable(AllTables::$PERSON);
+        $emailAddress = $personTable->getEmailFromUpesref($this->UPES_REF);
+        $requestor = $this->PES_REQUESTOR;
+        $names = $personTable->getNamesFromUpesref($this->UPES_REF);
+        $fullName = $names['FULL_NAME'];
+        $account = AccountTable::getAccountNameFromId($this->ACCOUNT_ID);
+
+        $to = array();
+        $cc = array();
+
+        switch ($this->PES_STATUS) {
+//             case self::PES_STATUS_CLEARED_PERSONAL:
+//                 $pattern   = self::$pesClearedPersonalEmailPattern;
+//                 $emailBody = self::$pesClearedPersonalEmail;
+//                 $replacements = array($this->FIRST_NAME,$this->PES_DATE_RESPONDED,personRecord::$pesTaskId[0]);
+//                 $title = 'vBAC PES Status Change';
+//                 !empty($emailAddress) ? $to[] = $emailAddress : null;
+//                 !empty($fmEmail)      ? $to[] = $fmEmail : null;
+//                 break;
+            case self::PES_STATUS_CLEARED:
+                $pattern   = self::$pesClearedEmailPattern;
+                $emailBody = self::$pesClearedEmail;
+                $replacements = array($fullName,$this->PES_CLEARED_DATE,self::$pesTaskId[0], $account);
+                $title = 'PES Status Change';
+                !empty($emailAddress) ? $to[] = $emailAddress : null;
+                !empty($requestor)    ? $to[] = $requestor : null;
+                break;
+            case self::PES_STATUS_CANCEL_REQ:
+                $pattern   = self::$pesCancelPesEmailPattern;
+                $emailBody = self::$pesCancelPesEmail;
+                $title = 'PES Cancel Request';
+                $replacements = array($fullName,$this->UPES_REF, $_SESSION['ssoEmail'], $account);
+                $to[] = personRecord::$pesTaskId[0];
+                !empty($requestor) ? $cc[] = $requestor : null;
+                $cc[] = $_SESSION['ssoEmail'];
+
+
+            default:
+
+                break;
+        }
+
+        AuditTable::audit(print_r($pattern,true),AuditTable::RECORD_TYPE_DETAILS);
+        AuditTable::audit(print_r($replacements,true),AuditTable::RECORD_TYPE_DETAILS);
+        AuditTable::audit(print_r($emailBody,true),AuditTable::RECORD_TYPE_DETAILS);
+
+        $message = preg_replace($pattern, $replacements, $emailBody);
+
+        AuditTable::audit(print_r($message,true),AuditTable::RECORD_TYPE_DETAILS);
+
+        $response = \itdq\BlueMail::send_mail($to, $title ,$message, self::$pesTaskId[0], $cc);
+        return $response;
+    }
+
 
 
 

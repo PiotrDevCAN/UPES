@@ -7,8 +7,12 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 use \DateTime;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use itdq\xls;
+use itdq\AuditTable;
 
 /*
+ *
+ *ALTER TABLE "UPES_UT"."ACCOUNT_PERSON" ALTER COLUMN "PES_RECHECK_DATE" SET DATA TYPE DATE;
+
  *
  */
 
@@ -65,7 +69,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
                 $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "') ";
                 break;
             case self::PES_TRACKER_RECORDS_NOT_ACTIVE :
-                $pesStatusPredicate = " AP.PES_STATUS not in ('" . AccountPersonRecord::PES_STATUS_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_EVI_REQUESTED. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "')  ";
+                $pesStatusPredicate = " AP.PES_STATUS not in ('" . AccountPersonRecord::PES_STATUS_PES_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_EVI_REQUESTED. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "')  ";
                 $pesStatusPredicate.= " AND AP.PROCESSING_STATUS_CHANGED > current timestamp - 31 days AND AP.CNUM is not null ";
                 break;
             case self::PES_TRACKER_RECORDS_ALL :
@@ -180,9 +184,9 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             $date = DateTime::createFromFormat('Y-m-d', $row['PES_DATE_REQUESTED']);
             $age  = !empty($row['PES_DATE_REQUESTED']) ?  $date->diff($today)->format('%R%a days') : null ;
             // $age = !empty($row['PES_DATE_REQUESTED']) ? $interval->format('%R%a days') : null;
-            $upesref = $row['UPES_REF'];
-            $accountId = $row['ACCOUNT_ID'];
-            $account = $row['ACCOUNT'];
+            $upesref = trim($row['UPES_REF']);
+            $accountId = trim($row['ACCOUNT_ID']);
+            $account = trim($row['ACCOUNT']);
             $fullName = trim($row['FULL_NAME']);
             $emailaddress = trim($row['EMAIL_ADDRESS']);
             $requestor = trim($row['PES_REQUESTOR']);
@@ -190,7 +194,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             $formattedIdentityField = self::formatEmailFieldOnTracker($row);
 
             ?>
-            <tr class='<?=$upesref;?>'>
+            <tr class='<?=$upesref;?> personDetails' data-upesref='<?=$upesref;?>' data-accountid='<?=$accountId;?>' data-account='<?=$account;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$requestor;?>'   >
             <td class='formattedEmailTd'>
             <div class='formattedEmailDiv'><?=$formattedIdentityField;?></div>
             </td>
@@ -208,10 +212,10 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
                 </td>
                 <?php
             }
-        ?>
+            ?>
             <td class='nonSearchable'>
             <div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' ><?=self::formatProcessingStatusCell($row);?></div>
-            <div class='text-center personDetails '   data-upesref='<?=$upesref;?>' data-accountid='<?=$accountId;?>' data-account='<?=$account;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$requestor;?>'   >
+            <div class='text-center'>
             <span style='white-space:nowrap' >
             <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='PES' data-toggle="tooltip" data-placement="top" title="With PES Team" ><i class="fas fa-users"></i></a>
             <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='User' data-toggle="tooltip" data-placement="top" title="With Applicant" ><i class="fas fa-user"></i></a>
@@ -452,14 +456,14 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
         $formattedField = trim($row['EMAIL_ADDRESS']) . "<br/><small>";
         $formattedField.= "<i>" . trim($row['PASSPORT_FIRST_NAME']) . "&nbsp;<b>" . trim($row['PASSPORT_LAST_NAME']) . "</b></i><br/>";
-        $formattedField.= trim($row['FULL_NAME']) . "</b></small><br/>" . trim($row['CNUM']);
+        $formattedField.= trim($row['FULL_NAME']) . "</b></small><br/>" . trim($row['UPES_REF']);
         $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
 
         $formattedField.="<span style='white-space:nowrap' >
             <button class='btn btn-xs btn-danger  btnPesPriority accessPes accessCdi' data-pespriority='1'  data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='High' ><span class='glyphicon glyphicon-king' ></button>
-            <button class='btn btn-xs btn-warning  btnPesPriority accessPes accessCdi' data-pespriority='2' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Medium' ><span class='glyphicon glyphicon-knight' ></button>
-            <button class='btn btn-xs btn-success  btnPesPriority accessPes accessCdi' data-pespriority='3' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Low'><span class='glyphicon glyphicon-pawn' ></button>
-            <button class='btn btn-xs btn-info btnPesPriority accessPes accessCdi' data-pespriority='99'    data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></button>
+            <button class='btn btn-xs btn-warning btnPesPriority accessPes accessCdi' data-pespriority='2' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Medium' ><span class='glyphicon glyphicon-knight' ></button>
+            <button class='btn btn-xs btn-success btnPesPriority accessPes accessCdi' data-pespriority='3' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Low'><span class='glyphicon glyphicon-pawn' ></button>
+            <button class='btn btn-xs btn-info    btnPesPriority accessPes accessCdi' data-pespriority='99'    data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></button>
             </span>";
 
 
@@ -507,7 +511,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
     static function getButtonsForPesStage($value, $alertClass, $stage, $upesref, $accountid){
         ?>
         <div class='alert <?=$alertClass;?> text-center pesStageDisplay' role='alert' ><?=$value;?></div>
-        <div class='text-center' data-pescolumn='<?=$stage?>' data-upesref='<?=$upesref?>' data-accountid='<?=$accountid?>'>
+        <div class='text-center columnDetails' data-pescolumn='<?=$stage?>' >
         <span style='white-space:nowrap' >
         <button class='btn btn-success btn-xs btnPesStageValueChange accessPes accessCdi'  data-setpesto='Yes' data-toggle="tooltip" data-placement="top" title="Cleared" ><span class="glyphicon glyphicon-ok-sign" ></span></button>
   		<button class='btn btn-warning btn-xs btnPesStageValueChange accessPes accessCdi'  data-setpesto='Prov' data-toggle="tooltip"  title="Stage Cleared Provisionally"><span class="glyphicon glyphicon-alert" ></span></button>
@@ -570,7 +574,12 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         return true;
     }
 
-    function setPesStatus($upesref=null,$accountid= null, $status=null,$requestor=null){
+    function setPesStatus($upesref=null,$accountid= null, $status=null,$requestor=null, $pesStatusDetails=null){
+
+        $db2AutoCommit = db2_autocommit($_SESSION['conn']);
+        db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_OFF);
+
+
         if(!$upesref or !$accountid){
             throw new \Exception('No UPESREF/ACCOUNTID provided in ' . __METHOD__);
         }
@@ -599,7 +608,8 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         }
         $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
         $sql .= " SET $dateField = current date, PES_STATUS='" . db2_escape_string($status)  . "' ";
-        $sql .= trim($status)==AccountPersonRecord::PES_STATUS_INITIATED ? ", PES_REQUESTOR='" . db2_escape_string($requestor) . "' " : null;
+        $sql .= !empty($pesStatusDetails) ? " AND PES_STATUS_DETAILS='" . db2_escape_string($pesStatusDetails) . "' " : null;
+        $sql .= trim($status)==AccountPersonRecord::PES_STATUS_PES_REQUESTED ? ", PES_REQUESTOR='" . db2_escape_string($requestor) . "' " : null;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' and ACCOUNT_ID='" . db2_escape_string($accountid)  . "' ";
 
         $result = db2_exec($_SESSION['conn'], $sql);
@@ -609,31 +619,43 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             return false;
         }
 
-        $pesTracker = new pesTrackerTable(allTables::$PES_TRACKER);
+        $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
         $pesTracker->savePesComment($upesref, $accountid,  "PES_STATUS set to :" . $status );
 
         AuditTable::audit("PES Status set for:" . $upesref . "/" . $accountid ." To : " . $status . " By:" . $requestor,AuditTable::RECORD_TYPE_AUDIT);
+
+
+        db2_commit($_SESSION['conn']);
+        db2_autocommit($_SESSION['conn'],$db2AutoCommit);
+
 
         return true;
     }
 
     function setPesRescheckDate($upesref=null,$accountid=null, $requestor=null){
         if(!$upesref or !$accountid){
-            throw new \Exception('No UPESREF/ACCOUNTID provided in ' . __METHOD__);
+            throw new \Exception('No UPES_REF/ACCOUNTID provided in ' . __METHOD__);
         }
 
         $requestor = empty($requestor) ? $_SESSION['ssoEmail'] : $requestor;
 
         $loader = new Loader();
         $predicate = " UPES_REF='" . db2_escape_string(trim($upesref)) . "' AND ACCOUNT_ID = '" . db2_escape_string($accountid) . "' ";
-        $pesLevels = $loader->loadIndexed('PES_LEVEL','UPES_REF',allTables::$PERSON,$predicate);
+        $pesLevels = $loader->loadIndexed('PES_LEVEL','UPES_REF',allTables::$ACCOUNT_PERSON,$predicate);
+        $pesRecheckPeriods = $loader->loadIndexed('RECHECK_YEARS','PES_LEVEL_REF',allTables::$PES_LEVELS);
 
-        $pesLevel = isset($pesLevels[trim($upesref)]) ? $pesLevels[trim($upesref)]  : self::PES_LEVEL_DEFAULT ;
-        $pesRecheckPeriod = isset(self::$pesRecheckPeriods[$pesLevel]) ? self::$pesRecheckPeriods[$pesLevel] : self::$pesRecheckPeriods[self::PES_LEVEL_DEFAULT];
+        $pesRecheckPeriod = 99; // default in case we don't find the actual value for this PES_LEVEL_REF
+
+        if(isset($pesLevels[trim($upesref)])){
+            $pesLevel = $pesLevels[trim($upesref)];
+            if(isset($pesRecheckPeriods[$pesLevel])){
+                $pesRecheckPeriod = $pesRecheckPeriods[$pesLevel];
+            }
+        }
 
         $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
-        $sql .= " SET PES_RECHECK_DATE = current date + " . $pesRecheckPeriod ;
-        $sql .= " WHERE CNUM='" . db2_escape_string($cnum) . "' ";
+        $sql .= " SET PES_RECHECK_DATE = current date + " . $pesRecheckPeriod . " years " ;
+        $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
 
         $result = db2_exec($_SESSION['conn'], $sql);
 
@@ -643,7 +665,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         }
 
         $sql  = " SELECT PES_RECHECK_DATE FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName;
-        $sql .= " WHERE CNUM='" . db2_escape_string($cnum) . "' ";
+        $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
 
         $res = db2_exec($_SESSION['conn'], $sql);
 
@@ -654,8 +676,8 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
         $row = db2_fetch_assoc($res);
 
-        $pesTracker = new pesTrackerTable(allTables::$PES_TRACKER);
-        $pesTracker->savePesComment($cnum, "PES_RECHECK_DATE set to :" .  $row['PES_RECHECK_DATE'] );
+        $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+        $pesTracker->savePesComment($upesref, $accountid, "PES_RECHECK_DATE set to :" .  $row['PES_RECHECK_DATE'] );
 
         AuditTable::audit("PES_RECHECK_DATE set to :  "  . $row['PES_RECHECK_DATE'] . " by " . $requestor,AuditTable::RECORD_TYPE_AUDIT);
 

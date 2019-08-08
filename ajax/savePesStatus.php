@@ -3,6 +3,9 @@
 use itdq\AuditTable;
 use upes\AccountPersonTable;
 use upes\AllTables;
+use upes\AccountPersonRecord;
+use upes\PersonTable;
+use upes\PersonRecord;
 
 ob_start();
 AuditTable::audit("Invoked:<b>" . __FILE__ . "</b>Parms:<pre>" . print_r($_POST,true) . "</b>",AuditTable::RECORD_TYPE_DETAILS);
@@ -10,82 +13,59 @@ AuditTable::audit("Invoked:<b>" . __FILE__ . "</b>Parms:<pre>" . print_r($_POST,
 $formattedEmailField= null;
 
 try {
-    $personTable= new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
-    $personTable->setPesStatus($_POST['psm_upesref'],$_POST['psm_accountid'],$_POST['psm_status'],$_SESSION['ssoEmail']);
-
-    $person = new personRecord();
-    $person->setFromArray(array('CNUM'=>$_POST['psm_cnum'],'PES_STATUS_DETAILS'=>$_POST['psm_detail'],'PES_DATE_RESPONDED'=>$_POST['PES_DATE_RESPONDED']));
-    $updateRecordResult = $personTable->update($person,false,false);
-
-    $personData = $personTable->getRecord($person);
-    $person->setFromArray($personData);
+    $accountPersonTable= new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+    $accountPersonRecord = new AccountPersonRecord();
+    $accountPersonTable->setPesStatus($_POST['psm_upesref'],$_POST['psm_accountid'],$_POST['psm_status'],$_SESSION['ssoEmail'], $_POST['psm_detail']);
+//     $accountPersonRecord->setFromArray(array('UPES_REF'=>$_POST['psm_upesref'], 'ACCOUNT_ID'=>$_POST['psm_accountid']));
+//     $accountPersonData = $accountPersonTable->getRecord($accountPersonRecord);
 
 
-    if(array_key_exists('psm_passportFirst', $_POST)){
-        /// We've been called from the PES TRACKER Screen;
-        $pesTracker = new pesTrackerTable(allTables::$PES_TRACKER   );
 
-        $pesTrackeRecord = new pesTrackerRecord();
-        $pesTrackeRecord->setFromArray(array('CNUM'=>$_POST['psm_cnum']));
+//     $person = new PersonRecord();
+//     $personTable = new PersonTable(AllTables::$PERSON);
+//     $person->setFromArray(array('UPES_REF'=>$_POST['psm_upesref']));
+//     $personData = $personTable->getRecord($person);
 
-        if (!$pesTracker->existsInDb($pesTrackeRecord)) {
-             $pesTracker->createNewTrackerRecord($_POST['psm_cnum']);
-        }
+//     $personData['ACCOUNT_ID'] = $accountPersonData['ACCOUNT_ID'];
+//     $personData['PRIORITY'] = $accountPersonData['PRIORITY'];
 
+//     $formattedEmailField = AccountPersonTable::formatEmailFieldOnTracker($personData);
 
-        $pesTracker->setPesPassportNames($_POST['psm_cnum'],trim($_POST['psm_passportFirst']), trim($_POST['psm_passportSurname']));
+//     AuditTable::audit("Saved Person <pre>" . print_r($person,true) . "</pre>", AuditTable::RECORD_TYPE_DETAILS);
 
-        $pesTrackerData = $pesTracker->getRecord($pesTrackeRecord);
+    switch ($_POST['psm_status']) {
+        case AccountPersonRecord::PES_STATUS_REMOVED:
+        case AccountPersonRecord::PES_STATUS_DECLINED:
+        case AccountPersonRecord::PES_STATUS_FAILED:
+        case AccountPersonRecord::PES_STATUS_PES_REQUESTED:
+        case AccountPersonRecord::PES_STATUS_EVI_REQUESTED:
+        case AccountPersonRecord::PES_STATUS_EXCEPTION:
+        case AccountPersonRecord::PES_STATUS_PROVISIONAL;
+        case AccountPersonRecord::PES_STATUS_RECHECK_REQ;
+        case AccountPersonRecord::PES_STATUS_LEFT_IBM;
+        case AccountPersonRecord::PES_STATUS_REVOKED;
+             $notificationStatus = 'Email not applicable';
+             break;
+        case AccountPersonRecord::PES_STATUS_CLEARED:
+        case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
+        case AccountPersonRecord::PES_STATUS_CANCEL_REQ:
+             $accountPersonRecord = new AccountPersonRecord();
+             $accountPersonTable  = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+             $accountPersonRecord->setFromArray(array('UPES_REF'=>$_POST['psm_upesref'], 'ACCOUNT_ID'=>$_POST['psm_accountid']));
+             $personData = $accountPersonTable->getRecord($accountPersonRecord);
+             $accountPersonRecord->setFromArray($personData);
 
-        $row = $pesTrackerData;
-        $row['EMAIL_ADDRESS'] = $personData['EMAIL_ADDRESS'];
-        $row['FIRST_NAME']    = $personData['FIRST_NAME'];
-        $row['LAST_NAME']     = $personData['LAST_NAME'];
-        $formattedEmailField = pesTrackerTable::formatEmailFieldOnTracker($row);
+             $emailResponse = $accountPersonRecord->sendPesStatusChangedEmail();
+             $notificationStatus = $emailResponse ? 'Email sent' : 'No email sent';
+             break;
+        default:
+             $notificationStatus = 'Email not applicable(other)';
+        break;
     }
 
-    AuditTable::audit("Saved Person <pre>" . print_r($person,true) . "</pre>", AuditTable::RECORD_TYPE_DETAILS);
+    AuditTable::audit("PES Status Email:" . $notificationStatus ,AuditTable::RECORD_TYPE_DETAILS);
+    $success = true;
 
-    if(!$updateRecordResult){
-        echo db2_stmt_error();
-        echo db2_stmt_errormsg();
-        AuditTable::audit("Db2 Error in " . __FILE__ . " Code:<b>" . db2_stmt_error() . "</b> Msg:<b>" . db2_stmt_errormsg() . "</b>", AuditTable::RECORD_TYPE_DETAILS);
-        $success = false;
-    } else {
-//         echo "<br/>PES Status set to : " . $_POST['psm_status'];
-//         echo "<br/>Detail : " . $_POST['psm_detail'];
-
-
-
-        switch ($_POST['psm_status']) {
-            case personRecord::PES_STATUS_REMOVED:
-            case personRecord::PES_STATUS_DECLINED:
-            case personRecord::PES_STATUS_FAILED:
-            case personRecord::PES_STATUS_INITIATED:
-            case personRecord::PES_STATUS_REQUESTED:
-            case personRecord::PES_STATUS_EXCEPTION:
-            case personRecord::PES_STATUS_PROVISIONAL;
-            case personRecord::PES_STATUS_RECHECK_REQ;
-            case personRecord::PES_STATUS_LEFT_IBM;
-            case personRecord::PES_STATUS_REVOKED;
-                $notificationStatus = 'Email not applicable';
-                 break;
-            case personRecord::PES_STATUS_CLEARED:
-            case personRecord::PES_STATUS_CLEARED_PERSONAL:
-            case personRecord::PES_STATUS_CANCEL_REQ:
-                $emailResponse = $person->sendPesStatusChangedEmail();
-                $notificationStatus = $emailResponse ? 'Email sent' : 'No email sent';
-                break;
-            default:
-                $notificationStatus = 'Email not applicable(other)';
-            break;
-        }
-
-        AuditTable::audit("PES Status Email:" . $notificationStatus ,AuditTable::RECORD_TYPE_DETAILS);
-
-        $success = true;
-
-    }
 } catch (Exception $e) {
     echo $e->getCode();
     echo $e->getMessage();
@@ -96,6 +76,6 @@ try {
 
 $messages = ob_get_clean();
 $success = $success && empty($messages);
-$response = array('success'=>$success,'messages'=>$messages, "emailResponse"=>$notificationStatus,"cnum"=>$_POST['psm_cnum'], "formattedEmailField"=>$formattedEmailField);
+$response = array('success'=>$success,'messages'=>$messages, "emailResponse"=>$notificationStatus,"upesref"=>$_POST['psm_upesref'],"account"=>$_POST['psm_account']);
 $jse = json_encode($response);
 echo $jse ? $jse : json_encode(array('success'=>false,'messages'=>'Failed to json_encode : ' . json_last_error() . json_last_error_msg()));
