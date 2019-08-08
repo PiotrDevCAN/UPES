@@ -605,7 +605,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
                 $dateField = 'PES_DATE_EVIDENCE';
                 break;
             case AccountPersonRecord::PES_STATUS_CLEARED:
-            case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
+//            case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
                 $dateField = 'PES_CLEARED_DATE';
                 self::setPesRescheckDate($upesref,$accountid, $requestor);
                 break;

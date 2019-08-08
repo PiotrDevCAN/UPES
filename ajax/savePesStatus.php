@@ -47,7 +47,7 @@ try {
              $notificationStatus = 'Email not applicable';
              break;
         case AccountPersonRecord::PES_STATUS_CLEARED:
-        case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
+//        case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
         case AccountPersonRecord::PES_STATUS_CANCEL_REQ:
              $accountPersonRecord = new AccountPersonRecord();
              $accountPersonTable  = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);

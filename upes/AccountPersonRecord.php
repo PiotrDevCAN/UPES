@@ -246,7 +246,7 @@ class AccountPersonRecord extends DbRecord
 
             $pesStatusWithButton.= "</button>&nbsp;";
             case $status == AccountPersonRecord::PES_STATUS_REQUESTED && $_SESSION['isPesTeam'] :
-            case $status == AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL && $_SESSION['isPesTeam'] :
+//            case $status == AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_CLEARED && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_EXCEPTION && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_DECLINED && $_SESSION['isPesTeam'] ;
