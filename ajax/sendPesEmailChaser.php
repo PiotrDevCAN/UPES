@@ -28,7 +28,7 @@ $response = array();
 $response['success'] = $success;
 $response['messages'] = $messages;
 $response['emailResponse'] = $emailResponse;
-$response['pesStatus'] = AccountPersonRecord::PES_STATUS_EVI_REQUESTED;
+$response['pesStatus'] = AccountPersonRecord::PES_STATUS_PES_PROGRESSING;
 
 if($success){
     $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);

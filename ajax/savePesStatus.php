@@ -37,8 +37,8 @@ try {
         case AccountPersonRecord::PES_STATUS_REMOVED:
         case AccountPersonRecord::PES_STATUS_DECLINED:
         case AccountPersonRecord::PES_STATUS_FAILED:
-        case AccountPersonRecord::PES_STATUS_PES_REQUESTED:
-        case AccountPersonRecord::PES_STATUS_EVI_REQUESTED:
+        case AccountPersonRecord::PES_STATUS_STARTER_REQUESTED:
+        case AccountPersonRecord::PES_STATUS_PES_PROGRESSING:
         case AccountPersonRecord::PES_STATUS_EXCEPTION:
         case AccountPersonRecord::PES_STATUS_PROVISIONAL;
         case AccountPersonRecord::PES_STATUS_RECHECK_REQ;

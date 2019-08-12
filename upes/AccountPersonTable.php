@@ -60,16 +60,16 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
         switch (trim($records)){
             case self::PES_TRACKER_RECORDS_ACTIVE :
-                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_PES_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_EVI_REQUESTED. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "') ";
+                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "') ";
                 break;
             case self::PES_TRACKER_RECORDS_ACTIVE_REQUESTED :
-                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_PES_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_EVI_REQUESTED. "') ";
+                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "') ";
                 break;
             case self::PES_TRACKER_RECORDS_ACTIVE_PROVISIONAL :
                 $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "') ";
                 break;
             case self::PES_TRACKER_RECORDS_NOT_ACTIVE :
-                $pesStatusPredicate = " AP.PES_STATUS not in ('" . AccountPersonRecord::PES_STATUS_PES_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_EVI_REQUESTED. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "')  ";
+                $pesStatusPredicate = " AP.PES_STATUS not in ('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "')  ";
                 $pesStatusPredicate.= " AND AP.PROCESSING_STATUS_CHANGED > current timestamp - 31 days  ";
                 break;
             case self::PES_TRACKER_RECORDS_ALL :
@@ -588,20 +588,19 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_OFF);
 
 
-        if(!$upesref or !$accountid){
-            throw new \Exception('No UPESREF/ACCOUNTID provided in ' . __METHOD__);
+        if(!$upesref or !$accountid or !$status){
+            throw new \Exception('One or more of UPESREF/ACCOUNTID/STATUS not provided in ' . __METHOD__);
         }
 
-        $status = empty($status) ? AccountPersonRecord::PES_STATUS_NOT_REQUESTED : $status;
         $requestor = empty($requestor) ? $_SESSION['ssoEmail'] : $requestor;
 
         switch ($status) {
-            case AccountPersonRecord::PES_STATUS_PES_REQUESTED:
+            case AccountPersonRecord::PES_STATUS_STARTER_REQUESTED:
             case AccountPersonRecord::PES_STATUS_RECHECK_REQ:
                 $requestor = empty($requestor) ? 'Unknown' : $requestor;
                 $dateField = 'PES_DATE_REQUESTED';
                 break;
-            case AccountPersonRecord::PES_STATUS_EVI_REQUESTED:
+            case AccountPersonRecord::PES_STATUS_PES_PROGRESSING:
                 $dateField = 'PES_EVIDENCE_DATE';
                 break;
             case AccountPersonRecord::PES_STATUS_CLEARED:
@@ -617,7 +616,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
         $sql .= " SET $dateField = current date, PES_STATUS='" . db2_escape_string($status)  . "' ";
         $sql .= !empty($pesStatusDetails) ? " AND PES_STATUS_DETAILS='" . db2_escape_string($pesStatusDetails) . "' " : null;
-        $sql .= trim($status)==AccountPersonRecord::PES_STATUS_PES_REQUESTED ? ", PES_REQUESTOR='" . db2_escape_string($requestor) . "' " : null;
+        $sql .= trim($status)==AccountPersonRecord::PES_STATUS_STARTER_REQUESTED ? ", PES_REQUESTOR='" . db2_escape_string($requestor) . "' " : null;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' and ACCOUNT_ID='" . db2_escape_string($accountid)  . "' ";
 
         $result = db2_exec($_SESSION['conn'], $sql);

@@ -83,15 +83,15 @@ class AccountPersonRecord extends DbRecord
     const PES_EVENT_MEDIA          = 'Media';
     const PES_EVENT_MEMBERSHIP     = 'Membership';
 
-    const PES_STATUS_NOT_REQUESTED = 'Not Requested';
+//    const PES_STATUS_NOT_REQUESTED = 'Not Requested'; - Doesn't apply in uPES, people only exist here once they've had PES Requested.
     const PES_STATUS_CLEARED       = 'Cleared';
 //    const PES_STATUS_CLEARED_PERSONAL= 'Cleared - Personal Reference'; - if this is coming back - need to handle the EMAIL when set to this status
     const PES_STATUS_DECLINED      = 'Declined';
     const PES_STATUS_EXCEPTION     = 'Exception';
     const PES_STATUS_PROVISIONAL   = 'Provisional Clearance';
     const PES_STATUS_FAILED        = 'Failed';
-    const PES_STATUS_PES_REQUESTED = 'Pes Requested';
-    const PES_STATUS_EVI_REQUESTED = 'Evidence Requested';
+    const PES_STATUS_STARTER_REQUESTED = 'Starter Requested';
+    const PES_STATUS_PES_PROGRESSING = 'PES Progressing';
     const PES_STATUS_REMOVED       = 'Removed';
     const PES_STATUS_REVOKED       = 'Revoked';
     const PES_STATUS_CANCEL_REQ     = 'Cancel Requested';
@@ -168,7 +168,7 @@ class AccountPersonRecord extends DbRecord
         </div>
 
     	<input id='PES_REQUESTOR' name='PES_REQUESTOR' type='hidden'  value='<?=$_SESSION['ssoEmail']?>'/>
-    	<input id='PES_STATUS' name='PES_STATUS' type='hidden'  value='<?=AccountPersonRecord::PES_STATUS_PES_REQUESTED;?>'/>
+    	<input id='PES_STATUS' name='PES_STATUS' type='hidden'  value='<?=AccountPersonRecord::PES_STATUS_STARTER_REQUESTED;?>'/>
 
    		<div class='form-group'>
    		<div class='col-sm-offset-2 -col-md-3'>
@@ -213,7 +213,7 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= "<span class='glyPesInitiate glyphicon glyphicon-plane ' aria-hidden='true'></span>";
                 $pesStatusWithButton.= "</button>&nbsp;";
                 break;
-            case $status == AccountPersonRecord::PES_STATUS_PES_REQUESTED && $_SESSION['isPesTeam'] ;
+            case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && $_SESSION['isPesTeam'] ;
             $emailAddress = trim($row['EMAIL_ADDRESS']);
             $fullName    = trim($row['FULL_NAME']);
             $country      = trim($row['COUNTRY']);
@@ -242,7 +242,7 @@ class AccountPersonRecord extends DbRecord
             $pesStatusWithButton.= "<span class='glyphicon glyphicon-send ' aria-hidden='true' ></span>";
 
             $pesStatusWithButton.= "</button>&nbsp;";
-            case $status == AccountPersonRecord::PES_STATUS_EVI_REQUESTED && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && $_SESSION['isPesTeam'] :
 //            case $status == AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_CLEARED && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_EXCEPTION && $_SESSION['isPesTeam'] :
@@ -269,9 +269,9 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= "<span class='glyphicon glyphicon-edit ' aria-hidden='true'></span>";
                 $pesStatusWithButton.= "</button>";
                 break;
-            case $status == AccountPersonRecord::PES_STATUS_EVI_REQUESTED && !$_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && !$_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && !$_SESSION['isPesTeam'] :
-            case $status == AccountPersonRecord::PES_STATUS_PES_REQUESTED && !$_SESSION['isPesTeam'] ;
+            case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && !$_SESSION['isPesTeam'] ;
             $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesCancel accessRestrict accessFm' aria-label='Left Align' ";
             $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
             $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";
@@ -292,7 +292,7 @@ class AccountPersonRecord extends DbRecord
                 break;
         }
 
-        if(isset($row['PROCESSING_STATUS']) && ( $row['PES_STATUS']== AccountPersonRecord::PES_STATUS_EVI_REQUESTED || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_PES_REQUESTED || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_RECHECK_REQ ) ){
+        if(isset($row['PROCESSING_STATUS']) && ( $row['PES_STATUS']== AccountPersonRecord::PES_STATUS_PES_PROGRESSING || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_STARTER_REQUESTED || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_RECHECK_REQ ) ){
             $pesStatusWithButton .= "&nbsp;<button type='button' class='btn btn-default btn-xs btnTogglePesTrackerStatusDetails' aria-label='Left Align' data-toggle='tooltip' data-placement='top' title='See PES Tracker Status' >";
             $pesStatusWithButton .= !empty($row['PROCESSING_STATUS']) ? "&nbsp;<small>" . $row['PROCESSING_STATUS'] . "</small>&nbsp;" : null;
             $pesStatusWithButton .= "<span class='glyphicon glyphicon-search  ' aria-hidden='true' ></span>";
@@ -376,8 +376,8 @@ class AccountPersonRecord extends DbRecord
                     <option value='<?=AccountPersonRecord::PES_STATUS_DECLINED;?>'><?=AccountPersonRecord::PES_STATUS_DECLINED;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_EXCEPTION;?>'><?=AccountPersonRecord::PES_STATUS_EXCEPTION;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_FAILED;?>'><?=AccountPersonRecord::PES_STATUS_FAILED;?></option>
-                    <option value='<?=AccountPersonRecord::PES_STATUS_EVI_REQUESTED;?>'><?=AccountPersonRecord::PES_STATUS_EVI_REQUESTED;?></option>
-                    <option value='<?=AccountPersonRecord::PES_STATUS_PES_REQUESTED;?>'><?=AccountPersonRecord::PES_STATUS_PES_REQUESTED;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_PES_PROGRESSING;?>'><?=AccountPersonRecord::PES_STATUS_PES_PROGRESSING;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_STARTER_REQUESTED;?>'><?=AccountPersonRecord::PES_STATUS_STARTER_REQUESTED;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_PROVISIONAL;?>'><?=AccountPersonRecord::PES_STATUS_PROVISIONAL;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_REMOVED;?>'><?=AccountPersonRecord::PES_STATUS_REMOVED;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_REVOKED;?>'><?=AccountPersonRecord::PES_STATUS_REVOKED;?></option>
