@@ -4,37 +4,28 @@ use itdq\Trace;
 
 echo "<div class='container'>";
 
-// $person1 = array('ACCOUNT'=>'RBS','COUNTRY'=>'India', 'STATUS'=>'Contractor');
-// $person2 = array('ACCOUNT'=>'RBS','COUNTRY'=>'India', 'STATUS'=>'Regular');
-// $person3 = array('ACCOUNT'=>'RBS','COUNTRY'=>'Poland', 'STATUS'=>'Regular');
-// $person4 = array('ACCOUNT'=>'RBS','COUNTRY'=>'Poland', 'STATUS'=>'Contractor');
-// $person5 = array('ACCOUNT'=>'RBS','COUNTRY'=>'UK', 'STATUS'=>'Regular');
-
-// $person6 = array('ACCOUNT'=>'CLS','COUNTRY'=>'UK', 'STATUS'=>'Regular');
-// $person7 = array('ACCOUNT'=>'CLS','COUNTRY'=>'India', 'STATUS'=>'Contractor');
-// $person8 = array('ACCOUNT'=>'CLS','COUNTRY'=>'Poland', 'STATUS'=>'Contractor');
-// $person9 = array('ACCOUNT'=>'CLS','COUNTRY'=>'Poland', 'STATUS'=>'Regular');
-
-// $person10 = array('ACCOUNT'=>'Halifax','COUNTRY'=>'Portugal', 'STATUS'=>'Contractor');
-// $person11 = array('ACCOUNT'=>'M&S','COUNTRY'=>'France', 'STATUS'=>'Regular');
+$personA1 = array('ACCOUNT'=>'RBS','COUNTRY'=>'India', 'STATUS'=>'Contractor');
+$personA2 = array('ACCOUNT'=>'RBS','COUNTRY'=>'India', 'STATUS'=>'Regular');
+$personA3 = array('ACCOUNT'=>'RBS','COUNTRY'=>'Poland', 'STATUS'=>'Contractor');
+$personA4 = array('ACCOUNT'=>'RBS','COUNTRY'=>'Poland', 'STATUS'=>'Regular');
+$personA5 = array('ACCOUNT'=>'RBS','COUNTRY'=>'UK', 'STATUS'=>'Regular');
+$personA6 = array('ACCOUNT'=>'RBS','COUNTRY'=>'UK', 'STATUS'=>'Contractor');
 
 
-$personA = array('ACCOUNT'=>'RBS','COUNTRY'=>'India', 'STATUS'=>'Contractor');
-$personB = array('ACCOUNT'=>'CLS','COUNTRY'=>'India', 'STATUS'=>'Regular');
-$personC = array('ACCOUNT'=>'M&S','COUNTRY'=>'Poland', 'STATUS'=>'Regular');
-$personC2 = array('ACCOUNT'=>'M&S','COUNTRY'=>'Poland', 'STATUS'=>'Contractor');
-$personC3 = array('ACCOUNT'=>'M&S','COUNTRY'=>'UK', 'STATUS'=>'Regular');
-$personC4 = array('ACCOUNT'=>'M&S','COUNTRY'=>'UK', 'STATUS'=>'Contractor');
+
+$personB1 = array('ACCOUNT'=>'LLoyds','COUNTRY'=>'India', 'STATUS'=>'Regular');
+$personB2 = array('ACCOUNT'=>'LLoyds','COUNTRY'=>'India', 'STATUS'=>'Contractor');
+$personB3 = array('ACCOUNT'=>'LLoyds','COUNTRY'=>'Poland', 'STATUS'=>'Regular');
+$personB4 = array('ACCOUNT'=>'LLoyds','COUNTRY'=>'Poland', 'STATUS'=>'Contractor');
+$personB5 = array('ACCOUNT'=>'LLoyds','COUNTRY'=>'UK', 'STATUS'=>'Regular');
+$personB6 = array('ACCOUNT'=>'LLoyds','COUNTRY'=>'UK', 'STATUS'=>'Contractor');
 
 
-$personD = array('ACCOUNT'=>'RBS','COUNTRY'=>'Poland', 'STATUS'=>'Contractor');
-$personE = array('ACCOUNT'=>'RBS','COUNTRY'=>'UK', 'STATUS'=>'Regular');
-$personF = array('ACCOUNT'=>'RBS','COUNTRY'=>'Poland', 'STATUS'=>'Regular');
 
 
 
 // $people = array($person1,$person2,$person3,$person4,$person5,$person6,$person7,$person8,$person9,$person10,$person11);
-$people = array($personA,$personB,$personC,$personC2,$personC3,$personC4,$personD,$personE, $personF);
+$people = array($personA1,$personA2,$personA3,$personA4,$personA5,$personA6,$personB1,$personB2,$personB3,$personB4,$personB5,$personB6);
 
 // $one   = file_exists('emailAttachments');
 // $two   = file_exists('emailAttachments/rob');
@@ -101,7 +92,7 @@ function findConsentForm(array $person, $fileNamePattern = null, $subFolder='con
 foreach ($people as $person){
 
     $consentForm = findConsentForm($person,'/(.*?)consent(.*?).(.*?)/i');
-    $odcForm = findConsentForm($person,'/(.*?)odc(.*?).(.*?)/i');
+    $odcForm = findConsentForm($person,'/(.*?)odc(.*?).(.*?)/i','odcForms');
 
     ?>
     <div class='row'>
