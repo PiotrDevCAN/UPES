@@ -25,7 +25,7 @@ $pesTrackerTable->displayTable(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE);
 
 $person = new AccountPersonRecord();
 $person->amendPesStatusModal();
-//$person->confirmSendPesEmailModal();
+$person->confirmSendPesEmailModal();
 
 
 
@@ -49,7 +49,7 @@ $(document).ready(function(){
  	pesevent.listenForEditPesStatus();
  	pesevent.listenForSavePesStatus();
 // 	person.listenForInitiatePesFromPortal();
-// 	person.listenforSendPesEmail();
+ 	person.listenforSendPesEmail();
 // 	person.listenforConfirmSendPesEmail();
 
     console.log($('button[name=pesRecordFilter]:checked'));

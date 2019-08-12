@@ -188,13 +188,17 @@ class AccountPersonRecord extends DbRecord
 
 
     static function getPesStatusWithButtons($row){
-        $emailAddress   = trim($row['EMAIL_ADDRESS']);
-        $upesRef = trim($row['UPES_REF']);
-        $status  = trim($row['PES_STATUS']);
-        $account  = trim($row['ACCOUNT']);
-        $accountid  = trim($row['ACCOUNT_ID']);
-        $passportFirst   = array_key_exists('PASSPORT_FIRST_NAME', $row) ? $row['PASSPORT_FIRST_NAME'] : null;
+        $emailAddress= trim($row['EMAIL_ADDRESS']);
+        $upesRef     = trim($row['UPES_REF']);
+        $ibmStatus   = trim($row['IBM_STATUS']);
+        $account     = trim($row['ACCOUNT']);
+        $accountid   = trim($row['ACCOUNT_ID']);
+        $passportFirst    = array_key_exists('PASSPORT_FIRST_NAME', $row) ? $row['PASSPORT_FIRST_NAME'] : null;
         $passportLastname = array_key_exists('PASSPORT_LAST_NAME', $row)    ? $row['PASSPORT_LAST_NAME'] : null;
+        $fullName    = trim($row['FULL_NAME']);
+        $country     = trim($row['COUNTRY']);
+        $status      = trim($row['PES_STATUS']);
+
 
         $pesStatusWithButton = '';
         $pesStatusWithButton.= "<span class='pesStatusField' data-upesref='" . $upesRef . "' data-account='" . $account . "'data-accountid='" . $accountid . "'  >" .  $status . "</span><br/>";
@@ -212,16 +216,11 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= "</button>&nbsp;";
                 break;
             case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && $_SESSION['isPesTeam'] ;
-            $emailAddress = trim($row['EMAIL_ADDRESS']);
-            $fullName    = trim($row['FULL_NAME']);
-            $country      = trim($row['COUNTRY']);
 
             $missing = !empty($emailAddress) ? '' : ' Email Address';
             $missing.= !empty($fullName) ? '' : ' Full Name';
             $missing.= !empty($country) ? '' : ' Country';
-
             $valid = empty(trim($missing));
-
             $disabled = $valid ? '' : 'disabled';
             $tooltip = $valid ? 'Confirm PES Email details' : "Missing $missing";
 
@@ -231,9 +230,11 @@ class AccountPersonRecord extends DbRecord
             $pesStatusWithButton.= " data-emailaddress='$emailAddress' ";
             $pesStatusWithButton.= " data-account='" . $account . "' ";
             $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
-            $pesStatusWithButton.= " data-fullnamee='$fullName' ";
+            $pesStatusWithButton.= " data-fullname='$fullName' ";
             $pesStatusWithButton.= " data-country='$country' ";
             $pesStatusWithButton.= " data-upesref='$upesRef' ";
+            $pesStatusWithButton.= " data-status='$status' ";
+            $pesStatusWithButton.= " data-ibmstatus='$ibmStatus' ";
             $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='$tooltip'";
             $pesStatusWithButton.= " $disabled  ";
             $pesStatusWithButton.= " > ";
@@ -466,9 +467,6 @@ class AccountPersonRecord extends DbRecord
     <label for="pesEmailAttachments">Attachments</label>
     <textarea class="form-control" id="pesEmailAttachments" name="pesEmailAttachments" disabled ></textarea>
   </div>
-
-
-
 </form>
 </div>
 </div>

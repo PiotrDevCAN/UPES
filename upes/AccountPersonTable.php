@@ -107,7 +107,6 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $sql.= ", AP.DIRECTORS ";
         $sql.= ", AP.MEDIA ";
         $sql.= ", AP.MEMBERSHIP ";
-
         $sql.= ", AP.PROCESSING_STATUS ";
         $sql.= ", AP.PROCESSING_STATUS_CHANGED ";
         $sql.= ", AP.DATE_LAST_CHASED ";
@@ -115,6 +114,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $sql.= ", AP.PES_STATUS_DETAILS ";
         $sql.= ", AP.COMMENT ";
         $sql.= ", AP.PRIORITY ";
+        $sql.= ", P.IBM_STATUS ";
 
         $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . allTables::$PERSON . " as P ";
         $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
@@ -155,7 +155,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         ?>
         <table id='pesTrackerTable' class='table table-striped table-bordered table-condensed '  style='width:100%'>
 		<thead>
-		<tr class='' ><th>Email Address</th><th>Account</th><th>Requestor</th><th>Country</th>
+		<tr class='' ><th>Person Details</th><th>Account</th><th>Requestor</th><th>Country</th>
 		<th width="5px">Consent Form</th>
 		<th width="5px">Proof or Right to Work</th>
 		<th width="5px">Proof of ID</th>
@@ -284,10 +284,11 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
     			<label class="control-label col-sm-1" for="pesRecordFilter">Records:</label>
     			<div class="col-sm-4" >
     			<div class="btn-group" role="group" aria-label="Record Selection">
-  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-info btnRecordSelection active" data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>'    data-toggle='tooltip'  title='Active Record in Initiated or Requested status'     >Requested</button>
-					<button type="button" role='button' name='pesRecordFilter' class="btn btn-info btnRecordSelection "       data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_PROVISIONAL?>'  data-toggle='tooltip'  title='Active Records in Provisional Clearance status' >Provisional</button>
-  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-info btnRecordSelection "       data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE?>'              data-toggle='tooltip'  title='Active Records'     >Active</button>
-  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-info btnRecordSelection"        data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_NOT_ACTIVE?>'          data-toggle='tooltip'  title='Recently Closed'  >Recent</button>
+  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-sm btn-info btnRecordSelection active" data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>'    data-toggle='tooltip'  title='Active Record in Initiated or Requested status'     >Requested</button>
+					<button type="button" role='button' name='pesRecordFilter' class="btn btn-sm btn-info btnRecordSelection "       data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_PROVISIONAL?>'  data-toggle='tooltip'  title='Active Records in Provisional Clearance status' >Provisional</button>
+  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-sm btn-info btnRecordSelection "       data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE?>'              data-toggle='tooltip'  title='Active Records'     >Active</button>
+  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-sm btn-info btnRecordSelection "       data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_PLUS?>'         data-toggle='tooltip'  title='Active+ Records'     >Active+</button>
+  					<button type="button" role='button' name='pesRecordFilter' class="btn btn-sm btn-info btnRecordSelection"        data-pesrecords='<?=AccountPersonTable::PES_TRACKER_RECORDS_NOT_ACTIVE?>'          data-toggle='tooltip'  title='Recently Closed'  >Recent</button>
 				</div>
 				</div>
 
@@ -472,6 +473,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $formattedField = trim($row['EMAIL_ADDRESS']) . "<br/><small>";
         $formattedField.= "<i>" . trim($row['PASSPORT_FIRST_NAME']) . "&nbsp;<b>" . trim($row['PASSPORT_LAST_NAME']) . "</b></i><br/>";
         $formattedField.= trim($row['FULL_NAME']) . "</b></small><br/>" . trim($row['UPES_REF']);
+        $formattedField.= "<br/>" . trim($row['IBM_STATUS']);
         $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
 
         $formattedField.="<span style='white-space:nowrap' >
@@ -725,6 +727,36 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $spreadsheet->setActiveSheetIndex($sheet++);
 
         return true;
+    }
+
+    static function addButtonsForPeopleReport($row){
+        $account = trim($row['ACCOUNT']);
+        $accountId = trim($row['ACCOUNT_ID']);
+        $upesref = trim($row['UPES_REF']);
+
+        $row['ACTION'] = '';
+
+        switch ($row['PES_STATUS']) {
+            case AccountPersonRecord::PES_STATUS_CLEARED:
+                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson ' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
+                                  <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
+                                </button>";
+                break;
+             default:
+                 $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson ' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
+                                  <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
+                                </button>";
+                $row['ACTION'].= "&nbsp;";
+                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Cancel PES Request' >
+              <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
+              </button>";
+
+
+            break;
+        }
+
+        return $row;
+
     }
 
 

@@ -26,7 +26,7 @@ include_once 'includes/modalError.html';
 
 <table id='userStatusTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Action</th><th>Email</th><th>Full Name</th><th >Account</th><th >Pes Level</th><th >Pes Description</th><th >Pes Status</th></tr>
+<tr><th>Action</th><th>Email</th><th>Full Name</th><th >Account</th><th >Pes Level</th><th >Pes Description</th><th >Pes Status</th><th>Cleared Date</th></tr>
 </thead>
 </table>
 </div>
@@ -64,6 +64,8 @@ $(document).ready(function(){
                     data: "PES_LEVEL_DESCRIPTION"
                   },{
                     data: "PES_STATUS"
+                  },{
+                    data: "PES_CLEARED_DATE"
                   }]
 	});
 
