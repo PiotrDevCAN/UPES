@@ -9,6 +9,19 @@ use itdq\BlueMail;
 
 class PesEmail {
 
+    const CONSENT_PATTERN = '/(.*?)consent(.*?).(.*?)/i';
+    const ODC_PATTERN = '/(.*?)odc(.*?).(.*?)/i';
+    const EMAIL_PATTERN = '/(.*?)email(.*?).(.*?)/i';
+    const APPLICATION_PATTERN = '/(.*?)application(.*?).(.*?)/i';
+
+    const EMAIL_ROOT_ATTACHMENTS = 'emailAttachments';
+
+    const EMAIL_SUB_CONSENT       = 'consentForms';
+    const EMAIL_SUB_ODC           = 'odcForms';
+    const EMAIL_SUB_APPLICATON    = 'applicationForms';
+    const EMAIL_SUB_BODIES        = 'emailBodies';
+
+
     private function getLloydsGlobalApplicationForm(){
         // LLoyds Global Application Form v1.4.doc
         $filename = "../emailAttachments/LLoyds Global Application Form v1.4.doc";
@@ -66,7 +79,7 @@ class PesEmail {
         return $ibmEmail ? 'Internal' : 'External';
     }
 
-    private function getAttachments($intExt,$emailType){
+    private function getAttachments(array $attachmentsToLoad){
         switch (true) {
             case $intExt=='External' && $emailType=='UK':
                 $encodedApplicationForm = $this->getLloydsGlobalApplicationForm();
@@ -133,55 +146,61 @@ class PesEmail {
         return $pesAttachments;
     }
 
-    function getEmailDetails($emailAddress, $country,$openSeat=null){
-        $countryCodeTable = new DbTable(allTables::$STATIC_COUNTRY_CODES);
-        $intExt = $this->determineInternalExternal($emailAddress);
-
-        $sql = ' SELECT PES_EMAIL ';
-        $sql.= ' FROM ' . strtoupper($_SERVER['environment']) . "." . allTables::$STATIC_COUNTRY_CODES;
-        $sql.= " WHERE  upper(country_name)= '" . db2_escape_string(strtoupper($country)) . "' ";
-
-        $rs = db2_exec($_SESSION['conn'], $sql);
-
-        if(!$rs){
-            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
-            return false;
+    private function findFiles(array $personDetails, $fileNamePattern = null, $subFolder=self::EMAIL_SUB_CONSENT, $baseFolder=self::EMAIL_ROOT_ATTACHMENTS){
+        if(empty($personDetails) or empty($fileNamePattern)){
+            throw new Exception('Incorrect parms passed');
         }
 
-        $row = db2_fetch_assoc($rs);
+        $pathToAccountCountryStatus     = "$baseFolder/$subFolder/" . $personDetails['ACCOUNT'] . "/" . $personDetails['COUNTRY'] . "/" . $personDetails['STATUS'];
+        $pathToAccountCountry           = "$baseFolder/$subFolder/" . $personDetails['ACCOUNT'] . "/" . $personDetails['COUNTRY'];
+        $pathToAccountStatus            = "$baseFolder/$subFolder/" . $personDetails['ACCOUNT'] . "/" . $personDetails['STATUS'];
+        $pathToAccount                  = "$baseFolder/$subFolder/" . $personDetails['ACCOUNT'];
+        $pathToCountry                  = "$baseFolder/$subFolder/" . $personDetails['COUNTRY'];
+        $pathToCountryStatus            = "$baseFolder/$subFolder/" . $personDetails['COUNTRY'] . "/" . $personDetails['STATUS'];
+        $pathToStatus                   = "$baseFolder/$subFolder/" . $personDetails['STATUS'];
 
-        $pesEmail = trim($row['PES_EMAIL']);
+        $pathToDefault    = "$baseFolder/$subFolder";
 
-        if(empty($pesEmail)){
+        $pathsToTry = array($pathToAccountCountryStatus,$pathToAccountCountry, $pathToAccountStatus
+            , $pathToAccount
+            , $pathToCountry, $pathToCountryStatus
+            , $pathToStatus
+            , $pathToDefault);
 
-            throw new \Exception('PES_EMAIL not defined for country : ' . $country,800);
+        $pathFound = false;
+        $consentFound = false;
+        $pathIndex = 0;
+        while(!$consentFound && $pathIndex < count($pathsToTry)){
+            $pathToTest = $pathsToTry[$pathIndex];
+            $pathFound = file_exists($pathToTest);
+            $pathIndex++;
+            if($pathFound){
+                $filesFound = scandir($pathToTest);
+                $consentFiles = preg_grep($fileNamePattern,$filesFound);
+                $consentFiles = array_values($consentFiles);
+
+                if(!empty($consentFiles[0])){
+                    $consentFound = true;
+                    return $pathFound .  $consentFiles[0];
+                }
+            }
         }
-
-        $results = preg_split('/[-.]/', $pesEmail);
-        $locationType = $results[0];
-        $emailType  = isset($results[1]) ? $results[1] : null;
-        switch ($locationType) {
-            case 'xxx':
-                // Need to know if Internal or External
-                $pesEmailBodyFilename = $intExt . "-" . $emailType . ".php";
-            break;
-            case 'unknown':
-                throw new Exception('No email defined for ' . $country, 801);
-                break;
-            default:
-                // We don't need to further clarify the PES EMAIL Body file;
-                $pesEmailBodyFilename = $pesEmail;
-            break;
-        }
-
-        $attachments = $this->getAttachments($intExt, $emailType);
-
-        foreach ($attachments as $attachment) {
-            $attachmentFileNames[] = $attachment['filename'];
-        }
+        return false;
+    }
 
 
-        return array('filename'=> $pesEmailBodyFilename, 'attachments'=>$attachments, 'attachmentFileNames'=> $attachmentFileNames,'emailType'=>$emailType,'splitResults'=>$results);
+
+
+    function getEmailDetails($upesRef, $account, $country, $ibmStatus){
+
+        $person = array('ACCOUNT'=>$account,'COUNTRY'=>$country,'STATUS'=>$ibmStatus);
+
+        $attachments[] = $this->findFiles($person,self::CONSENT_PATTERN, self::EMAIL_SUB_CONSENT, self::EMAIL_ROUTE_ATTACHMENTS);
+
+
+        $emailBody = $this->findFiles($person,self::CONSENT_PATTERN, self::EMAIL_SUB_CONSENT, self::EMAIL_ROOT_BODIES);
+
+        return array('filename'=> $pesEmailBodyFilename, 'attachments'=>$attachments);
     }
 
 
