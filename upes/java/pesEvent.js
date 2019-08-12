@@ -66,13 +66,13 @@ function pesEvent() {
   this.listenForBtnChaser = function() {
 	  $(document).on('click','.btnChaser', function(){
 		  var chaser = $(this).data('chaser').trim();
-		  var details = $(this).parent('span').parents('td').children('.personDetails').first();
-		  var upesref = $(details).data('upesref').trim();
-		  var accountid = $(details).data('accountid').trim();
-		  var account   = $(details).data('account').trim();
-		  var emailaddress   = $(details).data('emailaddress').trim();
-		  var fullName = $(details).data('fullname').trim();
-		  var requestor = $(details).data('requestor').trim();
+		  var details = $(this).parent('span').parents('tr.personDetails');
+		  var upesref = $(details).data('upesref');
+		  var accountid = $(details).data('accountid');
+		  var account   = $(details).data('account');
+		  var emailaddress   = $(details).data('emailaddress');
+		  var fullName = $(details).data('fullname');
+		  var requestor = $(details).data('requestor');
 		  
 		  var buttonObj = $(this);
 		  buttonObj.addClass('spinning');
@@ -91,7 +91,6 @@ function pesEvent() {
 			  			},
 			    success: function(result){
 			    	var resultObj = JSON.parse(result);
-			    	console.log(resultObj);
 			    	pesevent = new pesEvent();
 			    	$(dateField).val(resultObj.lastChased);
 			    	pesevent.getAlertClassForPesChasedDate(dateField);
@@ -291,7 +290,7 @@ function pesEvent() {
 	  $(document).on('click','.btnProcessStatusChange', function(){  
 		  var buttonObj = $(this);
 		  var processStatus = $(this).data('processstatus');	
-		  var dataDiv       = $(this).parents('td').children('.personDetails').first();
+		  var dataDiv       = $(this).parents('tr.personDetails');
 		  var upesref       = $(dataDiv).data('upesref');
 		  var accountid     = $(dataDiv).data('accountid');
 		  var account       = $(dataDiv).data('account');
