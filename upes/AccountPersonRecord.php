@@ -83,15 +83,13 @@ class AccountPersonRecord extends DbRecord
     const PES_EVENT_MEDIA          = 'Media';
     const PES_EVENT_MEMBERSHIP     = 'Membership';
 
-//    const PES_STATUS_NOT_REQUESTED = 'Not Requested'; - Doesn't apply in uPES, people only exist here once they've had PES Requested.
     const PES_STATUS_CLEARED       = 'Cleared';
-//    const PES_STATUS_CLEARED_PERSONAL= 'Cleared - Personal Reference'; - if this is coming back - need to handle the EMAIL when set to this status
     const PES_STATUS_DECLINED      = 'Declined';
     const PES_STATUS_EXCEPTION     = 'Exception';
-    const PES_STATUS_PROVISIONAL   = 'Provisional Clearance';
     const PES_STATUS_FAILED        = 'Failed';
-    const PES_STATUS_STARTER_REQUESTED = 'Starter Requested';
     const PES_STATUS_PES_PROGRESSING = 'PES Progressing';
+    const PES_STATUS_STARTER_REQUESTED = 'Starter Requested';
+    const PES_STATUS_PROVISIONAL   = 'Provisional Clearance';
     const PES_STATUS_REMOVED       = 'Removed';
     const PES_STATUS_REVOKED       = 'Revoked';
     const PES_STATUS_CANCEL_REQ     = 'Cancel Requested';

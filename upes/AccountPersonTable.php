@@ -26,9 +26,10 @@ protected $preparedGetPesCommentStmt;
 protected $preparedProcessStatusUpdate;
 protected $preparedGetProcessingStatusStmt;
 
-const PES_TRACKER_RECORDS_ACTIVE     = 'Active';
-const PES_TRACKER_RECORDS_NOT_ACTIVE = 'Not Active';
-const PES_TRACKER_RECORDS_ALL        = 'All';
+const PES_TRACKER_RECORDS_ACTIVE       = 'Active';
+const PES_TRACKER_RECORDS_ACTIVE_PLUS  = 'Active Plus';
+const PES_TRACKER_RECORDS_NOT_ACTIVE   = 'Not Active';
+const PES_TRACKER_RECORDS_ALL          = 'All';
 const PES_TRACKER_RECORDS_ACTIVE_REQUESTED = 'Active Requested';
 const PES_TRACKER_RECORDS_ACTIVE_PROVISIONAL = 'Active Provisional';
 
@@ -61,6 +62,9 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         switch (trim($records)){
             case self::PES_TRACKER_RECORDS_ACTIVE :
                 $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "') ";
+                break;
+            case self::PES_TRACKER_RECORDS_ACTIVE_PLUS :
+                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "','" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "','" . AccountPersonRecord::PES_STATUS_REMOVED. "','" . AccountPersonRecord::PES_STATUS_CLEARED. "') ";
                 break;
             case self::PES_TRACKER_RECORDS_ACTIVE_REQUESTED :
                 $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "') ";
@@ -304,6 +308,9 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
               	<div class="col-sm-1"  >
               	<span style='white-space:nowrap' id='pesDownload' >
 				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTracker.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker</a>
+				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerRecent.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Recent)</a>
+				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerActivePlus.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Active+)</a>
+
 				</span>
             	</div>
   			</div>
@@ -691,6 +698,34 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         return true;
     }
 
+
+    function getTracker($records=self::PES_TRACKER_RECORDS_ACTIVE, Spreadsheet $spreadsheet){
+        $sheet = 1;
+
+        $rs = self::returnPesEventsTable($records, self::PES_TRACKER_RETURN_RESULTS_AS_RESULT_SET);
+
+        if($rs){
+            set_time_limit(62);
+            $recordsFound = static::writeResultSetToXls($rs, $spreadsheet);
+            if($recordsFound){
+                static::autoFilter($spreadsheet);
+                static::autoSizeColumns($spreadsheet);
+                static::setRowColor($spreadsheet,'105abd19',1);
+            }
+        }
+
+        if(!$recordsFound){
+            $spreadsheet->getActiveSheet()->setCellValueByColumnAndRow(1, 1, "Warning");
+            $spreadsheet->getActiveSheet()->setCellValueByColumnAndRow(1, 2,"No records found");
+        }
+        // Rename worksheet & create next.
+
+        $spreadsheet->getActiveSheet()->setTitle('Record ' . $records);
+        $spreadsheet->createSheet();
+        $spreadsheet->setActiveSheetIndex($sheet++);
+
+        return true;
+    }
 
 
 
