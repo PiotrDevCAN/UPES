@@ -281,7 +281,7 @@ class PesTrackerTable extends DbTable{
 //         }
 
         $loader = new Loader();
-        $emailAddress = $loader->loadIndexed('EMAIL_ADDRESS','CNUM',allTables::$PERSON," CNUM in('" . db2_escape_string(trim($fromCnum)) . "','" . db2_escape_string(trim($toCnum)) . "') ");
+        $emailAddress = $loader->loadIndexed('EMAIL_ADDRESS','CNUM',AllTables::$PERSON," CNUM in('" . db2_escape_string(trim($fromCnum)) . "','" . db2_escape_string(trim($toCnum)) . "') ");
 
         $this->savePesComment($toCnum, "Serial Number changed from $fromCnum to $toCnum");
         $this->savePesComment($toCnum, "Email Address changed from $emailAddress[$fromCnum] to $emailAddress[$toCnum] ");

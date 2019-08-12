@@ -116,7 +116,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $sql.= ", AP.PRIORITY ";
         $sql.= ", P.IBM_STATUS ";
 
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . allTables::$PERSON . " as P ";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
         $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
         $sql.= " ON P.UPES_REF = AP.UPES_REF ";
         $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
@@ -657,8 +657,8 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
         $loader = new Loader();
         $predicate = " UPES_REF='" . db2_escape_string(trim($upesref)) . "' AND ACCOUNT_ID = '" . db2_escape_string($accountid) . "' ";
-        $pesLevels = $loader->loadIndexed('PES_LEVEL','UPES_REF',allTables::$ACCOUNT_PERSON,$predicate);
-        $pesRecheckPeriods = $loader->loadIndexed('RECHECK_YEARS','PES_LEVEL_REF',allTables::$PES_LEVELS);
+        $pesLevels = $loader->loadIndexed('PES_LEVEL','UPES_REF',AllTables::$ACCOUNT_PERSON,$predicate);
+        $pesRecheckPeriods = $loader->loadIndexed('RECHECK_YEARS','PES_LEVEL_REF',AllTables::$PES_LEVELS);
 
         $pesRecheckPeriod = 99; // default in case we don't find the actual value for this PES_LEVEL_REF
 

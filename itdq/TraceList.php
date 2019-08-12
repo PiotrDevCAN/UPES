@@ -2,7 +2,7 @@
 namespace itdq;
 use \DateTime;
 use itdq\TraceControlRecord;
-use cord\allTables;
+use itdq\allTables;
 /**
  * Displays the LOG table
  *

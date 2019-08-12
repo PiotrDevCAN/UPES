@@ -1,6 +1,6 @@
 <?php
 use itdq\AuditTable;
-use upes\allTables;
+use upes\AllTables;
 use upes\AccountPersonTable;
 use itdq\Loader;
 
