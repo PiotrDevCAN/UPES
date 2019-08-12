@@ -48,19 +48,23 @@ $people = array($personA,$personB,$personC,$personC2,$personC3,$personC4,$person
 // var_dump($three);
 
 
-function findConsentForm($person){
-    $pathToAccountCountryStatus     = "emailAttachments/ConsentForms/" . $person['ACCOUNT'] . "/" . $person['COUNTRY'] . "/" . $person['STATUS'];
-    $pathToAccountCountry           = "emailAttachments/ConsentForms/" . $person['ACCOUNT'] . "/" . $person['COUNTRY'];
-    $pathToAccountStatus            = "emailAttachments/ConsentForms/" . $person['ACCOUNT'] . "/" . $person['STATUS'];
+function findConsentForm(array $person, $fileNamePattern = null, $subFolder='consentForms'){
+    if(empty($person) or empty($fileNamePattern)){
+        throw new Exception('Incorrect parms passed');
+    }
 
-    $pathToAccount                  = "emailAttachments/ConsentForms/" . $person['ACCOUNT'];
+    $pathToAccountCountryStatus     = "emailAttachments/$subFolder/" . $person['ACCOUNT'] . "/" . $person['COUNTRY'] . "/" . $person['STATUS'];
+    $pathToAccountCountry           = "emailAttachments/$subFolder/" . $person['ACCOUNT'] . "/" . $person['COUNTRY'];
+    $pathToAccountStatus            = "emailAttachments/$subFolder/" . $person['ACCOUNT'] . "/" . $person['STATUS'];
 
-    $pathToCountry                  = "emailAttachments/ConsentForms/" . $person['COUNTRY'];
-    $pathToCountryStatus            = "emailAttachments/ConsentForms/" . $person['COUNTRY'] . "/" . $person['STATUS'];
+    $pathToAccount                  = "emailAttachments/$subFolder/" . $person['ACCOUNT'];
 
-    $pathToStatus                   = "emailAttachments/ConsentForms/" . $person['STATUS'];
+    $pathToCountry                  = "emailAttachments/$subFolder/" . $person['COUNTRY'];
+    $pathToCountryStatus            = "emailAttachments/$subFolder/" . $person['COUNTRY'] . "/" . $person['STATUS'];
 
-    $pathToDefault    = "emailAttachments/ConsentForms";
+    $pathToStatus                   = "emailAttachments/$subFolder/" . $person['STATUS'];
+
+    $pathToDefault    = "emailAttachments/$subFolder";
 
     $pathsToTry = array($pathToAccountCountryStatus,$pathToAccountCountry, $pathToAccountStatus
         , $pathToAccount
@@ -80,8 +84,8 @@ function findConsentForm($person){
 
         if($pathFound){
             $filesFound = scandir($pathToTest);
-            $consentPattern = '/(.*?)consent(.*?).(.*?)/i';
-            $consentFiles = preg_grep($consentPattern,$filesFound);
+        //    $consentPattern = '/(.*?)consent(.*?).(.*?)/i';
+            $consentFiles = preg_grep($fileNamePattern,$filesFound);
             $consentFiles = array_values($consentFiles);
 
             if(!empty($consentFiles[0])){
@@ -96,18 +100,16 @@ function findConsentForm($person){
 
 foreach ($people as $person){
 
-    $consentForm = findConsentForm($person);
+    $consentForm = findConsentForm($person,'/(.*?)consent(.*?).(.*?)/i');
+    $odcForm = findConsentForm($person,'/(.*?)odc(.*?).(.*?)/i');
 
     ?>
     <div class='row'>
-    <div class='col-sm-1'>A</div>
     <div class='col-sm-1'><b><?=$person['STATUS']?></b></div>
-    <div class='col-sm-2'>working on</div>
     <div class='col-sm-1'><b><?=$person['ACCOUNT']?></b></div>
-    <div class='col-sm-1'>in</div>
     <div class='col-sm-1'><b><?=$person['COUNTRY']?></b></div>
-    <div class='col-sm-1'>gets</div>
     <div class='col-sm-4'><b><?=$consentForm ? $consentForm : "Not found";?></b></div>
+    <div class='col-sm-5'><b><?=$odcForm ? $odcForm : "Not found";?></b></div>
     </div>
 	<?php
 
