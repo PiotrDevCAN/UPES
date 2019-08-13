@@ -129,7 +129,6 @@ function personRecord() {
 		               },
 		               type: 'POST',
 		               success: function(result){
-		                 console.log(result);
 		                 var resultObj = JSON.parse(result);
 		                 $('#savePesStatus').attr('disabled',false);
 		                 pesevent.table.ajax.reload();	
@@ -144,9 +143,7 @@ function personRecord() {
 			   console.log('set listener');
 			   console.log($('.btnSendPesEmail'));
 				$(document).on('click','.btnSendPesEmail', function(e){
-					console.log(e);
 					$(this).addClass('spinning');
-					console.log(this);
 					var data = $(this).data();
 					   $.ajax({
 						   url: "ajax/pesEmailDetails.php",
@@ -159,7 +156,6 @@ function personRecord() {
 					    	       },
 					       success: function(result){
 					    	   $('.btnSendPesEmail').removeClass('spinning');		    	 
-					           console.log(result);
 					           var resultObj = JSON.parse(result);
 					           if(resultObj.success==true){
 					   				$('#pesEmailFirstName').val(data.firstname);
@@ -227,11 +223,8 @@ function personRecord() {
 					    	       
 					    	       },
 					       success: function(result){
-					    	   $('#confirmSendPesEmail').removeClass('spinning');	  		    	   
-					    	   
-					    	   var resultObj = JSON.parse(result);		  	           
-					    	   console.log(resultObj);	
-					    	   
+					    	   $('#confirmSendPesEmail').removeClass('spinning');	  		    	   					    	   
+					    	   var resultObj = JSON.parse(result);					    	   
 					    	   if(typeof( personWithSubPRecord.table)!='undefined'){
 					    		//   personRecord.table.ajax.reload();
 					    	   }	

@@ -42,7 +42,6 @@ function pesEvent() {
         	dateFormat: 'dd M yy',
     		maxDate:0,
             onSelect: function(dateText) {
-            	console.log(this);
             	var cnum = $(this).data('cnum');
             	var pesevent = new pesEvent();
             	pesevent.saveDateLastChased(dateText, cnum, this);
@@ -63,12 +62,7 @@ function pesEvent() {
   this.listenForBtnRecordSelection = function() {
 	  $(document).on('click','.btnRecordSelection', function(){
 		  $('.btnRecordSelection').removeClass('active');
-		  $(this).addClass('active');
-		  
-		  console.log($('.btnRecordSelection'));
-		  console.log($('.btnRecordSelection.active'));
-		  console.log($('.btnRecordSelection.active').data('pesRecords'));
-		  
+		  $(this).addClass('active');	  
 		  var pesevent = new pesEvent();
 		  pesevent.populatePesTracker($(this).data('pesrecords'));
 	  });
@@ -137,11 +131,7 @@ function pesEvent() {
 		  	data : { records: records,
 		  			},
 		    success: function(result){
-		    	console.log(result);
 		    	var resultObj = JSON.parse(result);
-		    	
-		    	console.log(resultObj.success);
-		    	console.log(resultObj.messages);
 		    	if(resultObj.success){
 		    		$('#pesTrackerTableDiv').html(resultObj.table);	
 
@@ -183,8 +173,6 @@ function pesEvent() {
   
   
   this.saveDateLastChased = function(date,cnum, field){
-	  console.log(field);
-	  console.log($(field));
 	  var parentDiv = $(field).parent('div');
 	  $.ajax({
 		  	url: "ajax/savePesDateLastChased.php",
@@ -202,8 +190,7 @@ function pesEvent() {
   }
   
   this.listenForComment = function() {
-	  $('textarea').on('input', function(){
-		  console.log(this);		  
+	  $('textarea').on('input', function(){	  
 	  });
   }, 
   
@@ -216,10 +203,7 @@ function pesEvent() {
 		  var accountid =  $(this).siblings('textarea').data('accountid');
 		  var comment   = $(this).siblings('textarea').val();
 		  var button    = $(this);
-		  
-		  console.log(button.siblings('div'));
-		  console.log(button.siblings('div.pesComments'));
-		  
+	  
 		  button.addClass('spinning');
 		  $.ajax({
 			  	url: "ajax/savePesComment.php",
@@ -265,7 +249,6 @@ function pesEvent() {
 		    	   	   stage:column,
 		    	   	   },
 		       success: function(result){
-		           console.log(result);
 		           var resultObj = JSON.parse(result);
 		           if(resultObj.success==true){
 		        	   buttonObj.parents('td').parent('tr').children('td.pesCommentsTd').children('div.pesComments').html(resultObj.comment);
@@ -377,11 +360,9 @@ function pesEvent() {
 	  
 	  switch(priority){
 	  case 1:
-		  console.log('danger');
 		  $(priorityField).addClass('alert-danger');	  
 		  break;
 	  case 2:
-		  console.log('warning');
 		  $(priorityField).addClass('alert-warning');
 		  break;
 	  case 3:
@@ -451,15 +432,12 @@ function pesEvent() {
   },
   
   this.listenForEditPesStatus = function(){
-	    $(document).on('click','.btnPesStatus', function(e){
-   	
+	    $(document).on('click','.btnPesStatus', function(e){   	
 	           var upesref = ($(this).data('upesref'));
 	           var account = ($(this).data('account'));
 	           var accountid = ($(this).data('accountid'));
-	           var emailaddress = ($(this).data('emailaddress'));
-	           
-	           console.log($(this).data('passportfirst'));
-	           
+	           var emailaddress = ($(this).data('emailaddress'));     
+           
 	           if(typeof($(this).data('passportfirst'))!='undefined'){
 	        	   var passportFirst = $(this).data('passportfirst');
 	        	   var passportSurname = $(this).data('passportsurname');
@@ -504,14 +482,12 @@ function pesEvent() {
 	          var allDisabledFields = ($("input:disabled"));
 	          $(allDisabledFields).not('#psm_passportFirst').not('#psm_passportSurname').attr('disabled',false);
 	          var formData = $('#amendPesStatusModal form').serialize();
-	          console.log(formData);
 	          $(allDisabledFields).attr('disabled',true);
 	          $.ajax({
 	              url: "ajax/savePesStatus.php",
 	              data : formData,
 	              type: 'POST',
 	              success: function(result){
-	                console.log(result);
 	                var resultObj = JSON.parse(result);
 	                $('#savePesStatus').attr('disabled',false).removeClass('spinning');	                
 	                var success = resultObj.success;
