@@ -1,6 +1,6 @@
 <?php
 use itdq\AuditTable;
-use upes\pesEmail;
+use upes\PesEmail;
 use upes\AccountPersonTable;
 use upes\AllTables;
 

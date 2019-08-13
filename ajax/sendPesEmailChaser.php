@@ -17,7 +17,7 @@ $account= $_POST['account'];
 $accountId= $_POST['accountid'];
 $emailAddress = $_POST['emailaddress'];
 
-$pesEmailObj = new pesEmail();
+$pesEmailObj = new PesEmail();
 $emailResponse = $pesEmailObj->sendPesEmailChaser($upesref, $account, $emailAddress, $_POST['chaser'], $_POST['requestor']);
 
 $emailStatus = $emailResponse['Status']->status;
