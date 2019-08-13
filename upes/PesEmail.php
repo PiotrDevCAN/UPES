@@ -2,7 +2,7 @@
 namespace upes;
 
 use itdq\DbTable;
-use vbac\allTables;
+use upes\AllTables;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use itdq\BlueMail;

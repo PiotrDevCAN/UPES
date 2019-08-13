@@ -3,7 +3,7 @@ use PhpOffice\PhpSpreadsheet\Helper\Sample;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use itdq\DbTable;
-use vbac\allTables;
+use upes\AllTables;
 use itdq\Loader;
 use upes\AccountPersonTable;
 use upes\AccountPersonRecord;

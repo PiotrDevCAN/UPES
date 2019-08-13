@@ -1,6 +1,6 @@
 <?php
 
-use upes\allTables;
+use upes\AllTables;
 use upes\AccountPersonTable;
 use upes\PersonRecord;
 use upes\AccountPersonRecord;

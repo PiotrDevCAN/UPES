@@ -1,5 +1,5 @@
 <?php
-use upes\allTables;
+use upes\AllTables;
 use upes\AccountPersonTable;
 
 set_time_limit(0);
