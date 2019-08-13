@@ -28,26 +28,37 @@ function searchTable(){
 	  }
 }
 
+
+
+
+
 function pesEvent() {
 
   this.init = function(){
     console.log('+++ Function +++ pesEvent.init');
     
-    $('.pesDateLastChased').datepicker({
-    	dateFormat: 'dd M yy',
-		maxDate:0,
-        onSelect: function(dateText) {
-        	console.log(this);
-        	var cnum = $(this).data('cnum');
-        	var pesevent = new pesEvent();
-        	pesevent.saveDateLastChased(dateText, cnum, this);
-          }		
-		}
-    ).on("change", function() {
-        alert("Got change event from field");
-    });
+    $(document).on('ready',function(){
+        $('.pesDateLastChased').datepicker({
+        	dateFormat: 'dd M yy',
+    		maxDate:0,
+            onSelect: function(dateText) {
+            	console.log(this);
+            	var cnum = $(this).data('cnum');
+            	var pesevent = new pesEvent();
+            	pesevent.saveDateLastChased(dateText, cnum, this);
+              }		
+    		}
+        ).on("change", function() {
+            alert("Got change event from field");
+        });
+    });	
+    
+    
+    
     console.log('--- Function --- pesEvent.init');
-  },
+  },   
+    
+
   
   this.listenForBtnRecordSelection = function() {
 	  $(document).on('click','.btnRecordSelection', function(){
