@@ -155,7 +155,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         ?>
         <table id='pesTrackerTable' class='table table-striped table-bordered table-condensed '  style='width:100%'>
 		<thead>
-		<tr class='' ><th>Person Details</th><th>Account</th><th>Requestor</th><th>Country</th>
+		<tr class='' ><th>Person Details</th><th>Account</th><th>Requestor</th>
 		<th width="5px">Consent Form</th>
 		<th width="5px">Proof or Right to Work</th>
 		<th width="5px">Proof of ID</th>
@@ -212,7 +212,6 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             </td>
             <td><?=$row['ACCOUNT']?></td>
             <td><?=$row['PES_REQUESTOR']?><br/><small><?=$row['PES_DATE_REQUESTED']?><br/><?=$age?></small></td>
-            <td><?=trim($row['COUNTRY'])?></td>
 
             <?php
             foreach (self::PES_TRACKER_STAGES as $stage) {
@@ -473,7 +472,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $formattedField = trim($row['EMAIL_ADDRESS']) . "<br/><small>";
         $formattedField.= "<i>" . trim($row['PASSPORT_FIRST_NAME']) . "&nbsp;<b>" . trim($row['PASSPORT_LAST_NAME']) . "</b></i><br/>";
         $formattedField.= trim($row['FULL_NAME']) . "</b></small><br/>" . trim($row['UPES_REF']);
-        $formattedField.= "<br/>" . trim($row['IBM_STATUS']);
+        $formattedField.= "<br/>" . trim($row['IBM_STATUS']) . ":" . trim($row['COUNTRY']);
         $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
 
         $formattedField.="<span style='white-space:nowrap' >
