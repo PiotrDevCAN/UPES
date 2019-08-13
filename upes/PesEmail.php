@@ -5,6 +5,7 @@ use itdq\DbTable;
 use upes\AllTables;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use upes\PersonTable;
 use itdq\BlueMail;
 
 class PesEmail {
@@ -222,7 +223,7 @@ class PesEmail {
 
         $pesEmailPattern = array(); // Will be overridden when we include_once from emailBodies later.
         $pesEmail = null;          // Will be overridden when we include_once from emailBodies later.
-        $names = personTable::getNamesFromUpesref($upesref);
+        $names = PersonTable::getNamesFromUpesref($upesref);
         $fullName = $names['FULL_NAME'];
         $requestor = trim($_POST['requestor']);
 
