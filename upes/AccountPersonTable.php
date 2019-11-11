@@ -756,6 +756,12 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             break;
         }
 
+        $requestor = $row['PES_REQUESTOR'];
+        $requested = $row['PES_DATE_REQUESTED'];
+
+        $row['REQUESTED'] = "<small>" .  $requestor . "<br/>" . $requested . "</small>";
+
+
         return $row;
 
     }

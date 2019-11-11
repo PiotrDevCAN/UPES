@@ -22,11 +22,11 @@ include_once 'includes/modalError.html';
 
 <div class='container'>
 
-<div class='col-sm-10 col-sm-offset-1'>
+<div class='col-sm-12'>
 
 <table id='userStatusTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Action</th><th>Email</th><th>Full Name</th><th >Account</th><th >Pes Level</th><th >Pes Description</th><th >Pes Status</th><th>Cleared Date</th></tr>
+<tr><th>Action</th><th>Email</th><th>Full Name</th><th >Account</th><th>Requested</th><th >Pes Level</th><th >Pes Description</th><th >Pes Status</th><th>Cleared Date</th></tr>
 </thead>
 </table>
 </div>
@@ -58,6 +58,8 @@ $(document).ready(function(){
                     data: "FULL_NAME"
                   },{
                     data: "ACCOUNT"
+                  },{
+                    data: "REQUESTED"
                   },{
                     data: "PES_LEVEL"
                   },{
