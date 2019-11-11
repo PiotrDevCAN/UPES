@@ -34,10 +34,12 @@ $admin          = new NavBarMenu("uPES Admin");
 $accounts       = new NavBarOption('Manage Accounts','pa_manageAccounts.php','accessCdi accessPesTeam');
 $contracts      = new NavBarOption('Manage contracts','pa_manageContracts.php','accessCdi accessPesTeam');
 $pesLevels      = new NavBarOption('Manage Pes Levels','pa_managePesLevels.php','accessCdi accessPesTeam');
+$countries     = new NavBarOption('Manage Countries','pa_manageCountries.php','accessCdi accessPesTeam');
 $tracker       = new NavBarOption('Tracker','pc_pesTracker.php','accessCdi accessPesTeam');
 $admin->addOption($accounts);
 $admin->addOption($contracts);
 $admin->addOption($pesLevels);
+$admin->addOption($countries);
 $admin->addOption($tracker);
 
 $user          = new NavBarMenu("uPES",'accessCdi accessPesTeam accessUser' );

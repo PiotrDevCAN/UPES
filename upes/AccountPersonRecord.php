@@ -27,9 +27,8 @@ CREATE TABLE UPES_DEV.ACCOUNT_PERSON_HIST ( ACCOUNT_ID INTEGER NOT NULL, UPES_RE
 ALTER TABLE UPES_DEV.ACCOUNT_PERSON ADD VERSIONING USE HISTORY TABLE UPES_DEV.ACCOUNT_PERSON_HIST;
 
 ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD CONSTRAINT "AccPer_PK" PRIMARY KEY ("ACCOUNT_ID","UPES_REF" ) ENFORCED;
-ALTER TABLE "UPES_UT"."ACCOUNT_PERSON" ALTER COLUMN "PES_RECHECK_DATE" SET DATA TYPE DATE;
-
-
+ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ALTER COLUMN "PES_RECHECK_DATE" SET DATA TYPE DATE;
+ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD COLUMN "COUNTRY_OF_RESIDENCE" CHAR(50);
 
  *
  */
@@ -69,6 +68,7 @@ class AccountPersonRecord extends DbRecord
     protected $DATE_LAST_CHASED;
     protected $COMMENT;
     protected $PRIORITY;
+    protected $COUNTRY_OF_RESIDENCE;
 
     const PES_EVENT_CONSENT        = 'Consent Form';
     const PES_EVENT_WORK           = 'Right to Work';
@@ -122,6 +122,7 @@ class AccountPersonRecord extends DbRecord
         $notEditable = $mode == FormClass::$modeEDIT ? ' disabled ' : '';
         $loader = new Loader();
         $allEmail = $loader->loadIndexed('EMAIL_ADDRESS','UPES_REF',AllTables::$PERSON);
+        $allCountries = $loader->load('COUNTRY',AllTables::$COUNTRY);
         ?>
         <form id='accountPersonForm' class="form-horizontal" method='post'>
         <div class="form-group" >
@@ -157,6 +158,24 @@ class AccountPersonRecord extends DbRecord
             </div>
         </div>
 
+        <div class="form-group required" >
+            <label for='COUNTRY_OF_RESIDENCE' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Country'>Country of Residence</label>
+        	<div class='col-md-3'>
+			<select id='COUNTRY_OF_RESIDENCE' class='form-group select2' name='COUNTRY_OF_RESIDENCE' required  >
+        		<option value=''></option>
+        		<option value='India' data-country='India' <?=$this->COUNTRY_OF_RESIDENCE=='India' ? ' selected ': null;?>>India</option>
+        		<option value='UK'    data-country='UK' <?=$this->COUNTRY_OF_RESIDENCE=='UK' ? ' selected ': null;?>>UK</option>
+        		<option value='--------' data-country='--------'  disabled >---------</option>
+        		<?php
+        		unset($allCountries['UK']);
+        		unset($allCountries['India']);
+        		foreach ($allCountries as  $country) {
+        		    ?><option value='<?=$country?>' data-country='<?=$country?>' <?=$this->COUNTRY_OF_RESIDENCE==$country ? ' selected ' : null;?>><?=$country?></option><?php
+        		}
+        		?>
+        		</select>
+            </div>
+        </div>
 
         <div class="form-group required " >
             <label for='FULL_NAME' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Full Name'>Full Name</label>

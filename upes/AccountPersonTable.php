@@ -114,6 +114,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $sql.= ", AP.PES_STATUS_DETAILS ";
         $sql.= ", AP.COMMENT ";
         $sql.= ", AP.PRIORITY ";
+        $sql.= ", AP.COUNTRY_OF_RESIDENCE ";
         $sql.= ", P.IBM_STATUS ";
 
         $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
@@ -473,6 +474,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $formattedField.= "<i>" . trim($row['PASSPORT_FIRST_NAME']) . "&nbsp;<b>" . trim($row['PASSPORT_LAST_NAME']) . "</b></i><br/>";
         $formattedField.= trim($row['FULL_NAME']) . "</b></small><br/>" . trim($row['UPES_REF']);
         $formattedField.= "<br/>" . trim($row['IBM_STATUS']) . ":" . trim($row['COUNTRY']);
+        $formattedField.= "<br/>Resides:&nbsp;" . trim($row['COUNTRY_OF_RESIDENCE']);
         $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
 
         $formattedField.="<span style='white-space:nowrap' >

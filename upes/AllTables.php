@@ -15,6 +15,7 @@ class AllTables
     public static $ACCOUNT_PERSON     = 'ACCOUNT_PERSON';
 
     public static $CONTRACT           = 'CONTRACT';
+    public static $COUNTRY            = 'COUNTRY';
 
     public static $DB2_ERRORS         = 'DB2_ERRORS';
 

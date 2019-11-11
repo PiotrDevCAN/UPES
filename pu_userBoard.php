@@ -63,6 +63,12 @@ $(document).ready(function(){
 		placeholder:'Select Email'
 	});
 
+	$('#COUNTRY_OF_RESIDENCE').select2({
+		width: '100%',
+		placeholder:'Country of Residence'
+	});
+
+
 	$('#contract_id').change(function(e){
 		console.log(e);
 		var contractId = $('#contract_id').val();
@@ -95,6 +101,14 @@ $(document).ready(function(){
 		 }
 	});
 
+	$('#UPES_REF').on('select2:open',function(){
+		console.log('select2:open');
+		$('#contract_id').select2('data',null);
+		$('#contract_id').val('').trigger('change');
+		});
+
+
+
 	$('#UPES_REF').change(function(e){
 		var upesRef = $('#UPES_REF').val();
 		var fullName = upesrefToNameMapping[upesRef];
@@ -104,13 +118,6 @@ $(document).ready(function(){
 		} else {
 			$('#contract_id').attr('disabled',true).trigger('change');
 		}
-
-
-console.log($('#contract_id'));
-console.log($('#contract_id>optgroup'));
-console.log($('#contract_id>optgroup>option'));
-console.log($("#contract_id>optgroup>option[value='55']"));
-
 	});
 
 
@@ -140,6 +147,7 @@ console.log($("#contract_id>optgroup>option[value='55']"));
 		    	    $('#accountPersonForm').trigger("reset");
 		    	    $("#contract_id").trigger("change");
 		    	    $("#UPES_REF").trigger("change");
+		    	    $('#COUNTRY_OF_RESIDENCE').val('').trigger('change');
 		    	    $('#ACCOUNT_ID').val('');
 		            $("#PES_LEVEL").select2("destroy");
 		            $("#PES_LEVEL").html("<option><option>");
@@ -155,6 +163,7 @@ console.log($("#contract_id>optgroup>option[value='55']"));
 		    	    $('#accountPersonForm').trigger("reset");
 		    	    $("#contract_id").trigger("change");
 		    	    $("#UPES_REF").trigger("change");
+		    	    $('#COUNTRY_OF_RESIDENCE').val('').trigger('change');
 		    	    $('#ACCOUNT_ID').val('');
 	                $('.modal-body').html(responseObj.Messages);
 	                $('.modal-body').addClass('bg-danger').removeClass('bg-success');
