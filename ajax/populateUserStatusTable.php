@@ -22,6 +22,8 @@ $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
 $sql.= " LEFT JOIN  " . $_SESSION['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
 $sql.= " ON AP.PES_LEVEL = PL.PES_LEVEL_REF ";
 $sql.= " WHERE A.ACCOUNT is not null and AP.UPES_REF is not null ";
+$sql.= $_SESSION['isPesTeam'] ? null : " AND (AP.PES_REQUESTOR='" . db2_escape_string($_SESSION['ssoEmail']) . "' OR P.EMAIL_ADDRESS = '" . db2_escape_string($_SESSION['ssoEmail']) . "' ) ";
+
 
 $rs = db2_exec($_SESSION['conn'], $sql);
 
