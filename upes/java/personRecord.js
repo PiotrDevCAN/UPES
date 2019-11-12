@@ -20,6 +20,10 @@ function personRecord() {
     console.log('--- Function --- personRecord.init');
   },
   
+  this.initEditPersonForm = function(){
+  
+  },
+  
 //  this.listenForEditPesStatus = function(){
 //	    $(document).on('click','.btnPesStatus', function(e){
 //	    	

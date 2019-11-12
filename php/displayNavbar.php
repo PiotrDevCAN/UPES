@@ -78,9 +78,6 @@ $plannedOutagesId = str_replace(" ","_",$plannedOutagesLabel);
 
 ?>
 <script>
-
-
-
 $('.navbarMenuOption')<?=$isCdi?><?=$isPesTeam?><?=$isUser?>.remove();
 $('.navbarMenu').not(':has(li)').remove();
 

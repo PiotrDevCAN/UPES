@@ -72,18 +72,12 @@ function checkIfEmailKnown(){
 $(document).ready(function(){
 	var contractsSelect = <?=$contractSelectObj;?>;
 
-// 	var pesLeveldata = $.map(pesLevelByAccount, function(obj){
-// 		console.log(obj);
-// 		console.log($('#CONTRACT_ID').val());
-// 		return obj;
-// 		});
-
-	$('#CONTRACT_ID').select2({
-		placeholder: 'Select Contract',
-		width: '100%',
-		data : contractsSelect,
-		dataType : 'json'
-	});
+// 	$('#CONTRACT_ID').select2({
+// 		placeholder: 'Select Contract',
+// 		width: '100%',
+// 		data : contractsSelect,
+// 		dataType : 'json'
+// 	});
 
 	$('#COUNTRY').select2({
 		placeholder: 'Select Country',

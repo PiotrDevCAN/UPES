@@ -35,6 +35,10 @@ include_once 'includes/modalError.html';
 ?>
 </div>
 
+
+
+
+
 <script>
 
 function changePesLevels(dataCategory){
@@ -67,6 +71,7 @@ $(document).ready(function(){
 		width: '100%',
 		placeholder:'Country of Residence'
 	});
+
 
 
 	$('#contract_id').change(function(e){
@@ -192,6 +197,7 @@ $(document).ready(function(){
 	      		}
 			});
 	});
+
 });
 </script>
 

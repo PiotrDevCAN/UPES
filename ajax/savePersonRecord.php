@@ -24,7 +24,7 @@ try {
 
     $personRecord->setFromArray($personRecordRecordData);
 
-    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $personTable->insert($personRecord) : $personTable->update($personRecord);
+    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $personTable->insert($personRecord) : $personTable->update($personRecord, false, false);
     $upesRef  = $_POST['mode']==FormClass::$modeDEFINE ? $personTable->lastId() : $personRecordRecordData['UPES_REF'];
 
 } catch (Exception $e) {

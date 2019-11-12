@@ -44,39 +44,40 @@ class PersonRecord extends DbRecord
         <form id='personForm' class="form-horizontal" method='post'>
          <div class="form-group" >
             <label for='CNUM' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='IBM CNUM if applicable'>Lookup IBMer</label>
-        	<div class='col-md-3'>
-				<input id='ibmer' name='ibmer' class='form-control typeahead' <?=$notEditable;?> />
-				<input id='CNUM' name='CNUM' class='form-control' type='hidden' <?=$notEditable;?> />
+        	<div class='col-md-4'>
+				<input id='ibmer' name='ibmer' class='form-control typeahead' <?=$notEditable;?>  value='<?=!empty($this->FULL_NAME) ? $this->FULL_NAME :null ; ?>'/>
+				<input id='CNUM' name='CNUM' class='form-control' type='hidden' <?=$notEditable;?> value='<?=!empty($this->CNUM) ? $this->CNUM :null ; ?>' />
             </div>
         </div>
         <div class="form-group" >
             <label for='EMAIL_ADDRESS' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Email Address'>Email Address</label>
-        	<div class='col-md-3'>
-				<input id='EMAIL_ADDRESS' name='EMAIL_ADDRESS' class='form-control' <?=$notEditable;?> />
+        	<div class='col-md-4'>
+				<input id='EMAIL_ADDRESS' name='EMAIL_ADDRESS' class='form-control' value='<?=!empty($this->EMAIL_ADDRESS) ? $this->EMAIL_ADDRESS :null ; ?>'/>
             </div>
         </div>
         <div class="form-group required " >
             <label for='FULL_NAME' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Full Name'>Full Name</label>
-        	<div class='col-md-3'>
-				<input id='FULL_NAME' name='FULL_NAME' class='form-control' <?=$notEditable;?> />
+        	<div class='col-md-4'>
+				<input id='FULL_NAME' name='FULL_NAME' class='form-control' <?=$notEditable;?> value='<?=!empty($this->FULL_NAME) ? $this->FULL_NAME :null ; ?>' />
             </div>
         </div>
         <div class="form-group required " >
             <label for='COUNTRY' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Country of Residence'>Country</label>
-        	<div class='col-md-3'>
-        		<select id='COUNTRY' class='form-group select2' name='COUNTRY' <?=$notEditable?> >
+        	<div class='col-md-4'>
+        		<select id='COUNTRY' class='form-group select2' name='COUNTRY'  >
         		<option value=''></option>
         		</select>
             </div>
         </div>
         <div class="form-group required " >
             <label for='IBM_STATUS' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='IBM Status'>Status</label>
-        	<div class='col-md-3'>
-        		<select id='IBM_STATUS' class='form-group select2' name='IBM_STATUS' <?=$notEditable?> >
+        	<div class='col-md-4'>
+        		<select id='IBM_STATUS' class='form-group select2' name='IBM_STATUS' >
         		<option value=''></option>
         		<?php
         		foreach ($this->ibmStatus as $status) {
-        		    ?><option value='<?=$status ?>'><?=$status?></option><?php
+        		    ?><option value='<?=$status ?>' <?=$this->IBM_STATUS==$status ? 'checked ': null;
+        		     ?>><?=$status?></option><?php
         		}
         		?>
         		</select>
@@ -84,9 +85,10 @@ class PersonRecord extends DbRecord
         </div>
         <input id='PES_ADDER' name='PES_ADDER' type='hidden'  value='<?=$_SESSION['ssoEmail']?>'/>
    		<div class='form-group'>
-   		<div class='col-sm-offset-2 -col-md-3'>
+   		<div class='col-sm-offset-2 -col-md-4'>
         <?php
-   		$this->formHiddenInput('mode',$mode,'mode');
+        $this->formHiddenInput('UPES_REF',$this->UPES_REF,'UPES_REF');
+        $this->formHiddenInput('mode',$mode,'mode');
         $allButtons = array();
    		$submitButton = $mode==FormClass::$modeEDIT ?  $this->formButton('submit','Submit','updatePerson',null,'Update') :  $this->formButton('submit','Submit','savePerson',null,'Submit');
    		$resetButton  = $this->formButton('reset','Reset','resetPersonForm',null,'Reset','btn-warning');
