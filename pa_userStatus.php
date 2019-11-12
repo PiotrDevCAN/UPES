@@ -17,6 +17,7 @@ Trace::pageOpening($_SERVER['PHP_SELF']);
 
 include_once 'includes/modalError.html';
 include_once 'includes/modalEditPersonRecord.html';
+include_once 'includes/modalCancelPesRequestConfirm.html';
 
 ?>
 </div>
@@ -73,6 +74,72 @@ $(document).ready(function(){
                     data: "PES_CLEARED_DATE"
                   }]
 	});
+
+	$(document).on('click','button.cancelPesRequest',function(){
+		$(this).addClass('spinning').attr('disabled',true);
+		var upesRef = $(this).data('upesref');
+		console.log(upesRef);
+		console.log($(this).data());
+
+		$('#cancelEMAIL_ADDRESS').val($(this).data('email'));
+		$('#cancelFULL_NAME').val($(this).data('name'));
+		$('#cancelupesref').val($(this).data('upesref'));
+		$('#cancelACCOUNT').val($(this).data('account'));
+		$('#cancelACCOUNT_ID').val($(this).data('accountid'));
+		$('#modalCancelPesRequestConfirm').modal('show');
+
+	});
+
+
+	$(document).on('click','button.cancelPesRequestConfirmed',function(){
+		$(this).addClass('spinning').attr('disabled',false);
+		console.log('here');
+		var upesref = $('#cancelupesref').val();
+		var accountid = $('#cancelACCOUNT_ID').val();
+		$.ajax({
+			type:'post',
+		  	url: '/ajax/cancelPesRequest',
+		  	data:{upesref: upesref,
+		  		accountid: accountid},
+	      	success: function(response) {
+	      		var responseObj = JSON.parse(response);
+	      		if(responseObj.success){
+		    	    $('.spinning').removeClass('spinning').attr('disabled',false);
+		    		$('#cancelEMAIL_ADDRESS').val('');
+		    		$('#cancelFULL_NAME').val('');
+		    		$('#cancelupesref').val('');
+		    		$('#cancelACCOUNT').val('');
+		    		$('#cancelACCOUNT_ID').val('');
+		    	    $('#modalCancelPesRequestConfirm').modal('hide');
+		    	    userStatusTable.ajax.reload();
+				} else {
+		    	    $('.spinning').removeClass('spinning').attr('disabled',false);
+	                $('#modalError .modal-body').html(responseObj.Messages);
+	                $('#modalError .modal-body').addClass('bg-danger');
+	                $('#modalError').modal('show');
+				}
+          	},
+	      	fail: function(response){
+					console.log('Failed');
+					console.log(response);
+	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
+	                $('#modalError .modal-body').addClass('bg-warning');
+	                $('#modalError').modal('show');
+	                $(submitBtn).removeClass('spinning').attr('disabled',false);
+				},
+	      	error: function(error){
+	        		console.log('Ajax error');
+	        		console.log(error.statusText);
+	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('#modalError .modal-body').addClass('bg-warning');
+	                $('#modalError').modal('show');
+	                $(submitBtn).removeClass('spinning').attr('disabled',false);
+	        	}
+		});
+
+	});
+
+
 
 
 	$('#modalEditPersonRecord').on('shown.bs.modal',function(){

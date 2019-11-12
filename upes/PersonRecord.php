@@ -31,11 +31,15 @@ class PersonRecord extends DbRecord
     protected $PES_DATE_ADDED;
     protected $PES_ADDER;
 
+    public static $pesTaskId = array('lbgvetpr@uk.ibm.com'); // Only first entry will be used as the "contact" in the PES status emails.
+
 
     const IBM_STATUS_CONTRACTOR = 'Contractor';
     const IBM_STATUS_REGULAR = 'Regular';
 
     protected $ibmStatus = array(self::IBM_STATUS_CONTRACTOR, self::IBM_STATUS_REGULAR);
+
+
 
   function displayForm($mode)
     {
@@ -101,5 +105,4 @@ class PersonRecord extends DbRecord
 	</form>
     <?php
     }
-
 }

@@ -1,0 +1,48 @@
+<!-- Modal -->
+<div id="modalCancelPesRequestConfirm" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Confirm Cancel PES</h4>
+      </div>
+      <div class="modal-body" >
+	  <h4>Please <b>Confirm</b> you wish to stop processing the PES Clearance for : </h4>
+	  <form id='cancelPesForm' class="form-horizontal" method='post'>
+        <div class="form-group" >
+            <label for='cancelFULL_NAME' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Email Address'>Full Name</label>
+        	<div class='col-md-4'>
+				<input id='cancelFULL_NAME' name='FULL_NAME' class='form-control' value='' disabled />
+				<input id='CNUM' name='CNUM' type='hidden' value='' disabled />
+				<input id='cancelupesref' name='upesref' type='hidden' value='' disabled />
+            </div>
+        </div>
+        <div class="form-group" >
+            <label for='cancelEMAIL_ADDRESS' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Email Address'>Email</label>
+        	<div class='col-md-4'>
+			<input id='cancelEMAIL_ADDRESS' name='EMAIL_ADDRESS' class='form-control' type='text' disabled />
+            </div>
+        </div>
+        <h4>For Account : </h4>
+        <div class="form-group" >
+            <label for='cancelACCOUNT' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Account'>Account</label>
+        	<div class='col-md-4'>
+				<input id='cancelACCOUNT' name='ACCOUNT' class='form-control' value='' disabled/>
+				<input id='cancelACCOUNT_ID' name='ACCOUNT_ID' type='hidden' value='' disabled/>
+            </div>
+        </div>
+        </form>
+	 
+      <input type='hidden' id='confirmCancelPesAccountId' />
+      <input type='hidden' id='confirmCancelPesUpsRes' />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-warning modalButton cancelPesRequestConfirmed" data-dismiss="modal">Confirm</button>
+        <button type="button" class="btn btn-default modalButton" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>

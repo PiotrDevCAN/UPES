@@ -734,21 +734,27 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $account = trim($row['ACCOUNT']);
         $accountId = trim($row['ACCOUNT_ID']);
         $upesref = trim($row['UPES_REF']);
+        $email = trim($row['EMAIL_ADDRESS']);
+        $fullname = trim($row['FULL_NAME']);
+
 
         $row['ACTION'] = '';
 
         switch ($row['PES_STATUS']) {
             case AccountPersonRecord::PES_STATUS_CLEARED:
+            case AccountPersonRecord::PES_STATUS_CANCEL_REQ:
+            case AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED:
                 $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson ' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
                                   <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                                 </button>";
                 break;
+
              default:
                  $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson ' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
                                   <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                                 </button>";
                 $row['ACTION'].= "&nbsp;";
-                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Cancel PES Request' >
+                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "'data-toggle='tooltip' title='Cancel PES Request' >
               <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
               </button>";
 
@@ -763,6 +769,51 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
 
         return $row;
+
+    }
+
+
+    static function cancelPesRequest( $accountId=null, $upesref=null){
+
+        db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_OFF);
+
+        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
+        $sql.= " SET PES_STATUS='" . AccountPersonRecord::PES_STATUS_CANCEL_REQ . "' ";
+        $sql.= " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
+        $sql.= " AND UPES_REF='" . db2_escape_string($upesref) . "' ";
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+
+        $sql = " SELECT * ";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
+        $sql.= " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
+        $sql.= " AND UPES_REF='" . db2_escape_string($upesref) . "' ";
+
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+
+        $accountPersonData = db2_fetch_assoc($rs);
+
+
+        $accountPersonRecord = new AccountPersonRecord();
+        $accountPersonData['PES_STATUS'] = AccountPersonRecord::PES_STATUS_CANCEL_REQ; // Because DB2 isn't a commited change
+        $accountPersonRecord->setFromArray($accountPersonData);
+
+        $accountPersonRecord->sendPesStatusChangedEmail();
+
+        db2_commit($_SESSION['conn']);
+        db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_ON);
+
 
     }
 
