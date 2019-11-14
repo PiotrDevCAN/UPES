@@ -8,10 +8,14 @@ use itdq\FormClass;
 class CountryRecord extends DbRecord
 {
     protected $COUNTRY;
-    protected $INTERNATIONAL;
+    protected $EMAIL_BODY_NAME;
 
-    const INTERNATIONAL_YES = 'Yes';
-    const INTERNATIONAL_NO  = 'No';
+    const EMAIL_BODY_INTERNATIONAL = 'international';
+    const EMAIL_BODY_CORE4         = 'core4';
+    const EMAIL_BODY_UK            = 'uk';
+    const EMAIL_BODY_INDIA         = 'india';
+
+    const EMAIL_BODY_NAMES = array(self::EMAIL_BODY_CORE4,self::EMAIL_BODY_INDIA,self::EMAIL_BODY_INTERNATIONAL,self::EMAIL_BODY_UK);
 
     function displayForm($mode)
     {
@@ -27,9 +31,16 @@ class CountryRecord extends DbRecord
         </div>
 
          <div class="form-group required" >
-            <label for='INTERNATIONAL' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Internatinal'>International</label>
+            <label for='EMAIL_BODY_NAME' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Prefix of file holding email body'>Email Body Name</label>
         	<div class='col-md-1'>
-				<input type="checkbox" id='INTERNATIONAL' name='INTERNATIONAL' checked data-toggle="toggle" data-size="small" data-on="<?=self::INTERNATIONAL_YES;?>" data-off="<?=self::INTERNATIONAL_NO;?>">
+				<select id='EMAIL_BODY_NAME' class='col-md-3' >
+					<?php
+					foreach (self::EMAIL_BODY_NAMES as $emailBody){
+					    ?><option value='<?=$emailBody?>'><?=$emailBody?></option>
+					<?php
+					}
+					?>
+				</select>
             </div>
         </div>
 
@@ -50,9 +61,4 @@ class CountryRecord extends DbRecord
 	</form>
     <?php
     }
-
 }
-
-
-
-

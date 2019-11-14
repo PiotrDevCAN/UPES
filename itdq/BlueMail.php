@@ -17,6 +17,8 @@ class BlueMail
         , array $attachments=array())
     {
 
+        set_time_limit(60);
+
         $emailLogRecordID = null;
 
         $cleanedTo = $to;

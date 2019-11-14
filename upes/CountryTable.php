@@ -6,8 +6,13 @@ use itdq\Loader;
 
 /*
  *
- * CREATE TABLE "UPES".COUNTRY  ( COUNTRY CHAR(50) NOT NULL ,INTERNATIONAL CHAR(3) )
+ * CREATE TABLE "UPES".COUNTRY  ( COUNTRY CHAR(50) NOT NULL ,EMAIL_BODY_NAME CHAR(20) )
  * CREATE UNIQUE INDEX "UPES"."CountryIx" ON "UPES_DEV"."COUNTRY" ("COUNTRY" ASC);
+ *
+ * ALTER TABLE "UPES"."COUNTRY" RENAME COLUMN "INTERNATIONAL" TO "EMAIL_BODY_NAME";
+ * ALTER TABLE "UPES"."COUNTRY" ALTER COLUMN "EMAIL_BODY_NAME" SET DATA TYPE CHAR(20);
+ * ALTER TABLE "UPES"."COUNTRY" ALTER COLUMN "EMAIL_BODY_NAME" SET DEFAULT 'International'
+ *
  *
  */
 
@@ -52,5 +57,45 @@ class CountryTable extends DbTable
         $data['sort'] = $country;
         $row['COUNTRY'] = $data;
     }
+
+
+    static function getEmailBodyNameForCountry($country){
+        $sql = " SELECT EMAIL_BODY_NAME";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$COUNTRY;
+        $sql.= " WHERE COUNTRY='" . db2_escape_string($country). "' ";
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception("Sql error in " . __METHOD__ );
+        }
+
+        $row = db2_fetch_assoc($rs);
+
+        if(empty($row['EMAIL_BODY_NAME'])){
+            throw new \Exception("No EMAIL_BODY_NAME found for Country:$country");
+        }
+        return array_map('trim', $row);
+    }
+
+    static function getAdditionalAttachmentsNameCountry($country){
+        $sql = " SELECT COUNTRY, ADDITIONAL_APPLICATION_FORM ";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$COUNTRY;
+        $sql.= " WHERE COUNTRY='" . db2_escape_string($country). "' ";
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception("Sql error in " . __METHOD__ );
+        }
+
+        $row = db2_fetch_assoc($rs);
+
+        return array_map('trim', $row);
+    }
+
+
 
 }
