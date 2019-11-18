@@ -30,7 +30,7 @@ $allContractAccountMapping = ContractTable::prepareJsonObjectMappingContractToAc
 
 include_once 'includes/modalError.html';
 include_once 'includes/modalEditPersonRecord.html';
-include_once 'includes/modalEditPesLevelRecord.html';
+include_once 'includes/modalEditPesLevel.html';
 include_once 'includes/modalCancelPesRequestConfirm.html';
 
 ?>
@@ -277,10 +277,6 @@ $(document).ready(function(){
 
 		console.log(pesLevel);
         $('#PES_LEVEL').val(pesLevel).trigger('change');
-
-console.log($('#PES_LEVEL'));
-
-
 	  	$('.spinning').removeClass('spinning').attr('disabled',false);
 	});
 
@@ -290,7 +286,7 @@ console.log($('#PES_LEVEL'));
 	$(document).on('click','button.editPesLevel',function(){
 		$(this).addClass('spinning').attr('disabled',true);
 		$('#plEMAIL_ADDRESS').val($(this).data('plemailaddress'));
-	    $('#plUPES_REF').val($(this).data('plfullname'));
+	    $('#plUPES_REF').val($(this).data('plupesref'));
 		$('#plACCOUNT').val($(this).data('placcount'));
 		$('#plACCOUNT_ID').val($(this).data('placcountid'));
 	    $('#plCountry').val($(this).data('plcountry'));
@@ -298,6 +294,62 @@ console.log($('#PES_LEVEL'));
 	    $('#plPesLevel').val($(this).data('plpeslevelref'));
 	    $('#plContractId').val($(this).data('plcontractid'));
    	    $('#modalEditPesLevel').modal('show');
+	});
+
+	$(document).on('submit','#editPesLevelForm',function(e){
+		e.preventDefault();
+
+		var submitBtn = $(e.target).find('input[name="Submit"]').addClass('spinning');
+		var url = 'ajax/savePesLevelChanges.php';
+
+		var disabledFields = $(':disabled');
+		$(disabledFields).removeAttr('disabled');
+		var formData = $("#editPesLevelForm").serialize();
+		$(disabledFields).attr('disabled',true);
+
+		$.ajax({
+			type:'post',
+		  	url: url,
+		  	data:formData,
+		  	context: document.body,
+	      	success: function(response) {
+	      		var responseObj = JSON.parse(response);
+
+	      		console.log(responseObj.success);
+	      		if(responseObj.success){
+		    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
+		    	    $('#editPesLevelForm').trigger("reset");
+	                $('#modalEditPesLevel').modal('hide');
+	                userStatusTable.ajax.reload();
+		    	} else {
+     	    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
+		    	    $('#editPesLevelForm').trigger("reset");
+		    	    $('#modalEditPesLevel').modal('hide');
+	                $('#modalError .modal-body').html(responseObj.Messages);
+	                $('#modalError .modal-body').addClass('bg-danger');
+	                $('#modalError').modal('show');
+				}
+          	},
+	      	fail: function(response){
+					console.log('Failed');
+					console.log(response);
+	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
+	                $('#modalError .modal-body').addClass('bg-warning');
+	                $('#modalError').modal('show');
+	                $(submitBtn).removeClass('spinning').attr('disabled',false);
+				},
+	      	error: function(error){
+	        		console.log('Ajax error');
+	        		console.log(error.statusText);
+	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('#modalError .modal-body').addClass('bg-warning');
+	                $('#modalError').modal('show');
+	                $(submitBtn).removeClass('spinning').attr('disabled',false);
+	        	},
+	      	always: function(){
+	        		console.log('--- saved resource request ---');
+	      		}
+			});
 	});
 
 

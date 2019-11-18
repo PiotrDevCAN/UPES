@@ -57,15 +57,20 @@
         </div>
 
     	<input id='PES_REQUESTOR' name='PES_REQUESTOR' type='hidden'  value=''/>
- 	</form>
       </div>
       </div>
       <div class="modal-footer">
-        <input type='hidden' id='savePlEmailAddress' >
-        <input type='hidden' id='savePlPesLevel' >
-        <input type='hidden' id='savePlContractId' >
-        <input type='hidden' id='savePlCountryOfResidence' >
+   		<div class='form-group'>
+   			<div class='col-sm-offset-2 -col-md-3'>
+               <input type='hidden' id='mode' name='mode' value='Define' />
+               <div class='button-blue submitButtonDiv' style='display: block ' style='font-size:1.4em' >
+        		<input class='btn btn-primary' type='submit' name='Submit' id='savePesLevel'  value='Submit' >&nbsp;
+        		<input class='btn btn-warning' type='reset' name='Reset' id='resetPesLevelForm'  value='Reset' >&nbsp;
+        		</div>
+      		</div>
+  		</div>
       </div>
+       	</form>
     </div>
   </div>
 </div>

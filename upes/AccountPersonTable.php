@@ -772,7 +772,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
         $pesLevel = $row['PES_LEVEL'];
         $pesLevelRef = $row['PES_LEVEL_REF'];
-        $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel ' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "'data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "' data-toggle='tooltip' title='Edit Person' >
+        $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel ' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "' data-plupesref='" . $upesref . "' data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "' data-toggle='tooltip' title='Edit Person' >
                           <span class='glyphicon glyphicon-edit aria-hidden='true' ></span>
                           </button>&nbsp;" . $pesLevel;
 
