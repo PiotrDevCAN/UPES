@@ -731,12 +731,14 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
     }
 
     static function addButtonsForPeopleReport($row){
-        $account = trim($row['ACCOUNT']);
-        $accountId = trim($row['ACCOUNT_ID']);
-        $upesref = trim($row['UPES_REF']);
-        $email = trim($row['EMAIL_ADDRESS']);
-        $fullname = trim($row['FULL_NAME']);
+        $account = $row['ACCOUNT'];
+        $accountId = $row['ACCOUNT_ID'];
+        $upesref = $row['UPES_REF'];
+        $email = $row['EMAIL_ADDRESS'];
+        $fullname = $row['FULL_NAME'];
+        $countryOfResidence = $row['COUNTRY_OF_RESIDENCE'];
 
+        $row['ACCOUNT'] = array('display'=>"$account<br/><small>($countryOfResidence)<small>", 'sort'=>$account);
 
         $row['ACTION'] = '';
 
@@ -765,8 +767,14 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $requestor = $row['PES_REQUESTOR'];
         $requested = $row['PES_DATE_REQUESTED'];
 
+
         $row['REQUESTED'] = "<small>" .  $requestor . "<br/>" . $requested . "</small>";
 
+        $pesLevel = $row['PES_LEVEL'];
+        $pesLevelRef = $row['PES_LEVEL_REF'];
+        $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel ' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "'data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "' data-toggle='tooltip' title='Edit Person' >
+                          <span class='glyphicon glyphicon-edit aria-hidden='true' ></span>
+                          </button>&nbsp;" . $pesLevel;
 
         return $row;
 
