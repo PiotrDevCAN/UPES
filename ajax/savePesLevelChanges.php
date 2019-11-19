@@ -23,6 +23,7 @@ try {
     $accountPersonRecordData = array_map('trim', $_POST);
     $accountPersonRecord->setFromArray(array('ACCOUNT_ID'=>$accountPersonRecordData['ACCOUNT_ID'], 'UPES_REF'=>$accountPersonRecordData['UPES_REF'],'PES_LEVEL'=>$accountPersonRecordData['PES_LEVEL'],'COUNTRY_OF_RESIDENCE'=>$accountPersonRecordData['COUNTRY_OF_RESIDENCE']));
     $updateRecord = $accountPersonTable->update($accountPersonRecord,false, false); // Only used to save NEW accountPersonRecords
+    $accountPersonTable->setPesRescheckDate($accountPersonRecordData['UPES_REF'],$accountPersonRecordData['ACCOUNT_ID'],$_SESSION['ssoEmail']);
 } catch (Exception $e) {
     echo $e->getCode();
     echo $e->getMessage();
