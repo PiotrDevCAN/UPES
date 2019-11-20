@@ -3,7 +3,7 @@ use itdq\Loader;
 use upes\PersonRecord;
 use itdq\BluePages;
 use upes\PersonTable;
-use upes\allTables;
+use upes\AllTables;
 use itdq\AuditTable;
 use itdq\DbTable;
 use itdq\slack;
@@ -17,7 +17,7 @@ $slack->sendMessageToChannel("Revalidation invoked.", slack::CHANNEL_UPES_AUDIT)
 
 set_time_limit(60);
 
-$personTable = new personTable(allTables::$PERSON);
+$personTable = new personTable(AllTables::$PERSON);
 $slack = new slack();
 
 $loader = new Loader();
