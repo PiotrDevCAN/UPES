@@ -8,6 +8,7 @@ use \DateTime;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use itdq\xls;
 use itdq\AuditTable;
+use itdq\slack;
 
 /*
  *
@@ -25,6 +26,7 @@ protected $preparedTrackerInsert;
 protected $preparedGetPesCommentStmt;
 protected $preparedProcessStatusUpdate;
 protected $preparedGetProcessingStatusStmt;
+protected $preparedResetForRecheck;
 
 const PES_TRACKER_RECORDS_ACTIVE       = 'Active';
 const PES_TRACKER_RECORDS_ACTIVE_PLUS  = 'Active Plus';
@@ -824,6 +826,85 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         db2_commit($_SESSION['conn']);
         db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_ON);
 
+
+    }
+
+    function notifyRecheckDateApproaching(){
+        $slack = new slack();
+        $localConnection = $_SESSION['conn']; // So we can keep reading this RS whilst making updates to the TRACKER TABLE.
+        include "connect.php"; // get new connection on $_SESSION['conn'];
+
+        $sql = " SELECT AP.ACCOUNT_ID, A.ACCOUNT, AP.UPES_REF, P.CNUM, P.EMAIL_ADDRESS, P.FULL_NAME,  AP.PES_STATUS, AP.PES_RECHECK_DATE ";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . allTables::$ACCOUNT_PERSON . " as AP ";
+        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . allTables::$PERSON . " as P ";
+        $sql.= " ON AP.UPES_REF = P.UPES_REF ";
+        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . allTables::$ACCOUNT . " as A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " WHERE 1=1 ";
+        $sql.= " AND AP.PES_STATUS != '" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "' ";
+        $sql.= " and AP.PES_RECHECK_DATE is not null ";
+        $sql.= " and AP.PES_RECHECK_DATE < CURRENT DATE + 56 DAYS ";
+
+        $rs = db2_exec($localConnection, $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+        }
+
+        $allRecheckers = false;
+        while(($row=db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim', $row);
+            $allRecheckers[] = $trimmedRow;
+            $this->setPesStatus($trimmedRow['UPES_REF'],$trimmedRow['ACCOUNT_ID'],AccountPersonRecord::PES_STATUS_RECHECK_REQ);;
+            $this->resetForRecheck($trimmedRow['UPES_REF'],$trimmedRow['ACCOUNT_ID']);
+            $slack->sendMessageToChannel("PES Recheck " . $trimmedRow['FULL_NAME'] . " on " . $trimmedRow['ACCOUNT'], slack::CHANNEL_UPES_AUDIT);
+        }
+
+        if($allRecheckers){
+            pesEmail::notifyPesTeamOfUpcomingRechecks($allRecheckers);
+        } else {
+            pesEmail::notifyPesTeamNoUpcomingRechecks();
+        }
+        return $allRecheckers;
+
+    }
+
+    function resetForRecheck($upesRef=null, $accountId=null){
+
+        $preparedStmt = $this->prepareResetForRecheck();
+        $data = array($accountId,$upesRef);
+
+        $rs = db2_execute($preparedStmt,$data);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
+            throw new \Exception('Unable to reset for recheck Tracker record for ' . $accountId .":" . $upesRef);
+        }
+    }
+
+    function prepareResetForRecheck(){
+        if(isset($this->preparedResetForRecheck)) {
+            return $this->preparedResetForRecheck;
+        }
+
+        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql.= " SET PROCESSING_STATUS = 'PES' ";
+        // CONSENT = null, RIGHT_TO_WORK = null, PROOF_OF_ID = null, PROOF_OF_RESIDENCY= null, CREDIT_CHECK= null,FINANCIAL_SANCTIONS= null ";
+        // $sql.= " , CRIMINAL_RECORDS_CHECK= null, PROOF_OF_ACTIVITY= null
+        foreach (self::PES_TRACKER_STAGES as $trackerStage) {
+            $sql.= " , " . $trackerStage . " = null ";
+        }
+        $sql.= " ,  PROCESSING_STATUS_CHANGED= current timestamp, DATE_LAST_CHASED = null ";
+        $sql.= " WHERE ACCOUNT_ID = ?  AND UPES_REF = ? ";
+
+        $preparedStmt = db2_prepare($_SESSION['conn'], $sql);
+
+        if($preparedStmt){
+            $this->preparedResetForRecheck = $preparedStmt;
+            return $preparedStmt;
+        }
+
+        return false;
 
     }
 
