@@ -967,5 +967,34 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
     }
 
+    static function upcomingRechecksByAccount(){
+        $sql = " SELECT A.ACCOUNT, YEAR(PES_RECHECK_DATE) as YEAR, MONTH(PES_RECHECK_DATE) as MONTH, count(*) as RESOURCES ";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+
+        //         $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        //         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
+        $sql.= " WHERE DATE(PES_RECHECK_DATE) >= CURRENT DATE - 1 month ";
+        $sql.= " AND DATE(PES_RECHECK_DATE) <= CURRENT DATE + 5 MONTHS ";
+        $sql.= " GROUP by ACCOUNT, YEAR(PES_RECHECK_DATE), MONTH(PES_RECHECK_DATE) ";
+        $sql.= " ORDER by ACCOUNT ";
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception('Unable to produce upcomingRechecksByAccount result set');
+        }
+        $report = false;
+        while(($row=db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim', $row);
+            $report[] = $trimmedRow;
+        }
+
+        return $report;
+
+    }
+
 
 }
