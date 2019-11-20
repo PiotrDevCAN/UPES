@@ -909,5 +909,34 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
     }
 
 
+    static function statusByAccount(){
+        $sql = " SELECT A.ACCOUNT, AP.PES_STATUS, count(*) as RESOURCES ";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+
+//         $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+//         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
+//         $sql.= " WHERE P.BLUEPAGES = 'found' or P.BLUEPAGES is null ";
+
+        $sql.= " GROUP by ACCOUNT, PES_STATUS ";
+        $sql.= " ORDER by ACCOUNT ";
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception('Unable to produce StatusByAccount result set');
+        }
+        $report = false;
+        while(($row=db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim', $row);
+            $report[] = $trimmedRow;
+        }
+
+        return $report;
+
+    }
+
 
 }

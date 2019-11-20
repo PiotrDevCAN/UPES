@@ -50,10 +50,15 @@ $user->addOption($userAdd);
 $user->addOption($userBoard);
 $user->addOption($userStatus);
 
+$reports          = new NavBarMenu("Reports",'accessCdi accessPesTeam accessReports' );
+$overviewByAccount= new NavbarOption('By Account', 'pr_byAccount.php','accessCdi accessPesTeam accessReports');
+
+$reports->addOption($overviewByAccount);
 
 $navbar->addMenu($cdiAdmin);
 $navbar->addMenu($admin);
 $navbar->addMenu($user);
+$navbar->addMenu($reports);
 
 $outages = new NavbarOption($plannedOutagesLabel, 'ppo_PlannedOutages.php','accessCdi accessPesTeam accessUser');
 $navbar->addOption($outages);
