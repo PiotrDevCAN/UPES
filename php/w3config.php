@@ -50,7 +50,7 @@ $site = array(
     'csvPrefix' => $_SERVER['environment'],
 
     'cdiBg'       => 'ventus_cdi',
-    'pesTeamBg'   => 'vbac_pes',
+    'pesTeamBg'   => 'upes_pesTeam',
     'nullBg'      => null,
 
     'email' => false,
