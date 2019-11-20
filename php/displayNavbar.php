@@ -52,8 +52,10 @@ $user->addOption($userStatus);
 
 $reports          = new NavBarMenu("Reports",'accessCdi accessPesTeam accessReports' );
 $overviewByAccount= new NavbarOption('By Account', 'pr_byAccount.php','accessCdi accessPesTeam accessReports');
+$processStatus    = new NavbarOption('Process Status', 'pr_processStatus.php','accessCdi accessPesTeam accessReports');
 
 $reports->addOption($overviewByAccount);
+$reports->addOption($processStatus);
 
 $navbar->addMenu($cdiAdmin);
 $navbar->addMenu($admin);
@@ -92,6 +94,7 @@ $('li[data-pagename="<?=$page;?>"]').addClass('active').closest('li.dropdown').a
 
 
 if($page != "index.php" && substr($page,0,3)!='cdi'){
+
     ?>
     var pageAllowed = $('li[data-pagename="<?=$page;?>"]').length;
 
