@@ -50,7 +50,10 @@ AuditTable::audit("Revalidation found " . count($allNonLeavers) . "  leavers.",A
 $slack->sendMessageToChannel("Revalidation found " . count($allNonLeavers) . "  leavers.", slack::CHANNEL_UPES_AUDIT);
 
 PersonTable::setCnumsToFound($allFound);
-PersonTable::setCnumsToNotFound($allNonLeavers);
+
+if($allNonLeavers){
+    PersonTable::autoFlagLeftIBM($allNonLeavers);
+}
 
 AuditTable::audit("Revalidation completed.",AuditTable::RECORD_TYPE_REVALIDATION);
 $slack->sendMessageToChannel("Revalidation completed.", slack::CHANNEL_UPES_AUDIT);

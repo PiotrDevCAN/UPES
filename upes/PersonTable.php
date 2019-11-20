@@ -135,7 +135,7 @@ class PersonTable extends DbTable
     }
 
 
-    static function setCnumsToNotFound($arrayOfCnum){
+    private static function setCnumsToNotFound($arrayOfCnum){
         $cnumString = implode("','", $arrayOfCnum);
         $cnumString = "('" . $cnumString . "') ";
         $sql = " UPDATE ";
@@ -147,6 +147,53 @@ class PersonTable extends DbTable
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
         }
+    }
+
+    private static function setCnumsToLeftIBM($arrayOfCnum){
+        $cnumString = implode("','", $arrayOfCnum);
+        $cnumString = "('" . $cnumString . "') ";
+        $sql = " UPDATE ";
+        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " SET AP.PES_STATUS='" . AccountPersonRecord::PES_STATUS_LEFT_IBM . "' ";
+        $sql.= " WHERE UPES_REF in (";
+        $sql.= "   SELECT UPES_REF ";
+        $sql.= "   FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        $sql.= "   WHERE P.CNUM in " . $cnumString;
+        $sql.= " ) ";
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+        }
+    }
+
+
+
+    static function autoFlagLeftIBM($arrayOfCnum){
+        $cnumString = implode("','", $arrayOfCnum);
+        $cnumString = "('" . $cnumString . "') ";
+
+        $sql = " SELECT P.CNUM, P.FULL_NAME, A.ACCOUNT, AP.PES_STATUS, AP.PES_CLEARED_DATE, AP.PES_RECHECK_DATE ";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
+        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
+        $sql.= " ON P.UPES_REF = AP.UPES_REF ";
+        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
+        $sql.= " ON A.ACCOUNT_ID =  AP.ACCOUNT_ID ";
+        $sql.= " WHERE CNUM in " . $cnumString;
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+        }
+        $detailsOfLeavers = array();
+        while(($row = db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim',$row);
+            $detailsOfLeavers[] = $trimmedRow;
+        }
+
+        PesEmail::notifyPesTeamLeaversFound($detailsOfLeavers);
+        PersonTable::setCnumsToNotFound($arrayOfCnum);
+        PersonTable::setCnumsToLeftIBM($arrayOfCnum);
     }
 
 
