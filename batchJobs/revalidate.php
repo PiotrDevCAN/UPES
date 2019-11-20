@@ -46,8 +46,8 @@ foreach ($chunkedCnum as $key => $cnumList){
 }
 
 // At this stage, anyone still in the $allNonLeavers array - has NOT been found in BP and so is now POTENTIALLY a leaver and needs to be flagged as such.
-AuditTable::audit("Revalidation found " . count($allNonLeavers) . " potential leavers.",AuditTable::RECORD_TYPE_REVALIDATION);
-$slack->sendMessageToChannel("Revalidation found " . count($allNonLeavers) . " potential leavers.", slack::CHANNEL_UPES_AUDIT);
+AuditTable::audit("Revalidation found " . count($allNonLeavers) . "  leavers.",AuditTable::RECORD_TYPE_REVALIDATION);
+$slack->sendMessageToChannel("Revalidation found " . count($allNonLeavers) . "  leavers.", slack::CHANNEL_UPES_AUDIT);
 
 PersonTable::setCnumsToFound($allFound);
 PersonTable::setCnumsToNotFound($allNonLeavers);
