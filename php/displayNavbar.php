@@ -73,18 +73,6 @@ $isCdi       = employee_in_group($_SESSION['cdiBg'],  $_SESSION['ssoEmail']) ? "
 $isPesTeam   = employee_in_group($_SESSION['pesTeamBg'],  $_SESSION['ssoEmail']) ? ".not('.accessPesTeam')" : null;
 $isUser      = ".not('.accessUser')";
 
-
-
-
-var_dump($_SESSION['pesTeamBg']);
-var_dump($_SESSION['ssoEmail']);
-
-$result = employee_in_group($_SESSION['pesTeamBg'],  $_SESSION['ssoEmail']);
-var_dump($result);
-die('here');
-
-
-
 $isCdi        = stripos($_SERVER['environment'], 'dev') ? ".not('.accessCdi')"        : $isCdi;
 $isPesTeam    = stripos($_SERVER['environment'], 'dev')  ? ".not('.accessPesTeam')"   : $isPesTeam;
 $isUser       = stripos($_SERVER['environment'], 'dev')  ? ".not('.accessUser')"      : $isUser;
