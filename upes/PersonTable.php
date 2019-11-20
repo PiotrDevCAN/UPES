@@ -4,14 +4,10 @@ namespace upes;
 use itdq\DbTable;
 use itdq\Loader;
 
-
-
-
-
 class PersonTable extends DbTable
 {
 
-    function returnAsArray($predicate=null,$withButtons=true){
+   function returnAsArray($predicate=null,$withButtons=true){
         $sql  = " SELECT '' as ACTION, P.*, PL.PES_LEVEL as PES_LEVEL_TXT, PL.PES_LEVEL_DESCRIPTION ";
         $sql .= " FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName. " as P ";
         $sql .= " LEFT JOIN " .  $_SESSION['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
@@ -120,6 +116,16 @@ class PersonTable extends DbTable
 
         return true;
     }
+
+
+    static function setCnumsToNotFound($arrayOfCnum){
+        $cnumString = implode("','", $arrayOfCnum);
+
+        $cnumString = "('" . $cnumString . "') ";
+
+        var_dump($cnumString);
+    }
+
 
 
 

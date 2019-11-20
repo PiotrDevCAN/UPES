@@ -17,7 +17,7 @@ class BluePages {
 	static function getDetailsFromCnumSlapMulti($cnumArray,$parms="&uid&dept&div&cr&notesId&mail&managerSerialNumber&managerCountryCode&notesEmail&isManager"){
 	    $startTime = microtime(true);
 	    set_time_limit(120);
-	   //  $urlTemplate = "https://bluepages.ibm.com/BpHttpApisv3/slaphapi?ibmperson/(|";
+	    // $urlTemplate = "https://bluepages.ibm.com/BpHttpApisv3/slaphapi?ibmperson/(|";
 	    $urlTemplate = $_SERVER['SERVER_NAME'] . "/api/bluepages.php?ibmperson/(|";
 
 	    foreach ($cnumArray as $cnum){
@@ -32,7 +32,7 @@ class BluePages {
 	     */
 
 
-// 	    echo $urlTemplate;
+ 	    echo $urlTemplate;
 	    $ch = curl_init ( $urlTemplate );
 	    AuditTable::audit(__FUNCTION__ . ":" . print_r($urlTemplate,true),AuditTable::RECORD_TYPE_DETAILS);
 	    curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -40,6 +40,8 @@ class BluePages {
 	    $curlReturn = curl_exec ( $ch );
 	    $lookupTime = (float)(microtime(true) - $startTime);
 	    echo "<br/>Bluepages Lookup Elapsed Time:$lookupTime";
+
+	    var_dump($curlReturn);
 
 	    //$xml = simplexml_load_string($curlReturn);
 	    $jsonObject = json_decode($curlReturn);
