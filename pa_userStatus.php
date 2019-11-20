@@ -216,7 +216,7 @@ $(document).ready(function(){
 
 		$.ajax({
 			type:'post',
-		  	url: '/ajax/getEditPersonForm',
+		  	url: '/ajax/getEditPersonForm.php',
 		  	data:{upesRef: upesRef},
 	      	success: function(response) {
 	      		var responseObj = JSON.parse(response);

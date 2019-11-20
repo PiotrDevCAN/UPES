@@ -112,9 +112,8 @@ $(document).ready(function () {
 
     $('button.accessRestrict')<?=$isCdi?><?=$isPesTeam?><?=$isUser?>.remove();
 
-
-    <?=!empty($isPesTeam)   ? '$("#userLevel").html("Pes Team");console.log("pes");' : null;?>
     <?=!empty($isUser)      ? '$("#userLevel").html("User");console.log("user");' : null;?>
+    <?=!empty($isPesTeam)   ? '$("#userLevel").html("Pes Team");console.log("pes");' : null;?>
     <?=!empty($isCdi)       ? '$("#userLevel").html("CDI");console.log("CDI");' : null;?>
 
     var poContent = $('#<?=$plannedOutagesId?> a').html();
