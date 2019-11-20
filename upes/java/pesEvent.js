@@ -512,7 +512,7 @@ function pesEvent() {
   
 }
 
-$( document ).ready(function() {
-	  var pesevent = new pesEvent();
-	  pesevent.init();
+$( document ).ready(function() {	  
+	  var Pesevent = new pesEvent();
+	  Pesevent.init();
 	});

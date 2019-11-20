@@ -1,4 +1,4 @@
- /*
+/*
  *
  *
  *
@@ -149,57 +149,37 @@ function personRecord() {
 				$(document).on('click','.btnSendPesEmail', function(e){
 					$(this).addClass('spinning');
 					var data = $(this).data();
+					
+					console.log(data);
+					
 					   $.ajax({
 						   url: "ajax/pesEmailDetails.php",
 					       type: 'POST',
-					       data : {emailaddress:data.emailaddress,
-					    	       country:data.country,
-					    	       ibmstatus:data.ibmstatus,
-					    	       upesref:data.upesref,
+					       data : {country:data.country,					    	       
 					    	       account:data.account
 					    	       },
 					       success: function(result){
 					    	   $('.btnSendPesEmail').removeClass('spinning');		    	 
 					           var resultObj = JSON.parse(result);
 					           if(resultObj.success==true){
-					   				$('#pesEmailFirstName').val(data.firstname);
-					   				$('#pesEmailLastName').val(data.lastname);
+					        	    $('#pesEmailUpesRef').val(data.upesref);
+					   				$('#pesEmailFullName').val(data.fullname);
 					   				$('#pesEmailAddress').val(data.emailaddress);
 					   				$('#pesEmailCountry').val(data.country);
-					   				$('#pesEmailOpenSeat').val(data.openseat);
-					   				$('#pesEmailFilename').val(resultObj.filename);
-					   				$('#pesEmailCnum').val(resultObj.cnum);
-					   				$('#pesEmailFilename').css('background-color','#eeeeee');
-					   				$('#pesEmailAttachments').val(''); // clear it out the first time.
-					   				var arrayLength = resultObj.attachmentFileNames.length;
+					   				$('#pesEmailAccount').val(data.account);
+					   				$('#pesEmailAccountId').val(data.accountid );
+					   				$('#pesEmailCnum').val(data.cnum);					   				
+					   				$('#pesEmailApplicationForm').val(''); // clear it out the first time.
+					   				var arrayLength = resultObj.pesAttachments.length;
 					   				for (var i = 0; i < arrayLength; i++) {
-					   					var attachments = $('#pesEmailAttachments').val();
-					   					$('#pesEmailAttachments').val(resultObj.attachmentFileNames[i] + "\n" + attachments);
+					   					var attachments = $('#pesEmailApplicationForm').val();
+					   					$('#pesEmailApplicationForm').val(resultObj.pesAttachments[i].filename + "\n" + attachments);
 					   				}		
 					   				$('#confirmSendPesEmail').prop('disabled',false);
 					   				$('#confirmSendPesEmailModal').modal('show');
 					             } else {
-					            	 $('#confirmSendPesEmail').prop('disabled',true);
-							   		 $('#pesEmailFirstName').val(data.firstname);
-							   		 $('#pesEmailLastName').val(data.lastname);
-									 $('#pesEmailAddress').val(data.emailaddress);
-									 $('#pesEmailCountry').val(data.country);
-									 $('#pesEmailOpenSeat').val(data.openseat);
-									 $('#pesEmailAttachments').val(''); // clear it out the first time.
-									 if(resultObj.attachmentFileNames){
-							   			var arrayLength = resultObj.attachmentFileNames.length;
-							   			for (var i = 0; i < arrayLength; i++) {
-							   				var attachments = $('#pesEmailAttachments').val();
-							   				$('#pesEmailAttachments').val(resultObj.attachmentFileNames[i] + "\n" + attachments);
-							   			}									 
-									 }							 
-									 if(resultObj.warning.filename){
-										 $('#pesEmailFilename').val(resultObj.warning.filename);	
-										 $('#pesEmailFilename').css('background-color','red');
-									 };
-									 
-									
-									 $('#confirmSendPesEmailModal').modal('show');
+					            	 $('#modalError .modal-body').html(resultObj.messages);
+									 $('#modalError').modal('show');
 					             };
 					       }
 					   });	
@@ -209,34 +189,30 @@ function personRecord() {
 		  this.listenforConfirmSendPesEmail = function(){ 
 				$(document).on('click','#confirmSendPesEmail', function(e){
 					$('#confirmSendPesEmail').addClass('spinning');
-		   			var firstname = $('#pesEmailFirstName').val();
-		   			var lastname = $('#pesEmailLastName').val();
-					var emailAddress = $('#pesEmailAddress').val();
 					var country = $('#pesEmailCountry').val();
-					var openseat = $('#pesEmailOpenSeat').val();
+					var upesref = $('#pesEmailUpesRef').val();
+					var account = $('#pesEmailAccount').val();
+					var accountid = $('#pesEmailAccountId').val();
 					var cnum = $('#pesEmailCnum').val();
 					   $.ajax({
 						   url: "ajax/sendPesEmail.php",
 					       type: 'POST',
-					       data : {emailaddress:emailAddress,
-					    	   	   firstname:firstname,
-					    	       lastname:lastname,
-					    	       country:country,
-					    	       openseat:openseat,
-					    	       cnum:cnum
-					    	       
+					       data : { upesref:upesref,
+					    	   	    country:country,
+					    	       account:account,
+					    	       accountid:accountid,
+					    	       cnum:cnum				    	       
 					    	       },
 					       success: function(result){
-					    	   $('#confirmSendPesEmail').removeClass('spinning');	  		    	   					    	   
-					    	   var resultObj = JSON.parse(result);					    	   
-					    	   if(typeof( personWithSubPRecord.table)!='undefined'){
-					    		//   personRecord.table.ajax.reload();
-					    	   }	
-					    	   
-					    	  $('.pesComments[data-cnum="' + cnum + '"]').html('<small>' + resultObj.comment + '</small>');
-					    	  $('.pesStatusField[data-cnum="' + cnum + '"]').text(resultObj.pesStatus);	
-					    	  $('.pesStatusField[data-cnum="' + cnum + '"]').siblings('.btnSendPesEmail').remove();
+					    	  $('#confirmSendPesEmail').removeClass('spinning');	  		    	   					    	   
 					    	  $('#confirmSendPesEmailModal').modal('hide');
+					    	  
+					    	  var resultObj = JSON.parse(result);
+					    	  
+					    	  $('.pesComments[data-upesref="' + upesref + '"]').html('<small>' + resultObj.comment + '</small>');
+					    	  $('.pesStatusTd[data-upesref="' + upesref + '"]').html(resultObj.pesStatus);	
+					    	 //  $('.pesStatusField[data-upesref="' + upesref + '"]').siblings('.btnSendPesEmail').remove();
+					    	 
 					           
 					      }
 					   });

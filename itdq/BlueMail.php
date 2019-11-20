@@ -103,7 +103,9 @@ class BlueMail
                 }
 
                 if(!$resp){
-                    throw new \Exception('Error trying to send email :' . $subject);
+                    echo curl_errno($ch);
+                    echo curl_error($ch);
+                    throw new \Exception('Error trying to send email (' . curl_error($ch) . ') : ' . $subject);
                 }
 
                 $responseObject = json_decode($resp);

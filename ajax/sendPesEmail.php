@@ -1,0 +1,62 @@
+<?php
+
+use upes\PesEmail;
+use upes\AccountPersonRecord;
+use upes\AccountPersonTable;
+use upes\AllTables;
+use upes\PersonRecord;
+use upes\PersonTable;
+
+
+ob_start();
+$pesEmailObj = new PesEmail();
+$accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+$personTable = new PersonTable(AllTables::$PERSON);
+$personRecord = new PersonRecord();
+$personRecord->setFromArray(array('UPES_REF'=>$_POST['upesref']));
+$personRecordData = $personTable->getRecord($personRecord);
+$names = explode(" ", $personRecordData['FULL_NAME']);
+
+db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_OFF);
+
+try {
+
+    $sendResponse = PesEmail::sendPesApplicationForms($_POST['account'], $_POST['country'], $personRecordData['CNUM'],  $personRecordData['FULL_NAME'], $names[0],array($personRecordData['EMAIL_ADDRESS']));
+
+    $accountPersonTable->savePesComment($_POST['upesref'],$_POST['accountid'],  "PES application forms sent:" . $sendResponse['Status']->status );
+    $accountPersonTable->setPesStatus($_POST['upesref'],$_POST['accountid'],AccountPersonRecord::PES_STATUS_PES_PROGRESSING,'PES Application form sent:' . $sendResponse['Status']->status);
+
+} catch ( \Exception $e) {
+    switch ($e->getCode()) {
+        case 803:
+            $emailDetails['warning']['filename'] = 'No email exists for combination of Internal/External and Country';
+            echo "Warning";
+        break;
+        default:
+            var_dump($e);
+        break;
+    }
+}
+
+$data = AccountPersonTable::returnPesEventsTable('Active', AccountPersonTable::PES_TRACKER_RETURN_RESULTS_AS_ARRAY,$_POST['upesref'],$_POST['accountid']);
+$pesStatusField = AccountPersonRecord::getPesStatusWithButtons($data[0]);
+
+db2_commit($_SESSION['conn']);
+db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_ON);
+
+
+$pesCommentField = $data[0]['COMMENT'];
+
+
+$messages = ob_get_clean();
+$success = strlen($messages)==0;
+
+unset($emailDetails['attachments']); // dont need them at this point.
+$emailDetails['success'] = $success;
+$emailDetails['messages'] = $messages;
+$emailDetails['cnum'] = $data[0]['CNUM'];
+$emailDetails['comment'] = $pesCommentField;
+$emailDetails['pesStatus'] = $pesStatusField;
+
+ob_clean();
+echo json_encode($emailDetails);

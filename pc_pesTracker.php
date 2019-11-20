@@ -26,14 +26,17 @@ $pesTrackerTable->displayTable(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE);
 $person = new AccountPersonRecord();
 $person->amendPesStatusModal();
 $person->confirmSendPesEmailModal();
+include "includes/modalError.html";
 
 
 
 ?>
 </div>
 <script>
+var pesTrackerTable;
 var pesevent = new pesEvent();
 var person = new personRecord();
+
 
 $(document).ready(function(){
 
@@ -50,7 +53,7 @@ $(document).ready(function(){
  	pesevent.listenForSavePesStatus();
 // 	person.listenForInitiatePesFromPortal();
  	person.listenforSendPesEmail();
-// 	person.listenforConfirmSendPesEmail();
+ 	person.listenforConfirmSendPesEmail();
 
     console.log($('button[name=pesRecordFilter]:checked'));
     console.log($('button[name=pesRecordFilter]:checked').val());

@@ -29,7 +29,9 @@ class PesEmail {
     static private function getGlobalApplicationForm(){
         // LLoyds Global Application Form v1.4.doc
         // $filename = "../emailAttachments/LLoyds Global Application Form v1.4.doc";
-        $filename = self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_GLOBAL;
+        $filename = "../". self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_GLOBAL;
+
+
         $handle = fopen($filename, "r");
         $applicationForm = fread($handle, filesize($filename));
         fclose($handle);
@@ -38,8 +40,8 @@ class PesEmail {
 
     static private function getOwensConsentForm(){
         //$filename = "../emailAttachments/New Overseas Consent Form GDPR.pdf";
-        $filename = self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_OWENS;
-        $handle = fopen($filename, "r");
+        $filename = "../" .  self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_OWENS;
+        $handle = fopen($filename, "r",true);
         $applicationForm = fread($handle, filesize($filename));
         fclose($handle);
         return base64_encode($applicationForm);
@@ -48,7 +50,7 @@ class PesEmail {
 
     static private function getOdcApplicationForm(){
         //$inputFileName = '../emailAttachments/ODC application form V2.0.xls';
-        $inputFileName = self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_ODC;
+        $inputFileName = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_ODC;
         /** Load $inputFileName to a Spreadsheet Object  **/
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
 
@@ -83,8 +85,8 @@ class PesEmail {
 
         $emailBodyName = CountryTable::getEmailBodyNameForCountry($country);
 
-        $pathToAccountBody     = self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/request_" . $emailBodyName['EMAIL_BODY_NAME'] . ".php";
-        $pathToDefaultBody     = self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//request_" . $emailBodyName['EMAIL_BODY_NAME'] . ".php";
+        $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/request_" . $emailBodyName['EMAIL_BODY_NAME'] . ".php";
+        $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//request_" . $emailBodyName['EMAIL_BODY_NAME'] . ".php";
 
         $pathsToTry = array($pathToAccountBody,$pathToDefaultBody);
 
@@ -107,13 +109,9 @@ class PesEmail {
         $emailBodyPattern    = array('/&&candidate_first_name&&/','/&&name_of_application_form&&/','/&&account_name&& /');
         $emailBody = '';// overwritten by include
 
-        $nameOfApplicationForm = "<i>Form names here</i>";
-
-        $additionalApplicationFormDetails = CountryTable::getAdditionalAttachmentsNameCountry($country);
-
-        $nameOfApplicationForm = "<ul><li><i>" . self::APPLICATION_FORM_GLOBAL . "</i></li>";
-        $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
-        $nameOfApplicationForm.= "</ul>";
+        $applicationFormDetails = self::determinePesApplicationForms($country);
+        $nameOfApplicationForm = $applicationFormDetails['nameOfApplicationForm'];
+        $pesAttachments        = $applicationFormDetails['pesAttachments'];
 
         $emailBodyFile = PesEmail::findEmailBody($account, $country);
 
@@ -123,6 +121,19 @@ class PesEmail {
 
         $emailBodyReplacements = array($candidate_first_name,$nameOfApplicationForm,$account);
         $email = preg_replace($emailBodyPattern, $emailBodyReplacements, $emailBody);
+
+        // AccountPersonRecord::$pesTaskId[0]
+
+        return BlueMail::send_mail($candidateEmail, $subject, $email, 'daniero@uk.ibm.com',array(),array(),false,$pesAttachments);
+    }
+
+    static function determinePesApplicationForms($country){
+
+        $additionalApplicationFormDetails = CountryTable::getAdditionalAttachmentsNameCountry($country);
+
+        $nameOfApplicationForm = "<ul><li><i>" . self::APPLICATION_FORM_GLOBAL . "</i></li>";
+        $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
+        $nameOfApplicationForm.= "</ul>";
 
         $pesAttachments = array();
         $encodedApplicationForm = self::getGlobalApplicationForm();
@@ -139,10 +150,11 @@ class PesEmail {
                 break;
             default:
                 null;
-            break;
+                break;
         }
-        return BlueMail::send_mail($candidateEmail, $subject, $email, 'lbgvetpr@uk.ibm.com',array(),array(),false,$pesAttachments);
+        return array('pesAttachments'=> $pesAttachments,'nameOfApplicationForm'=>$nameOfApplicationForm);
     }
+
 
 
 

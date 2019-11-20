@@ -6,9 +6,10 @@ use upes\PesEmail;
 ob_start();
 $pesEmailObj = new PesEmail();
 
-
 try {
-    $emailDetails = $pesEmailObj->getEmailDetails($_POST['upesref'],  $_POST['account'], $_POST['country'],$_POST['ibmstatus']);
+   // $emailDetails = $pesEmailObj->getEmailDetails($_POST['upesref'],  $_POST['account'], $_POST['country'],$_POST['ibmstatus']);
+   $emailDetails = PesEmail::determinePesApplicationForms($_POST['country']);
+
 } catch ( \Exception $e) {
     switch ($e->getCode()) {
         case 803:

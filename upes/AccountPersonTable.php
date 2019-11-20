@@ -57,7 +57,7 @@ const PES_TRACKER_STAGE_MEMBERSHIP     = 'Membership';
 const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF_OF_RESIDENCY','CREDIT_CHECK','FINANCIAL_SANCTIONS','CRIMINAL_RECORDS_CHECK','PROOF_OF_ACTIVITY','QUALIFICATIONS','DIRECTORS','MEDIA','MEMBERSHIP');
 
 
-    static function returnPesEventsTable($records='Active',$returnResultsAs='array'){
+    static function returnPesEventsTable($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null){
 
         switch (trim($records)){
             case self::PES_TRACKER_RECORDS_ACTIVE :
@@ -125,6 +125,8 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $sql.= " WHERE 1=1 ";
         $sql.= " and (AP.UPES_REF is not null or ( AP.UPES_REF is null  AND AP.PES_STATUS_DETAILS is null )) "; // it has a tracker record
         $sql.= " AND " . $pesStatusPredicate;
+        $sql.= !empty($upesRef) ? " AND AP.UPES_REF='" . db2_escape_string($upesRef)  . "' " : null;
+        $sql.= !empty($accountId) ? " AND AP.ACCOUNT_ID='" . db2_escape_string($accountId)  . "' " : null;
 
         $rs = db2_exec($_SESSION['conn'], $sql);
 
@@ -249,7 +251,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             </span>
             </div>
             </td>
-            <td class='nonSearchable'><?=AccountPersonRecord::getPesStatusWithButtons($row)?></td>
+            <td class='nonSearchable pesStatusTd' data-upesref='<?=$upesref;?>'><?=AccountPersonRecord::getPesStatusWithButtons($row)?></td>
             <td class='pesCommentsTd'><textarea rows="3" cols="20"  data-upesref='<?=$upesref?>' data-accountid='<?=$accountId?>'></textarea><br/>
             <button class='btn btn-default btn-xs btnPesSaveComment accessPes accessCdi' data-setpesto='Yes' data-toggle="tooltip" data-placement="top" title="Save Comment" ><span class="glyphicon glyphicon-save" ></span></button>
             <div class='pesComments' data-upesref='<?=$upesref?>'><small><?=$row['COMMENT']?></small></div>

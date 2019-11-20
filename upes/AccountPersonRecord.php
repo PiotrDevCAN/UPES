@@ -83,20 +83,20 @@ class AccountPersonRecord extends DbRecord
     const PES_EVENT_MEDIA          = 'Media';
     const PES_EVENT_MEMBERSHIP     = 'Membership';
 
-    const PES_STATUS_CLEARED       = 'Cleared';
-    const PES_STATUS_DECLINED      = 'Declined';
-    const PES_STATUS_EXCEPTION     = 'Exception';
-    const PES_STATUS_FAILED        = 'Failed';
+    const PES_STATUS_CLEARED        = 'Cleared';
+    const PES_STATUS_DECLINED       = 'Declined';
+    const PES_STATUS_EXCEPTION      = 'Exception';
+    const PES_STATUS_FAILED         = 'Failed';
     const PES_STATUS_PES_PROGRESSING = 'PES Progressing';
     const PES_STATUS_STARTER_REQUESTED = 'Starter Requested';
-    const PES_STATUS_PROVISIONAL   = 'Provisional Clearance';
-    const PES_STATUS_REMOVED       = 'Removed';
-    const PES_STATUS_REVOKED       = 'Revoked';
+    const PES_STATUS_PROVISIONAL    = 'Provisional Clearance';
+    const PES_STATUS_REMOVED        = 'Removed';
+    const PES_STATUS_REVOKED        = 'Revoked';
     const PES_STATUS_CANCEL_REQ     = 'Cancel Requested';
     const PES_STATUS_CANCEL_CONFIRMED = 'Cancel Confirmed';
-    const PES_STATUS_TBD           = 'TBD';
-    const PES_STATUS_RECHECK_REQ   = 'Recheck Req';
-    const PES_STATUS_LEFT_IBM      = 'Left IBM';
+    const PES_STATUS_TBD            = 'TBD';
+    const PES_STATUS_RECHECK_REQ    = 'Recheck Req';
+    const PES_STATUS_LEFT_IBM       = 'Left IBM';
 
     static public $pesEvents = array('Consent Form','Right to Work','Proof of Id','Residency','Credit Check','Financial Sanctions','Criminal Records Check','Activity','Qualifications','Directors','Media','Membership');
 
@@ -207,6 +207,7 @@ class AccountPersonRecord extends DbRecord
 
 
     static function getPesStatusWithButtons($row){
+        $cnum = trim($row['CNUM']);
         $emailAddress= trim($row['EMAIL_ADDRESS']);
         $upesRef     = trim($row['UPES_REF']);
         $ibmStatus   = trim($row['IBM_STATUS']);
@@ -215,16 +216,16 @@ class AccountPersonRecord extends DbRecord
         $passportFirst    = array_key_exists('PASSPORT_FIRST_NAME', $row) ? $row['PASSPORT_FIRST_NAME'] : null;
         $passportLastname = array_key_exists('PASSPORT_LAST_NAME', $row)    ? $row['PASSPORT_LAST_NAME'] : null;
         $fullName    = trim($row['FULL_NAME']);
-        $country     = trim($row['COUNTRY']);
+        $country     = trim($row['COUNTRY_OF_RESIDENCE']);
         $status      = trim($row['PES_STATUS']);
 
 
         $pesStatusWithButton = '';
-        $pesStatusWithButton.= "<span class='pesStatusField' data-upesref='" . $upesRef . "' data-account='" . $account . "'data-accountid='" . $accountid . "'  >" .  $status . "</span><br/>";
+        $pesStatusWithButton.= "<span class='pesStatusField' data-upesref='" . $upesRef . "' data-account='" . $account . "' data-accountid='" . $accountid . "'  >" .  $status . "</span><br/>";
         switch (true) {
             case $status == AccountPersonRecord::PES_STATUS_TBD && !$_SESSION['isPesTeam']:
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesInitiate accessRestrict accessPmo accessFm' ";
-                $pesStatusWithButton.= "aria-label='Left Align' ";
+                $pesStatusWithButton.= " aria-label='Left Align' ";
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
                 $pesStatusWithButton.= " data-account='" .$account . "' ";
                 $pesStatusWithButton.= " data-accountid='" .$accountid . "' ";
@@ -246,6 +247,7 @@ class AccountPersonRecord extends DbRecord
 
             $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnSendPesEmail accessRestrict accessPmo accessFm' ";
             $pesStatusWithButton.= "aria-label='Left Align' ";
+            $pesStatusWithButton.= " data-cnum='$cnum' ";
             $pesStatusWithButton.= " data-emailaddress='$emailAddress' ";
             $pesStatusWithButton.= " data-account='" . $account . "' ";
             $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
@@ -457,48 +459,42 @@ class AccountPersonRecord extends DbRecord
   <div class="panel-heading">Applicant Details</div>
   <div class="panel-body">
   <form>
-    <input type='hidden' id='pesEmailCnum' name='pesEmailCnum' >
     <div class="form-group">
-    <label for="pesEmailFirstName">First Name</label>
-    <input type="text" class="form-control" id="pesEmailFirstName" name="pesEmailFirstName" disabled >
+    <label for="pesEmailCnum">Cnum</label>
+    <input type="text" class="form-control" id="pesEmailCnum" name="pesEmailCnum" disabled >
+    <input type="hidden" class="form-control" id="pesEmailUpesRef" name="pesEmailUpesRef" disabled >
   </div>
     <div class="form-group">
-    <label for="pesEmailLastName">Last Name</label>
-    <input type="text" class="form-control" id="pesEmailLastName" name="pesEmailLastName" disabled >
-  </div>
-    <div class="form-group">
-    <label for="pesEmailOpenSeat">Open Seat</label>
-    <input type="text" class="form-control" id="pesEmailOpenSeat" name="pesEmailOpenSeat" disabled >
+    <label for="pesEmailFullName">Full Name</label>
+    <input type="text" class="form-control" id="pesEmailFullName" name="pesEmailFullName" disabled >
   </div>
   <div class="form-group">
     <label for="pesEmailAddress">Email address</label>
     <input type="text" class="form-control" id="pesEmailAddress" name="pesEmailAddress" disabled >
   </div>
   <div class="form-group">
-    <label for="pesEmailCountry">Country</label>
+    <label for="pesEmailCountryOfResidence">Country of Residence</label>
     <input type="text" class="form-control" id="pesEmailCountry" name="pesEmailCountry" disabled >
   </div>
-  <div class="form-group">
-    <label for="pesEmailFilename">Filename</label>
-    <input type="text" class="form-control" id="pesEmailFilename" name="pesEmailFilename" disabled >
+    <div class="form-group">
+    <label for="pesEmailAccount">Account</label>
+    <input type="text" class="form-control" id="pesEmailAccount" name="pesEmailAccount" disabled >
+    <input type="hidden" class="form-control" id="pesEmailAccountId" name="pesEmailAccountId" disabled >
   </div>
-
   <div class="form-group">
-    <label for="pesEmailAttachments">Attachments</label>
-    <textarea class="form-control" id="pesEmailAttachments" name="pesEmailAttachments" disabled ></textarea>
+    <label for="pesEmailApplicationForm">Application Forms</label>
+    <textarea class="form-control" id="pesEmailApplicationForm" name="pesEmailApplicationForm" disabled ></textarea>
   </div>
 </form>
 </div>
 </div>
             </div>
              <div class='modal-footer'>
-                    <?php
-                    $allButtons = null;
-                    $submitButton = $this->formButton('submit','confirmSendPesEmail','confirmSendPesEmail',null,'Confirm','btn-primary');
-                    $allButtons[] = $submitButton;
-                    $this->formBlueButtons($allButtons);
-                    ?>
-              <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+
+             <div class='button-blue submitButtonDiv' style='display: block '>
+        		<input class='btn btn-primary' type='submit' name='confirmSendPesEmail' id='confirmSendPesEmail'  value='Confirm' >&nbsp;
+                <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+      		</div>
              </div>
             </div>
         </div>
