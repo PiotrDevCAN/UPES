@@ -118,14 +118,36 @@ class PersonTable extends DbTable
     }
 
 
-    static function setCnumsToNotFound($arrayOfCnum){
+    static function setCnumsToFound($arrayOfCnum){
         $cnumString = implode("','", $arrayOfCnum);
 
         $cnumString = "('" . $cnumString . "') ";
 
-        var_dump($cnumString);
+        $sql = " UPDATE ";
+        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$PERSON;
+        $sql.= " SET BLUEPAGES_STATUS='" . PersonRecord::BLUEPAGES_STATUS_FOUND . "' ";
+        $sql.= " WHERE BLUEPAGES_STATUS is null AND CNUM in " . $cnumString;
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+        }
     }
 
+
+    static function setCnumsToNotFound($arrayOfCnum){
+        $cnumString = implode("','", $arrayOfCnum);
+        $cnumString = "('" . $cnumString . "') ";
+        $sql = " UPDATE ";
+        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$PERSON;
+        $sql.= " SET BLUEPAGES_STATUS='" . PersonRecord::BLUEPAGES_STATUS_NOT_FOUND . "' ";
+        $sql.= " WHERE CNUM in " . $cnumString;
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+        }
+    }
 
 
 
