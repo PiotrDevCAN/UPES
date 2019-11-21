@@ -770,15 +770,24 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 
         $requestor = $row['PES_REQUESTOR'];
         $requested = $row['PES_DATE_REQUESTED'];
+        $requestedObj = \DateTime::createFromFormat('Y-m-d', $requested);
+        $requestedDisplay = $requestedObj ? $requestedObj->format('d-m-Y') : $requested;
 
 
-        $row['REQUESTED'] = "<small>" .  $requestor . "<br/>" . $requested . "</small>";
+        $row['REQUESTED'] = "<small>" .  $requestor . "<br/>" . $requestedDisplay . "</small>";
 
         $pesLevel = $row['PES_LEVEL'];
         $pesLevelRef = $row['PES_LEVEL_REF'];
         $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel ' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "' data-plupesref='" . $upesref . "' data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "' data-toggle='tooltip' title='Edit Person' >
                           <span class='glyphicon glyphicon-edit aria-hidden='true' ></span>
                           </button>&nbsp;" . $pesLevel;
+
+        $clearedDateObj = \DateTime::createFromFormat('Y-m-d', $row['PES_CLEARED_DATE']);
+        $clearedDateDisplay =  $clearedDateObj ? $clearedDateObj->format('d-m-Y') : $row['PES_CLEARED_DATE'];
+        $row['PES_CLEARED_DATE'] = $clearedDateDisplay;
+
+        var_dump($clearedDateObj);
+
 
         return $row;
 
