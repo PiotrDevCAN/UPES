@@ -9,6 +9,7 @@ class CountryRecord extends DbRecord
 {
     protected $COUNTRY;
     protected $EMAIL_BODY_NAME;
+    protected $ADDITIONAL_APPLICATION_FORM;
 
     const EMAIL_BODY_INTERNATIONAL = 'international';
     const EMAIL_BODY_CORE4         = 'core4';
@@ -16,6 +17,12 @@ class CountryRecord extends DbRecord
     const EMAIL_BODY_INDIA         = 'india';
 
     const EMAIL_BODY_NAMES = array(self::EMAIL_BODY_CORE4,self::EMAIL_BODY_INDIA,self::EMAIL_BODY_INTERNATIONAL,self::EMAIL_BODY_UK);
+
+    const ADDITIONAL_APPLICATION_FORM_OWENS = 'owens';
+    const ADDITIONAL_APPLICATION_FORM_ODC = 'odc';
+    const ADDITIONAL_APPLICATION_FORM_UK = 'uk';
+
+    const ADDITIONAL_APPLICATION_FORM_NAMES = array(self::ADDITIONAL_APPLICATION_FORM_ODC, self::ADDITIONAL_APPLICATION_FORM_OWENS, self::ADDITIONAL_APPLICATION_FORM_UK);
 
     function displayForm($mode)
     {
@@ -32,11 +39,27 @@ class CountryRecord extends DbRecord
 
          <div class="form-group required" >
             <label for='EMAIL_BODY_NAME' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Prefix of file holding email body'>Email Body Name</label>
-        	<div class='col-md-1'>
-				<select id='EMAIL_BODY_NAME' class='col-md-3' >
+        	<div class='col-md-3'>
+				<select id='EMAIL_BODY_NAME' name='EMAIL_BODY_NAME' >
+				<option value=''></option>
 					<?php
 					foreach (self::EMAIL_BODY_NAMES as $emailBody){
 					    ?><option value='<?=$emailBody?>'><?=$emailBody?></option>
+					<?php
+					}
+					?>
+				</select>
+            </div>
+        </div>
+
+        <div class="form-group required" >
+            <label for='ADDITIONAL_APPLICATION_FORM' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Additional Application Form'>Additional Application Form</label>
+        	<div class='col-md-3'>
+				<select id='ADDITIONAL_APPLICATION_FORM'  name='ADDITIONAL_APPLICATION_FORM' >
+				<option value=''></option>
+					<?php
+					foreach (self::ADDITIONAL_APPLICATION_FORM_NAMES as $form){
+					    ?><option value='<?=$form?>'><?=$form?></option>
 					<?php
 					}
 					?>

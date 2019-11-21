@@ -20,8 +20,7 @@ try {
     $countryTable = new CountryTable(AllTables::$COUNTRY);
     $countryRecordRecordData = array_map('trim', $_POST);
 
-    $international = isset($_POST['INTERNATIONAL']) ? CountryRecord::INTERNATIONAL_YES : CountryRecord::INTERNATIONAL_NO;
-    $countryRecord->setFromArray(array('COUNTRY'=>$_POST['COUNTRY'],'INTERNATIONAL'=>$international));
+    $countryRecord->setFromArray($countryRecordRecordData);
 
     $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $countryTable->insert($countryRecord) : $countryTable->update($countryRecord);
 
@@ -38,7 +37,12 @@ if($success){
     $messages.= $_POST['mode']==FormClass::$modeDEFINE ? "Created" : "Updated" ;
 }
 
-$response = array('success'=>$success,'saveResponse' => $saveRecord, 'Messages'=>$messages);
+ob_start();
+$countryRecord->iterateVisible();
+$record = ob_get_clean();
+
+
+$response = array('success'=>$success,'saveResponse' => $saveRecord, 'Messages'=>$messages,'record'=>$record);
 
 ob_clean();
 echo json_encode($response);

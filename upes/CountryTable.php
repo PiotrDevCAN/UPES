@@ -37,10 +37,11 @@ class CountryTable extends DbTable
                 die('Failed JSON Encode');
                 break; // It's got invalid chars in it that will be a problem later.
             }
+            $trimmedRow = array_map('trim', $row);
             if($withButtons){
-                $this->addGlyphicons($row);
+                $this->addGlyphicons($trimmedRow);
             }
-            $allData[]  = $row;
+            $allData[]  = $trimmedRow;
         }
         return $allData ;
     }
@@ -48,11 +49,12 @@ class CountryTable extends DbTable
 
     function addGlyphicons(&$row){
         $data = array();
-        $country       = trim($row['COUNTRY']);
-        $international = trim($row['INTERNATIONAL']);
+        $country       = $row['COUNTRY'];
+        $emailBodyName = $row['EMAIL_BODY_NAME'];
+        $additionalDocs = $row['ADDITIONAL_APPLICATION_FORM'];
 
         $data['display'] = "<button type='button' class='btn btn-primary btn-xs editCountry ' aria-label='Left Align' data-country='" . $country . "'  data-toggle='tooltip' title='Edit Country' >
-              <span class='glyphicon glyphicon-edit editCountryName'  aria-hidden='true' data-country='" . $country . "'  data-international='" . $international . "'   ></span>
+              <span class='glyphicon glyphicon-edit editCountryName'  aria-hidden='true' data-country='" . $country . "'  data-emailbodyname='" . $emailBodyName . "'  data-additionaldocs='" . $additionalDocs . "'  ></span>
               </button>&nbsp;" . $country;
         $data['sort'] = $country;
         $row['COUNTRY'] = $data;

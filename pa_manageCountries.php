@@ -12,7 +12,7 @@ use itdq\JavaScript;
 Trace::pageOpening($_SERVER['PHP_SELF']);
 ?>
 <div class='container'>
-<h2>Manage Accounts</h2>
+<h2>Manage Countries</h2>
 <?php
 $loader = new Loader();
 $allCountries = $loader->load('COUNTRY',AllTables::$COUNTRY);
@@ -42,7 +42,7 @@ include_once 'includes/modalDeleteAccountConfirm.html';
 
 <table id='countryTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Country</th><th>International</th></tr>
+<tr><th>Country</th><th>Email Body Name</th><th>Additional Application Form</th></tr>
 </thead>
 </table>
 </div>
@@ -56,6 +56,15 @@ var countryTable;
 $(document).ready(function(){
 
 console.log(country);
+
+	$('#EMAIL_BODY_NAME').select2({
+		width:'100%',
+		placeholder: "Select email body"
+	});
+	$('#ADDITIONAL_APPLICATION_FORM').select2({
+		width:'100%',
+		placeholder:"Select additional application form"
+	});
 
 
 	$('#countryForm').submit(function(e){
@@ -126,9 +135,9 @@ console.log(country);
                   'print'
               ],
        columns:
-                  [ { data: "COUNTRY" , render : {_:'display',sort:'sort' }
-                  },{ data: "INTERNATIONAL"
-                  }
+                  [ { data: "COUNTRY" , render : {_:'display',sort:'sort' }}
+                  ,{ data: "EMAIL_BODY_NAME" }
+                  ,{ data: "ADDITIONAL_APPLICATION_FORM" }
                   ]
 	});
 
@@ -144,12 +153,10 @@ console.log(country);
 
 	$(document).on('click','.editCountry',function(e){
  		var button = $(e.target).parent('button').addClass('spinning');
- 		$('#COUNTRY').val($(e.target).data('country'));
- 		if($(e.target).data('international')=='Yes'){
- 			$('#INTERNATIONAL').bootstrapToggle('on');
- 		} else {
- 			$('#INTERNATIONAL').bootstrapToggle('off');
- 		}
+ 		$('#COUNTRY').val($(e.target).data('country')).attr('disabled',true);
+ 		$('#EMAIL_BODY_NAME').val($(e.target).data('emailbodyname')).trigger('change');
+ 		$('#ADDITIONAL_APPLICATION_FORM').val($(e.target).data('additionaldocs')).trigger('change');
+
  		$('#mode').val('<?=FormClass::$modeEDIT?>');
  		$('.spinning').removeClass('spinning');
 
