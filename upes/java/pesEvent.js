@@ -144,6 +144,8 @@ function pesEvent() {
 		    	        var title = $(this).text();
 		    	        $(this).html('<input class="firstInput" type="text" size="10" placeholder="Search '+title+'" />' );
 		    	    });
+		    	    
+		    	    $('.btnTogglePesTrackerStatusDetails').remove();
 		    		
 		    	} else {
 		    		$('#pesTrackerTableDiv').html(resultObj.messages);

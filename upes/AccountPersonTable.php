@@ -136,12 +136,11 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
             throw new \Exception('Error in ' . __METHOD__ . " running $sql");
         }
-
         switch ($returnResultsAs) {
             case self::PES_TRACKER_RETURN_RESULTS_AS_ARRAY:
                 $report = array();
                 while(($row=db2_fetch_assoc($rs))==true){
-                    $report[] = $row;
+                    $report[] = array_map('trim',$row);
                 }
                 return $report;
             break;
@@ -207,6 +206,9 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             $fullName = trim($row['FULL_NAME']);
             $emailaddress = trim($row['EMAIL_ADDRESS']);
             $requestor = trim($row['PES_REQUESTOR']);
+            $requested = trim($row['PES_DATE_REQUESTED']);
+            $requestedObj = \DateTime::createFromFormat('Y-m-d', $requested);
+            $requestedDisplay = $requestedObj ? $requestedObj->format('d-m-Y') : $requested;
 
             $formattedIdentityField = self::formatEmailFieldOnTracker($row);
 
@@ -216,7 +218,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             <div class='formattedEmailDiv'><?=$formattedIdentityField;?></div>
             </td>
             <td><?=$row['ACCOUNT']?></td>
-            <td><?=$row['PES_REQUESTOR']?><br/><small><?=$row['PES_DATE_REQUESTED']?><br/><?=$age?></small></td>
+            <td><?=$row['PES_REQUESTOR']?><br/><small><?=$requestedDisplay;?><br/><?=$age?></small></td>
 
             <?php
             foreach (self::PES_TRACKER_STAGES as $stage) {
@@ -785,10 +787,6 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $clearedDateObj = \DateTime::createFromFormat('Y-m-d', $row['PES_CLEARED_DATE']);
         $clearedDateDisplay =  $clearedDateObj ? $clearedDateObj->format('d-m-Y') : $row['PES_CLEARED_DATE'];
         $row['PES_CLEARED_DATE'] = $clearedDateDisplay;
-
-        var_dump($clearedDateObj);
-
-
         return $row;
 
     }

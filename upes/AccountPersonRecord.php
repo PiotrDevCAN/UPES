@@ -321,7 +321,7 @@ class AccountPersonRecord extends DbRecord
 
             $pesStatusWithButton .= "<div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' style='display:none' >";
             ob_start();
-            pesTrackerTable::formatProcessingStatusCell($row);
+            AccountPersonTable::formatProcessingStatusCell($row);
             $pesStatusWithButton .= ob_get_clean();
             $pesStatusWithButton .= "</div>";
         }
