@@ -256,10 +256,10 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             </span>
             </div>
             </td>
-            <td class='nonSearchable pesStatusTd' data-upesref='<?=$upesref;?>'><?=AccountPersonRecord::getPesStatusWithButtons($row)?></td>
+            <td class='nonSearchable pesStatusTd' data-upesacc='<?=$upesref.$accountId;?>' data-upesref='<?=$upesref;?>'><?=AccountPersonRecord::getPesStatusWithButtons($row)?></td>
             <td class='pesCommentsTd'><textarea rows="3" cols="20"  data-upesref='<?=$upesref?>' data-accountid='<?=$accountId?>'></textarea><br/>
             <button class='btn btn-default btn-xs btnPesSaveComment accessPes accessCdi' data-setpesto='Yes' data-toggle="tooltip" data-placement="top" title="Save Comment" ><span class="glyphicon glyphicon-save" ></span></button>
-            <div class='pesComments' data-upesref='<?=$upesref?>'><small><?=$row['COMMENT']?></small></div>
+            <div class='pesComments' data-upesacc='<?=$upesref.$accountId;?>' data-upesref='<?=$upesref?>'><small><?=$row['COMMENT']?></small></div>
             </td>
             </tr>
         <?php

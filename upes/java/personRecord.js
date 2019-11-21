@@ -209,8 +209,8 @@ function personRecord() {
 					    	  
 					    	  var resultObj = JSON.parse(result);
 					    	  
-					    	  $('.pesComments[data-upesref="' + upesref + '"]').html('<small>' + resultObj.comment + '</small>');
-					    	  $('.pesStatusTd[data-upesref="' + upesref + '"]').html(resultObj.pesStatus);	
+					    	  $('.pesComments[data-upesacc="' + upesref + accountid + '"]').html('<small>' + resultObj.comment + '</small>');
+					    	  $('.pesStatusTd[data-upesacc="' + upesref + accountid + '"]').html(resultObj.pesStatus);	
 					    	 //  $('.pesStatusField[data-upesref="' + upesref + '"]').siblings('.btnSendPesEmail').remove();
 					    	 
 					           
