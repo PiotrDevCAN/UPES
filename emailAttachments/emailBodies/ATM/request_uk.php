@@ -15,7 +15,7 @@ $emailBody = <<<endOfEmailBody
 <p>Many Thanks for your cooperation,</p>
 <p>&&account_name&& &nbsp; PES Team</p>
 <p>Rachele Smith - Global PES Compliance Officer<br/>Zoe O'Flaherty - Global PES compliance Officer<br/>Carra Booth - Global PES SME - Please note I work Monday - Friday 10 - 2:30</p>
-<p><small>Phone: 44-131 656 0870 | Tie-Line: 37 580870<br/>E-mail: <a href='mailto:lbgvetpr@uk.ibm.com'>lbgvetpr@uk.ibm.com</a></small></p>
+<p><small>Phone: 44-131 656 0870 | Tie-Line: 37 580870<br/>E-mail: <a href='mailto:&&pestaskid&&'>&&pestaskid&&</a></small></p>
 <p>IBM UK PES Team<br/>Atria One, 5th Floor<br/>144 Morrison Street, Edinburgh, EH3 8EX</br>United Kingdom</br>**Please input IBM UK Ltd, as we share a building**</p>
 endOfEmailBody
 ?>

@@ -36,7 +36,7 @@ class PersonRecord extends DbRecord
     protected $PES_ADDER;
     protected $BLUPAGES_STATUS;
 
-    public static $pesTaskId = array('lbgvetpr@uk.ibm.com'); // Only first entry will be used as the "contact" in the PES status emails.
+    // public static $pesTaskId = array('lbgvetpr@uk.ibm.com'); // Only first entry will be used as the "contact" in the PES status emails.
 
     const IBM_STATUS_CONTRACTOR = 'Contractor';
     const IBM_STATUS_REGULAR = 'Regular';

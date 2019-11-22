@@ -112,7 +112,7 @@ class AccountPersonRecord extends DbRecord
                                               <br/>This action has been requested by  &&requestor&&.';
     private static $pesCancelPesEmailPattern = array('/&&candidate&&/','/&&upesref&&/','/&&requestor&&/','/&&account&&/');
 
-    public static $pesTaskId = array('lbgvetpr@uk.ibm.com'); // Only first entry will be used as the "contact" in the PES status emails.
+   //  public static $pesTaskId = array('lbgvetpr@uk.ibm.com'); // Only first entry will be used as the "contact" in the PES status emails.
 
 
 
@@ -505,13 +505,18 @@ class AccountPersonRecord extends DbRecord
 
     function sendPesStatusChangedEmail(){
 
+        $loader = new Loader();
+        $allAccounts = $loader->loadIndexed('ACCOUNT','ACCOUNT_ID',AllTables::$ACCOUNT);
+        $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT_ID',AllTables::$ACCOUNT);
+
         $personTable = new PersonTable(AllTables::$PERSON);
         $emailAddress = $personTable->getEmailFromUpesref($this->UPES_REF);
         $requestor = $this->PES_REQUESTOR;
         $names = $personTable->getNamesFromUpesref($this->UPES_REF);
         $fullName = $names['FULL_NAME'];
-        $account = AccountTable::getAccountNameFromId($this->ACCOUNT_ID);
-
+        //$account = AccountTable::getAccountNameFromId($this->ACCOUNT_ID);
+        $account = $allAccounts[$this->ACCOUNT_ID];
+        $pesTaskid = $allPesTaskid[$this->ACCOUNT_ID];
         $to = array();
         $cc = array();
 
@@ -527,7 +532,7 @@ class AccountPersonRecord extends DbRecord
             case self::PES_STATUS_CLEARED:
                 $pattern   = self::$pesClearedEmailPattern;
                 $emailBody = self::$pesClearedEmail;
-                $replacements = array($fullName,$this->PES_CLEARED_DATE,self::$pesTaskId[0], $account);
+                $replacements = array($fullName,$this->PES_CLEARED_DATE,$pesTaskid, $account);
                 $title = "PES($account) Status Change";
                 !empty($emailAddress) ? $to[] = $emailAddress : null;
                 !empty($requestor)    ? $to[] = $requestor : null;
@@ -537,7 +542,7 @@ class AccountPersonRecord extends DbRecord
                 $emailBody = self::$pesCancelPesEmail;
                 $title = "PES($account) Cancel Request";
                 $replacements = array($fullName,$this->UPES_REF, $_SESSION['ssoEmail'], $account);
-                $to[] = personRecord::$pesTaskId[0];
+                $to[] = $pesTaskid;
                 !empty($requestor) ? $cc[] = $requestor : null;
                 $cc[] = $_SESSION['ssoEmail'];
 
@@ -555,7 +560,7 @@ class AccountPersonRecord extends DbRecord
 
         AuditTable::audit(print_r($message,true),AuditTable::RECORD_TYPE_DETAILS);
 
-        $response = \itdq\BlueMail::send_mail($to, $title ,$message, self::$pesTaskId[0], $cc);
+        $response = \itdq\BlueMail::send_mail($to, $title ,$message, $pesTaskid, $cc);
         return $response;
     }
 

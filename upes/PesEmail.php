@@ -27,6 +27,9 @@ class PesEmail {
     const EMAIL_SUBJECT          = "IBM Confidential: URGENT - &&account_name&&  Pre Employment Screening- &&serial_number&& &&candidate_name&&";
     const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS);
 
+    static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
+
+
     static private function getGlobalApplicationForm(){
         // LLoyds Global Application Form v1.4.doc
         // $filename = "../emailAttachments/LLoyds Global Application Form v1.4.doc";
@@ -106,8 +109,11 @@ class PesEmail {
 
 
     static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail){
+        $loader = new Loader();
+        $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
+
         $emailSubjectPattern = array('/&&account_name&& /','/&&serial_number&&/','/&&candidate_name&&/');
-        $emailBodyPattern    = array('/&&candidate_first_name&&/','/&&name_of_application_form&&/','/&&account_name&& /');
+        $emailBodyPattern    = array('/&&candidate_first_name&&/','/&&name_of_application_form&&/','/&&account_name&& /','&&taskid&&','&&taskid&&');
         $emailBody = '';// overwritten by include
 
         $applicationFormDetails = self::determinePesApplicationForms($country);
@@ -115,17 +121,18 @@ class PesEmail {
         $pesAttachments        = $applicationFormDetails['pesAttachments'];
 
         $emailBodyFile = PesEmail::findEmailBody($account, $country);
+        $pesTaskid = $allPesTaskid[$account];
 
         include $emailBodyFile;
         $subjectReplacements = array($account,$serial,$candidateName);
         $subject = preg_replace($emailSubjectPattern, $subjectReplacements, PesEmail::EMAIL_SUBJECT);
 
-        $emailBodyReplacements = array($candidate_first_name,$nameOfApplicationForm,$account);
+        $emailBodyReplacements = array($candidate_first_name,$nameOfApplicationForm,$account,$pesTaskid);
         $email = preg_replace($emailBodyPattern, $emailBodyReplacements, $emailBody);
 
         // AccountPersonRecord::$pesTaskId[0]
 
-        return BlueMail::send_mail($candidateEmail, $subject, $email, 'daniero@uk.ibm.com',array(),array(),false,$pesAttachments);
+        return BlueMail::send_mail($candidateEmail, $subject, $email, $pesTaskid,array(),array(),false,$pesAttachments);
     }
 
     static function determinePesApplicationForms($country){
@@ -173,21 +180,25 @@ class PesEmail {
 //     }
 
 
-    function sendPesEmail($firstName, $lastName, $emailAddress, $country, $openseat, $cnum){
-            $emailDetails = $this->getEmailDetails($emailAddress, $country);
-            $emailBodyFileName = $emailDetails['filename'];
-            $pesAttachments = $emailDetails['attachments'];
-            $replacements = array($firstName,$openseat);
+//     function sendPesEmail($firstName, $lastName, $emailAddress, $country, $openseat, $cnum){
+//             $emailDetails = $this->getEmailDetails($emailAddress, $country);
+//             $emailBodyFileName = $emailDetails['filename'];
+//             $pesAttachments = $emailDetails['attachments'];
+//             $replacements = array($firstName,$openseat);
 
-            include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/' . $emailBodyFileName;
-            $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
+//             include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/' . $emailBodyFileName;
+//             $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
 
-            $sendResponse = BlueMail::send_mail(array($emailAddress), "NEW URGENT - Pre Employment Screening - $cnum : $firstName, $lastName", $emailBody,'LBGVETPR@uk.ibm.com',array(),array(),false,$pesAttachments);
-            return $sendResponse;
+//             $sendResponse = BlueMail::send_mail(array($emailAddress), "NEW URGENT - Pre Employment Screening - $cnum : $firstName, $lastName", $emailBody,'LBGVETPR@uk.ibm.com',array(),array(),false,$pesAttachments);
+//             return $sendResponse;
 
-    }
+//     }
 
     function sendPesEmailChaser($upesref, $account, $emailAddress, $chaserLevel){
+
+        $loader = new Loader();
+        $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
+        $pesTaskid = $allPesTaskid[$account];
 
         $pesEmailPattern = array(); // Will be overridden when we include_once from emailBodies later.
         $pesEmail = null;          // Will be overridden when we include_once from emailBodies later.
@@ -201,13 +212,16 @@ class PesEmail {
         include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/' . $emailBodyFileName;
         $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
 
-        $sendResponse = BlueMail::send_mail(array($emailAddress), "PES Reminder - $fullName($upesref) on $account", $emailBody,'LBGVETPR@uk.ibm.com',array($requestor));
+        $sendResponse = BlueMail::send_mail(array($emailAddress), "PES Reminder - $fullName($upesref) on $account", $emailBody,$pesTaskid,array($requestor));
         return $sendResponse;
 
 
     }
 
     function sendPesProcessStatusChangedConfirmation($upesref, $account,  $fullname, $emailAddress, $processStatus, $requestor=null){
+        $loader = new Loader();
+        $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
+        $pesTaskid = $allPesTaskid[$account];
 
         $pesEmailPattern = array(); // Will be overridden when we include_once from emailBodies later.
         $pesEmail = null;          // Will be overridden when we include_once from emailBodies later.
@@ -218,7 +232,7 @@ class PesEmail {
         include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/' . $emailBodyFileName;
         $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
 
-        return BlueMail::send_mail(array($emailAddress), "PES Status Change - $fullname($upesref) : $account", $emailBody,'LBGVETPR@uk.ibm.com', array($requestor));
+        return BlueMail::send_mail(array($emailAddress), "PES Status Change - $fullname($upesref) : $account", $emailBody,$pesTaskid, array($requestor));
     }
 
 
@@ -247,7 +261,7 @@ class PesEmail {
 
         $emailBody = $pesEmail;
 
-        $sendResponse = BlueMail::send_mail(array('LBGVETPR@uk.ibm.com'), "UPES Upcoming Rechecks", $emailBody,'LBGVETPR@uk.ibm.com');
+        $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "UPES Upcoming Rechecks", $emailBody,self::$notifyPesEmailAddresses['to'],self::$notifyPesEmailAddresses['cc']);
         return $sendResponse;
 
 
@@ -265,7 +279,7 @@ class PesEmail {
         $pesEmail.= "<p>No upcoming rechecks have been found</p>";
         $emailBody = $pesEmail;
 
-        $sendResponse = BlueMail::send_mail(array('LBGVETPR@uk.ibm.com'), "Upcoming Rechecks-None", $emailBody,'LBGVETPR@uk.ibm.com');
+        $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "Upcoming Rechecks-None", $emailBody,self::$notifyPesEmailAddresses['to'],self::$notifyPesEmailAddresses['cc']);
         return $sendResponse;
 
 
@@ -297,7 +311,7 @@ class PesEmail {
 
         $emailBody = $pesEmail;
 
-        $sendResponse = BlueMail::send_mail(array('LBGVETPR@uk.ibm.com'), "uPES Notification of Leavers", $emailBody,'LBGVETPR@uk.ibm.com');
+        $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "uPES Notification of Leavers", $emailBody,self::$notifyPesEmailAddresses['to'],self::$notifyPesEmailAddresses['cc']);
         return $sendResponse;
 
 
