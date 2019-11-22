@@ -25,7 +25,7 @@ $allContractAccountMapping = ContractTable::prepareJsonObjectMappingContractToAc
 
 ?>
 <div class='container'>
-<h2>User Status Report</h2>
+
 <?php
 
 include_once 'includes/modalError.html';
@@ -36,13 +36,14 @@ include_once 'includes/modalCancelPesRequestConfirm.html';
 ?>
 </div>
 
-<div class='container'>
+<div class='container-fluid	'>
 
-<div class='col-sm-12'>
+<div class='col-sm-8 col-sm-offset-2'>
+<h2>User Status Report</h2>
 
 <table id='userStatusTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Action</th><th>Email</th><th>Full Name</th><th >Account</th><th>Requested</th><th >Pes Level</th><th >Pes Description</th><th >Pes Status</th><th>Cleared Date</th></tr>
+<tr><th>Action</th><th>Email</th><th>Full Name</th><th >Account</th><th>Requested</th><th >Pes Level</th><th >Pes Description</th><th >Process Status</th><th >Pes Status</th><th>Cleared Date</th></tr>
 </thead>
 </table>
 </div>
@@ -107,6 +108,8 @@ $(document).ready(function(){
                     data: "PES_LEVEL"
                   },{
                     data: "PES_LEVEL_DESCRIPTION"
+                  },{
+                    data: "PROCESSING_STATUS", render: { _:'display', sort:'sort' },
                   },{
                     data: "PES_STATUS"
                   },{

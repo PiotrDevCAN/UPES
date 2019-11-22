@@ -769,9 +769,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
                 $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "'data-toggle='tooltip' title='Cancel PES Request' >
               <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
               </button>";
-
-
-            break;
+                break;
         }
 
         $requestor = $row['PES_REQUESTOR'];
@@ -791,6 +789,15 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $clearedDateObj = \DateTime::createFromFormat('Y-m-d', $row['PES_CLEARED_DATE']);
         $clearedDateDisplay =  $clearedDateObj ? $clearedDateObj->format('d-m-Y') : $row['PES_CLEARED_DATE'];
         $row['PES_CLEARED_DATE'] = $clearedDateDisplay;
+
+
+        $processingStatus = $row['PROCESSING_STATUS'];
+        $processingStatusChanged = $row['PROCESSING_STATUS_CHANGED'];
+        $processingStatusChangedObj = \DateTime::createFromFormat('Y-m-d+', $processingStatusChanged);
+        $processingStatusDisplayed = $processingStatusChangedObj ? $processingStatusChangedObj->format('d-m-Y') : $processingStatusChanged;
+
+        $row['PROCESSING_STATUS'] =  array('display'=>$processingStatus . "<br/><small>" . $processingStatusDisplayed . "</small>", 'sort'=>$processingStatus);
+
         return $row;
 
     }
