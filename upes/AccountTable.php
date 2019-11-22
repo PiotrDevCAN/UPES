@@ -17,8 +17,8 @@ use itdq\Loader;
  * ALTER TABLE "UPES_DEV"."ACCOUNT" ADD CONSTRAINT "ACC_UNIQUE" UNIQUE ("ACCOUNT" ) ENFORCED;
  * ALTER TABLE "UPES_UT"."ACCOUNT" ADD CONSTRAINT "ACC_UNIQUE" UNIQUE ("ACCOUNT" ) ENFORCED;
  * ALTER TABLE "UPES"."ACCOUNT" ADD CONSTRAINT "ACC_UNIQUE" UNIQUE ("ACCOUNT" ) ENFORCED;
-
  *
+ * ALTER TABLE "UPES_DEV"."ACCOUNT" ADD COLUMN "TASKID" CHAR(20);*
  *
  *
  */
@@ -43,20 +43,22 @@ class AccountTable extends DbTable
                 die('Failed JSON Encode');
                 break; // It's got invalid chars in it that will be a problem later.
             }
+            $trimmedRow = array_map('trim',$row);
             if($withButtons){
-                $this->addGlyphicons($row);
+                $this->addGlyphicons($trimmedRow);
             }
-            $allData[]  = $row;
+            $allData[]  = $trimmedRow;
         }
         return $allData ;
     }
 
 
     function addGlyphicons(&$row){
-        $accountId = trim($row['ACCOUNT_ID']);
-        $account   = trim($row['ACCOUNT']);
+        $accountId = $row['ACCOUNT_ID'];
+        $account   = $row['ACCOUNT'];
+        $taskid    = $row['TASKID'];
 
-        $row['ACTION'] = "<button type='button' class='btn btn-primary btn-xs editAccountName ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-toggle='tooltip' title='Edit Account Name' >
+        $row['ACTION'] = "<button type='button' class='btn btn-primary btn-xs editAccountName ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'data-taskid='" . $taskid . "'  data-toggle='tooltip' title='Edit Account Name' >
               <span class='glyphicon glyphicon-edit editAccountName'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'   ></span>
               </button>";
         $row['ACTION'].= "&nbsp;";

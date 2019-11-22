@@ -42,7 +42,7 @@ include_once 'includes/modalDeleteAccountConfirm.html';
 
 <table id='accountTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Action</th><th>Account Id</th><th class='searchable' >Account</th></tr>
+<tr><th>Action</th><th>Account Id</th><th class='searchable' >Account</th><th class='searchable' >PES Taskid</th></tr>
 </thead>
 </table>
 </div>
@@ -131,6 +131,8 @@ console.log(accounts);
                     data: "ACCOUNT_ID"
                   },{
                     data: "ACCOUNT"
+                  },{
+                    data: "TASKID"
                   }]
 	});
 
@@ -149,6 +151,7 @@ console.log(accounts);
  		var account = $(e.target).data('account');
  		$('#ACCOUNT').val($(e.target).data('account'));
  		$('#ACCOUNT_ID').val($(e.target).data('accountid'));
+ 		$('#TASKID').val($(e.target).data('taskid'));
 		$('#mode').val('<?=FormClass::$modeEDIT?>');
 		$(button).removeClass('spinning');
 	});

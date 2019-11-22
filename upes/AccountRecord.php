@@ -8,6 +8,7 @@ class AccountRecord extends DbRecord
 {
     protected $ACCOUNT_ID;
     protected $ACCOUNT;
+    protected $TASKID;
 
 
     function displayForm($mode)
@@ -26,6 +27,14 @@ class AccountRecord extends DbRecord
 				<input id='ACCOUNT_ID' name='ACCOUNT_ID' type='hidden' value='0' />
             </div>
         </div>
+
+        <div class="form-group required" id="taskidGroup">
+            <label for='TASKID' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='PES Taskid'>PES Taskid</label>
+        	<div class='col-md-3'>
+				<input id='TASKID' name='TASKID' class='form-control' />
+            </div>
+        </div>
+
 
    		<div class='form-group'>
    		<div class='col-sm-offset-2 -col-md-3'>
