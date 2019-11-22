@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use upes\PersonTable;
 use itdq\BlueMail;
 use itdq\slack;
+use itdq\Loader;
 
 class PesEmail {
 
@@ -113,7 +114,7 @@ class PesEmail {
         $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
 
         $emailSubjectPattern = array('/&&account_name&& /','/&&serial_number&&/','/&&candidate_name&&/');
-        $emailBodyPattern    = array('/&&candidate_first_name&&/','/&&name_of_application_form&&/','/&&account_name&& /','&&taskid&&','&&taskid&&');
+        $emailBodyPattern    = array('/&&candidate_first_name&&/','/&&name_of_application_form&&/','/&&account_name&& /','/&&pestaskid&&/');
         $emailBody = '';// overwritten by include
 
         $applicationFormDetails = self::determinePesApplicationForms($country);
@@ -128,11 +129,14 @@ class PesEmail {
         $subject = preg_replace($emailSubjectPattern, $subjectReplacements, PesEmail::EMAIL_SUBJECT);
 
         $emailBodyReplacements = array($candidate_first_name,$nameOfApplicationForm,$account,$pesTaskid);
+
         $email = preg_replace($emailBodyPattern, $emailBodyReplacements, $emailBody);
 
-        // AccountPersonRecord::$pesTaskId[0]
+        if(!$email){
+            throw new \Exception('Error preparing Pes Application Form email');
+        }
 
-        return BlueMail::send_mail($candidateEmail, $subject, $email, $pesTaskid,array(),array(),false,$pesAttachments);
+        return $email ? BlueMail::send_mail($candidateEmail, $subject, $email, $pesTaskid,array(),array(),false,$pesAttachments) : false;
     }
 
     static function determinePesApplicationForms($country){
