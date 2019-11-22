@@ -412,8 +412,8 @@ class AccountPersonRecord extends DbRecord
                  </div>
                  <label for='pes_date' class='col-md-1 control-label '>Date</label>
                  <div class='col-md-3'>
-                  <input class="form-control" id="pes_date" value="<?=$now->format('d M Y')?>" type="text" placeholder='Pes Status Changed' data-toggle='tooltip' title='PES Date Responded'>
-                  <input class="form-control" id="pes_date_db2"  value="<?=$now->format('Y-m-d')?>" name="PES_DATE_RESPONDED" type='hidden' >
+                  <input class="form-control" id="pes_date" name="pes_date" value="<?=$now->format('d-m-Y') ?>" type="text" placeholder='Pes Status Changed' data-toggle='tooltip' title='PES Date Responded'>
+                  <input class="form-control" id="pes_date_db2"  value="<?=$now->format('Y-m-d') ?>" name="pes_date_db2" type='hidden' >
                  </div>
                 </div>
               </div>
@@ -532,7 +532,9 @@ class AccountPersonRecord extends DbRecord
             case self::PES_STATUS_CLEARED:
                 $pattern   = self::$pesClearedEmailPattern;
                 $emailBody = self::$pesClearedEmail;
-                $replacements = array($fullName,$this->PES_CLEARED_DATE,$pesTaskid, $account);
+                $pesClearedDateObj = \DateTime::createFromFormat('Y-m-d', $this->PES_CLEARED_DATE);
+                $pesClearedDate = $pesClearedDateObj ? $pesClearedDateObj->format('D dS M Y') : $this->PES_CLEARED_DATE;
+                $replacements = array($fullName,$pesClearedDate,$pesTaskid, $account);
                 $title = "PES($account) Status Change";
                 !empty($emailAddress) ? $to[] = $emailAddress : null;
                 !empty($requestor)    ? $to[] = $requestor : null;

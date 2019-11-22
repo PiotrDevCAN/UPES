@@ -600,10 +600,12 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         return true;
     }
 
-    function setPesStatus($upesref=null,$accountid= null, $status=null,$requestor=null, $pesStatusDetails=null){
+    function setPesStatus($upesref=null,$accountid= null, $status=null,$requestor=null, $pesStatusDetails=null,$dateToUse=null){
 
         $db2AutoCommit = db2_autocommit($_SESSION['conn']);
         db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_OFF);
+
+        $dateToUse = empty($dateToUse) ? " current date " : " date('" . db2_escape_string($dateToUse) . "') ";
 
 
         if(!$upesref or !$accountid or !$status){
@@ -632,8 +634,8 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
                 break;
         }
         $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
-        $sql .= " SET $dateField = current date, PES_STATUS='" . db2_escape_string($status)  . "' ";
-        $sql .= !empty($pesStatusDetails) ? " AND PES_STATUS_DETAILS='" . db2_escape_string($pesStatusDetails) . "' " : null;
+        $sql .= " SET $dateField = $dateToUse , PES_STATUS='" . db2_escape_string($status)  . "' ";
+        $sql .= !empty($pesStatusDetails) ? " , PES_STATUS_DETAILS='" . db2_escape_string($pesStatusDetails) . "' " : null;
         $sql .= trim($status)==AccountPersonRecord::PES_STATUS_STARTER_REQUESTED ? ", PES_REQUESTOR='" . db2_escape_string($requestor) . "' " : null;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' and ACCOUNT_ID='" . db2_escape_string($accountid)  . "' ";
 
