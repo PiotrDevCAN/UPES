@@ -43,7 +43,7 @@ include_once 'includes/modalCancelPesRequestConfirm.html';
 
 <table id='userStatusTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Action</th><th>Email</th><th>Full Name</th><th >Account</th><th>Requested</th><th >Pes Level</th><th >Pes Description</th><th >Process Status</th><th >Pes Status</th><th>Cleared Date</th></tr>
+<tr><th>Action</th><th>Email</th><th>Full Name</th><th >Account</th><th >Country Of Residence</th><th>Requestor</th><th>Requested</th><th >Pes Level</th><th >Pes Description</th><th>Process Status</th><th>Process Status Changed</th><th >Pes Status</th><th>Cleared Date</th></tr>
 </thead>
 </table>
 </div>
@@ -81,6 +81,21 @@ foreach ($allCountries as  $country) {
 ?>
 var userStatusTable;
 
+var buttonCommon = {
+        exportOptions: {
+            format: {
+                body: function ( data, row, column, node ) {
+                 //   return data ?  data.replace( /<br\s*\/?>/ig, "\n") : data ;
+                 return data ? data.replace( /<br\s*\/?>/ig, "\n").replace(/(&nbsp;|<([^>]+)>)/ig, "") : data ;
+                 //    data.replace( /[$,.]/g, '' ) : data.replace(/(&nbsp;|<([^>]+)>)/ig, "");
+
+                }
+            }
+        }
+    };
+
+
+
 $(document).ready(function(){
 	userStatusTable = $('#userStatusTable').DataTable({
     	ajax: {
@@ -91,10 +106,35 @@ $(document).ready(function(){
     	responsive: true,
     	dom: 'Blfrtip',
         buttons: [
-                  'csvHtml5',
-                  'excelHtml5',
-                  'print'
-              ],
+            'colvis',
+            $.extend( true, {}, buttonCommon, {
+                extend: 'excelHtml5',
+                exportOptions: {
+                    orthogonal: 'sort',
+                    stripHtml: true,
+                    stripNewLines:false
+                },
+                 customize: function( xlsx ) {
+                     var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                 }
+        }),
+        $.extend( true, {}, buttonCommon, {
+            extend: 'csvHtml5',
+            exportOptions: {
+                orthogonal: 'sort',
+                stripHtml: true,
+                stripNewLines:false
+            }
+        }),
+        $.extend( true, {}, buttonCommon, {
+            extend: 'print',
+            exportOptions: {
+                orthogonal: 'sort',
+                stripHtml: true,
+                stripNewLines:false
+            }
+        })
+        ],
        columns:  [{ data: "ACTION"
                   },{
                     data: "EMAIL_ADDRESS"
@@ -103,13 +143,19 @@ $(document).ready(function(){
                   },{
                     data: "ACCOUNT", render: { _:'display', sort:'sort' },
                   },{
-                    data: "REQUESTED"
+                    data: "COUNTRY_OF_RESIDENCE", visible:false
+                  },{
+                    data: "PES_REQUESTOR", visible:false
+                  },{
+                    data: "REQUESTED", render: { _:'display', sort:'sort' },
                   },{
                     data: "PES_LEVEL"
                   },{
                     data: "PES_LEVEL_DESCRIPTION"
                   },{
                     data: "PROCESSING_STATUS", render: { _:'display', sort:'sort' },
+                  },{
+                    data: "PROCESSING_STATUS_CHANGED", visible:false
                   },{
                     data: "PES_STATUS"
                   },{

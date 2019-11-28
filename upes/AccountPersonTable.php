@@ -782,7 +782,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $requestedDisplay = $requestedObj ? $requestedObj->format('d-m-Y') : $requested;
 
 
-        $row['REQUESTED'] = "<small>" .  $requestor . "<br/>" . $requestedDisplay . "</small>";
+        $row['REQUESTED'] = array('display'=> "<small>" .  $requestor . "<br/>" . $requestedDisplay . "</small>", 'sort'=>$row['PES_DATE_REQUESTED']);
 
         $pesLevel = $row['PES_LEVEL'];
         $pesLevelRef = $row['PES_LEVEL_REF'];
