@@ -180,7 +180,6 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 		<td>Email Address</td>
 		<td>Account</td>
 		<td>Requestor</td>
-		<td>Country</td>
 		<td>Consent</td>
 		<td>Right to Work</td>
 		<td>ID</td>
