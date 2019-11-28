@@ -13,7 +13,8 @@ use itdq\slack;
 /*
  *
  *ALTER TABLE "UPES_UT"."ACCOUNT_PERSON" ALTER COLUMN "PES_RECHECK_DATE" SET DATA TYPE DATE;
-
+ *
+ *ALTER TABLE "UPES"."ACCOUNT_PERSON" ADD COLUMN "NI_EVIDENCE" CHAR(10);
  *
  */
 
@@ -52,11 +53,12 @@ const PES_TRACKER_STAGE_QUALIFICATIONS = 'Qualifications';
 const PES_TRACKER_STAGE_DIRECTORS      = 'Directors';
 const PES_TRACKER_STAGE_MEDIA          = 'Media';
 const PES_TRACKER_STAGE_MEMBERSHIP     = 'Membership';
+const PES_TRACKER_STAGE_NI_EVIDENCE    = 'NI Evidence';
 
 
 
 
-const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF_OF_RESIDENCY','CREDIT_CHECK','FINANCIAL_SANCTIONS','CRIMINAL_RECORDS_CHECK','PROOF_OF_ACTIVITY','QUALIFICATIONS','DIRECTORS','MEDIA','MEMBERSHIP');
+const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF_OF_RESIDENCY','CREDIT_CHECK','FINANCIAL_SANCTIONS','CRIMINAL_RECORDS_CHECK','PROOF_OF_ACTIVITY','QUALIFICATIONS','DIRECTORS','MEDIA','MEMBERSHIP','NI_EVIDENCE');
 
 
     static function returnPesEventsTable($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null){
@@ -172,6 +174,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 		<th width="5px">Directors</th>
 		<th width="5px">Media</th>
 		<th width="5px">Membership</th>
+		<th width="5px">NI Evidence</th>
 		<th>Process Status</th><th>PES Status</th><th>Comment</th></tr>
 		<tr class='searchingRow wrap'>
 		<td>Email Address</td>
@@ -190,6 +193,7 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
 		<td>Directors</td>
 		<td>Media</td>
 		<td>Membership</td>
+		<td>NI Evidence</td>
 		<td>Process Status</td><td>PES Status</td><td>Comment</td></tr>
 		</thead>
 		<tbody>
