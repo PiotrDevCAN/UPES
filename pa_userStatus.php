@@ -186,7 +186,7 @@ $(document).ready(function(){
 		var accountid = $('#cancelACCOUNT_ID').val();
 		$.ajax({
 			type:'post',
-		  	url: '/ajax/cancelPesRequest',
+		  	url: '/ajax/cancelPesRequest.php',
 		  	data:{upesref: upesref,
 		  		accountid: accountid},
 	      	success: function(response) {
