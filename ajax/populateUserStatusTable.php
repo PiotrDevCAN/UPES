@@ -13,6 +13,12 @@ error_reporting(E_ALL);
 Trace::pageOpening($_SERVER['PHP_SELF']);
 ob_start();
 
+$sqlToAllowPeopleToSeeRequestsForTheirAccounts = " AND A.ACCOUNT_ID in ( ";
+$sqlToAllowPeopleToSeeRequestsForTheirAccounts.= "     SELECT DISTINCT ACCOUNT_ID from " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
+$sqlToAllowPeopleToSeeRequestsForTheirAccounts.= "     WHERE AP.PES_REQUESTOR='" . db2_escape_string($_SESSION['ssoEmail']) . "' ) " ;
+$sqlToAllowPeopleToSeeRequestsForTheirAccounts.= " OR P.EMAIL_ADDRESS = '" . db2_escape_string($_SESSION['ssoEmail']) . "' ";
+
+
 $sql = " SELECT '' AS ACTION, P.EMAIL_ADDRESS, P.FULL_NAME, A.ACCOUNT, PL.PES_LEVEL, PL.PES_LEVEL_DESCRIPTION, PL.PES_LEVEL_REF ";
 $sql.= " , AP.PES_STATUS,AP.PES_CLEARED_DATE, AP.ACCOUNT_ID, AP.UPES_REF, AP.PES_REQUESTOR, AP.PES_DATE_REQUESTED,AP.COUNTRY_OF_RESIDENCE, AP.PROCESSING_STATUS, AP.PROCESSING_STATUS_CHANGED ";
 $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
@@ -23,7 +29,7 @@ $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
 $sql.= " LEFT JOIN  " . $_SESSION['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
 $sql.= " ON AP.PES_LEVEL = PL.PES_LEVEL_REF ";
 $sql.= " WHERE A.ACCOUNT is not null and AP.UPES_REF is not null ";
-$sql.= $_SESSION['isPesTeam'] ? null : " AND (AP.PES_REQUESTOR='" . db2_escape_string($_SESSION['ssoEmail']) . "' OR P.EMAIL_ADDRESS = '" . db2_escape_string($_SESSION['ssoEmail']) . "' ) ";
+$sql.= $_SESSION['isPesTeam'] ? null : $sqlToAllowPeopleToSeeRequestsForTheirAccounts;
 
 
 $rs = db2_exec($_SESSION['conn'], $sql);
