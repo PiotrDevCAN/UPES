@@ -25,7 +25,7 @@ $knownEmailLookup = PersonTable::prepareJsonKnownEmailLookup();
 <div class='container'>
 <h2>Add Individual to uPES</h2>
 <p><small>This is the first step towards requesting PES Checking for the individual to work on an Account.
-<br/>After "Adding", you "Board" them to one or more accounts/contracts as appropriate.</small></p>
+<br/><span style='color:red'>After "Adding", you must "Board" them to one or more accounts/contracts as appropriate.</span></small></p>
 
 <?php
 $personRecord = new PersonRecord();
@@ -60,7 +60,7 @@ function checkIfEmailKnown(){
 		if(allreadyExists){ // comes back with Position in array(true) or false is it's NOT in the array.
 			$('#savePerson').attr('disabled',true);
 			$('#EMAIL_ADDRESS').css("background-color","LightPink");
-			alert('Person already defined to uPES');
+			alert('Person already defined to uPES. This does NOT mean they are PES Cleared for the account you want them to be cleared on. Simply, that they have been defined to uPES before.');
 			return false;
 		} else {
 			$('#EMAIL_ADDRESS').css("background-color","LightGreen");
