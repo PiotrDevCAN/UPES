@@ -185,6 +185,12 @@ $(document).ready(function(){
 		        	$('#PES_LEVEL').select2({width: '100%'})
 		        	    .attr('disabled',false)
 		                .attr('required',true);
+	                $('.modal-title').html('Message');
+		            $('.modal-body').html('<p>You have now ADDED a new IBMer to uPES<br/>The next step in getting them PES Cleared is to request they be "Boarded" to the appropriatge Account.<br/>You do this using the "Board to Contract" menu option, under the "Upes" drop down above.</p>');
+		            $('.modal-body').addClass('bg-success');
+		            $('#modalError').modal('show');
+
+
 		    	} else {
      	    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
 		    	    $('#personForm').trigger("reset");
