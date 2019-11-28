@@ -152,4 +152,15 @@ td {
     font-size: 10px;
 }
 
+.formattedEmailDiv:hover {
+    font-size: 12px;
+}
+
+
+.pesComments:hover {
+    font-size: 12px;
+}
+
+
+
 </style>
