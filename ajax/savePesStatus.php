@@ -19,12 +19,21 @@ try {
 //     $accountPersonRecord->setFromArray(array('UPES_REF'=>$_POST['psm_upesref'], 'ACCOUNT_ID'=>$_POST['psm_accountid']));
 //     $accountPersonData = $accountPersonTable->getRecord($accountPersonRecord);
 
+    $person = new PersonRecord();
+    $personTable = new PersonTable(AllTables::$PERSON);
+    $person->setFromArray(array('UPES_REF'=>$_POST['psm_upesref']));
+    $personData = $personTable->getRecord($person);
+
+    if(!empty($_POST['psm_passportFirst']) || !empty($_POST['psm_passportSurname'])){
+        $personData['PASSPORT_FIRST_NAME'] = !empty($_POST['psm_passportFirst']) ? $_POST['psm_passportFirst'] : $personData['PASSPORT_FIRST_NAME'];
+        $personData['PASSPORT_LAST_NAME'] = !empty($_POST['psm_passportSurname']) ? $_POST['psm_passportSurname'] : $personData['PASSPORT_LAST_NAME'];
+        $person->setFromArray($personData);
+        $personTable->update($person);
+    }
+
+ //   $formattedEmailField = AccountPersonTable::formatEmailFieldOnTracker($accountPersonData);
 
 
-//     $person = new PersonRecord();
-//     $personTable = new PersonTable(AllTables::$PERSON);
-//     $person->setFromArray(array('UPES_REF'=>$_POST['psm_upesref']));
-//     $personData = $personTable->getRecord($person);
 
 //     $personData['ACCOUNT_ID'] = $accountPersonData['ACCOUNT_ID'];
 //     $personData['PRIORITY'] = $accountPersonData['PRIORITY'];
