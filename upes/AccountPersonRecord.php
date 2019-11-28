@@ -100,6 +100,17 @@ class AccountPersonRecord extends DbRecord
 
     static public $pesEvents = array('Consent Form','Right to Work','Proof of Id','Residency','Credit Check','Financial Sanctions','Criminal Records Check','Activity','Qualifications','Directors','Media','Membership');
 
+    private static $pesEmailBody = 'Please initiate PES check for the following individual : Name : &&name&&, Account : &&account&&, Requested By : &&requestor&&, Requested Timestamp : &&requested&&';
+    private static $pesEmailPatterns = array(
+        '/&&name&&/',
+        '/&&account&&/',
+        '/&&requestor&&/',
+        '/&&requested&&/',
+    );
+
+
+
+
     private static $pesClearedEmail = 'Hello &&candidate&&,
                                               <br/>I can confirm that you have successfully passed &&accountName&& PES Screening, effective from &&effectiveDate&&
                                               <br/>If you need any more information regarding your PES clearance, please contact the taskid &&taskid&&.
@@ -500,6 +511,35 @@ class AccountPersonRecord extends DbRecord
         </div>
       </div>
     <?php
+    }
+
+    function sendNotificationToPesTaskid(){
+
+        $loader = new Loader();
+        $allAccounts = $loader->loadIndexed('ACCOUNT','ACCOUNT_ID',AllTables::$ACCOUNT);
+        $allPeople   = $loader->loadIndexed('FULL_NAME','UPES_REF',AllTables::$PERSON, " UPES_REF='" . db2_escape_string($this->UPES_REF) ."' ");
+        $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT_ID',AllTables::$ACCOUNT);
+
+        $name  = $allPeople[$this->UPES_REF];
+        $account = $allAccounts[$this->ACCOUNT_ID];
+        $pesTaskid = $allPesTaskid[$this->ACCOUNT_ID];
+
+        $to = array();
+        $to[] = $pesTaskid;
+
+        $now = new \DateTime();
+
+        $replacements = array(
+            $name,
+            $account,
+            $_SESSION['ssoEmail'],
+            $now->format('Y-m-d H:i:s'),
+        );
+        $message = preg_replace(self::$pesEmailPatterns, $replacements, self::$pesEmailBody);
+
+        $response = \itdq\BlueMail::send_mail($to, 'uPES Starter Request - ' . $name . " ("  . $account . ") ", $message, $pesTaskid);
+
+        return $response;
     }
 
 

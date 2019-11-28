@@ -24,6 +24,7 @@ try {
     $accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
     $accountPersonRecordData = array_map('trim', $_POST);
     $accountPersonRecord->setFromArray($accountPersonRecordData);
+    $emailResponse = $accountPersonRecord->sendNotificationToPesTaskid();
 
     $saveRecord = $accountPersonTable->insert($accountPersonRecord); // Only used to save NEW accountPersonRecords
 
@@ -40,7 +41,7 @@ if($success){
     $messages.= $_POST['mode']==FormClass::$modeDEFINE ? "Created" : "Updated" ;
 }
 
-$response = array('success'=>$success,'upesref' => $upesRef, 'saveResponse' => $saveRecord, 'Messages'=>$messages);
+$response = array('success'=>$success,'upesref' => $upesRef, 'saveResponse' => $saveRecord, 'Messages'=>$messages,'emailResponse'=>$emailResponse);
 
 ob_clean();
 echo json_encode($response);
