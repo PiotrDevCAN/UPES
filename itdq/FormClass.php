@@ -1184,6 +1184,20 @@ function formTextArea($label, $fieldName, $state = null, $textAreaclass = null, 
     }
 
 
+    function displaySaveReset(){
+        ?>
+            <div class='form-group'>
+            <div class='col-sm-2'>
+            </div>
+            <div class='btn-group col-sm-8' >
+            <button type='submit' class='btn btn-default'>Save</button>
+            <button type='reset' class='btn btn-default'>Reset</button>
+            </div>
+            </div>
+            <?php
+        }
+
+
     /**
      * Tim Minter
      *

@@ -60,29 +60,27 @@ class TraceControlRecord extends DbRecord {
 		Trace::traceComment(null,__METHOD__);
         $this->modeSetup($mode);
 
-		$loader = new Loader();
-
-		$allClasses = Trace::allApplicationsClasses('dpulse',true);
+		$allClasses = Trace::allApplicationsClasses('upes');
 		sort($allClasses);
+
 		$allFunctions = array('Methods...');
+ 		?><div class='panel panel-primary'><?php
+        ?><div class='panel-heading'>Trace Control</div><?php
+        ?><div class='container'><?php
 
- 		echo "<div class='panel panel-primary'>";
-        echo "<div class='panel-heading'>Trace Control</div>";
-        echo "<div class='container'>";
-
-        echo "<div class='form-horizontal'>";
+        ?><div class='form-horizontal'><?php
         $onChange = "onChange='var traceControlRec = new TraceControlRecord(); traceControlRec.populateMethodSelect()'";
-		$this->formSelect( self::$controlTypes, 'Control Type', 'TRACE_CONTROL_TYPE', $this->chkState,null,$onChange);
-		$this->formSelect($allClasses, 'Class', 'trace_class_name',$this->state,null,$onChange);
-        $this->formSelect($allFunctions, 'Method', 'trace_method_name','disabled' ,null,'Method...','blue-med');
+		$this->formSelect(null, self::$controlTypes, 'Control Type', 'TRACE_CONTROL_TYPE', $this->chkState,null,$onChange);
+ 		$this->formSelect(null, $allClasses, 'Class', 'trace_class_name',$this->state,null,$onChange);
+        $this->formSelect(null, $allFunctions, 'Method', 'trace_method_name','disabled' ,null,'Method...','blue-med');
 
 
-        echo "<input type='hidden' name='mode' value='insert'> ";
+        ?><input type='hidden' name='mode' value='insert'><?php
         $this->displaySaveReset();
 
-        echo "</div>"; // form-horiztonal
-        echo "</div>"; // container
-        echo "</div>"; // panel
+        ?></div><?php // form-horiztonal
+        ?></div><?php // container
+        ?></div><?php // panel
 
 	}
 
