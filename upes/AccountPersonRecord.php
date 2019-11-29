@@ -324,18 +324,16 @@ class AccountPersonRecord extends DbRecord
                 break;
         }
 
-        if(isset($row['PROCESSING_STATUS']) && ( $row['PES_STATUS']== AccountPersonRecord::PES_STATUS_PES_PROGRESSING || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_STARTER_REQUESTED || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_RECHECK_REQ ) ){
-//             $pesStatusWithButton .= "&nbsp;<button type='button' class='btn btn-default btn-xs btnTogglePesTrackerStatusDetails' aria-label='Left Align' data-toggle='tooltip' data-placement='top' title='See PES Tracker Status' >";
-//             $pesStatusWithButton .= !empty($row['PROCESSING_STATUS']) ? "&nbsp;<small>" . $row['PROCESSING_STATUS'] . "</small>&nbsp;" : null;
-//             $pesStatusWithButton .= "<span class='glyphicon glyphicon-search  ' aria-hidden='true' ></span>";
-//             $pesStatusWithButton .= "</button>";
+//         if(isset($row['PROCESSING_STATUS']) && ( $row['PES_STATUS']== AccountPersonRecord::PES_STATUS_PES_PROGRESSING || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_STARTER_REQUESTED || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_RECHECK_REQ ) ){
+// //             $pesStatusWithButton .= "&nbsp;<button type='button' class='btn btn-default btn-xs btnTogglePesTrackerStatusDetails' aria-label='Left Align' data-toggle='tooltip' data-placement='top' title='See PES Tracker Status' >";
+// //             $pesStatusWithButton .= !empty($row['PROCESSING_STATUS']) ? "&nbsp;<small>" . $row['PROCESSING_STATUS'] . "</small>&nbsp;" : null;
+// //             $pesStatusWithButton .= "<span class='glyphicon glyphicon-search  ' aria-hidden='true' ></span>";
+// //             $pesStatusWithButton .= "</button>";
 
-            $pesStatusWithButton .= "<div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' style='display:none' >";
-            ob_start();
-            AccountPersonTable::formatProcessingStatusCell($row);
-            $pesStatusWithButton .= ob_get_clean();
-            $pesStatusWithButton .= "</div>";
-        }
+//             $pesStatusWithButton .= "<div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' style='display:none' >";
+//             $pesStatusWithButton .= AccountPersonTable::formatProcessingStatusCell($row);
+//             $pesStatusWithButton .= "</div>";
+//        }
 
         return $pesStatusWithButton;
 

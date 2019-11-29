@@ -47,11 +47,8 @@ try {
 
 
     $now = new DateTime();
-    $row = array('UPOS_REF'=>$upesref, 'ACCOUNT_ID'=>$accountid, 'PROCESSING_STATUS'=>$_POST['processStatus'],'PROCESSING_STATUS_CHANGED'=>$now->format('Y-m-d H:i:s'));
-
-    ob_start();
-    AccountPersonTable::formatProcessingStatusCell($row);
-    $formattedStatusField = ob_get_clean();
+    $row = array('UPES_REF'=>$upesref, 'ACCOUNT_ID'=>$accountid, 'PROCESSING_STATUS'=>$_POST['processStatus'],'PROCESSING_STATUS_CHANGED'=>$now->format('Y-m-d H:i:s'));
+    $formattedStatusField = AccountPersonTable::formatProcessingStatusCell($row);
 
 } catch (Exception $e){
     $success = false;

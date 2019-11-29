@@ -36,8 +36,6 @@ const PES_TRACKER_RECORDS_ALL          = 'All';
 const PES_TRACKER_RECORDS_ACTIVE_REQUESTED = 'Active Requested';
 const PES_TRACKER_RECORDS_ACTIVE_PROVISIONAL = 'Active Provisional';
 
-
-
 const PES_TRACKER_RETURN_RESULTS_AS_ARRAY      = 'array';
 const PES_TRACKER_RETURN_RESULTS_AS_RESULT_SET = 'resultSet';
 
@@ -55,10 +53,13 @@ const PES_TRACKER_STAGE_MEDIA          = 'Media';
 const PES_TRACKER_STAGE_MEMBERSHIP     = 'Membership';
 const PES_TRACKER_STAGE_NI_EVIDENCE    = 'NI Evidence';
 
-
-
-
 const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF_OF_RESIDENCY','CREDIT_CHECK','FINANCIAL_SANCTIONS','CRIMINAL_RECORDS_CHECK','PROOF_OF_ACTIVITY','QUALIFICATIONS','DIRECTORS','MEDIA','MEMBERSHIP','NI_EVIDENCE');
+
+const PROCESS_STATUS_PES = 'PES';
+const PROCESS_STATUS_USER = 'User';
+const PROCESS_STATUS_REQUESTOR = 'Requestor';
+const PROCESS_STATUS_CRC = 'CRC';
+const PROCESS_STATUS_UNKOWN = 'Unknown';
 
 
     static function returnPesEventsTable($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null){
@@ -235,14 +236,14 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
             }
             ?>
             <td class='nonSearchable'>
-            <div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' ><?=self::formatProcessingStatusCell($row);?></div>
+            <div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' data-upesacc='<?=$upesref.$accountId;?>' ><?=self::formatProcessingStatusCell($row);?></div>
             <div class='text-center'>
             <span style='white-space:nowrap' >
-            <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='PES' data-toggle="tooltip" data-placement="top" title="With PES Team" ><i class="fas fa-users"></i></a>
-            <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='User' data-toggle="tooltip" data-placement="top" title="With Applicant" ><i class="fas fa-user"></i></a>
-            <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='Requestor' data-toggle="tooltip" data-placement="top" title="With Requestor" ><i class="fas fa-male"></i><i class="fas fa-female"></i></a>
-            <a class="btn btn-xs btn-info   btnProcessStatusChange accessPes accessCdi" 	data-processstatus='CRC' data-toggle="tooltip" data-placement="top" title="Awaiting CRC"><i class="fas fa-gavel"></i></a>
-            <button class='btn btn-info btn-xs  btnProcessStatusChange accessPes accessCdi' data-processstatus='Unknown' data-toggle="tooltip"  title="Unknown"><span class="glyphicon glyphicon-erase" ></span></button>
+            <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='<?=self::PROCESS_STATUS_PES?>'       data-toggle="tooltip" data-placement="top" title="With PES Team" ><i class="fas fa-users"></i></a>
+            <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='<?=self::PROCESS_STATUS_USER?>'      data-toggle="tooltip" data-placement="top" title="With Applicant" ><i class="fas fa-user"></i></a>
+            <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='<?=self::PROCESS_STATUS_REQUESTOR?>' data-toggle="tooltip" data-placement="top" title="With Requestor" ><i class="fas fa-male"></i><i class="fas fa-female"></i></a>
+            <a class="btn btn-xs btn-info   btnProcessStatusChange accessPes accessCdi" 	data-processstatus='<?=self::PROCESS_STATUS_CRC?>'       data-toggle="tooltip" data-placement="top" title="Awaiting CRC"><i class="fas fa-gavel"></i></a>
+            <button class='btn btn-info btn-xs  btnProcessStatusChange accessPes accessCdi' data-processstatus='<?=self::PROCESS_STATUS_UNKOWN?>'    data-toggle="tooltip"  title="Unknown"><span class="glyphicon glyphicon-erase" ></span></button>
             </span>
             <?php
             $dateLastChased = !empty($row['DATE_LAST_CHASED']) ? DateTime::createFromFormat('Y-m-d', $row['DATE_LAST_CHASED']) : null;
@@ -456,7 +457,9 @@ const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF
         $date = DateTime::createFromFormat('Y-m-d H:i:s', substr($row['PROCESSING_STATUS_CHANGED'],0,19));
         $age  = !empty($row['PROCESSING_STATUS_CHANGED']) ?  $date->diff($today)->format('%R%a days') : null ;
 
+        ob_start();
         echo $processingStatus;?><br/><small><?=substr(trim($row['PROCESSING_STATUS_CHANGED']),0,10);?><br/><?=$age?></small><?php
+        return ob_get_clean();
     }
 
     static function formatEmailFieldOnTracker($row){

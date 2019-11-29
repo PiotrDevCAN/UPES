@@ -211,6 +211,7 @@ function personRecord() {
 					    	  
 					    	  $('.pesComments[data-upesacc="' + upesref + accountid + '"]').html('<small>' + resultObj.comment + '</small>');
 					    	  $('.pesStatusTd[data-upesacc="' + upesref + accountid + '"]').html(resultObj.pesStatus);	
+					    	  $('.pesProcessStatusDisplay[data-upesacc="' + upesref + accountid + '"]').html(resultObj.processingStatus);
 					    	 //  $('.pesStatusField[data-upesref="' + upesref + '"]').siblings('.btnSendPesEmail').remove();
 					    	 
 					           
