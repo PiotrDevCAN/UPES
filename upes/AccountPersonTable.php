@@ -112,6 +112,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $sql.= ", AP.DIRECTORS ";
         $sql.= ", AP.MEDIA ";
         $sql.= ", AP.MEMBERSHIP ";
+        $sql.= ", AP.NI_EVIDENCE ";
         $sql.= ", AP.PROCESSING_STATUS ";
         $sql.= ", AP.PROCESSING_STATUS_CHANGED ";
         $sql.= ", AP.DATE_LAST_CHASED ";
