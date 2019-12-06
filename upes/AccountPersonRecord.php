@@ -289,6 +289,8 @@ class AccountPersonRecord extends DbRecord
             case $status == AccountPersonRecord::PES_STATUS_PROVISIONAL && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_TBD && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_STAGE_1 && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_STAGE_2 && $_SESSION['isPesTeam'] :
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesStatus' aria-label='Left Align' ";
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
                 $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";
@@ -419,8 +421,9 @@ class AccountPersonRecord extends DbRecord
                     <option value='<?=AccountPersonRecord::PES_STATUS_TBD;?>'><?=AccountPersonRecord::PES_STATUS_TBD;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_RECHECK_REQ;?>'><?=AccountPersonRecord::PES_STATUS_RECHECK_REQ;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_LEFT_IBM;?>'><?=AccountPersonRecord::PES_STATUS_LEFT_IBM;?></option>
-
-                       </select>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_STAGE_1;?>'><?=AccountPersonRecord::PES_STATUS_STAGE_1;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_STAGE_2;?>'><?=AccountPersonRecord::PES_STATUS_STAGE_2;?></option>
+                    </select>
                  </div>
                  <label for='pes_date' class='col-md-1 control-label '>Date</label>
                  <div class='col-md-3'>
