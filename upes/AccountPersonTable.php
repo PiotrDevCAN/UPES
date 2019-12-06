@@ -122,12 +122,18 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $sql.= ", AP.PRIORITY ";
         $sql.= ", AP.COUNTRY_OF_RESIDENCE ";
         $sql.= ", P.IBM_STATUS ";
+        $sql.= ", PL.PES_LEVEL ";
+        $sql.= ", PL.PES_LEVEL_DESCRIPTION ";
+
 
         $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
         $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
         $sql.= " ON P.UPES_REF = AP.UPES_REF ";
         $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
+        $sql.= " ON AP.PES_LEVEL = PL.PES_LEVEL_REF ";
+
         $sql.= " WHERE 1=1 ";
         $sql.= " and (AP.UPES_REF is not null or ( AP.UPES_REF is null  AND AP.PES_STATUS_DETAILS is null )) "; // it has a tracker record
         $sql.= " AND " . $pesStatusPredicate;
@@ -222,7 +228,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
             <td class='formattedEmailTd'>
             <div class='formattedEmailDiv'><?=$formattedIdentityField;?></div>
             </td>
-            <td><?=$row['ACCOUNT']?></td>
+            <td><?=$row['ACCOUNT']?><br/><?=$row['PES_LEVEL']; ?><br/><?=$row['PES_LEVEL_DESCRIPTION']; ?></td>
             <td><?=$row['PES_REQUESTOR']?><br/><small><?=$requestedDisplay;?><br/><?=$age?></small></td>
 
             <?php
