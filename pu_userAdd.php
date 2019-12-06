@@ -155,10 +155,10 @@ $(document).ready(function(){
 	});
 
 	$('#personForm').submit(function(e){
+		var submitBtn = $(e.target).find('input[name="Submit"]').addClass('spinning').attr('disabled',true);
 		console.log(e);
 		e.preventDefault();
 
-		var submitBtn = $(e.target).find('input[name="Submit"]').addClass('spinning');
 		var url = 'ajax/savePersonRecord.php';
 
 		var disabledFields = $(':disabled');
