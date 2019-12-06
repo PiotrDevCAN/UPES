@@ -97,6 +97,9 @@ class AccountPersonRecord extends DbRecord
     const PES_STATUS_TBD            = 'TBD';
     const PES_STATUS_RECHECK_REQ    = 'Recheck Req';
     const PES_STATUS_LEFT_IBM       = 'Left IBM';
+    const PES_STATUS_STAGE_1        = 'Stage 1 Completed';
+    const PES_STATUS_STAGE_2        = 'Stage 2 Completed';
+
 
     static public $pesEvents = array('Consent Form','Right to Work','Proof of Id','Residency','Credit Check','Financial Sanctions','Criminal Records Check','Activity','Qualifications','Directors','Media','Membership');
 
