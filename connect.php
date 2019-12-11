@@ -20,15 +20,15 @@ if( getenv( "VCAP_SERVICES" ) )
 
     // $amendedConn_String = str_replace(";Security=", "!;Security=", $conn_string); // password needs to end with a !
 
-    $amendedConn_String = '';
-    $conn_array = explode(";", $conn_string);
+//     $amendedConn_String = '';
+//     $conn_array = explode(";", $conn_string);
 
-    foreach ($conn_array as $conn_element){
-        $conn_element =  substr($conn_element, 0,4)=='PWD=' ?  $conn_element . "!" : $conn_element;
-        $amendedConn_String.=$conn_element . ";";
-    }
-    $amendedConn_String = substr($amendedConn_String,0,-1);
-    $conn = db2_connect( $amendedConn_String, "", "" );
+//     foreach ($conn_array as $conn_element){
+//         $conn_element =  substr($conn_element, 0,4)=='PWD=' ?  $conn_element . "!" : $conn_element;
+//         $amendedConn_String.=$conn_element . ";";
+//     }
+//     $amendedConn_String = substr($amendedConn_String,0,-1);
+    $conn = db2_connect( $conn_string, "", "" );
 
 //   $_SESSION['ssoEmail'] = 'dummyUser';
     if( $conn )
