@@ -111,6 +111,7 @@ if($page != "index.php" && substr($page,0,3)!='cdi'){
 $(document).ready(function () {
 
     $('button.accessRestrict')<?=$isCdi?><?=$isPesTeam?><?=$isUser?>.remove();
+    $('li.accessRestrict')<?=$isCdi?><?=$isPesTeam?><?=$isUser?>.remove();
 
     <?=!empty($isUser)      ? '$("#userLevel").html("User");console.log("user");' : null;?>
     <?=!empty($isPesTeam)   ? '$("#userLevel").html("Pes Team");console.log("pes");' : null;?>
