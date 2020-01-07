@@ -501,12 +501,13 @@ function pesEvent() {
 	                $('#savePesStatus').attr('disabled',false).removeClass('spinning');	                
 	                var success = resultObj.success;
 	      		    var currentReportRecords = $('.btnRecordSelection.active').data('pesRecords');                
-	                pesevent.populatePesTracker(currentReportRecords);
+	                // pesevent.populatePesTracker(currentReportRecords);
 	                if(!success){
 	                	alert('Save PES Status, may not have been successful');
 	                	alert(resultObj.messages + resultObj.emailResponse);
 	                } else {                    
 	                    $('#amendPesStatusModal').modal('hide');
+	                    $()
 	                }
               	
 	              }
