@@ -507,7 +507,11 @@ function pesEvent() {
 	                	alert(resultObj.messages + resultObj.emailResponse);
 	                } else {                    
 	                    $('#amendPesStatusModal').modal('hide');
-	                    $()
+	                    var upesref = resultObj.upesref;
+	                    var accountid = resultObj.accountid;	                    
+	                    console.log($('.pesStatusTd[data-upesacc="' + upesref + accountid + '"]'));	                    
+	                    $('.pesStatusTd[data-upesacc="' + upesref + accountid + '"]').html(resultObj.pesStatus);                   
+	                    
 	                }
               	
 	              }
