@@ -1,6 +1,9 @@
 <?php
 $config_openidconnect = new stdClass();
 
+// Blueapi connect Secret : C2qY0qE7pH0pY5kY1sJ8xE3aX8aB4wO7rW2vV6rU7iF6kB4wQ7
+//                 Client ID : 28f8d81d-e9e3-4cb1-86ba-3bfaf445aa61
+
 
 switch (strtolower($_SERVER['environment'])) {
     case 'upes':
