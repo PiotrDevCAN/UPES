@@ -112,23 +112,21 @@ class BluePages {
 			return FALSE;
 		}
 		set_time_limit(120);
-		$url = "http://bluepages.ibm.com/BpHttpApisv3/wsapi?allByNotesIDLite=NOTES_ID_HERE%25";
+		$url = "http://bluepages.ibm.com/BpHttpApisv3/wsapi?allByNotesIDLite=CN=NOTES_ID_HERE%";
 
 	    $sp = strpos($notesId,'/O=IBM');
 
 		if($sp){
-			$amendIbm2 = urlencode(trim($notesId));
+		  $pregAmendedNotesid = urlencode(trim($notesId));
 		} else {
-			$amendIbm = str_replace("/IBM","xxxxx",$notesId);
-			$amendCC  = str_replace("/","/OU=",$amendIbm);
-			$amendIbm2 = str_replace("xxxxx","/O=IBM",$amendCC);
-			$amendIbm2 = "CN%3D" . urlencode($amendIbm2);
+		  $pregAmendedNotesid = urlencode(preg_replace(array('/\/ibm/i','/\//'), array('','/OU='), $notesId));
 		}
-		$ch = curl_init ( str_replace('NOTES_ID_HERE',$amendIbm2,$url) );
+
+		$newUrl = str_replace('NOTES_ID_HERE',$pregAmendedNotesid,$url);
+
+		$ch = curl_init ( $newUrl  );
 		return self::processDetails($ch);
 	}
-
-
 
 
 
@@ -555,7 +553,6 @@ class BluePages {
 	    $details = array();
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
 		$m = curl_exec ( $ch );
-
 		$pattern = "/# rc/";
 		$results = preg_split ( $pattern, $m );
 		$pattern = "/[=,]/";
