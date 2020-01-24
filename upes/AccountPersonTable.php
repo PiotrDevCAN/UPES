@@ -693,8 +693,20 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
             }
         }
 
+        $sql  = " SELECT PES_CLEARED_DATE FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
+
+        $cleared = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$cleared){
+            DbTable::displayErrorMessage($result, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+
+        $row = db2_fetch_assoc($cleared);
+
         $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
-        $sql .= " SET PES_RECHECK_DATE = current date + " . $pesRecheckPeriod . " years " ;
+        $sql .= " SET PES_RECHECK_DATE = DATE('" . $row['PES_CLEARED_DATE'] . "') + " . $pesRecheckPeriod . " years " ;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
 
         $result = db2_exec($_SESSION['conn'], $sql);
@@ -793,16 +805,21 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
         $row['REQUESTED'] = array('display'=> "<small>" .  $requestor . "<br/>" . $requestedDisplay . "</small>", 'sort'=>$row['PES_DATE_REQUESTED']);
 
-        $pesLevel = $row['PES_LEVEL'];
-        $pesLevelRef = $row['PES_LEVEL_REF'];
-        $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel ' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "' data-plupesref='" . $upesref . "' data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "' data-toggle='tooltip' title='Edit Person' >
-                          <span class='glyphicon glyphicon-edit aria-hidden='true' ></span>
-                          </button>&nbsp;" . $pesLevel;
-
         $clearedDateObj = \DateTime::createFromFormat('Y-m-d', $row['PES_CLEARED_DATE']);
         $clearedDateDisplay =  $clearedDateObj ? $clearedDateObj->format('d-m-Y') : $row['PES_CLEARED_DATE'];
         $row['PES_CLEARED_DATE'] = $clearedDateDisplay;
 
+        $recheckDateObj = \DateTime::createFromFormat('Y-m-d', $row['PES_RECHECK_DATE']);
+        $recheckDateDisplay =  $recheckDateObj ? $recheckDateObj->format('d-m-Y') : $row['PES_RECHECK_DATE'];
+
+
+
+
+        $pesLevel = $row['PES_LEVEL'];
+        $pesLevelRef = $row['PES_LEVEL_REF'];
+        $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel ' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "' data-plupesref='" . $upesref . "' data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "'  data-plRequestor='" . $requestor ."'  data-plClearedDate='" . $clearedDateDisplay ."'  data-plRecheckDate='" . $recheckDateDisplay ."' data-toggle='tooltip' title='Edit Request Details' >
+                          <span class='glyphicon glyphicon-edit aria-hidden='true' ></span>
+                          </button>&nbsp;" . $pesLevel;
 
         $processingStatus = $row['PROCESSING_STATUS'];
         $processingStatusChanged = $row['PROCESSING_STATUS_CHANGED'];

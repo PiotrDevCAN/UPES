@@ -21,7 +21,11 @@ try {
     $accountPersonRecord = new AccountPersonRecord();
     $accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
     $accountPersonRecordData = array_map('trim', $_POST);
-    $accountPersonRecord->setFromArray(array('ACCOUNT_ID'=>$accountPersonRecordData['ACCOUNT_ID'], 'UPES_REF'=>$accountPersonRecordData['UPES_REF'],'PES_LEVEL'=>$accountPersonRecordData['PES_LEVEL'],'COUNTRY_OF_RESIDENCE'=>$accountPersonRecordData['COUNTRY_OF_RESIDENCE']));
+    $accountPersonRecord->setFromArray(array('ACCOUNT_ID'=>$accountPersonRecordData['ACCOUNT_ID'], 'UPES_REF'=>$accountPersonRecordData['UPES_REF']
+                                            ,'PES_LEVEL'=>$accountPersonRecordData['PES_LEVEL'],'COUNTRY_OF_RESIDENCE'=>$accountPersonRecordData['COUNTRY_OF_RESIDENCE']
+                                            ,'PES_CLEARED_DATE'=>$accountPersonRecordData['PES_CLEARED_DATE_db2'],'PES_RECHECK_DATE'=>$accountPersonRecordData['PES_RECHECK_DATE_db2']
+                                            ,'PES_REQUESTOR'=>$accountPersonRecordData['PES_REQUESTOR']
+                                            ));
     $updateRecord = $accountPersonTable->update($accountPersonRecord,false, false); // Only used to save NEW accountPersonRecords
     $accountPersonTable->setPesRescheckDate($accountPersonRecordData['UPES_REF'],$accountPersonRecordData['ACCOUNT_ID'],$_SESSION['ssoEmail']);
 } catch (Exception $e) {

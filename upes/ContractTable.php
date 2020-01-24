@@ -60,6 +60,9 @@ class ContractTable extends DbTable
 
 
     static function prepareArrayForContractDropDown($upesref){
+
+        var_dump($upesref);
+
         $loader = new Loader();
         $allAccounts = $loader->loadIndexed('ACCOUNT','ACCOUNT_ID',AllTables::$ACCOUNT);
         $allContracts = $loader->loadIndexed('CONTRACT','CONTRACT_ID',AllTables::$CONTRACT);
@@ -68,7 +71,12 @@ class ContractTable extends DbTable
         $predicate = !empty($upesref) ? " UPES_REF='" . db2_escape_string($upesref) . "' " : null;
         $allAccountsForPerson = $loader->loadIndexed('ACCOUNT_ID','UPES_REF',AllTables::$ACCOUNT_PERSON, $predicate );
 
+        var_dump($allAccountsForPerson);
+
+
         $filteredContracts = !empty($upesref) ?  array_diff($allContractAccountMapping, $allAccountsForPerson) : $allContractAccountMapping;
+
+        var_dump($filteredContracts);
 
         $contractsAgainstAccount = array();
 

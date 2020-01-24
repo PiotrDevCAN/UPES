@@ -304,6 +304,33 @@ $(document).ready(function(){
 	});
 
 	$('#modalEditPesLevel').on('shown.bs.modal',function(){
+
+		try {
+			 $('#plPES_CLEARED_DATE').datepicker('destroy');
+
+			}
+			catch(error) {
+			  console.log(error);
+			}
+
+		try {
+			 $('#plPES_RECHECK_DATE').datepicker('destroy');
+		    }
+			catch(error) {
+			  console.log(error);
+			}
+
+
+        $('#plPES_CLEARED_DATE').datepicker({ dateFormat: 'dd-mm-yy',
+			   altField:'#plPES_CLEARED_DATE_db2',
+			   altFormat:'yy-mm-dd',
+	   });
+
+        $('#plPES_RECHECK_DATE').datepicker({ dateFormat: 'dd-mm-yy',
+			   altField:'#plPES_RECHECK_DATE_db2',
+			   altFormat:'yy-mm-dd',
+ 	   });
+
 		$('#plCOUNTRY_OF_RESIDENCE').select2({
 			placeholder: 'Select Country of Residence',
 			width: '100%',
@@ -342,6 +369,11 @@ $(document).ready(function(){
 	    $('#plFULL_NAME').val($(this).data('plfullname'));
 	    $('#plPesLevel').val($(this).data('plpeslevelref'));
 	    $('#plContractId').val($(this).data('plcontractid'));
+	    $('#plPES_REQUESTOR').val($(this).data('plrequestor'));
+	    $('#plPES_CLEARED_DATE').val($(this).data('plcleareddate'));
+	    $('#plPES_RECHECK_DATE').val($(this).data('plrecheckdate'));
+
+
    	    $('#modalEditPesLevel').modal('show');
 	});
 
