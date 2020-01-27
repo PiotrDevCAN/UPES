@@ -34,7 +34,7 @@ $now = new DateTime();
 $pesTrackerTable = new AccountPersonTable(\upes\AllTables::$ACCOUNT_PERSON);
 
 try {
-        $pesTrackerTable->getTracker(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE, $spreadsheet);
+        $pesTrackerTable->getTracker(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED, $spreadsheet);
         // Set active sheet index to the first sheet, so Excel opens this as the first sheet
         $spreadsheet->setActiveSheetIndex(0);
         // Redirect output to a client’s web browser (Xlsx)
