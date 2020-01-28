@@ -699,14 +699,17 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $cleared = db2_exec($_SESSION['conn'], $sql);
 
         if(!$cleared){
-            DbTable::displayErrorMessage($result, __CLASS__, __METHOD__, $sql);
+            DbTable::displayErrorMessage($cleared, __CLASS__, __METHOD__, $sql);
             return false;
         }
 
         $row = db2_fetch_assoc($cleared);
 
+        $pes_cleared_obj = !empty($row['PES_CLEARED_DATE']) ? \DateTime::createFromFormat('Y-m-d', $row['PES_CLEARED_DATE']) : new \DateTime();
+        $pes_cleared_sql = "DATE('" . $pes_cleared_obj->format('Y-m-d') . "') ";
+
         $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
-        $sql .= " SET PES_RECHECK_DATE = DATE('" . $row['PES_CLEARED_DATE'] . "') + " . $pesRecheckPeriod . " years " ;
+        $sql .= " SET PES_RECHECK_DATE = $pes_cleared_sql  +  $pesRecheckPeriod  years " ;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
 
         $result = db2_exec($_SESSION['conn'], $sql);

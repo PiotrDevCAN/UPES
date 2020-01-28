@@ -380,7 +380,7 @@ $(document).ready(function(){
 	$(document).on('submit','#editPesLevelForm',function(e){
 		e.preventDefault();
 
-		var submitBtn = $(e.target).find('input[name="Submit"]').addClass('spinning');
+		var submitBtn = $('#savePesLevel').addClass('spinning').attr('disabled',true);;
 		var url = 'ajax/savePesLevelChanges.php';
 
 		var disabledFields = $(':disabled');
@@ -398,12 +398,12 @@ $(document).ready(function(){
 
 	      		console.log(responseObj.success);
 	      		if(responseObj.success){
-		    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
+		    	    $('.spinning').removeClass('spinning').attr('disabled',false);
 		    	    $('#editPesLevelForm').trigger("reset");
 	                $('#modalEditPesLevel').modal('hide');
 	                userStatusTable.ajax.reload();
 		    	} else {
-     	    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
+     	    	    $('.spinning').removeClass('spinning').attr('disabled',false);
 		    	    $('#editPesLevelForm').trigger("reset");
 		    	    $('#modalEditPesLevel').modal('hide');
 	                $('#modalError .modal-body').html(responseObj.Messages);
