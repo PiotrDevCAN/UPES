@@ -21,7 +21,7 @@ class PesEmail {
     const EMAIL_BODIES             = 'emailBodies';
     const EMAIL_APPLICATION_FORMS  = 'applicationForms';
 
-    const APPLICATION_FORM_GLOBAL = 'FSS Global Application Form v1.0.doc';
+    const APPLICATION_FORM_GLOBAL = 'FSS Global Application Form v2.0.doc';
     const APPLICATION_FORM_ODC    = 'ODC application form v3.0.xls';
     const APPLICATION_FORM_OWENS  = 'Owens_Consent_Form.pdf';
 
@@ -290,6 +290,13 @@ class PesEmail {
     }
 
     static function notifyPesTeamLeaversFound($detailsOfLeavers){
+        $shortDetails = array();
+        $fullDetails = array();
+        foreach ($detailsOfLeavers as $leaver){
+            $shortDetails[$leaver['CNUM']]  = $leaver['FULL_NAME'];
+            $fullDetails[$leaver['CNUM']][] = $leaver;
+        }
+
         $slack = new slack();
         $now = new \DateTime();
         $pesEmail = null;          // Will be overridden when we include_once from emailBodies later.
@@ -303,9 +310,15 @@ class PesEmail {
         $pesEmail.= "<tr><th style='padding:25px;'>CNUM</th><th style='padding:25px;'>Full Name</th><th style='padding:25px;'>Account</th><th style='padding:25px;'>PES Status</th><th style='padding:25px;'>Cleared Date</th><th style='padding:25px;'>Recheck Date</th>";
         $pesEmail.= "</tr></thead><tbody>";
 
-        foreach ($detailsOfLeavers as $leaver) {
-            $pesEmail.="<tr><td style='padding:15px;'>" . $leaver['CNUM'] . "</td><td style='padding:15px;'>" . $leaver['FULL_NAME']  . "</td><td style='padding:15px;'>" . $leaver['ACCOUNT']  . "</td><td style='padding:15px;'>" . $leaver['PES_STATUS'] . "</td><td style='padding:15px;'>" . $leaver['PES_CLEARED_DATE'] . "</td><td style='padding:15px;'>" . $leaver['PES_RECHECK_DATE'] . "</td></tr>";
-            $slack->sendMessageToChannel("Leaver :  " . $leaver['CNUM'] . " : " . $leaver['FULL_NAME'], slack::CHANNEL_UPES_AUDIT);
+//         foreach ($detailsOfLeavers as $leaver) {
+//             $pesEmail.="<tr><td style='padding:15px;'>" . $leaver['CNUM'] . "</td><td style='padding:15px;'>" . $leaver['FULL_NAME']  . "</td><td style='padding:15px;'>" . $leaver['ACCOUNT']  . "</td><td style='padding:15px;'>" . $leaver['PES_STATUS'] . "</td><td style='padding:15px;'>" . $leaver['PES_CLEARED_DATE'] . "</td><td style='padding:15px;'>" . $leaver['PES_RECHECK_DATE'] . "</td></tr>";
+//         }
+
+        foreach ($shortDetails as $cnum => $fullName) {
+            $slack->sendMessageToChannel("Leaver :  " . $cnum . " : " . $fullName , slack::CHANNEL_UPES_AUDIT);
+            foreach ($fullDetails[$cnum] as $leaver){
+                $pesEmail.="<tr><td style='padding:15px;'>" . $leaver['CNUM'] . "</td><td style='padding:15px;'>" . $leaver['FULL_NAME']  . "</td><td style='padding:15px;'>" . $leaver['ACCOUNT']  . "</td><td style='padding:15px;'>" . $leaver['PES_STATUS'] . "</td><td style='padding:15px;'>" . $leaver['PES_CLEARED_DATE'] . "</td><td style='padding:15px;'>" . $leaver['PES_RECHECK_DATE'] . "</td></tr>";
+            }
         }
 
         $pesEmail.="</tbody>";
