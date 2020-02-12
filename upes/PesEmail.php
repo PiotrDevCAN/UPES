@@ -83,15 +83,18 @@ class PesEmail {
         return base64_encode($xlsAttachment);
     }
 
-    static function findEmailBody($account,$country){
+    static function findEmailBody($account,$country, $emailAddress){
         if(empty($account) or empty($country)){
             throw new Exception('Incorrect parms passed');
         }
 
+        $intExt = stripos($emailAddress, ".ibm.com") !== false ? null : "_ext" ;
+
         $emailBodyName = CountryTable::getEmailBodyNameForCountry($country);
 
-        $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/request_" . $emailBodyName['EMAIL_BODY_NAME'] . ".php";
-        $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//request_" . $emailBodyName['EMAIL_BODY_NAME'] . ".php";
+
+        $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/request_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//request_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
 
         $pathsToTry = array($pathToAccountBody,$pathToDefaultBody);
 
@@ -121,7 +124,7 @@ class PesEmail {
         $nameOfApplicationForm = $applicationFormDetails['nameOfApplicationForm'];
         $pesAttachments        = $applicationFormDetails['pesAttachments'];
 
-        $emailBodyFile = PesEmail::findEmailBody($account, $country);
+        $emailBodyFile = PesEmail::findEmailBody($account, $country, $candidateEmail);
         $pesTaskid = $allPesTaskid[$account];
 
         include $emailBodyFile;
