@@ -211,13 +211,14 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
             $date = DateTime::createFromFormat('Y-m-d', $row['PES_DATE_REQUESTED']);
             $age  = !empty($row['PES_DATE_REQUESTED']) ?  $date->diff($today)->format('%R%a days') : null ;
             // $age = !empty($row['PES_DATE_REQUESTED']) ? $interval->format('%R%a days') : null;
-            $upesref = trim($row['UPES_REF']);
-            $accountId = trim($row['ACCOUNT_ID']);
-            $account = trim($row['ACCOUNT']);
-            $fullName = trim($row['FULL_NAME']);
-            $emailaddress = trim($row['EMAIL_ADDRESS']);
-            $requestor = trim($row['PES_REQUESTOR']);
-            $requested = trim($row['PES_DATE_REQUESTED']);
+            $cnum = $row['CNUM'];
+            $upesref = $row['UPES_REF'];
+            $accountId = $row['ACCOUNT_ID'];
+            $account = $row['ACCOUNT'];
+            $fullName = $row['FULL_NAME'];
+            $emailaddress = $row['EMAIL_ADDRESS'];
+            $requestor = $row['PES_REQUESTOR'];
+            $requested = $row['PES_DATE_REQUESTED'];
             $requestedObj = \DateTime::createFromFormat('Y-m-d', $requested);
             $requestedDisplay = $requestedObj ? $requestedObj->format('d-m-Y') : $requested;
 
@@ -491,11 +492,12 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
                 break;
         }
 
-        $formattedField = trim($row['EMAIL_ADDRESS']) . "<br/><small>";
-        $formattedField.= "<i>" . trim($row['PASSPORT_FIRST_NAME']) . "&nbsp;<b>" . trim($row['PASSPORT_LAST_NAME']) . "</b></i><br/>";
-        $formattedField.= trim($row['FULL_NAME']) . "</b></small><br/>" . trim($row['UPES_REF']);
-        $formattedField.= "<br/>" . trim($row['IBM_STATUS']) . ":" . trim($row['COUNTRY']);
-        $formattedField.= "<br/>Resides:&nbsp;" . trim($row['COUNTRY_OF_RESIDENCE']);
+        $formattedField = $row['EMAIL_ADDRESS'] . "<br/><small>";
+        $formattedField.= "<i>" . $row['PASSPORT_FIRST_NAME'] . "&nbsp;<b>" . $row['PASSPORT_LAST_NAME'] . "</b></i><br/>";
+        $formattedField.= $row['FULL_NAME'] . "</b></small><br/>Ref: " . $row['UPES_REF'];
+        $formattedField.= "<br/>CNUM: " . $row['CNUM'];
+        $formattedField.= "<br/>" . $row['IBM_STATUS'] . ":" . $row['COUNTRY'];
+        $formattedField.= "<br/>Resides:&nbsp;" . $row['COUNTRY_OF_RESIDENCE'];
         $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
 
         $formattedField.="<span style='white-space:nowrap' >
