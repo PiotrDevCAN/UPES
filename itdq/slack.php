@@ -24,6 +24,7 @@ class slack {
 
         $messageToSlack = '{"text":"' . trim($message) . '[' . $_SERVER['environment'] . ']"}';
 
+        set_time_limit(25);
         curl_setopt( $ch, CURLOPT_POSTFIELDS,$messageToSlack );
         curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Content-Length: ' . strlen($messageToSlack)));
 

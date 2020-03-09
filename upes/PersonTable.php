@@ -3,6 +3,8 @@ namespace upes;
 
 use itdq\DbTable;
 use itdq\Loader;
+use itdq\AuditTable;
+use itdq\slack;
 
 class PersonTable extends DbTable
 {
@@ -167,9 +169,44 @@ class PersonTable extends DbTable
         }
     }
 
+    private static function recordPesStatusPriorToLeftIBM($arrayOfCnum){
+        $accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+        $slack = new slack();
+
+        $cnumString = implode("','", $arrayOfCnum);
+        $cnumString = "('" . $cnumString . "') ";
+        $sql = " SELECT P.UPES_REF, AP.ACCOUNT_ID, A.ACCOUNT, AP.PES_STATUS, P.FULL_NAME, P.CNUM  ";
+        $sql.= " FROM " .  $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN ";
+        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        $sql.= " ON AP.UPES_REF = P.UPES_REF ";
+        $sql.= " LEFT JOIN ";
+        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " WHERE P.UPES_REF in (";
+        $sql.= "   SELECT P2.UPES_REF ";
+        $sql.= "   FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P2 ";
+        $sql.= "   WHERE P2.CNUM in " . $cnumString;
+        $sql.= " ) ";
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+        }
+
+        while(($row=db2_fetch_assoc($rs))==true){
+            $row = array_map('trim',$row);
+            $accountPersonTable->savePesComment($row['UPES_REF'],$row['ACCOUNT_ID'], "PES Status was " . $row['PES_STATUS'] . " prior to leaving");
+            $slack->sendMessageToChannel($row['FULL_NAME'] . "(" . $row['CNUM'] . ") -  PES Status on Account " . $row['ACCOUNT'] . " was " . $row['PES_STATUS'] . " prior to leaving", slack::CHANNEL_UPES_AUDIT);
+        }
+    }
 
 
-    static function autoFlagLeftIBM($arrayOfCnum){
+
+
+    static function FlagAsLeftIBM($arrayOfCnum){
+
+        self::recordPesStatusPriorToLeftIBM($arrayOfCnum);
         $cnumString = implode("','", $arrayOfCnum);
         $cnumString = "('" . $cnumString . "') ";
 

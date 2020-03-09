@@ -24,7 +24,8 @@ $loader = new Loader();
 
 db2_commit($_SESSION['conn']);
 
-$activeIbmErsPredicate = "   ( trim(BLUEPAGES_STATUS) = '' or BLUEPAGES_STATUS is null or BLUEPAGES_STATUS =  '" . PersonRecord::BLUEPAGES_STATUS_FOUND . "') ";
+$activeIbmErsPredicate = "   ( trim(BLUEPAGES_STATUS) = '' or BLUEPAGES_STATUS is null or trim(BLUEPAGES_STATUS) =  '" . PersonRecord::BLUEPAGES_STATUS_FOUND . "') ";
+$activeIbmErsPredicate.= " and ( lower(trim(EMAIL_ADDRESS)) like '%ibm.com' )";
 $allNonLeavers = $loader->load('CNUM',allTables::$PERSON, $activeIbmErsPredicate ); //
 AuditTable::audit("Revalidation will check " . count($allNonLeavers) . " people currently flagged as found.",AuditTable::RECORD_TYPE_REVALIDATION);
 $slack->sendMessageToChannel("Revalidation will check " . count($allNonLeavers) . " people currently flagged as found.", slack::CHANNEL_UPES_AUDIT);
@@ -38,7 +39,7 @@ $allFound = array();
 foreach ($chunkedCnum as $key => $cnumList){
     $bpEntries[$key] = BluePages::getDetailsFromCnumSlapMulti($cnumList, $detailsFromBp);
     foreach ($bpEntries[$key]->search->entry as $bpEntry){
-        set_time_limit(20);
+        set_time_limit(40);
         $serial = substr($bpEntry->dn,4,9);
         unset($allNonLeavers[$serial]);
         $allFound[] = $serial;
@@ -46,13 +47,15 @@ foreach ($chunkedCnum as $key => $cnumList){
 }
 
 // At this stage, anyone still in the $allNonLeavers array - has NOT been found in BP and so is now POTENTIALLY a leaver and needs to be flagged as such.
-AuditTable::audit("Revalidation found " . count($allNonLeavers) . "  leavers.",AuditTable::RECORD_TYPE_REVALIDATION);
-$slack->sendMessageToChannel("Revalidation found " . count($allNonLeavers) . "  leavers.", slack::CHANNEL_UPES_AUDIT);
+$potentialLeaver = $allNonLeavers;
+
+AuditTable::audit("Revalidation found " . count($potentialLeaver) . "  leavers.",AuditTable::RECORD_TYPE_REVALIDATION);
+$slack->sendMessageToChannel("Revalidation found " . count($potentialLeaver) . "  leavers.", slack::CHANNEL_UPES_AUDIT);
 
 PersonTable::setCnumsToFound($allFound);
 
-if($allNonLeavers){
-    PersonTable::autoFlagLeftIBM($allNonLeavers);
+if($potentialLeaver){
+    PersonTable::FlagAsLeftIBM($potentialLeaver);
 }
 
 AuditTable::audit("Revalidation completed.",AuditTable::RECORD_TYPE_REVALIDATION);
