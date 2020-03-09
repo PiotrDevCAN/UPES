@@ -461,6 +461,14 @@ class AccountPersonRecord extends DbRecord
                      </div>
                 </div>
              </div>
+        	<div class='row'>
+  				<div class='col-sm-10 col-sm-offset-2 '>
+  					<label class="radio"><input type="radio" name="emailNotification" value='send' checked >Send Notification (If applicable)</label>
+  					<label class="radio"><input type="radio" name="emailNotification" value='suppress' >Do NOT Send Notification</label>
+				</div>
+			</div>
+	</div>
+
            </div>
           </div>
           <div class="modal-footer">

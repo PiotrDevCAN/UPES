@@ -42,39 +42,47 @@ try {
 
 //     AuditTable::audit("Saved Person <pre>" . print_r($person,true) . "</pre>", AuditTable::RECORD_TYPE_DETAILS);
 
-    switch ($_POST['psm_status']) {
-        case AccountPersonRecord::PES_STATUS_REMOVED:
-        case AccountPersonRecord::PES_STATUS_DECLINED:
-        case AccountPersonRecord::PES_STATUS_FAILED:
-        case AccountPersonRecord::PES_STATUS_STARTER_REQUESTED:
-        case AccountPersonRecord::PES_STATUS_PES_PROGRESSING:
-        case AccountPersonRecord::PES_STATUS_EXCEPTION:
-        case AccountPersonRecord::PES_STATUS_PROVISIONAL;
-        case AccountPersonRecord::PES_STATUS_RECHECK_REQ;
-        case AccountPersonRecord::PES_STATUS_LEFT_IBM;
-        case AccountPersonRecord::PES_STATUS_REVOKED;
-        case AccountPersonRecord::PES_STATUS_STAGE_1;
-        case AccountPersonRecord::PES_STATUS_STAGE_2;
-             $notificationStatus = 'Email not applicable';
-             break;
-        case AccountPersonRecord::PES_STATUS_CLEARED:
-//        case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
-        case AccountPersonRecord::PES_STATUS_CANCEL_REQ:
-             $accountPersonRecord = new AccountPersonRecord();
-             $accountPersonTable  = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
-             $accountPersonRecord->setFromArray(array('UPES_REF'=>$_POST['psm_upesref'], 'ACCOUNT_ID'=>$_POST['psm_accountid']));
-             $personData = $accountPersonTable->getRecord($accountPersonRecord);
-             $accountPersonRecord->setFromArray($personData);
+    if($_POST['emailNotification']=='send'){
 
-             $emailResponse = $accountPersonRecord->sendPesStatusChangedEmail();
-             $notificationStatus = $emailResponse ? 'Email sent' : 'No email sent';
-             break;
-        default:
-             $notificationStatus = 'Email not applicable(other)';
-        break;
+        switch ($_POST['psm_status']) {
+            case AccountPersonRecord::PES_STATUS_REMOVED:
+            case AccountPersonRecord::PES_STATUS_DECLINED:
+            case AccountPersonRecord::PES_STATUS_FAILED:
+            case AccountPersonRecord::PES_STATUS_STARTER_REQUESTED:
+            case AccountPersonRecord::PES_STATUS_PES_PROGRESSING:
+            case AccountPersonRecord::PES_STATUS_EXCEPTION:
+            case AccountPersonRecord::PES_STATUS_PROVISIONAL;
+            case AccountPersonRecord::PES_STATUS_RECHECK_REQ;
+            case AccountPersonRecord::PES_STATUS_LEFT_IBM;
+            case AccountPersonRecord::PES_STATUS_REVOKED;
+            case AccountPersonRecord::PES_STATUS_STAGE_1;
+            case AccountPersonRecord::PES_STATUS_STAGE_2;
+                $notificationStatus = 'Email not applicable';
+                break;
+            case AccountPersonRecord::PES_STATUS_CLEARED:
+//          case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
+            case AccountPersonRecord::PES_STATUS_CANCEL_REQ:
+                $accountPersonRecord = new AccountPersonRecord();
+                $accountPersonTable  = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+                $accountPersonRecord->setFromArray(array('UPES_REF'=>$_POST['psm_upesref'], 'ACCOUNT_ID'=>$_POST['psm_accountid']));
+                $personData = $accountPersonTable->getRecord($accountPersonRecord);
+                $accountPersonRecord->setFromArray($personData);
+
+                $emailResponse = $accountPersonRecord->sendPesStatusChangedEmail();
+                $notificationStatus = $emailResponse ? 'Email sent' : 'No email sent';
+                break;
+            default:
+                $notificationStatus = 'Email not applicable(other)';
+            break;
+        }
+
+    } else {
+        $notificationStatus = 'Email was suppressed.';
     }
 
+
     AuditTable::audit("PES Status Email:" . $notificationStatus ,AuditTable::RECORD_TYPE_DETAILS);
+
     $success = true;
 
 } catch (Exception $e) {
