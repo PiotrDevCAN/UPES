@@ -895,7 +895,6 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $sql.= " AND AP.PES_STATUS != '" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "' ";
         $sql.= " and AP.PES_RECHECK_DATE is not null ";
         $sql.= " and AP.PES_RECHECK_DATE < CURRENT DATE + 56 DAYS ";
-
         $rs = db2_exec($localConnection, $sql);
 
         if(!$rs){
