@@ -16,7 +16,7 @@ $requestor = trim($_POST['requestor']);
 
 
 try {
-    $pesEmailObj = new pesEmail();
+    $pesEmailObj = new PesEmail();
     $response['emailResponse']='dummy'; // Remove this when using emailobj
 
 

@@ -913,9 +913,9 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         }
 
         if($allRecheckers){
-            pesEmail::notifyPesTeamOfUpcomingRechecks($allRecheckers);
+            PesEmail::notifyPesTeamOfUpcomingRechecks($allRecheckers);
         } else {
-            pesEmail::notifyPesTeamNoUpcomingRechecks();
+            PesEmail::notifyPesTeamNoUpcomingRechecks();
         }
         return $allRecheckers;
 
