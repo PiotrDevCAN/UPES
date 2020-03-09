@@ -1049,4 +1049,35 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
     }
 
 
+    static function getEmailAddressAccountArray(){
+        $data = array();
+        $sql = " SELECT P.EMAIL_ADDRESS, A.ACCOUNT, P.UPES_REF, A.ACCOUNT_ID ";
+        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . \upes\AllTables::$PERSON . " as P ";
+        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " ON P.UPES_REF = AP.UPES_REF ";
+        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT . " AS A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " WHERE AP.ACCOUNT_ID is not null ";
+        $sql.= " ORDER BY EMAIL_ADDRESS, ACCOUNT ";
+
+        $rs = db2_exec($_SESSION['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception('Unable to produce emailAddress Account Pes Status result set');
+        }
+        while(($row=db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim', $row);
+            $personAccount = $trimmedRow['EMAIL_ADDRESS'] . " : " . $trimmedRow['ACCOUNT'];
+            $upesAccountId = $trimmedRow['UPES_REF'] . ":" . $trimmedRow['ACCOUNT_ID'];
+            $data[$personAccount] = $upesAccountId;
+        }
+
+        return $data;
+    }
+
+
+
+
+
 }
