@@ -7,35 +7,18 @@ use upes\PesEmail;
 
 Trace::pageOpening($_SERVER['PHP_SELF']);
 
-$candidate_first_name = 'John';
-$candidateEmail = array('rob.daniel@uk.ibm.com');
-$serial = '123456866';
 
-// $account = 'CLS';
-// $country = "India";
-// $candidateName = 'CLS_India';
-// PesEmail::sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail);
+$array1 = array('A'=>'aa','b'=>'b1','c'=>'c1');
+$array2 = array('A'=>'aa','b'=>'b2','c'=>'c2');
 
-// $account = 'LBG';
-// $country = "Turkey";
-// $candidateName = 'LBG_Turkey';
-// PesEmail::sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail);
+$bigArray = array($array1,$array2);
 
-// $account = 'Nationwide';
-// $country = "Taiwan";
-// $candidateName = 'LBG_Taiwan';
-// PesEmail::sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail);
+echo "<pre>";
+print_r($bigArray);
+echo "</pre>";
 
-// $account = 'Barclays';
-// $country = "Belgium";
-// $candidateName = 'Barclays Belgium';
-// PesEmail::sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail);
 
-$account = 'ATM';
-$country = "UK";
-$candidateName = 'ATM_UK';
-$sendResponse = PesEmail::sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail);
 
-var_dump($sendResponse);
+
 
 Trace::pageLoadComplete($_SERVER['PHP_SELF']);
