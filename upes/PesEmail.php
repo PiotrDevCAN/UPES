@@ -327,11 +327,11 @@ class PesEmail {
         $pesEmail.="</tbody>";
         $pesEmail.="</table>";
 
-        $pesEmail.= "<style> th { background:red; padding:!5px; } </style>";
+        $pesEmail.= "<style> th { background:blue; padding:5px; } </style>";
 
         $emailBody = $pesEmail;
 
-        $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "uPES Notification of Leavers", $emailBody,self::$notifyPesEmailAddresses['to'],self::$notifyPesEmailAddresses['cc']);
+        $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "uPES Notification of Leavers", $emailBody,self::$notifyPesEmailAddresses['to'][0],self::$notifyPesEmailAddresses['cc']);
         return $sendResponse;
 
 
