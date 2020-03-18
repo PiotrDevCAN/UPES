@@ -11,6 +11,9 @@ $emailBody = <<<endOfEmailBody
 <p><b>The Certification MUST be done by another IBM'er</b>, to confirm that they have seen the original document.  The following statement should be <b>handwritten</b> on <b>each document</b>, on the <b>same side as the image</b>.</p>
 <h4><span style='color:red'><center>True & Certified Copy<br/>Name of certifier in BLOCK CAPITALS<br/>IBM Serial number of certifier<br/>Certification Date<br/>Signature of certifier</center></span></h4>
 <p>If you have any questions, you do not have any of the listed documents or are unsure about the process please contact the PES Team.</p>
+<p><b>Please Note</b></p>
+<p>Due to the recent situation we understand that many people will be unable to meet with fellow IBM'ers to have their documents Certified.  We have implemented a  'provisional clearance' process and wil accept documents without certification, at this time.  However these documents will require to be certified as soon as the restrictions are lifted.</p>
+<p>This will not give you full PES clearance for the account, so if you can get them certified correctly (ie another IBM'er seeing the document and signing) please do so.</p>
 <p>Many Thanks for your cooperation,</p>
 <p>&&account_name&& &nbsp; PES Team</p>
 <p>Rachele Smith - Global PES Compliance Officer<br/>Zoe O'Flaherty - Global PES compliance Officer<br/>Carra Booth - Global PES SME - Please note I work Monday - Friday 10 - 2:30</p>
