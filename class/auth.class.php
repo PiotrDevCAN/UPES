@@ -66,17 +66,17 @@
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postvars);
 
-			error_log($url);
+			error_log(__FILE__ . __LINE__ . " URL:" . $url);
 			
-			$result = curl_exec($ch);
+			$curl_result = curl_exec($ch);
 			
-			error_log($result);
+			error_log(__FILE__ . __LINE__ . "Curl Result:" .$curl_result);
 
 			curl_close($ch);
 			
 			$result =  $this->processOpenIDConnectCallback($result);
 			
-			error_log(__FILE__ . __LINE__ . "result:" . print_r($result,true));
+			error_log(__FILE__ . __LINE__ . "Open ID result:" . print_r($result,true));
 			
 			return $result;
 		}
@@ -85,6 +85,9 @@
 		//returns boolean
 		private function processOpenIDConnectCallback($data)
 		{
+		    
+		    error_log(__FILE__ . __LINE__ . "Data:" . print_r($data,true));
+		    
 			$token_response = json_decode($data);
 			if($token_response)
 			{
