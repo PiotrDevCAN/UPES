@@ -23,20 +23,20 @@ $config_openidconnect = new stdClass();
  *
  */
 
-$config_openidconnect->client_id['staging']      = "ZWMwMTNkYTEtYmEzMC00";
-$config_openidconnect->client_secret['staging']  = "ZWVlYzZjYzktNzUwOS00";
+$config_openidconnect->client_id['staging']      = !empty($_ENV['sso_staging_id']) ? $_ENV['sso_staging_id'] :null ;
+$config_openidconnect->client_secret['staging']  = !empty($_ENV['sso_staging_secret']) ?  $_ENV['sso_staging_secret'] :null ;
 
 $config_openidconnect->authorize_url['staging']  = "https://w3id.alpha.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/authorize";
 $config_openidconnect->token_url['staging']      = "https://w3id.alpha.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/token";
 $config_openidconnect->introspect_url['staging'] = "https://w3id.alpha.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/introspect";
 
 
-// $config_openidconnect->client_id['production']      = "";
-// $config_openidconnect->client_secret['production']  = "";
+$config_openidconnect->client_id['production']      = !empty($_ENV['sso_production_id']) ? $_ENV['sso_production_id'] :null ;
+$config_openidconnect->client_secret['production']  = !empty($_ENV['sso_production_secret']) ? $_ENV['sso_production_secret'] :null ;
 
-// $config_openidconnect->authorize_url['production']  = "https://w3id.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/authorize";
-// $config_openidconnect->token_url['production']      = "https://w3id.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/token";
-// $config_openidconnect->introspect_url['production'] = "https://w3id.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/introspect";
+$config_openidconnect->authorize_url['production']  = "https://w3id.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/authorize";
+$config_openidconnect->token_url['production']      = "https://w3id.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/token";
+$config_openidconnect->introspect_url['production'] = "https://w3id.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/introspect";
 
 /*
  * Application Instance of Config
