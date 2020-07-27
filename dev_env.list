@@ -4,6 +4,6 @@ environment=upes_dev
 SERVER_ADMIN=rob.daniel@uk.ibm.com
 SSO_environment=staging
 api_token=soEkCfj8zGNDLZ8yXH2YJjpehd8ijzlS
-ssldsn=
+ssldsn=DATABASE=BLUDB;HOSTNAME=dashdb-txn-flex-yp-dal10-182.services.dal.bluemix.net;PORT=50001;PROTOCOL=TCPIP;UID=bluadmin;PWD=NWUyMzg1OTJlYjQ4!;Security=SSL;
 token_ventus_sre=xoxb-210170148918-1027216985764-8dHOWn9pZKUDxup2wF1M9K4u
 jwt_token=dGhpcyBpcyBhIHN0cmluZyB0aGF0IHdpbGwgYmUgdXNlZCB0byBzZWN1cmUgdmJhYydzIHNlc3Npb25zLiBUaGUgbW9yZSBjaGFyYWN0ZXJzIEkga2V5IGludG8gdGhpcyB0aGUgbW9yZSBzZWN1cmUgaXQgaXMg
