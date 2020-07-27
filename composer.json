@@ -1,9 +1,10 @@
 {
-	"name" : "upes",
+	"name" : "upes/upes",
 	"require" : {
-	    "ext-ldap" : "*",
-    	"phpoffice/phpspreadsheet" : "~1.8",
-    	"php": "7.1.2" 
+		"phpoffice/phpspreadsheet" : "~1.12",
+		"ext-gd" : "*",
+		"phpmailer/phpmailer" : "~6.1",
+		"byjg/jwt-session" : "~2.0"
 	},
 	"repositories" : [{
 			"type" : "composer",
