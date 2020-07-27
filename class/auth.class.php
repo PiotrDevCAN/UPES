@@ -20,7 +20,10 @@
 		//returns boolean
 		public function ensureAuthorized()
 		{
-			if(isset($_SESSION['uid']) && isset($_SESSION['exp']) && ($_SESSION['exp']-300) > time()) return true;
+		    error_log("uid:" . $_SESSION['uid']);
+		    error_log("exp:" . $_SESSION['exp']);
+		  
+		    if(isset($_SESSION['uid']) && isset($_SESSION['exp']) && ($_SESSION['exp']-300) > time()) return true;
 
 			switch ($this->technology) {
 				case "openidconnect":
@@ -95,6 +98,10 @@
 
 				if ( isset( $token_response->id_token ) ) {
 					$jwt_arr = explode('.', $token_response->id_token );
+					
+					error_log(__FILE__ . __LINE__ . "Data:" . print_r($jwt_arr,true));
+					
+					
 					$encoded = $jwt_arr[1];
 					$decoded = "";
 					for ($i=0; $i < ceil(strlen($encoded)/4); $i++)
@@ -189,8 +196,8 @@
 			$current_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 			$authorizeString = $this->config->authorize_url[strtolower($_ENV['SSO_environment'])] . "?scope=openid&response_type=code&client_id=".$this->config->client_id[strtolower($_ENV['SSO_environment'])]."&state=".urlencode($current_link)."&redirect_uri=".$this->config->redirect_url;
            
-			error_log("Current Link" . $current_link);
-			error_log("String" . $authorizeString);
+			error_log("Current Link:" . $current_link);
+			error_log("String:" . $authorizeString);
 			
 			return $authorizeString;
 		}

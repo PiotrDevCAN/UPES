@@ -3,13 +3,32 @@
 
 // ** session_cache_limiter('private');
 // ** for fpdf http://www.fpdf.org/ download of pdf files in https;
+use itdq\JwtSecureSession;
+
+$start = microtime(true);
+
+set_include_path("./" . PATH_SEPARATOR . "../" . PATH_SEPARATOR . "../../" . PATH_SEPARATOR . "../../../" . PATH_SEPARATOR);
+
+include ('vendor/autoload.php');
+include ('splClassLoader.php');
+
+$sessionConfig = (new \ByJG\Session\SessionConfig($_SERVER['SERVER_NAME']))
+->withTimeoutMinutes(120)
+->withSecret($_ENV['jwt_token']);
+
+$handler = new JwtSecureSession($sessionConfig);
+session_set_save_handler($handler, true);
+
 session_start();
+
+error_log(__FILE__ . "session:" . session_id());
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 date_default_timezone_set('UTC');
 
-set_include_path("./" . PATH_SEPARATOR . "../" . PATH_SEPARATOR . "../../" . PATH_SEPARATOR . "../../../" . PATH_SEPARATOR);
+
+
 
 while(ob_get_level()>0){
     ob_end_clean();
@@ -18,19 +37,6 @@ ob_start();
 $GLOBALS['Db2Schema'] = strtoupper($_ENV['environment']);
 $https = (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == "on");
 
-// Only keep login data available via secure sessions
-if (isset($_SESSION['ltcuser']) && $https === FALSE) {
-    unset($_SESSION['ltcuser']);
-}
-// restore cached logins
-if (isset($_SESSION['ltcuser']['expire'])) {
-    if ($_SESSION['ltcuser']['expire'] > time()) {
-        $GLOBALS['ltcuser'] = $_SESSION['ltcuser'];
-    } else {
-        unset($GLOBALS['ltcuser']);
-        unset($_SESSION['ltcuser']);
-    }
-}
 
 // global var and config file
 include_once ('w3config.php');
@@ -168,14 +174,9 @@ function do_error($page = array())
 function do_auth($group = null)
 {
 
-    if(stripos($_ENV['environment'], 'dev')) {
-//if(true) {
-    $_SESSION['ssoEmail'] = $_SERVER['SERVER_ADMIN'];
-    $_SESSION['ssoEmail'] = $_SERVER['SERVER_ADMIN'];
+if(stripos($_ENV['environment'], 'dev')) {
+    $_SESSION['ssoEmail'] = $_ENV['SERVER_ADMIN'];
 } else {
-    
-    error_log(__FILE__ . __FUNCTION__. "Begining");
-    
     include_once "class/include.php";
     $auth = new Auth();
     if(!$auth->ensureAuthorized()){
@@ -300,17 +301,25 @@ function _microtime_float()
     return ((float) $usec + (float) $sec);
 }
 
+$elapsed = microtime(true);
+error_log("Pre do_Auth():" . (float)($elapsed-$start));
+
 do_auth();
+$elapsed = microtime(true);
+error_log("Post do_Auth():" . (float)($elapsed-$start));
 include ('php/ldap.php');
 include ('php/templates/interior.header.html');
 include ('itdq/java/scripts.html');
 include ('upes/java/scripts.html');
-include ('vendor/autoload.php');
-include ('splClassLoader.php');
+$elapsed = microtime(true);
+error_log("Pre connect:" . (float)($elapsed-$start));
 include ('connect.php');
+
+$elapsed = microtime(true);
+error_log("Post connect:" . (float)($elapsed-$start));
 //include ('php/templates/navbar.php');
 include('displayNavbar.php');
 
-
-
+$elapsed = microtime(true);
+error_log("Post Navbar:" . (float)($elapsed-$start));
 ?>
