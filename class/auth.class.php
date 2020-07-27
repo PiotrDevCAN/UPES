@@ -77,6 +77,8 @@
 			$result =  $this->processOpenIDConnectCallback($result);
 			
 			error_log(__FILE__ . __LINE__ . "result:" . print_r($result,true));
+			
+			return $result;
 		}
 
 		//processes openid data and sets session
