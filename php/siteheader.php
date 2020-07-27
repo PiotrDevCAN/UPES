@@ -21,7 +21,7 @@ session_set_save_handler($handler, true);
 
 session_start();
 
-error_log(__FILE__ . "session:" . session_id());
+error_log(__FILE__ . "session id:" . session_id());
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);

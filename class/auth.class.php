@@ -20,9 +20,6 @@
 		//returns boolean
 		public function ensureAuthorized()
 		{
-		    error_log("uid:" . $_SESSION['uid']);
-		    error_log("exp:" . $_SESSION['exp']);
-		  
 		    if(isset($_SESSION['uid']) && isset($_SESSION['exp']) && ($_SESSION['exp']-300) > time()) return true;
 
 			switch ($this->technology) {
@@ -39,8 +36,7 @@
 		{
 			switch ($this->technology) {
 				case "openidconnect":
-				    error_log(__FILE__ . __METHOD__ . " verify Response code " . $response['code']);
-					return $this->verifyCodeOpenIDConnect($response['code']);
+				    return $this->verifyCodeOpenIDConnect($response['code']);
 					break;
 			}
 		}
@@ -69,55 +65,34 @@
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postvars);
 
-			error_log(__FILE__ . __LINE__ . " URL:" . $url);
-			
 			$curl_result = curl_exec($ch);
-			
-			error_log(__FILE__ . __LINE__ . "Curl Result:" .$curl_result);
-
 			curl_close($ch);
 			
-			$result =  $this->processOpenIDConnectCallback($curl_result);
-			
-			error_log(__FILE__ . __LINE__ . "Open ID result:" . print_r($result,true));
-			
-			return $result;
+			return  $this->processOpenIDConnectCallback($curl_result);
+
 		}
 
 		//processes openid data and sets session
 		//returns boolean
 		private function processOpenIDConnectCallback($data)
 		{
-		    
-		    error_log(__FILE__ . __LINE__ . "Data:" . print_r($data,true));
-		    
 			$token_response = json_decode($data);
 			if($token_response)
 			{
 				if(isset($token_response->error)) throw new Exception('Error happened while authenticating. Please, try again later.');
 
 				if ( isset( $token_response->id_token ) ) {
-					$jwt_arr = explode('.', $token_response->id_token );
-					
-					error_log(__FILE__ . __LINE__ . "Data:" . print_r($jwt_arr,true));
-					
-					
+					$jwt_arr = explode('.', $token_response->id_token );			
 					$encoded = $jwt_arr[1];
 					$decoded = "";
 					for ($i=0; $i < ceil(strlen($encoded)/4); $i++)
 						$decoded = $decoded . base64_decode(substr($encoded,$i*4,4));
-					$userData = json_decode( $decoded, true );
-					
-					error_log(__FILE__ . __LINE__ . "Data:" . print_r($userData,true));
-					
+					$userData = json_decode( $decoded, true );			
 				} else {
 					return false;
 				}
 
 				// use this to debug returned values from w3id/IBM ID service if you got to else in the condition below
-				error_log(__FILE__ . __LINE__);
-	
-				
 
 				//if using this code on w3ID
 				if(isset($userData) && !empty($userData)
@@ -133,7 +108,6 @@
 					$_SESSION['lastName'] = $userData['lastName'];
 					$_SESSION['exp'] = $userData['exp'];
 					$_SESSION['uid'] = $userData['uid'];
-					error_log(__FILE__ . __LINE__);
 					return true;
 				}
 				//if using this code on IBM ID
@@ -150,7 +124,6 @@
 					$_SESSION['lastName'] = $userData['family_name'];
 					$_SESSION['exp'] = $userData['exp'];
 					$_SESSION['uid'] = $userData['uniqueSecurityName'];
-					error_log(__FILE__ . __LINE__);
 					return true;
 				}
 				//if something in the future gets changed and the strict checking on top of this is not working any more
@@ -161,11 +134,9 @@
 					//throw new Exception('OpenIDConnect returned values were not correct.');
 					$_SESSION = $userData;
 					$_SESSION['somethingChanged'] = true;
-					error_log(__FILE__ . __LINE__);
 					return true;
 				}
 			}
-			error_log(__FILE__ . __LINE__);
 			return false;
 		}
 
@@ -183,7 +154,6 @@
 		private function authenticateOpenIDConnect()
 		{
 		    $authorizedUrL = $this->generateOpenIDConnectAuthorizeURL();
-		    error_log(__CLASS__ . __FUNCTION__ . __LINE__. " About to pass to  : " . $authorizedUrL);
 		    header("Access-Control-Allow-Origin: *");
 			header("Location: ".$authorizedUrL);
 			exit();
@@ -195,10 +165,6 @@
 		{
 			$current_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 			$authorizeString = $this->config->authorize_url[strtolower($_ENV['SSO_environment'])] . "?scope=openid&response_type=code&client_id=".$this->config->client_id[strtolower($_ENV['SSO_environment'])]."&state=".urlencode($current_link)."&redirect_uri=".$this->config->redirect_url;
-           
-			error_log("Current Link:" . $current_link);
-			error_log("String:" . $authorizeString);
-			
 			return $authorizeString;
 		}
 
