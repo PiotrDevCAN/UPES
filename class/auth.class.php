@@ -100,9 +100,8 @@
 				}
 
 				// use this to debug returned values from w3id/IBM ID service if you got to else in the condition below
-				var_dump($userData);
-				die();
-				
+				error_log(__FILE__ . __LINE__);
+	
 				
 
 				//if using this code on w3ID
@@ -177,7 +176,11 @@
 		{
 			$current_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 			$authorizeString = $this->config->authorize_url[strtolower($_ENV['SSO_environment'])] . "?scope=openid&response_type=code&client_id=".$this->config->client_id[strtolower($_ENV['SSO_environment'])]."&state=".urlencode($current_link)."&redirect_uri=".$this->config->redirect_url;
-            return $authorizeString;
+           
+			error_log("Current Link" . $current_link);
+			error_log("String" . $authorizeString);
+			
+			return $authorizeString;
 		}
 
 		//loads openidconnect

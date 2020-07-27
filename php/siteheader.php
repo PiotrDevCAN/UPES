@@ -173,6 +173,9 @@ function do_auth($group = null)
     $_SESSION['ssoEmail'] = $_SERVER['SERVER_ADMIN'];
     $_SESSION['ssoEmail'] = $_SERVER['SERVER_ADMIN'];
 } else {
+    
+    error_log(__FILE__ . __FUNCTION__. "Begining");
+    
     include_once "class/include.php";
     $auth = new Auth();
     if(!$auth->ensureAuthorized()){
