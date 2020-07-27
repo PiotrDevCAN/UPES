@@ -6,6 +6,7 @@ function tryConnect($conn_string){
     $connection =  db2_pconnect( $conn_string, "", "" );
     $postConnect = microtime(true);
     error_log("Db2 Pconnect took:" . (float)($postConnect-$preConnect));
+    error_log("Db2 Pconnection:" . print_r($connection,true));
     return $connection;
 }
 

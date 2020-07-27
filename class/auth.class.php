@@ -36,6 +36,7 @@
 		{
 			switch ($this->technology) {
 				case "openidconnect":
+				    error_log(__FILE__ . __METHOD__ . " verify Response code " . $response['code']);
 					return $this->verifyCodeOpenIDConnect($response['code']);
 					break;
 			}
@@ -47,6 +48,7 @@
 		private function verifyCodeOpenIDConnect($code)
 		{
 		    $url = $this->config->token_url[strtolower($_ENV['SSO_environment'])];
+		    	    
 
 		    $fields = array(
 				'code' => $code,
@@ -64,11 +66,17 @@
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postvars);
 
+			error_log($url);
+			
 			$result = curl_exec($ch);
+			
+			error_log($result);
 
 			curl_close($ch);
-
-			return $this->processOpenIDConnectCallback($result);
+			
+			$result =  $this->processOpenIDConnectCallback($result);
+			
+			error_log(__FILE__ . __LINE__ . "result:" . print_r($result,true));
 		}
 
 		//processes openid data and sets session
@@ -91,9 +99,11 @@
 					return false;
 				}
 
-				//use this to debug returned values from w3id/IBM ID service if you got to else in the condition below
-				//var_dump($userData);
-				//die();
+				// use this to debug returned values from w3id/IBM ID service if you got to else in the condition below
+				var_dump($userData);
+				die();
+				
+				
 
 				//if using this code on w3ID
 				if(isset($userData) && !empty($userData)
