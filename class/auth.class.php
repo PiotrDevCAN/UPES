@@ -74,7 +74,7 @@
 
 			curl_close($ch);
 			
-			$result =  $this->processOpenIDConnectCallback($result);
+			$result =  $this->processOpenIDConnectCallback($curl_result);
 			
 			error_log(__FILE__ . __LINE__ . "Open ID result:" . print_r($result,true));
 			
