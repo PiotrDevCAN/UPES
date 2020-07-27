@@ -2,14 +2,14 @@
 namespace itdq;
 /*
  * This class Displays the LOG table.
- *
+ * 
  * @author GB001399
  * @package itdqLib
- *
+ * 
  */
 
 class LogList extends SortableList {
-
+	
 	function __construct($tableName=null, $pwd=null) {
 		parent::__construct ($tableName, $pwd );
 		$this->DbTable = new DbTable ( $tableName, null );
@@ -37,32 +37,31 @@ class LogList extends SortableList {
 			$loader = new Loader ();
 			$updaterColumn = "LASTUPDATER";
 		}
-
+		
 		if(!empty($this->dropSelect)){
 			$this->dropSelect = array ('Updater' => array ('label' => 'Updater', 'first' => 'All...', 'column' => "$updaterColumn",'array' => $loader->load ( "LASTUPDATER", $tableName, false ) ),
 									   'From' => array ('label' => 'From', 'first' => 'All...', 'column' => "DATE(LASTUPDATED)", 'array' => $dates, 'type' => 'date', 'operator' => ">=" ),
 									   'To' => array ('label' => 'To', 'first' => 'All...', 'column' => "DATE(LASTUPDATED)", 'array' => $dates, 'type' => 'date', 'operator' => '<=' ) );
 		}
-
+	
 	}
-
+	
 	function fetchList() {
 		$this->sql = " SELECT ";
 		foreach ( $this->fields as $col => $label ) {
-
-			if (trim($col) == "LOG_ENTRY" and !empty($_SERVER['encryption'])) {
-			    $this->sql .= ",DECRYPT_CHAR(" . $col . ",'" . $_SERVER['encryption'] . "') as $label";
+			if ($col != "LASTUPDATED" and !empty($this->pwd)) {
+				$this->sql .= ",DECRYPT_CHAR(" . $col . ",'" . $this->pwd . "') as $label";
 			} else {
 				$this->sql .= ", " . $col . " as $label";
 			}
 		}
-
-		$this->sql .= " from " . $_SESSION['Db2Schema'] . "." . $this->DbTable->getName(). " as E";
-
+		
+		$this->sql .= " from " . $GLOBALS['Db2Schema'] . "." . $this->DbTable->getName(). " as E";
+		
 		$this->sql = str_replace ( 'SELECT ,', 'SELECT ', $this->sql );
-
+		
 		$predicateParm = $this->predicateSelect->getPredicate ();
-
+		
 		if ($predicateParm != null) {
 			$predicate = " WHERE " . trim ( $predicateParm );
 			$predicate = str_replace ( 'WHERE AND', 'WHERE ', $predicate );
@@ -70,9 +69,9 @@ class LogList extends SortableList {
 		}
 		$this->sql .= " ORDER BY LASTUPDATED DESC ";
 		return parent::fetchList ( TRUE );
-
+	
 	}
-
+	
 	function processField($key, $value, $row, $type = null) {
 		/*
 		 * Overwrite the default because we don't want to call htmlspecial chars

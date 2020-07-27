@@ -2,71 +2,53 @@
 use itdq\BlueMail;
 use vbac\personTable;
 use vbac\allTables;
+use upes\PersonRecord;
+use upes\PesEmail;
 
-$_SESSION['Db2Schema'] = 'UPES';
+ob_clean();
 
-$sql = " SELECT * ";
-$sql.= " FROM UPES.EMAIL_LOG ";
-$sql.= " WHERE  SUBJECT like 'PES Reminder%' ";
-$sql.= " fetch first 3 rows only " ;
+$emailBody = "Testing 1 2 3";
 
-$rs = db2_exec($_SESSION['conn'], $sql);
+$sendResponse = BlueMail::send_mail(PesEmail::$notifyPesEmailAddresses['to'], "uPES Notification of Leavers"
+    , $emailBody,PesEmail::$notifyPesEmailAddresses['to'][0],PesEmail::$notifyPesEmailAddresses['cc']);
 
-echo "<div class='container'>";
-
-$nonRecipients = false;
+var_dump($sendResponse);
 
 
+$data_json = '   {
+	"contact": "rob.daniel@uk.ibm.com",
+	"recipients": [
+		{"recipient": "rob.daniel@uk.ibm.com"}
+	],
+	"subject": "Bluemix BlueMail Test Wed Sept 22 11:44:51 EDT 2015",
+	"message": "Testing the email service. Defaults selected."
+   }';
 
-while (($row=db2_fetch_assoc($rs))==true){
-    echo "<pre>";
-    print_r($row);
-    echo "</pre>";
-
-
-    ini_set('max_execution_time', 60);
-    echo "<br/>";
-    echo "<br/><b>To: </b>" . implode(",",unserialize($row['TO']));
-    echo "<br/><b>Subject: </b>" . $row['SUBJECT'];
-
-    $dataJson = json_decode($row['DATA_JSON']);
-
-    echo "<br/><b>cc:</b>" .  $dataJson->cc[0]->recipient;
-
-    $responsObj = json_decode($row['RESPONSE']);
-
-    foreach ($responsObj->link as  $value) {
-        if($value->rel=='status'){
-            $statusUrl = $value->href;
-        }
-    }
-
-    echo "<br/><b>Status URL:</b>" . $statusUrl;
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_URL, $statusUrl);
-
-    $currentStatus = curl_exec($ch);
-
-    sleep(2);
-
-    $statusObj = json_decode($currentStatus);
-    $sent = $statusObj->sent ? 'Yes' : 'No';
-
-    echo "<br/><b>Sent:</b>" . $sent;
-    echo "<br/><b>Status:</b>" . $statusObj->status;
-
-    if($sent=='No'){
-        $nonRecipients[implode(" ",unserialize($row['TO']))] = $row['SUBJECT'];
-    }
-
-}
-
-echo "<h2>Reminder not sent</h2>";
-echo "<pre>";
-print_r($nonRecipients);
-echo "</pre>";
+var_dump($data_json);
 
 
-echo "</div>";
+// $vcapServices = json_decode($_SERVER['VCAP_SERVICES']);
+
+// $ch = curl_init();
+// curl_setopt($ch, CURLOPT_HEADER,         1);
+// curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+// curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+// curl_setopt($ch, CURLOPT_TIMEOUT,        240);
+// curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 240);
+// curl_setopt($ch, CURLOPT_HTTPAUTH,  CURLAUTH_BASIC);
+// curl_setopt($ch, CURLOPT_HEADER,    FALSE);
+
+// $userpwd = $vcapServices->bluemailservice[0]->credentials->username . ':' . $vcapServices->bluemailservice[0]->credentials->password;
+// curl_setopt($ch, CURLOPT_USERPWD,        $userpwd);
+
+// curl_setopt($ch, CURLOPT_URL, $vcapServices->bluemailservice[0]->credentials->emailUrl);
+
+// curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: ' . strlen($data_json)));
+// curl_setopt($ch, CURLOPT_POSTFIELDS,$data_json);
+
+// $resp = curl_exec($ch);
+
+// var_dump($resp);
+
+// echo curl_errno($ch);
+// echo curl_error($ch);

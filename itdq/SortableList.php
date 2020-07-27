@@ -448,7 +448,7 @@ class SortableList
 
         Trace::traceVariable($this->sql2, __METHOD__, __LINE__);
 
-        $rs = db2_exec($_SESSION['conn'], $this->sql2, array(
+        $rs = db2_exec($GLOBALS['conn'], $this->sql2, array(
             'cursor' => DB2_SCROLLABLE
         ));
 
@@ -606,12 +606,7 @@ class SortableList
         // $this->initialiseSubTotalArray($subTotalArray, $cols, $rs);
 
         $rowNumber = 1; // Get the first row first, as we fetched it already processing the header.
-        $counter=0;
-
-        $max = ini_get('max_execution_time');
         while ($row = db2_fetch_assoc($rs, $rowNumber)) {
-            ini_set('max_execution_time',2);
-            // echo "<br/>" . ++$counter .":" . microtime(true) . " >>> " .  (microtime(TRUE)-$_SESSION['tracePageOpenTime'] . " <<< Elapsed");
             // if($rowNumber==1 and $trackPreviousRow){
             // //initialise previous row here.
             // $this->updatePreviousRow($previousRow,$row);
@@ -677,9 +672,6 @@ class SortableList
             }
             $this->updatePreviousRow($previousRow, $row); // Save this row as the $previousRow
         }
-
-        ini_set('max_execution_time',$max);
-
         $columnsinTable = 0;
 
         $columnsinTable = $this->ColumnsInTable;

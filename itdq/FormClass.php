@@ -119,9 +119,6 @@ class FormClass
     const SELECT_DISPLAY_KEY_RETURN_VALUE   = 'displayKeyReturnValue';
     const SELECT_DISPLAY_KEY_RETURN_KEY     = 'displayKeyReturnKey';
 
-    const SUBMIT_BUTTONS_SHOW  = false;
-    const SUBMIT_BUTTONS_HIDE  = true;
-
 
     function __construct(){
         $this->enableDisabledSelects();
@@ -1068,21 +1065,24 @@ function formTextArea($label, $fieldName, $state = null, $textAreaclass = null, 
         echo "</DIV>";
     }
 
-    static function formBlueButtons($buttonDetails = null, $hide=false)
+    static function formBlueButtons($buttonDetails = null)
     {
-        $divStyle = $hide ? ' none '  : ' block ';
-        ?>
-        <div class='button-blue submitButtonDiv' style='display:<?=$divStyle?>' style='font-size:1.4em' >
-        <?php
+        echo "<span class='button-blue' style='font-size:1.4em'>";
         foreach ($buttonDetails as $button) {
-            ?><input class='btn <?=$button['class'];?>' type='<?=$button['type']?>' name='<?=$button['name']?>' id='<?=$button['id']?>' <?=$button['state']?> value='<?=$button['value']?>' >&nbsp;<?php
+
+            if(is_array($button)){
+                echo "<input class='btn "
+                     . $button['class']
+                     . "' type='"
+                     . $button['type'] . "' name='"
+                     . $button['name'] . "' id='"
+                     . $button['id'] . "' "
+                     . $button['state'] . " value='"
+                     . $button['value'] . "'  >&nbsp;";
+            }
         }
-        ?>
-        </div>
-        <div class='submitButtonSpinnerDiv' style='display:none' >
-		<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate spinningsm' aria-hidden='true'></span>
-        </div>
-        <?php
+        // echo "<input type='submit' name='btnNewProduct' id='btnNewProduct' enabled value='Define New Product' >";
+        echo "</span>";
     }
 
     static function formButton($type = null, $name = null, $id = null, $state = null, $value = null,$class='btn-primary')
@@ -1182,20 +1182,6 @@ function formTextArea($label, $fieldName, $state = null, $textAreaclass = null, 
         </p>
         <?php
     }
-
-
-    function displaySaveReset(){
-        ?>
-            <div class='form-group'>
-            <div class='col-sm-2'>
-            </div>
-            <div class='btn-group col-sm-8' >
-            <button type='submit' class='btn btn-default'>Save</button>
-            <button type='reset' class='btn btn-default'>Reset</button>
-            </div>
-            </div>
-            <?php
-        }
 
 
     /**

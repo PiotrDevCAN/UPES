@@ -56,18 +56,18 @@ class Navbar
         foreach ($this->menuItems as $menu){
             $menu->createItem();
         }
+
+        $hash = `git log -1 --pretty=%h`;
+
+
         ?>
         </ul>
 
-
-
-		<p class='nav navbar-nav navbar-right userLevel '>User Level is:<span id='userLevel'></span><br/>Powered by CDI</p>
+		<p class='nav navbar-nav navbar-right userLevel '>User Level is:<scan id='userLevel'></scan><br/>Powered by SRE (<?=$hash;?>)</p>
         <ul class="nav navbar-nav navbar-right">
-        <li class='accessRestrict accessCdi accessPmo accessFm accessUser'
+        <li class='accessCdi accessPmo accessFm accessUser'
                id='Help_Page'
                data-pagename='pa_helpPage.php'><a href="pa_helpPage.php">Help/Feedback</a></li>
-        <li class='accessRestrict  accessCdi accessPmo userLevel'>Email is:<?=$_SERVER['email']?></li>
-
 	    </ul>
 
         </div><!-- /.navbar-collapse -->

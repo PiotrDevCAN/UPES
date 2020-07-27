@@ -51,7 +51,7 @@ try {
             case AccountPersonRecord::PES_STATUS_STARTER_REQUESTED:
             case AccountPersonRecord::PES_STATUS_PES_PROGRESSING:
             case AccountPersonRecord::PES_STATUS_EXCEPTION:
-            case AccountPersonRecord::PES_STATUS_PROVISIONAL;
+        //    case AccountPersonRecord::PES_STATUS_PROVISIONAL;
             case AccountPersonRecord::PES_STATUS_RECHECK_REQ;
             case AccountPersonRecord::PES_STATUS_LEFT_IBM;
             case AccountPersonRecord::PES_STATUS_REVOKED;
@@ -59,8 +59,8 @@ try {
             case AccountPersonRecord::PES_STATUS_STAGE_2;
                 $notificationStatus = 'Email not applicable';
                 break;
+            case AccountPersonRecord::PES_STATUS_PROVISIONAL;  // Temp req to send special email during covid
             case AccountPersonRecord::PES_STATUS_CLEARED:
-//          case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
             case AccountPersonRecord::PES_STATUS_CANCEL_REQ:
                 $accountPersonRecord = new AccountPersonRecord();
                 $accountPersonTable  = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);

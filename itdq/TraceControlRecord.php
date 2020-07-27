@@ -1,19 +1,11 @@
 <?php
 namespace itdq;
-
-/*
- * CREATE TABLE UPES_DEV.TRACE_CONTROL ( TRACE_CONTROL_TYPE CHAR(20), TRACE_CONTROL_VALUE CHAR(40) ) IN USERSPACE1 COMPRESS YES VALUE COMPRESSION;
- *
- */
-
-
-
 /**
  * Trace control records control the level of tracing performed by the application.
- *
+ * 
  * It is down to the develop to put suitable TRACE statements in the code, but using Trace Control the end user/debugger
  * can determine which of the Trace statements they wish to see.
- *
+ * 
  * Tracing can be "inclusive" - ie ALL TRace Statements will write to the Trace Table, EXCEPT those specifically EXLUDED
  * or
  * it can be "exclusive" - ie ONLY those Trace Statements specfically INCLUDED will write to the TRACE table.
@@ -31,14 +23,14 @@ class TraceControlRecord extends DbRecord {
 	protected $trace_class_name;
 	protected $trace_method_name;
 
-
+	
 	const CONTROL_TYPE_CLASS_TIMINGS = 'classTimings';
 	const CONTROL_TYPE_CLASS_INCLUDE = 'classInclude';
 	const CONTROL_TYPE_CLASS_EXCLUDE = 'classExclude';
 	const CONTROL_TYPE_METHOD_TIMINGS = 'methodTimings';
 	const CONTROL_TYPE_METHOD_INCLUDE = 'methodInclude';
 	const CONTROL_TYPE_METHOD_EXCLUDE = 'methodExclude';
-
+	
 	public static $controlTypeHeadings = array(TraceControlRecord::CONTROL_TYPE_CLASS_EXCLUDE => 'Classes Excluded',
 	    TraceControlRecord::CONTROL_TYPE_CLASS_INCLUDE => 'Classes Included',
 	    TraceControlRecord::CONTROL_TYPE_CLASS_TIMINGS => 'Classes Timed',
@@ -46,45 +38,47 @@ class TraceControlRecord extends DbRecord {
 	    TraceControlRecord::CONTROL_TYPE_METHOD_INCLUDE => 'Methods Included',
 	    TraceControlRecord::CONTROL_TYPE_METHOD_TIMINGS => 'Methods Timed',
 	);
-
-
+	
+	
 	private static $controlTypes = array(TraceControlRecord::CONTROL_TYPE_CLASS_EXCLUDE,TraceControlRecord::CONTROL_TYPE_CLASS_INCLUDE,TraceControlRecord::CONTROL_TYPE_CLASS_TIMINGS,TraceControlRecord::CONTROL_TYPE_METHOD_EXCLUDE,TraceControlRecord::CONTROL_TYPE_METHOD_INCLUDE,TraceControlRecord::CONTROL_TYPE_METHOD_TIMINGS);
-
+	
 	function __construct($pwd=null){
-		Trace::traceComment(null,__METHOD__);
+		Trace::traceComment(null,__METHOD__);		
 		parent::__construct ( $pwd );
 		$this->fcFormName = 'TraceControl';
 	}
-
+	
 	function displayForm($mode){
-		Trace::traceComment(null,__METHOD__);
+		Trace::traceComment(null,__METHOD__);	
         $this->modeSetup($mode);
-
-		$allClasses = Trace::allApplicationsClasses('upes');
+		
+		$loader = new Loader();
+		
+		$allClasses = Trace::allApplicationsClasses('dpulse',true);	
 		sort($allClasses);
-
 		$allFunctions = array('Methods...');
- 		?><div class='panel panel-primary'><?php
-        ?><div class='panel-heading'>Trace Control</div><?php
-        ?><div class='container'><?php
-
-        ?><div class='form-horizontal'><?php
+		
+ 		echo "<div class='panel panel-primary'>";
+        echo "<div class='panel-heading'>Trace Control</div>";	
+        echo "<div class='container'>";
+        
+        echo "<div class='form-horizontal'>";
         $onChange = "onChange='var traceControlRec = new TraceControlRecord(); traceControlRec.populateMethodSelect()'";
-		$this->formSelect(null, self::$controlTypes, 'Control Type', 'TRACE_CONTROL_TYPE', $this->chkState,null,$onChange);
- 		$this->formSelect(null, $allClasses, 'Class', 'trace_class_name',$this->state,null,$onChange);
-        $this->formSelect(null, $allFunctions, 'Method', 'trace_method_name','disabled' ,null,'Method...','blue-med');
+		$this->formSelect( self::$controlTypes, 'Control Type', 'TRACE_CONTROL_TYPE', $this->chkState,null,$onChange);	
+		$this->formSelect($allClasses, 'Class', 'trace_class_name',$this->state,null,$onChange);
+        $this->formSelect($allFunctions, 'Method', 'trace_method_name','disabled' ,null,'Method...','blue-med');
 
-
-        ?><input type='hidden' name='mode' value='insert'><?php
+       
+        echo "<input type='hidden' name='mode' value='insert'> ";    
         $this->displaySaveReset();
-
-        ?></div><?php // form-horiztonal
-        ?></div><?php // container
-        ?></div><?php // panel
-
+        
+        echo "</div>"; // form-horiztonal
+        echo "</div>"; // container
+        echo "</div>"; // panel
+        
 	}
+	
 
-
-
+	
 }
 ?>

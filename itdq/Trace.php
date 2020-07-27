@@ -2,13 +2,6 @@
 namespace itdq;
 use DateTime;
 
-/*
- * CREATE TABLE UPES_DEV.TRACE_CONTROL ( TRACE_CONTROL_TYPE CHAR(20), TRACE_CONTROL_VALUE CHAR(40) ) IN USERSPACE1 COMPRESS YES VALUE COMPRESSION;
- *
- *
- */
-
-
 /**
  * @author GB001399
  *
@@ -41,7 +34,6 @@ class Trace extends Log{
 //	);
 
 	static function traceTimings($additionalText=null, $methodParm='Method', $line=null ){
-	    $pwd = isset($_SERVER['encryption']) ?  $_SERVER['encryption'] : null ;
 		$page = pathinfo($_SERVER['SCRIPT_FILENAME'],PATHINFO_BASENAME);
 		if(!strpos($methodParm,"::")===FALSE){
 			$classMethod = explode("::",$methodParm);
@@ -49,8 +41,8 @@ class Trace extends Log{
 			$method = trim($classMethod[1]);
 			//$page = '';
 		} else {
-			//$fileLocation = explode("/",$methodParm);
-			//$levels = sizeof($fileLocation);
+			$fileLocation = explode("/",$methodParm);
+			$levels = sizeof($fileLocation);
 			//$page = $fileLocation[$levels-1];
 			$class = 'pageAccess';
 			$method = trim($page);
@@ -60,14 +52,13 @@ class Trace extends Log{
 			$memory = (memory_get_peak_usage(true)/1048576);
 			$elapsed = isset($_SESSION['tracePageOpenTime']) ? microtime(true) - $_SESSION['tracePageOpenTime'] : null;
 			$traceString = "<b>*T*:" . $methodParm . "-" . $line . "</b>:<br/> " . htmlspecialchars($additionalText) . "<br/><b>Time : $elapsed Memory:$memory mb</b>";
-			self::logEntry($traceString,$class,$method,$page,$pwd);
+			self::logEntry($traceString,$class,$method,$page);
 		}
 	}
 
 
 
 	static function traceComment($additionalText=null, $methodParm='Method', $line=null ){
-	    $pwd = isset($_SERVER['encryption']) ?  $_SERVER['encryption'] : null ;
 		$page = pathinfo($_SERVER['SCRIPT_FILENAME'],PATHINFO_BASENAME);
 		if(!strpos($methodParm,"::")===FALSE){
 			$classMethod = explode("::",$methodParm);
@@ -84,16 +75,15 @@ class Trace extends Log{
 
 		if(isset($_SESSION['trace']) or (isset($_SESSION['methodInclude'][$method])) or (isset($_SESSION['classInclude'][$class]))){ // Are we tracing ?
 			if(!isset($_SESSION['methodExclude'][$method]) and !isset($_SESSION['classExclude'][$class])){ // Is this Class/Method one we're ignoring ?
-				//$now = new \DateTime();
+				$now = new \DateTime();
 				// $additionalText .= "\n<<USER>>" . $_SESSION['ssoEmail'] . " <<TIME>>" . $now->format('Y-m-d H:i:s');
 				$traceString = "<B>" . $methodParm . "-" . $line . "</B>:<br/> " . htmlspecialchars($additionalText);
-				self::logEntry($traceString,$class,$method,$page,$pwd);
+				self::logEntry($traceString,$class,$method,$page);
 			}
 		}
 	}
 
 	static function traceVariable($variable, $methodParm='Method', $line=null){
-	    $pwd = isset($_SERVER['encryption']) ?  $_SERVER['encryption'] : null ;
 		$page = pathinfo($_SERVER['SCRIPT_FILENAME'],PATHINFO_BASENAME);
 		if(!strpos($methodParm,"::")===FALSE){
 			$classMethod = explode("::",$methodParm);
@@ -118,7 +108,7 @@ class Trace extends Log{
 		$traceString = "<B>" . $methodParm . "-" . $line . "</B>:<br/> Variable Type $type : Value: $output ";
 		if(isset($_SESSION['trace']) or (isset($_SESSION['methodInclude'][$method])) or (isset($_SESSION['classInclude'][$class]))){
 			if(!isset($_SESSION['methodExclude'][$method]) and !isset($_SESSION['classExclude'][$class])){ // Is this Class/Method one we're ignoring ?
-				self::logEntry($traceString,$class,$method,$page,$pwd);
+				self::logEntry($traceString,$class,$method,$page);
 			}
 		}
 	}
@@ -134,21 +124,21 @@ class Trace extends Log{
 		$elapsed = isset($_SESSION['tracePageOpenTime']) ? microtime(true) - $_SESSION['tracePageOpenTime'] : null;
 		$elapsed =  ($elapsed > 3600) ? 0 : $elapsed ; // Fix for long page opening times.
 
-		$sql  = " INSERT INTO " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$TRACE . " ( LOG_ENTRY,LASTUPDATER,CLASS,METHOD,PAGE ";
+		$sql  = " INSERT INTO " . $GLOBALS['Db2Schema'] . "." . AllItdqTables::$TRACE . " ( LOG_ENTRY,LASTUPDATER,CLASS,METHOD,PAGE ";
 		$sql .= empty($elapsed) ? ") " : ",ELAPSED) ";
 		$db2Entry = db2_escape_string($entry);
+
 		$db2Entry = strlen($db2Entry)>31000 ? "**TRUNCATED**" . substr($db2Entry, 0,31000) : $db2Entry;
 
 		if($pwd != null){
 			$db2Entry =  str_replace($pwd,'********',$db2Entry);
-			$sql .= " VALUES (ENCRYPT('$db2Entry','$pwd')";
+			$sql .= " VALUES (ENCRYPT_RC2('$db2Entry','$pwd'),ENCRYPT_RC2('$userid','$pwd'), ENCRYPT_RC2('$class','$pwd'), ENCRYPT_RC2('$method','$pwd'), ENCRYPT_RC2('$page','$pwd') ";
+			$sql .= empty($elapsed) ? ") " : ", ENCRYPT_RC2('$elapsed','$pwd') )";
 		} else {
-			$sql .= " VALUES ('$db2Entry'";
+			$sql .= " VALUES ('$db2Entry','$userid','$class','$method','$page'";
+			$sql .= empty($elapsed) ? ") " : ",'$elapsed') ";
 		}
-
-		$sql .= ",'$userid','$class','$method','$page'";
-		$sql .= empty($elapsed) ? ") " : ",'$elapsed') ";
-		$rs = DB2_EXEC($_SESSION['conn'],$sql);
+		$rs = DB2_EXEC($GLOBALS['conn'],$sql);
 		if(!$rs)
 			{
 			echo "<BR>Error: " . db2_stmt_error();
@@ -158,10 +148,10 @@ class Trace extends Log{
 	}
 
 	static function deleteTraceRecords($keepDays=2){
-		$sql = "DELETE FROM " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$TRACE . " WHERE LASTUPDATED < (CURRENT TIMESTAMP - $keepDays DAYS) ";
+		$sql = "DELETE FROM " . $GLOBALS['Db2Schema'] . "." . AllItdqTables::$TRACE . " WHERE LASTUPDATED < (CURRENT TIMESTAMP - $keepDays DAYS) ";
 
 		Trace::traceVariable($keepDays);
-		$rs = DB2_EXEC($_SESSION['conn'],$sql);
+		$rs = DB2_EXEC($GLOBALS['conn'],$sql);
 		if(!$rs)
 			{
 			echo "<BR>Error: " . db2_stmt_error();
@@ -171,39 +161,33 @@ class Trace extends Log{
 	}
 
 	static function setTraceControls(){
-	    if(isset($_SESSION['conn'])){
-	        $sql = "SELECT * FROM " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$TRACE_CONTROL ;
-	        $rs = DB2_EXEC($_SESSION['conn'],$sql);
-	        if(!$rs)
-	        {
-	            echo "<BR>Error: " . db2_stmt_error();
-	            echo "<BR>Msg: " . db2_stmt_errormsg() . "<BR>";
-	            exit("Error in: " . __METHOD__ .  __LINE__ . "<BR>running: $sql");
-	        }
-	        $anyExcludes = FALSE;
-	        $_SESSION['methodInclude'] = array();  // Allows you to make changes, by reseting the array before setting specific values later.
-	        $_SESSION['methodExclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-	        $_SESSION['methodTimings'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-	        $_SESSION['classInclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-	        $_SESSION['classExclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-	        $_SESSION['classTimings'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
-	        unset($_SESSION['trace']);
 
-	        while($row = db2_fetch_assoc($rs)){
-	            if(trim($row['TRACE_CONTROL_TYPE'])=='methodExclude' or trim($row['TRACE_CONTROL_TYPE'])=='classExclude'){
-	                $anyExcludes = TRUE;
-	            }
-	            $_SESSION[trim($row['TRACE_CONTROL_TYPE'])][trim($row['TRACE_CONTROL_VALUE'])] = 'On';
-	        }
-	        if($anyExcludes){
-	            $_SESSION['trace']='Log';
-	        }
+		$sql = "SELECT * FROM " . $GLOBALS['Db2Schema'] . "." . AllItdqTables::$TRACE_CONTROL ;
+		$rs = DB2_EXEC($GLOBALS['conn'],$sql);
+		if(!$rs)
+			{
+			echo "<BR>Error: " . db2_stmt_error();
+			echo "<BR>Msg: " . db2_stmt_errormsg() . "<BR>";
+			exit("Error in: " . __METHOD__ .  __LINE__ . "<BR>running: $sql");
+		}
+		$anyExcludes = FALSE;
+		$_SESSION['methodInclude'] = array();  // Allows you to make changes, by reseting the array before setting specific values later.
+		$_SESSION['methodExclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+		$_SESSION['methodTimings'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+		$_SESSION['classInclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+		$_SESSION['classExclude'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+		$_SESSION['classTimings'] = array(); // Allows you to make changes, by reseting the array before setting specific values later.
+		unset($_SESSION['trace']);
 
-	    } else {
-	        echo "<br/>Not connected to DB2.";
-	    }
-
-
+		while($row = db2_fetch_assoc($rs)){
+			if(trim($row['TRACE_CONTROL_TYPE'])=='methodExclude' or trim($row['TRACE_CONTROL_TYPE'])=='classExclude'){
+				$anyExcludes = TRUE;
+			}
+			$_SESSION[trim($row['TRACE_CONTROL_TYPE'])][trim($row['TRACE_CONTROL_VALUE'])] = 'On';
+		}
+		if($anyExcludes){
+			$_SESSION['trace']='Log';
+		}
 	}
 
 	static function pageOpening($file=null,$tracePost = true,$traceRequest = false, $debugBacktrace=false){
@@ -260,16 +244,16 @@ class Trace extends Log{
 
 
 	static function listFunctionsInClass($class){
-// 		if(empty($directory)){
-// 			$self = $_SERVER['PHP_SELF'];
-// 			$elementsOfSelf = explode("/", $self);
-// 			$directory = $elementsOfSelf[1];
-// 		}
+		if(empty($directory)){
+			$self = $_SERVER['PHP_SELF'];
+			$elementsOfSelf = explode("/", $self);
+			$directory = $elementsOfSelf[1];
+		}
 		$dirFile = $class . ".php";
 		$file = fopen($dirFile,'r',true);
 
 		$classFound = false;
-		//$allExtendedFunctions = null;
+		$allExtendedFunctions = null;
 		while($line = fgets($file)){
   			if(!$classFound){
   				//echo "<BR/>$line";

@@ -14,17 +14,20 @@ class Log extends DbTable  {
 
 static function logEntry($entry,$pwd=null){
 
+
+
+
 	$userid = $_SESSION['ssoEmail'];
 
-	$sql = " INSERT INTO " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$LOG . " ( LOG_ENTRY,LASTUPDATER) ";
+	$sql = " INSERT INTO " . $GLOBALS['Db2Schema'] . "." . AllItdqTables::$LOG . " ( LOG_ENTRY,LASTUPDATER) ";
 	$db2Entry = db2_escape_string($entry);
 	$db2Entry =  str_replace($pwd,'********',$db2Entry);
 	if($pwd!=null){
-		$sql .= " VALUES (ENCRYPT('$db2Entry','$pwd'),ENCRYPT('$userid','$pwd')) ";
+		$sql .= " VALUES (ENCRYPT_RC2('$db2Entry','$pwd'),ENCRYPT_RC2('$userid','$pwd')) ";
 	} else {
 		$sql .= " VALUES ('$db2Entry','$userid') ";
 	}
-	$rs = DB2_EXEC($_SESSION['conn'],$sql);
+	$rs = DB2_EXEC($GLOBALS['conn'],$sql);
 	if(!$rs)
 		{
 		echo "<BR>Error: " . db2_stmt_error();
@@ -34,8 +37,8 @@ static function logEntry($entry,$pwd=null){
 }
 
 	static function deleteLogRecords($keepDays=1){
-		$sql = "DELETE FROM " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$LOG . " WHERE LASTUPDATED < (CURRENT TIMESTAMP - $keepDays DAYS) ";
-		$rs = DB2_EXEC($_SESSION['conn'],$sql);
+		$sql = "DELETE FROM " . $GLOBALS['Db2Schema'] . "." . AllItdqTables::$LOG . " WHERE LASTUPDATED < (CURRENT TIMESTAMP - $keepDays DAYS) ";
+		$rs = DB2_EXEC($GLOBALS['conn'],$sql);
 		if(!$rs)
 			{
 			echo "<BR>Error: " . db2_stmt_error();

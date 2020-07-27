@@ -49,7 +49,7 @@ class Loader
 
         Trace::traceVariable($sql, __METHOD__, __LINE__);
         $preDb2Time = microtime(TRUE);
-        $rs5 = db2_exec($_SESSION['conn'], $sql);
+        $rs5 = db2_exec($GLOBALS['conn'], $sql);
         if (! $rs5) {
             DbTable::displayErrorMessage($rs5, __CLASS__, __METHOD__, $sql);
             return false;
@@ -87,21 +87,9 @@ class Loader
     function loadIndexed($value = null, $key = null, $table = null, $predicate = null, $order = 'asc')
     {
         Trace::traceComment(null, __METHOD__);
-
         $array = array();
 
-        $asPos = strripos($value, ' as ');
-
-        $valueForPredicate = $asPos ? substr($value,0,$asPos) : $value;
-        $valueColName      = $asPos ? trim(substr($value, $asPos+4)): $value;
-
-        $asPos = strripos($key, ' as ');
-        $keyForPredicate =  $asPos ? substr($key,0,$asPos): $key;
-        $keyColName      =  $asPos ? trim(substr($key,$asPos+4)) : $key;
-
-        $sql = $this->buildIxSQL($value, $key, $table, $valueForPredicate, $keyForPredicate);
-
-
+        $sql = $this->buildIxSQL($value, $key, $table);
         if ($predicate != null) {
             if ($this->notNull) {
                 $sql .= " and $predicate ";
@@ -113,28 +101,24 @@ class Loader
         $sql .= " order by 1 $order ";
         Trace::traceVariable($sql, __METHOD__, __LINE__);
 
-        $rs5 = db2_exec($_SESSION['conn'], $sql);
+        $rs5 = db2_exec($GLOBALS['conn'], $sql);
         if (! $rs5) {
             DbTable::displayErrorMessage($rs5, __CLASS__, __METHOD__, $sql);
         }
 
-        while (($row = db2_fetch_assoc($rs5)) == true) {
-            $array[utf8_encode(trim($row[$keyColName]))] = utf8_encode(trim($row[$valueColName]));
+        while (($row = db2_fetch_both($rs5)) == true) {
+            $array[utf8_encode(trim($row[$key]))] = utf8_encode(trim($row[$value]));
         }
         Trace::traceVariable($array, __METHOD__, __LINE__);
         return $array;
     }
 
-    function buildIxSQL($value, $key, $table, $valueForPredicate = null, $keyForPredicate=null)
+    function buildIxSQL($value, $key, $table)
     {
         $sql = "select distinct $value,$key ";
-
-        $valueForPredicate = empty($valueForPredicate) ? $value : $valueForPredicate;
-        $keyForPredicate = empty($keyForPredicate) ? $key : $keyForPredicate;
-
-        $sql .= " from " . $_SESSION['Db2Schema'] . ".$table ";
+        $sql .= " from " . $GLOBALS['Db2Schema'] . ".$table ";
         if ($this->notNull) {
-            $sql .= " where $valueForPredicate is not null and $keyForPredicate is not null";
+            $sql .= " where $value is not null and $key is not null";
         }
         // echo "<BR/>" . __METHOD__ . __LINE__ . $table;
         return $sql;
@@ -143,7 +127,7 @@ class Loader
     function buildSQL($column, $table)
     {
         $sql = "select distinct $column ";
-        $sql .= " from " . $_SESSION['Db2Schema'] . ".$table ";
+        $sql .= " from " . $GLOBALS['Db2Schema'] . ".$table ";
         if ($this->notNull) {
             $sql .= " where $column is not null";
         }
@@ -181,7 +165,7 @@ class Loader
 
         $sql .= " order by 1 $order ";
 
-        $rs5 = db2_exec($_SESSION['conn'], $sql);
+        $rs5 = db2_exec($GLOBALS['conn'], $sql);
         if (! $rs5) {
             DbTable::displayErrorMessage($rs5, __CLASS__, __METHOD__, $sql);
         }
@@ -224,7 +208,7 @@ class Loader
 
         $sql .= " order by 1 $order ";
 
-        $rs5 = db2_exec($_SESSION['conn'], $sql);
+        $rs5 = db2_exec($GLOBALS['conn'], $sql);
         if (! $rs5) {
             DbTable::displayErrorMessage($rs5, __CLASS__, __METHOD__, $sql);
         }
@@ -269,7 +253,7 @@ class Loader
 
         $sql .= " order by 1 $order ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
         if (! $rs) {
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
         }
@@ -299,7 +283,7 @@ class Loader
     private function buildQuadSQL($first, $second, $third, $forth, $table)
     {
         $sql = "select distinct $first,$second,$third,$forth ";
-        $sql .= " from " . $_SESSION['Db2Schema'] . ".$table ";
+        $sql .= " from " . $GLOBALS['Db2Schema'] . ".$table ";
         $sql .= " where $first is not null and $second is not null and $third is not null and $forth is not null ";
         return $sql;
     }
@@ -316,7 +300,7 @@ class Loader
     private function buildTriSQL($first, $second, $third, $table)
     {
         $sql = "select distinct $first,$second,$third ";
-        $sql .= " from " . $_SESSION['Db2Schema'] . ".$table ";
+        $sql .= " from " . $GLOBALS['Db2Schema'] . ".$table ";
         $sql .= " where $first is not null and $second is not null and $third is not null";
         return $sql;
     }

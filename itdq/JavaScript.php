@@ -267,32 +267,5 @@ class JavaScript {
 	    </script><?php
 	}
 
-	static function buildObjectFourDeep($data, $objectName){
-
-	    //  var test = {2018: {onshore: {1: 123.56, 2:234.56}}};
-
-	    ?><script type="text/javascript" charset="utf-8">
-
-	    var <?=$objectName?> = {};
-	    <?php
-	    foreach ($data as $key => $levelTwo) {
-	        $string = $objectName . "['$" . trim($key) . "'] = {}
-";
-	        echo $string;
-	        foreach($levelTwo as $key2 => $levelThree){
-	            $string = $objectName . "['$" . trim($key) . "']['$" . trim($key2) . "'] = [";
-	            foreach($levelThree as $key3 => $data){
-	                $string.= "{id:" . trim($key3) . ", text: " . trim($data) . "},";
-	            };
-	            $string = substr($string, 0,-1) . "];
-";
-	            echo $string;
-
-	        }
-	    }
-
-	    ?></script><?php
-	}
-
 
 }?>

@@ -39,23 +39,29 @@ class BlueGroups {
 
 
 	public static function listMembers($groupName){
-	    $url = "http://bluepages.ibm.com/tools/groups/groupsxml.wss?task=listMembers&group=" . urlencode($groupName) . "&depth=1";
+	    $url = "https://bluepages.ibm.com/tools/groups/groupsxml.wss?task=listMembers&group=" . urlencode($groupName) . "&depth=1";
 	    $myXMLData =  self::getBgResponseXML($url);
-
 
 	    $xml=simplexml_load_string($myXMLData);
 
-	    // print_r($xml);
-
-	    return get_object_vars($xml)['member'];
-
-
+        return get_object_vars($xml)['member'];
 
 	    // $simple = "<para><note>simple note</note></para>";
 // 	    $p = xml_parser_create();
 // 	    xml_parse_into_struct($p, $xml, $vals, $index);
 // 	    print_r($vals);
 	}
+
+
+	public static function inAGroup($groupName, $ssoEmail, $depth=1){
+	    // https://bluepages.ibm.com/tools/groups/groupsxml.wss?task=inAGroup&email=MEMBER_EMAIL_ADDRESS&group=GROUP_NAME[&depth=DEPTH]
+	    $url = "https://bluepages.ibm.com/tools/groups/groupsxml.wss?task=inAGroup&email=" . urlencode($ssoEmail) . "&group=" . urlencode($groupName) . "&depth=" . urlencode($depth);
+	    $myXMLData =  self::getBgResponseXML($url);
+	    $xml=simplexml_load_string($myXMLData);
+	    return get_object_vars($xml)['msg']=='Success';
+
+	}
+
 
 
 	public static function getUID($email){
@@ -84,13 +90,13 @@ class BlueGroups {
 	private static function createCurl($agent='ITDQ'){
 			// create a new cURL resource
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_HEADER,         1);
+//		curl_setopt($ch, CURLOPT_HEADER,         1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_TIMEOUT,        240);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 240);
-		curl_setopt($ch, CURLOPT_USERAGENT,      $agent);
-		curl_setopt($ch, CURLOPT_CAINFO,        '/cecert/cacert.pem');
+//		curl_setopt($ch, CURLOPT_TIMEOUT,        240);
+//		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 240);
+//		curl_setopt($ch, CURLOPT_USERAGENT,      $agent);
+//		curl_setopt($ch, CURLOPT_CAINFO,        '/cecert/cacert.pem');
 //		curl_setopt($ch, CURLOPT_CAINFO,        '/usr/local/zendsvr6/share/curl/cacert.pem');
 //		curl_setopt($ch, CURLOPT_HTTPAUTH,        CURLAUTH_BASIC);
 		curl_setopt($ch, CURLOPT_HEADER,        FALSE);
@@ -152,6 +158,7 @@ class BlueGroups {
 	    $ch = self::createCurl();
 
 	    curl_setopt($ch, CURLOPT_URL, $url);
+
         $ret = curl_exec($ch);
         if (empty($ret)) {
             //     some kind of an error happened

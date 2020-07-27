@@ -17,8 +17,8 @@ class BluePages {
 	static function getDetailsFromCnumSlapMulti($cnumArray,$parms="&uid&dept&div&cr&notesId&mail&managerSerialNumber&managerCountryCode&notesEmail&isManager"){
 	    $startTime = microtime(true);
 	    set_time_limit(120);
-	    // $urlTemplate = "https://bluepages.ibm.com/BpHttpApisv3/slaphapi?ibmperson/(|";
-	    $urlTemplate = $_SERVER['SERVER_NAME'] . "/api/bluepages.php?ibmperson/(|";
+	   //  $urlTemplate = "https://bluepages.ibm.com/BpHttpApisv3/slaphapi?ibmperson/(|";
+	    $urlTemplate = "https://bluepages.ibm.com/BpHttpApisv3/slaphapi?ibmperson/(|";
 
 	    foreach ($cnumArray as $cnum){
 	        $urlTemplate .= "(UID=" . trim($cnum) . ")";
@@ -30,18 +30,17 @@ class BluePages {
 	     * Alternative making it easier (byJson)
 	     * http://bluepages.ibm.com/BpHttpApisv3/slaphapi?ibmperson/(|(UID=099470866)(UID=001399866)).list/byJson?&uid&dept&div&c&managerCnum&managerCountryCode%C2%ACesEmail&isManager%C2%ACesId&mail
 	     */
-
-
-//  	    echo $urlTemplate;
 	    $ch = curl_init ( $urlTemplate );
+
 	    AuditTable::audit(__FUNCTION__ . ":" . print_r($urlTemplate,true),AuditTable::RECORD_TYPE_DETAILS);
 	    curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+	    curl_setopt ( $ch, CURLOPT_VERBOSE, true );
+	    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 	    $curlReturn = curl_exec ( $ch );
-	    $lookupTime = (float)(microtime(true) - $startTime);
-//	    echo "<br/>Bluepages Lookup Elapsed Time:$lookupTime";
 
-// 	    var_dump($curlReturn);
+	    $lookupTime = (float)(microtime(true) - $startTime);
+	    echo "<br/>Bluepages Lookup Elapsed Time:$lookupTime";
 
 	    //$xml = simplexml_load_string($curlReturn);
 	    $jsonObject = json_decode($curlReturn);
@@ -67,12 +66,11 @@ class BluePages {
 
 
 	static function getDetailsFromIntranetId($intranetId){
-	    $details = array();
 		if(empty($intranetId)){
 			return FALSE;
 		}
 		set_time_limit(120);
-		$url = "http://bluepages.ibm.com/BpHttpApisv3/wsapi?byInternetAddr=INTRANET_ID_HERE";
+		$url = "https://bluepages.ibm.com/BpHttpApisv3/wsapi?byInternetAddr=INTRANET_ID_HERE";
 		//echo "<BR/>" . str_replace('INTRANET_ID_HERE',urlencode($intranetId),$url);
 		$ch = curl_init ( str_replace('INTRANET_ID_HERE',urlencode($intranetId),$url) );
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -84,6 +82,7 @@ class BluePages {
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
 
+		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
@@ -112,21 +111,23 @@ class BluePages {
 			return FALSE;
 		}
 		set_time_limit(120);
-		$url = "http://bluepages.ibm.com/BpHttpApisv3/wsapi?allByNotesIDLite=CN=NOTES_ID_HERE%";
+		$url = "https://bluepages.ibm.com/BpHttpApisv3/wsapi?allByNotesIDLite=NOTES_ID_HERE%25";
 
-	    $sp = strpos($notesId,'/O=IBM');
+	$sp = strpos($notesId,'/O=IBM');
 
-		if($sp){
-		  $pregAmendedNotesid = urlencode(trim($notesId));
+		if($sp != FALSE){
+			$amendIbm2 = urlencode(trim($notesId));
 		} else {
-		  $pregAmendedNotesid = urlencode(preg_replace(array('/\/ibm/i','/\//'), array('','/OU='), $notesId));
+			$amendIbm = str_replace("/IBM","xxxxx",$notesId);
+			$amendCC  = str_replace("/","/OU=",$amendIbm);
+			$amendIbm2 = str_replace("xxxxx","/O=IBM",$amendCC);
+			$amendIbm2 = "CN%3D" . urlencode($amendIbm2);
 		}
-
-		$newUrl = str_replace('NOTES_ID_HERE',$pregAmendedNotesid,$url);
-
-		$ch = curl_init ( $newUrl  );
+		$ch = curl_init ( str_replace('NOTES_ID_HERE',$amendIbm2,$url) );
 		return self::processDetails($ch);
 	}
+
+
 
 
 
@@ -135,7 +136,7 @@ class BluePages {
 			return FALSE;
 		}
 		set_time_limit(120);
-		$url = "http://bluepages.ibm.com/BpHttpApisv3/wsapi?byInternetAddr=INTRANET_ID_HERE";
+		$url = "https://bluepages.ibm.com/BpHttpApisv3/wsapi?byInternetAddr=INTRANET_ID_HERE";
 //		echo "<BR/>" . str_replace('INTRANET_ID_HERE',urlencode($intranetId),$url);
 		$ch = curl_init ( str_replace('INTRANET_ID_HERE',urlencode($intranetId),$url) );
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -147,12 +148,14 @@ class BluePages {
 
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
+		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
 			$pattern = "/[\n:]/";
 			$matches = preg_split ( $pattern, $results [0] );
 			for($cellOffset = 0; $cellOffset < count ( $matches ); $cellOffset ++) {
+				$next = $cellOffset+1;
 				switch ($matches [$cellOffset]) {
 
 					case 'CNUM' :
@@ -173,6 +176,7 @@ class BluePages {
 					case 'NOTESID':
 						$notesId = trim ( $matches [$cellOffset+1]);
 					default :
+						;
 						break;
 				}
 			}
@@ -195,11 +199,11 @@ class BluePages {
 			return FALSE;
 		}
 		set_time_limit(120);
-		$url = "http://bluepages.ibm.com/BpHttpApisv3/wsapi?allByNotesIDLite=NOTES_ID_HERE%25";
+		$url = "https://bluepages.ibm.com/BpHttpApisv3/wsapi?allByNotesIDLite=NOTES_ID_HERE%25";
 
 	$sp = strpos($notesId,'/O=IBM');
 
-		if($sp){
+		if($sp != FALSE){
 			$amendIbm2 = urlencode(trim($notesId));
 		} else {
 			$amendIbm = str_replace("/IBM","xxxxx",$notesId);
@@ -218,6 +222,7 @@ class BluePages {
 
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
+		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
@@ -241,6 +246,7 @@ class BluePages {
 					case 'MGRCC':
 					case 'NOTESID':
 					default :
+						;
 						break;
 				}
 			}
@@ -257,11 +263,11 @@ class BluePages {
 			return FALSE;
 		}
 		set_time_limit(120);
-		$url = "http://bluepages.ibm.com/BpHttpApisv3/wsapi?allByNotesIDLite=NOTES_ID_HERE%25";
+		$url = "https://bluepages.ibm.com/BpHttpApisv3/wsapi?allByNotesIDLite=NOTES_ID_HERE%25";
 
 	    $sp = strpos($notesId,'/O=IBM');
 
-		if($sp){
+		if($sp != FALSE){
 			$amendIbm2 = urlencode(trim($notesId));
 		} else {
 			$amendIbm = str_replace("/IBM","xxxxx",$notesId);
@@ -279,6 +285,7 @@ class BluePages {
 
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
+		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
@@ -306,6 +313,7 @@ class BluePages {
 //						print_r($matches);
 						$internetId = trim ( $matches [$cellOffset+1]);
 					default :
+						;
 						break;
 				}
 			}
@@ -326,7 +334,7 @@ class BluePages {
 			return FALSE;
 		}
 		set_time_limit(120);
-		$url = "http://bluepages.ibm.com/BpHttpApisv3/wsapi?byInternetAddr=INTRANET_ID_HERE";
+		$url = "https://bluepages.ibm.com/BpHttpApisv3/wsapi?byInternetAddr=INTRANET_ID_HERE";
 //echo "<BR/>" . str_replace('INTRANET_ID_HERE',urlencode($intranetId),$url);
 		$ch = curl_init ( str_replace('INTRANET_ID_HERE',urlencode($intranetId),$url) );
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -338,6 +346,7 @@ class BluePages {
 
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
+		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;
@@ -361,6 +370,7 @@ class BluePages {
 					case 'MGRCC':
 					case 'NOTESID':
 					default :
+						;
 						break;
 				}
 			}
@@ -373,6 +383,8 @@ class BluePages {
 
 	function lookup($cnum) {
 		$this->CNUM = $cnum;
+		$dept = null;
+
 		$ch = curl_init ( str_replace('CNUM_HERE',$this->CNUM,$this->url) );
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
 
@@ -430,6 +442,8 @@ class BluePages {
 							$this->person [trim ( $matches [$cellOffset] )] = $stripAt ;
 						}
 					default :
+						;
+						break;
 				}
 			}
 
@@ -449,7 +463,6 @@ class BluePages {
 
 	function saveDeptToDb() {
 		if (isset ( $this->dept )) {
-		    $data = array();
 		//	$sql = " INSERT INTO " . $_SESSION ['prefix'] . "." . $this->table . " ( NAME, SERIAL, COUNTRY_CODE, LOCATION, MGR_SERIAL, MGR_CTRY_CODE, REG_OR_SUBCO, INTERNET, EMPTYPE, HRACTIVE, HREMPLOYEETYPE, DEPT, HRFAMILYNAME, NOTESID, JOBRESPONSIB) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)  ";
 
 		//	$preparedInsert = db2_prepare ( $_SESSION ['conn'], $sql );
@@ -474,14 +487,14 @@ class BluePages {
 				$data[12] = $this->dept['HRFAMILYNAME'][$key];
 				$data[13] = $this->dept['NOTESID'][$key];
 				$data[14] = $this->dept['JOBRESPONSIB'][$key];
-				if (stripos ( $data [0], '*FUN')=== false) { // Don't record the Functional Ids.
+				if ((stripos ( $data [0], '*FUN' ) === false)) { // Don't record the Functional Ids.
 					$rs = db2_execute ( $this->preparedInsert, $data );
 					if (! $rs) {
 						echo "<BR>" . db2_stmt_error ();
 						echo "<BR>" . db2_stmt_errormsg () . "<BR>";
 						echo "<BR> Data :";
 						print_r ( $data );
-						exit ( "Unable to Execute prepared SQL Insert" );
+						exit ( "Unable to Execute $sql" );
 					}
 					if($this->online){
 						echo "<BR>" . $data [0];
@@ -506,7 +519,6 @@ class BluePages {
 
 	function savePersonToDb() {
 			$actual = 0;
-			$data = array();
 			$data [0] = substr ( $this->person  ['NAME'], 0, 50 );	 	// Name from BP
 			$data [1] = substr ( $this->person  ['EMPNUM'], 0, 6 );		// 6 Digit Serial
 			$data [2] = substr ( $this->person  ['EMPCC'], 0, 3 ); 		// 3 Digit Country Code
@@ -526,17 +538,18 @@ class BluePages {
 			$data[12] = $this->person['HRFAMILYNAME'];
 			$data[13] = $this->person['NOTESID'];
 			$data[14] = $this->person['JOBRESPONSIB'];
-			if (stripos ( $data [0], '*FUN' ) === false) { // Don't record the Functional Ids.
+			if ((stripos ( $data [0], '*FUN' ) === false)) { // Don't record the Functional Ids.
 				$rs = db2_execute ( $this->preparedInsert, $data );
 				if (! $rs) {
 					echo "<BR>" . db2_stmt_error ();
 					echo "<BR>" . db2_stmt_errormsg () . "<BR>";
 					echo "<BR> Data :";
 					print_r ( $data );
-					exit ( "Unable to Execute prepared Insert" );
+					exit ( "Unable to Execute $sql" );
 				}
 				$actual++ ;
 			}
+			$data = null;
 			if($this->online){
 				echo "<H2>Saved Details for : " . $this->CNUM . " " . $this->person  ['NAME'] . "</H2>";
 			}
@@ -550,14 +563,15 @@ class BluePages {
 		}
 
 	static function processDetails($ch){
-	    $details = array();
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
 		$m = curl_exec ( $ch );
+
 		$pattern = "/# rc/";
 		$results = preg_split ( $pattern, $m );
 		$pattern = "/[=,]/";
 		$resultValues = preg_split ( $pattern, $results [1] );
 
+		$size = $resultValues [3];
 		$found = false;
 		if ($resultValues [3] > 0) {
 			$found = true;

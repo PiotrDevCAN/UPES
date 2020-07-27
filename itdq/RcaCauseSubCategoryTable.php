@@ -17,10 +17,10 @@ class RcaCauseSubCategoryTable extends DbTableTable
     static function getAsXML($predicate = null)
     {
         $sql = " Select * ";
-        $sql .= " FROM " . $_SESSION['Db2Schema'] . "." . AllItdqTables::$RCA_CAUSE_SUB_CATEGORY;
+        $sql .= " FROM " . $GLOBALS['Db2Schema'] . "." . AllItdqTables::$RCA_CAUSE_SUB_CATEGORY;
         $sql .= " WHERE 1=1 " . $predicate;
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if (! $rs) {
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
@@ -101,7 +101,7 @@ class RcaCauseSubCategoryTable extends DbTableTable
         $httpInfo = curl_getinfo($curlHandle);
         if ($httpInfo['http_code'] != '200') {
             var_dump($httpInfo);
-            throw new Exception("Unable to retrive RCA CATEGORIES from DPULSE", 460);
+            throw new \Exception("Unable to retrive RCA CATEGORIES from DPULSE", 460);
         }
 
         $rcaCauseSubCategoryDom = new \DOMDocument();
