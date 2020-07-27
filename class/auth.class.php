@@ -100,6 +100,9 @@
 					for ($i=0; $i < ceil(strlen($encoded)/4); $i++)
 						$decoded = $decoded . base64_decode(substr($encoded,$i*4,4));
 					$userData = json_decode( $decoded, true );
+					
+					error_log(__FILE__ . __LINE__ . "Data:" . print_r($userData,true));
+					
 				} else {
 					return false;
 				}
@@ -123,6 +126,7 @@
 					$_SESSION['lastName'] = $userData['lastName'];
 					$_SESSION['exp'] = $userData['exp'];
 					$_SESSION['uid'] = $userData['uid'];
+					error_log(__FILE__ . __LINE__);
 					return true;
 				}
 				//if using this code on IBM ID
@@ -139,6 +143,7 @@
 					$_SESSION['lastName'] = $userData['family_name'];
 					$_SESSION['exp'] = $userData['exp'];
 					$_SESSION['uid'] = $userData['uniqueSecurityName'];
+					error_log(__FILE__ . __LINE__);
 					return true;
 				}
 				//if something in the future gets changed and the strict checking on top of this is not working any more
@@ -149,9 +154,11 @@
 					//throw new Exception('OpenIDConnect returned values were not correct.');
 					$_SESSION = $userData;
 					$_SESSION['somethingChanged'] = true;
+					error_log(__FILE__ . __LINE__);
 					return true;
 				}
 			}
+			error_log(__FILE__ . __LINE__);
 			return false;
 		}
 
