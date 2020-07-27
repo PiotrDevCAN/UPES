@@ -15,10 +15,10 @@ if(empty($_POST['peslevelref'])){
 }
 
 
-$sql = " DELETE FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PES_LEVELS ;
+$sql = " DELETE FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS ;
 $sql.= " WHERE PES_LEVEL_REF='" . db2_escape_string($_POST['peslevelref']) . "' ";
 
-$rs = db2_exec($_SESSION['conn'], $sql);
+$rs = db2_exec($GLOBALS['conn'], $sql);
 
 if(!$rs){
     DbTable::displayErrorMessage($rs, __CLASS__, __FILE__, $sql);

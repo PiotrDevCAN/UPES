@@ -18,9 +18,9 @@ class ContractTable extends DbTable
 {
     function returnAsArray($predicate=null,$withButtons=true){
         $sql  = " SELECT '' as ACTION, A.ACCOUNT, C.* ";
-        $sql .= " FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName. " as C ";
+        $sql .= " FROM  " . $GLOBALS['Db2Schema'] . "." . $this->tableName. " as C ";
 
-        $sql .= " LEFT JOIN  " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT. " as A ";
+        $sql .= " LEFT JOIN  " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT. " as A ";
         $sql .= " ON C.ACCOUNT_ID = A.ACCOUNT_ID ";
         $sql .= " WHERE 1=1 " ;
         $sql .= !empty($predicate) ? " AND  $predicate " : null ;

@@ -29,7 +29,7 @@ class AccountTable extends DbTable
 
     function returnAsArray($predicate=null,$withButtons=true){
         $sql  = " SELECT '' as ACTION, A.* ";
-        $sql .= " FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName. " as A ";
+        $sql .= " FROM  " . $GLOBALS['Db2Schema'] . "." . $this->tableName. " as A ";
         $sql .= " WHERE 1=1 " ;
         $sql .= !empty($predicate) ? " AND  $predicate " : null ;
 
@@ -74,8 +74,8 @@ class AccountTable extends DbTable
 
 
     static function getAccountNameFromId($accountId){
-        $sql = " SELECT ACCOUNT FROM " . $_SESSION['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT . " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $sql = " SELECT ACCOUNT FROM " . $GLOBALS['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT . " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
+        $rs = db2_exec($GLOBALS['conn'], $sql);
         $row = db2_fetch_assoc($rs);
         return trim($row['ACCOUNT']);
     }

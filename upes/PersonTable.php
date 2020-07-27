@@ -11,8 +11,8 @@ class PersonTable extends DbTable
 
    function returnAsArray($predicate=null,$withButtons=true){
         $sql  = " SELECT '' as ACTION, P.*, PL.PES_LEVEL as PES_LEVEL_TXT, PL.PES_LEVEL_DESCRIPTION ";
-        $sql .= " FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName. " as P ";
-        $sql .= " LEFT JOIN " .  $_SESSION['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
+        $sql .= " FROM  " . $GLOBALS['Db2Schema'] . "." . $this->tableName. " as P ";
+        $sql .= " LEFT JOIN " .  $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
         $sql .= " ON P.PES_LEVEL = PL.PES_LEVEL_REF ";
         $sql .= " WHERE 1=1 " ;
         $sql .= !empty($predicate) ? " AND  $predicate " : null ;
@@ -46,8 +46,8 @@ class PersonTable extends DbTable
     static function prepareJsonKnownEmailLookup(){
         $allEmail =  array();
 
-        $sql = " Select distinct lower(EMAIL_ADDRESS) as EMAIL_ADDRESS from " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON;
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $sql = " Select distinct lower(EMAIL_ADDRESS) as EMAIL_ADDRESS from " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON;
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         while(($row=db2_fetch_assoc($rs))==true){
             $allEmail[] = trim($row['EMAIL_ADDRESS']);
@@ -58,8 +58,8 @@ class PersonTable extends DbTable
     static function prepareJsonUpesrefToNameMapping(){
         $allNames =  array();
 
-        $sql = " Select distinct UPES_REF, FULL_NAME from " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON;
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $sql = " Select distinct UPES_REF, FULL_NAME from " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON;
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         while(($row=db2_fetch_assoc($rs))==true){
             $allNames[$row['UPES_REF']] = trim($row['FULL_NAME']);
@@ -69,11 +69,11 @@ class PersonTable extends DbTable
 
 
     static function getEmailFromUpesref($upesref){
-        $sql = " SELECT EMAIL_ADDRESS FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON;
+        $sql = " SELECT EMAIL_ADDRESS FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON;
         $sql.= " WHERE UPES_REF = '" . db2_escape_string(strtoupper(trim($upesref))) . "' ";
         $sql.= " FETCH FIRST 1 ROW ONLY ";
 
-        $resultSet = db2_exec($_SESSION['conn'], $sql);
+        $resultSet = db2_exec($GLOBALS['conn'], $sql);
         if(!$resultSet){
             DbTable::displayErrorMessage($resultSet, __CLASS__, __METHOD__, $sql);
             return false;
@@ -85,10 +85,10 @@ class PersonTable extends DbTable
 
     static function getNamesFromUpesref($upesref){
         $sql = " SELECT case when P.PASSPORT_FIRST_NAME is null then P.FULL_NAME else P.PASSPORT_FIRST_NAME concat ' ' concat P.PASSPORT_LAST_NAME end as FULL_NAME ";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
         $sql.= " WHERE P.UPES_REF = '" . db2_escape_string(strtoupper(trim($upesref))) . "' ";
 
-        $resultSet = db2_exec($_SESSION['conn'], $sql);
+        $resultSet = db2_exec($GLOBALS['conn'], $sql);
         if(!$resultSet){
             DbTable::displayErrorMessage($resultSet, __CLASS__, __METHOD__, $sql);
             return false;
@@ -102,14 +102,14 @@ class PersonTable extends DbTable
 
     function setPesPassportNames($upesref,$passportFirstname=null,$passportSurname=null){
 
-        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql.= " SET PASSPORT_FIRST_NAME=";
         $sql.= !empty($passportFirstname) ? "'" . db2_escape_string($passportFirstname) . "', " : " null, ";
         $sql.= " PASSPORT_SURNAME=";
         $sql.= !empty($passportSurname) ? "'" . db2_escape_string($passportSurname) . "'  " : " null ";
         $sql.= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' ";
 
-        $rs = db2_exec($_SESSION['conn'],$sql);
+        $rs = db2_exec($GLOBALS['conn'],$sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
@@ -126,11 +126,11 @@ class PersonTable extends DbTable
         $cnumString = "('" . $cnumString . "') ";
 
         $sql = " UPDATE ";
-        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$PERSON;
+        $sql.= $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON;
         $sql.= " SET BLUEPAGES_STATUS='" . PersonRecord::BLUEPAGES_STATUS_FOUND . "' ";
         $sql.= " WHERE BLUEPAGES_STATUS is null AND CNUM in " . $cnumString;
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
         }
@@ -141,11 +141,11 @@ class PersonTable extends DbTable
         $cnumString = implode("','", $arrayOfCnum);
         $cnumString = "('" . $cnumString . "') ";
         $sql = " UPDATE ";
-        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$PERSON;
+        $sql.= $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON;
         $sql.= " SET BLUEPAGES_STATUS='" . PersonRecord::BLUEPAGES_STATUS_NOT_FOUND . "' ";
         $sql.= " WHERE CNUM in " . $cnumString;
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
         }
@@ -155,15 +155,15 @@ class PersonTable extends DbTable
         $cnumString = implode("','", $arrayOfCnum);
         $cnumString = "('" . $cnumString . "') ";
         $sql = " UPDATE ";
-        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
         $sql.= " SET AP.PES_STATUS='" . AccountPersonRecord::PES_STATUS_LEFT_IBM . "' ";
         $sql.= " WHERE UPES_REF in (";
         $sql.= "   SELECT UPES_REF ";
-        $sql.= "   FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        $sql.= "   FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
         $sql.= "   WHERE P.CNUM in " . $cnumString;
         $sql.= " ) ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
         }
@@ -176,20 +176,20 @@ class PersonTable extends DbTable
         $cnumString = implode("','", $arrayOfCnum);
         $cnumString = "('" . $cnumString . "') ";
         $sql = " SELECT P.UPES_REF, AP.ACCOUNT_ID, A.ACCOUNT, AP.PES_STATUS, P.FULL_NAME, P.CNUM  ";
-        $sql.= " FROM " .  $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " FROM " .  $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
         $sql.= " LEFT JOIN ";
-        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        $sql.= $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
         $sql.= " LEFT JOIN ";
-        $sql.= $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
         $sql.= " WHERE P.UPES_REF in (";
         $sql.= "   SELECT P2.UPES_REF ";
-        $sql.= "   FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P2 ";
+        $sql.= "   FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P2 ";
         $sql.= "   WHERE P2.CNUM in " . $cnumString;
         $sql.= " ) ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
         }
@@ -211,14 +211,14 @@ class PersonTable extends DbTable
         $cnumString = "('" . $cnumString . "') ";
 
         $sql = " SELECT P.CNUM, P.FULL_NAME, A.ACCOUNT, AP.PES_STATUS, AP.PES_CLEARED_DATE, AP.PES_RECHECK_DATE ";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
-        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
         $sql.= " ON P.UPES_REF = AP.UPES_REF ";
-        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
         $sql.= " ON A.ACCOUNT_ID =  AP.ACCOUNT_ID ";
         $sql.= " WHERE CNUM in " . $cnumString;
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
         }

@@ -15,10 +15,10 @@ if(empty($_POST['accountid'])){
 }
 
 
-$sql = " DELETE FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT ;
+$sql = " DELETE FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT ;
 $sql.= " WHeRE ACCOUNT_ID='" . db2_escape_string($_POST['accountid']) . "' ";
 
-$rs = db2_exec($_SESSION['conn'], $sql);
+$rs = db2_exec($GLOBALS['conn'], $sql);
 
 if(!$rs){
     DbTable::displayErrorMessage($rs, __CLASS__, __FILE__, $sql);

@@ -23,7 +23,7 @@ class CountryTable extends DbTable
 
     function returnAsArray($predicate=null,$withButtons=true){
         $sql  = " SELECT '' as ACTION, C.* ";
-        $sql .= " FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName. " as C ";
+        $sql .= " FROM  " . $GLOBALS['Db2Schema'] . "." . $this->tableName. " as C ";
         $sql .= " WHERE 1=1 " ;
         $sql .= !empty($predicate) ? " AND  $predicate " : null ;
 
@@ -63,10 +63,10 @@ class CountryTable extends DbTable
 
     static function getEmailBodyNameForCountry($country){
         $sql = " SELECT EMAIL_BODY_NAME";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$COUNTRY;
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$COUNTRY;
         $sql.= " WHERE COUNTRY='" . db2_escape_string($country). "' ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
@@ -83,10 +83,10 @@ class CountryTable extends DbTable
 
     static function getAdditionalAttachmentsNameCountry($country){
         $sql = " SELECT COUNTRY, ADDITIONAL_APPLICATION_FORM ";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$COUNTRY;
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$COUNTRY;
         $sql.= " WHERE COUNTRY='" . db2_escape_string($country). "' ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);

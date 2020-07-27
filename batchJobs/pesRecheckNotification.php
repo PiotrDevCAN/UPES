@@ -22,4 +22,4 @@ $accountPersonTable->notifyRecheckDateApproaching();
 AuditTable::audit("PES Recheck email to PES Team - completed.",AuditTable::RECORD_TYPE_DETAILS);
 $slack->sendMessageToChannel("PES Recheck email to PES Team - completed.", slack::CHANNEL_UPES_AUDIT);
 
-db2_commit($_SESSION['conn']);
+db2_commit($GLOBALS['conn']);

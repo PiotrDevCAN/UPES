@@ -126,12 +126,12 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $sql.= ", PL.PES_LEVEL_DESCRIPTION ";
 
 
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
-        $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
         $sql.= " ON P.UPES_REF = AP.UPES_REF ";
-        $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
-        $sql.= " left join " . $_SESSION['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
         $sql.= " ON AP.PES_LEVEL = PL.PES_LEVEL_REF ";
 
         $sql.= " WHERE 1=1 ";
@@ -140,7 +140,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $sql.= !empty($upesRef) ? " AND AP.UPES_REF='" . db2_escape_string($upesRef)  . "' " : null;
         $sql.= !empty($accountId) ? " AND AP.ACCOUNT_ID='" . db2_escape_string($accountId)  . "' " : null;
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
@@ -363,13 +363,13 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 //         if(!empty($_SESSION['preparedStageUpdateStmts'][strtoupper(db2_escape_string($stage))] )) {
 //             return $_SESSION['preparedStageUpdateStmts'][strtoupper(db2_escape_string($stage))];
 //         }
-        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql.= " SET " . strtoupper(db2_escape_string($stage)) . " = ? ";
         $sql.= " WHERE ACCOUNT_ID= ? and UPES_REF=? ";
 
         $this->preparedSelectSQL = $sql;
 
-        $preparedStmt = db2_prepare($_SESSION['conn'], $sql);
+        $preparedStmt = db2_prepare($GLOBALS['conn'], $sql);
 
         if($preparedStmt){
             $_SESSION['preparedStageUpdateStmts'][strtoupper(db2_escape_string($stage))] = $preparedStmt;
@@ -393,11 +393,11 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         }
 
 
-        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql.= " SET COMMENT='" . db2_escape_string($newComment) . "' ";
         $sql.= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($account_id) . "' ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
@@ -412,10 +412,10 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 //             return $_SESSION['preparedGetPesCommentStmt'];
 //         }
 
-        $sql = " SELECT COMMENT FROM " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql = " SELECT COMMENT FROM " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql.= " WHERE UPES_REF=?  and ACCOUNT_ID = ? ";
 
-        $preparedStmt = db2_prepare($_SESSION['conn'], $sql);
+        $preparedStmt = db2_prepare($GLOBALS['conn'], $sql);
 
         if($preparedStmt){
             $_SESSION['preparedGetPesCommentStmt'] = $preparedStmt;
@@ -444,12 +444,12 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
     function savePesPriority($upesRef, $accountId,$pesPriority=null){
 
-        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql.= " SET PRIORITY=";
         $sql.= !empty($pesPriority) ? "'" . db2_escape_string($pesPriority) . "' " : " null, ";
         $sql.= " WHERE UPES_REF='" . db2_escape_string($upesRef) . "' and ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
 
-        $rs = db2_exec($_SESSION['conn'],$sql);
+        $rs = db2_exec($GLOBALS['conn'],$sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
@@ -568,13 +568,13 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         if(!empty($_SESSION['preparedProcessStatusUpdate'] )) {
             return $_SESSION['prepareProcessStatusUpdate'];
         }
-        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql.= " SET PROCESSING_STATUS =?, PROCESSING_STATUS_CHANGED = current timestamp ";
         $sql.= " WHERE UPES_REF=? AND ACCOUNT_ID=?";
 
         $this->preparedSelectSQL = $sql;
 
-        $preparedStmt = db2_prepare($_SESSION['conn'], $sql);
+        $preparedStmt = db2_prepare($GLOBALS['conn'], $sql);
 
         if($preparedStmt){
             $_SESSION['prepareProcessStatusUpdate'] = $preparedStmt;
@@ -601,11 +601,11 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
     function setPesDateLastChased($upesref, $accountId, $dateLastChased){
 
-        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql.= " SET DATE_LAST_CHASED=DATE('" . db2_escape_string($dateLastChased) . "') ";
         $sql.= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountId)  . "' ";
 
-        $rs = db2_exec($_SESSION['conn'],$sql);
+        $rs = db2_exec($GLOBALS['conn'],$sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
@@ -617,8 +617,8 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
     function setPesStatus($upesref=null,$accountid= null, $status=null,$requestor=null, $pesStatusDetails=null,$dateToUse=null){
 
-        $db2AutoCommit = db2_autocommit($_SESSION['conn']);
-        db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_OFF);
+        $db2AutoCommit = db2_autocommit($GLOBALS['conn']);
+        db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
 
         $dateToUse = empty($dateToUse) ? " current date " : " date('" . db2_escape_string($dateToUse) . "') ";
 
@@ -648,13 +648,13 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
                 $dateField = 'PES_DATE_RESPONDED';
                 break;
         }
-        $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql  = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql .= " SET $dateField = $dateToUse , PES_STATUS='" . db2_escape_string($status)  . "' ";
         $sql .= !empty($pesStatusDetails) ? " , PES_STATUS_DETAILS='" . db2_escape_string($pesStatusDetails) . "' " : null;
         $sql .= trim($status)==AccountPersonRecord::PES_STATUS_STARTER_REQUESTED ? ", PES_REQUESTOR='" . db2_escape_string($requestor) . "' " : null;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' and ACCOUNT_ID='" . db2_escape_string($accountid)  . "' ";
 
-        $result = db2_exec($_SESSION['conn'], $sql);
+        $result = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$result){
             DbTable::displayErrorMessage($result, __CLASS__, __METHOD__, $sql);
@@ -667,8 +667,8 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         AuditTable::audit("PES Status set for:" . $upesref . "/" . $accountid ." To : " . $status . " By:" . $requestor,AuditTable::RECORD_TYPE_AUDIT);
 
 
-        db2_commit($_SESSION['conn']);
-        db2_autocommit($_SESSION['conn'],$db2AutoCommit);
+        db2_commit($GLOBALS['conn']);
+        db2_autocommit($GLOBALS['conn'],$db2AutoCommit);
 
 
         return true;
@@ -695,10 +695,10 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
             }
         }
 
-        $sql  = " SELECT PES_CLEARED_DATE FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql  = " SELECT PES_CLEARED_DATE FROM  " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
 
-        $cleared = db2_exec($_SESSION['conn'], $sql);
+        $cleared = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$cleared){
             DbTable::displayErrorMessage($cleared, __CLASS__, __METHOD__, $sql);
@@ -710,21 +710,21 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $pes_cleared_obj = !empty($row['PES_CLEARED_DATE']) ? \DateTime::createFromFormat('Y-m-d', $row['PES_CLEARED_DATE']) : new \DateTime();
         $pes_cleared_sql = "DATE('" . $pes_cleared_obj->format('Y-m-d') . "') ";
 
-        $sql  = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql  = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql .= " SET PES_RECHECK_DATE = $pes_cleared_sql  +  $pesRecheckPeriod  years " ;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
 
-        $result = db2_exec($_SESSION['conn'], $sql);
+        $result = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$result){
             DbTable::displayErrorMessage($result, __CLASS__, __METHOD__, $sql);
             return false;
         }
 
-        $sql  = " SELECT PES_RECHECK_DATE FROM  " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql  = " SELECT PES_RECHECK_DATE FROM  " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
 
-        $res = db2_exec($_SESSION['conn'], $sql);
+        $res = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$res){
             DbTable::displayErrorMessage($result, __CLASS__, __METHOD__, $sql);
@@ -840,14 +840,14 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
     static function cancelPesRequest( $accountId=null, $upesref=null){
 
-        db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_OFF);
+        db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
 
-        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
         $sql.= " SET PES_STATUS='" . AccountPersonRecord::PES_STATUS_CANCEL_REQ . "' ";
         $sql.= " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
         $sql.= " AND UPES_REF='" . db2_escape_string($upesref) . "' ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
@@ -855,12 +855,12 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         }
 
         $sql = " SELECT * ";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
         $sql.= " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
         $sql.= " AND UPES_REF='" . db2_escape_string($upesref) . "' ";
 
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
@@ -876,22 +876,22 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
         $accountPersonRecord->sendPesStatusChangedEmail();
 
-        db2_commit($_SESSION['conn']);
-        db2_autocommit($_SESSION['conn'],DB2_AUTOCOMMIT_ON);
+        db2_commit($GLOBALS['conn']);
+        db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_ON);
 
 
     }
 
     function notifyRecheckDateApproaching(){
         $slack = new slack();
-        $localConnection = $_SESSION['conn']; // So we can keep reading this RS whilst making updates to the TRACKER TABLE.
-        include "connect.php"; // get new connection on $_SESSION['conn'];
+        $localConnection = $GLOBALS['conn']; // So we can keep reading this RS whilst making updates to the TRACKER TABLE.
+        include "connect.php"; // get new connection on $GLOBALS['conn'];
 
         $sql = " SELECT AP.ACCOUNT_ID, A.ACCOUNT, AP.UPES_REF, P.CNUM, P.EMAIL_ADDRESS, P.FULL_NAME,  AP.PES_STATUS, AP.PES_RECHECK_DATE ";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . allTables::$ACCOUNT_PERSON . " as AP ";
-        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . allTables::$PERSON . " as P ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . allTables::$ACCOUNT_PERSON . " as AP ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . allTables::$PERSON . " as P ";
         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
-        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . allTables::$ACCOUNT . " as A ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . allTables::$ACCOUNT . " as A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
         $sql.= " WHERE 1=1 ";
         $sql.= " AND AP.PES_STATUS != '" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "' ";
@@ -939,7 +939,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
             return $this->preparedResetForRecheck;
         }
 
-        $sql = " UPDATE " . $_SESSION['Db2Schema'] . "." . $this->tableName;
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
         $sql.= " SET PROCESSING_STATUS = 'PES' ";
         // CONSENT = null, RIGHT_TO_WORK = null, PROOF_OF_ID = null, PROOF_OF_RESIDENCY= null, CREDIT_CHECK= null,FINANCIAL_SANCTIONS= null ";
         // $sql.= " , CRIMINAL_RECORDS_CHECK= null, PROOF_OF_ACTIVITY= null
@@ -949,7 +949,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $sql.= " ,  PROCESSING_STATUS_CHANGED= current timestamp, DATE_LAST_CHASED = null ";
         $sql.= " WHERE ACCOUNT_ID = ?  AND UPES_REF = ? ";
 
-        $preparedStmt = db2_prepare($_SESSION['conn'], $sql);
+        $preparedStmt = db2_prepare($GLOBALS['conn'], $sql);
 
         if($preparedStmt){
             $this->preparedResetForRecheck = $preparedStmt;
@@ -963,18 +963,18 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
     static function statusByAccount(){
         $sql = " SELECT A.ACCOUNT, AP.PES_STATUS, count(*) as RESOURCES ";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
-        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
 
-//         $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+//         $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
 //         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
 //         $sql.= " WHERE P.BLUEPAGES = 'found' or P.BLUEPAGES is null ";
 
         $sql.= " GROUP by ACCOUNT, PES_STATUS ";
         $sql.= " ORDER by ACCOUNT ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
@@ -992,18 +992,18 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
     static function processStatusByAccount(){
         $sql = " SELECT A.ACCOUNT, AP.PROCESSING_STATUS, count(*) as RESOURCES ";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
-        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
 
-        //         $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        //         $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
         //         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
         //         $sql.= " WHERE P.BLUEPAGES = 'found' or P.BLUEPAGES is null ";
 
         $sql.= " GROUP by ACCOUNT, PROCESSING_STATUS ";
         $sql.= " ORDER by ACCOUNT ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
@@ -1021,18 +1021,18 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
     static function upcomingRechecksByAccount(){
         $sql = " SELECT A.ACCOUNT, YEAR(PES_RECHECK_DATE) as YEAR, MONTH(PES_RECHECK_DATE) as MONTH, count(*) as RESOURCES ";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
-        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
 
-        //         $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        //         $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
         //         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
         $sql.= " WHERE DATE(PES_RECHECK_DATE) >= CURRENT DATE - 1 month ";
         $sql.= " AND DATE(PES_RECHECK_DATE) <= CURRENT DATE + 5 MONTHS ";
         $sql.= " GROUP by ACCOUNT, YEAR(PES_RECHECK_DATE), MONTH(PES_RECHECK_DATE) ";
         $sql.= " ORDER by ACCOUNT ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
@@ -1052,15 +1052,15 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
     static function getEmailAddressAccountArray(){
         $data = array();
         $sql = " SELECT P.EMAIL_ADDRESS, A.ACCOUNT, P.UPES_REF, A.ACCOUNT_ID ";
-        $sql.= " FROM " . $_SESSION['Db2Schema'] . "." . \upes\AllTables::$PERSON . " as P ";
-        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . \upes\AllTables::$PERSON . " as P ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT_PERSON . " AS AP ";
         $sql.= " ON P.UPES_REF = AP.UPES_REF ";
-        $sql.= " LEFT JOIN " . $_SESSION['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT . " AS A ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT . " AS A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
         $sql.= " WHERE AP.ACCOUNT_ID is not null ";
         $sql.= " ORDER BY EMAIL_ADDRESS, ACCOUNT ";
 
-        $rs = db2_exec($_SESSION['conn'], $sql);
+        $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
