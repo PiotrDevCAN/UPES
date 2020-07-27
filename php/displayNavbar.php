@@ -12,7 +12,7 @@ $plannedOutages = new PlannedOutages();
 include ('UserComms/responsiveOutages_V2.php');
 
 $navBarImage = ""; //a small image to displayed at the top left of the nav bar
-$navBarBrand = array(strtoupper($_SERVER['environment']),"index.php");
+$navBarBrand = array(strtoupper($_ENV['environment']),"index.php");
 $navBarSearch = false;
 
 $pageDetails = explode("/", $_SERVER['PHP_SELF']);
@@ -78,9 +78,9 @@ $isCdi       = employee_in_group($_SESSION['cdiBg'],  $_SESSION['ssoEmail']) ? "
 $isPesTeam   = employee_in_group($_SESSION['pesTeamBg'],  $_SESSION['ssoEmail']) ? ".not('.accessPesTeam')" : null;
 $isUser      = ".not('.accessUser')";
 
-$isCdi        = stripos($_SERVER['environment'], 'dev') ? ".not('.accessCdi')"        : $isCdi;
-$isPesTeam    = stripos($_SERVER['environment'], 'dev')  ? ".not('.accessPesTeam')"   : $isPesTeam;
-$isUser       = stripos($_SERVER['environment'], 'dev')  ? ".not('.accessUser')"      : $isUser;
+$isCdi        = stripos($_ENV['environment'], 'dev') ? ".not('.accessCdi')"        : $isCdi;
+$isPesTeam    = stripos($_ENV['environment'], 'dev')  ? ".not('.accessPesTeam')"   : $isPesTeam;
+$isUser       = stripos($_ENV['environment'], 'dev')  ? ".not('.accessUser')"      : $isUser;
 
 
 $_SESSION['isCdi']       = !empty($isCdi)     ? true : false;

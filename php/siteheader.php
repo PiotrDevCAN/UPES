@@ -15,6 +15,7 @@ while(ob_get_level()>0){
     ob_end_clean();
 }
 ob_start();
+$GLOBALS['Db2Schema'] = strtoupper($_ENV['environment']);
 $https = (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == "on");
 
 // Only keep login data available via secure sessions
@@ -167,7 +168,7 @@ function do_error($page = array())
 function do_auth($group = null)
 {
 
-if(stripos($_SERVER['environment'], 'dev')) {
+    if(stripos($_ENV['environment'], 'dev')) {
 //if(true) {
     $_SESSION['ssoEmail'] = $_SERVER['SERVER_ADMIN'];
     $_SESSION['ssoEmail'] = $_SERVER['SERVER_ADMIN'];
