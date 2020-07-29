@@ -19,8 +19,7 @@ $emailAddress = $_POST['emailaddress'];
 
 $pesEmailObj = new PesEmail();
 $emailResponse = $pesEmailObj->sendPesEmailChaser($upesref, $account, $emailAddress, $_POST['chaser'], $_POST['requestor']);
-
-$emailStatus = $emailResponse['Status']->status;
+$emailStatus = $emailResponse['Status'];
 
 $messages = ob_get_contents();
 $success = strlen($messages)==0;
@@ -30,9 +29,9 @@ $response['messages'] = $messages;
 $response['emailResponse'] = $emailResponse;
 $response['pesStatus'] = AccountPersonRecord::PES_STATUS_PES_PROGRESSING;
 
-if($success){
-    $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+$pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 
+if($success){    
     $dateObj = new DateTime();
     $dateLastChased = $dateObj->format('Y-m-d');
     $pesTracker->setPesDateLastChased($upesref, $accountId, $dateLastChased);
