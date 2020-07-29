@@ -23,8 +23,8 @@ try {
 
     $sendResponse = PesEmail::sendPesApplicationForms($_POST['account'], $_POST['country'], $personRecordData['CNUM'],  $personRecordData['FULL_NAME'], $names[0],array($personRecordData['EMAIL_ADDRESS']));
 
-    $accountPersonTable->setPesStatus($_POST['upesref'],$_POST['accountid'],AccountPersonRecord::PES_STATUS_PES_PROGRESSING,'PES Application form sent:' . $sendResponse['Status']->status);
-    $accountPersonTable->savePesComment($_POST['upesref'],$_POST['accountid'],  "PES application forms sent:" . $sendResponse['Status']->status );
+    $accountPersonTable->setPesStatus($_POST['upesref'],$_POST['accountid'],AccountPersonRecord::PES_STATUS_PES_PROGRESSING,'PES Application form sent:' . $sendResponse['Status']);
+    $accountPersonTable->savePesComment($_POST['upesref'],$_POST['accountid'],  "PES application forms sent:" . $sendResponse['Status'] );
 
     $accountPersonTable->setPesProcessStatus($_POST['upesref'],$_POST['accountid'],AccountPersonTable::PROCESS_STATUS_USER);
     $accountPersonTable->savePesComment($_POST['upesref'],$_POST['accountid'],  "Process Status set to " . AccountPersonTable::PROCESS_STATUS_USER );
