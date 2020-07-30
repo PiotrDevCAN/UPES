@@ -34,6 +34,7 @@ try {
 }
 
 $messages = ob_get_clean();
+ob_start();
 $success = empty($messages);
 if($success){
     $messages = " Person: " . $personRecordData['EMAIL_ADDRESS'] . "<br/> uPES Ref:" . $upesRef . "<br/>";

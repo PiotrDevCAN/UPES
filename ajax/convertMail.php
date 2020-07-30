@@ -14,6 +14,7 @@ foreach ($emailAddresses as $email) {
 }
 
 $messages = ob_get_clean();
+ob_start();
 $success = empty($messages);
 
 $response = array('success'=>$success,'converted' => $convertedEmail, 'messages'=>$messages);

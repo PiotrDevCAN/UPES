@@ -65,6 +65,7 @@ try {
 }
 
 $messages = ob_get_clean();
+ob_start();
 $success = empty($messages);
 
 $response = array('success'=>$success,'Messages'=>$messages,'Notification'=>$notificationStatus,'email'=>$_SERVER['email'],'emailNotification'=>$_POST['emailNotification']);

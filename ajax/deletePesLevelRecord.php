@@ -25,6 +25,7 @@ if(!$rs){
 }
 
 $messages = ob_get_clean();
+ob_start();
 $success = $rs && empty($messages);
 
 $response = array('success'=>$success,'peslevelref' => $_POST['peslevelref'], 'Messages'=>$messages);

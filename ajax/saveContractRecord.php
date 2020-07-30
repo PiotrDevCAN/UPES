@@ -34,6 +34,7 @@ try {
 }
 
 $messages = ob_get_clean();
+ob_start();
 $success = empty($messages);
 if($success){
     $messages = " Account: " . $contractRecordData['ACCOUNT'] . "<br/>Contract: " . $contractRecordData['CONTRACT'] . "<br/>Contract Id:" . $contractId . "<br/>";

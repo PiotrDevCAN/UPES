@@ -25,11 +25,13 @@ if(!$rs){
 }
 
 $messages = ob_get_clean();
+ob_start();
 $success = $rs && empty($messages);
 
 $response = array('success'=>$success,'contractId' => $contractId, 'Messages'=>$messages);
 
 ob_clean();
+
 echo json_encode($response);
 
 Trace::pageLoadComplete($_SERVER['PHP_SELF']);

@@ -37,6 +37,7 @@ try {
 }
 
 $messages = ob_get_clean();
+ob_start();
 $success = empty($messages);
 if($success){
     $messages = " Account: " . $pesLevelRecordData['ACCOUNT'] . "<br/>Pes Level: " . $pesLevelRecordData['PES_LEVEL'] . "<br/>Pes Level Ref:" . $pesLevelRef . "<br/>";

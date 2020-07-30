@@ -35,13 +35,14 @@ try {
 }
 
 $messages = ob_get_clean();
+ob_start();
 $success = empty($messages);
 if($success){
     $messages = " Person: " . $accountPersonRecordData['FULL_NAME'] . "<br/> Will be PES Cleared for :" . $allAccounts[$accountPersonRecordData['ACCOUNT_ID']] . "<br/>";
     $messages.= $_POST['mode']==FormClass::$modeDEFINE ? "Created" : "Updated" ;
 }
 
-$response = array('success'=>$success,'upesref' => $upesRef, 'saveResponse' => $saveRecord, 'Messages'=>$messages,'emailResponse'=>$emailResponse);
+$response = array('success'=>$success,'saveResponse' => $saveRecord, 'Messages'=>$messages,'emailResponse'=>$emailResponse);
 
 ob_clean();
 echo json_encode($response);

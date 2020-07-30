@@ -15,6 +15,7 @@ $accountsTable = new AccountTable(AllTables::$ACCOUNT);
 $data = $accountsTable->returnAsArray();
 
 $messages = ob_get_clean();
+ob_start();
 $Success = empty($messages);
 
 $response = array('data'=>$data,'success'=>$Success,'messages'=>$messages);

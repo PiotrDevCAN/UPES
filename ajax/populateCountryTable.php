@@ -15,6 +15,7 @@ $countryTable = new CountryTable(AllTables::$COUNTRY);
 $data = $countryTable->returnAsArray();
 
 $messages = ob_get_clean();
+ob_start();
 $Success = empty($messages);
 
 $response = array('data'=>$data,'success'=>$Success,'messages'=>$messages);

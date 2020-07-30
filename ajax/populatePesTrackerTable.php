@@ -20,6 +20,7 @@ if($dataJsonAble) {
 } else {
     var_dump($dataJsonAble);
     $messages = ob_get_clean();
+    ob_start();
     $success = empty($messages);
     $response = array("success"=>$success,'messages'=>$messages);
     echo json_encode($response);

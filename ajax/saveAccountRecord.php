@@ -34,6 +34,7 @@ try {
 }
 
 $messages = ob_get_clean();
+ob_start();
 $success = empty($messages);
 if($success){
     $messages = " Account: " . $accountRecordData['ACCOUNT'] . "<br/>Account Id:" . $accountId . "<br/><br/>PES Taskid:" . $accountRecordData['TASKID'] . "<br/>";

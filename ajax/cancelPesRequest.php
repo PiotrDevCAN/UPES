@@ -15,6 +15,7 @@ ob_start();
 $cancelResponse = AccountPersonTable::cancelPesRequest($_POST['accountid'],$_POST['upesref']);
 
 $messages = ob_get_clean();
+ob_start();
 $success = empty($messages);
 $response = array('success'=>$success, 'cancelResponse' => $cancelResponse, 'Messages'=>$messages);
 

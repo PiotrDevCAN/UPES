@@ -19,6 +19,7 @@ $personRecord->displayForm(FormClass::$modeEDIT);
 $form = ob_get_clean();
 
 $messages = ob_get_clean();
+ob_start();
 $success = empty($messages);
 $response = array('success'=>$success,'form' => $form, 'Messages'=>$messages,'country'=>$personData['COUNTRY'],'status'=>$personData['IBM_STATUS'],'cnum'=>$personData['CNUM']);
 

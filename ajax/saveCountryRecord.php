@@ -40,6 +40,7 @@ if($success){
 ob_start();
 $countryRecord->iterateVisible();
 $record = ob_get_clean();
+ob_start();
 
 
 $response = array('success'=>$success,'saveResponse' => $saveRecord, 'Messages'=>$messages,'record'=>$record);
