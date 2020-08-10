@@ -160,11 +160,13 @@ $(document).ready(function(){
 		  	success: function(response) {
 			  	var resultObj = JSON.parse(response);
 			  	console.log(resultObj);
+			  	
 			  	$('.spinning').removeClass('spinning').attr('disabled',false	);
 
 			  	var message = resultObj.success ? "<br/>Status Update Successful" : "<br/>Status Update Failed";
  			  	    message+= resultObj.emailNotification !='suppress' ? "<br/>Email Notification was Enabled" : "<br/>Email Notification was Suppressed";
 				    message+= resultObj.success && resultObj.emailNotification !='suppress' ? "<br/>" + resultObj.Notification : '';
+				    message+= "<br/>" + resultObj.Messages;
 				$('#updateReport').html(message);
 				$('#showUpdateResultModal').modal('show');
 

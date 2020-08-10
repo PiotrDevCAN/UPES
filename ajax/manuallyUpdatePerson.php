@@ -49,7 +49,8 @@ try {
                 $accountPersonRecord->setFromArray($personData);
 
                 $emailResponse = $accountPersonRecord->sendPesStatusChangedEmail();
-                $notificationStatus = $emailResponse ? 'Email sent' : 'No email sent';
+                              
+                $notificationStatus = $emailResponse ? $emailResponse['sendResponse']['response']  : 'Error sending Pes Status Changed Email';
                 break;
             default:
                 $notificationStatus = 'Email not applicable(other)';
@@ -63,6 +64,9 @@ try {
     echo $e->getMessage();
     print_r($e->getTrace());
 }
+
+
+print_r($emailResponse['sendResponse']['response'],true);
 
 $messages = ob_get_clean();
 ob_start();

@@ -20,11 +20,16 @@ class BlueMail
         , array $attachments=array())
     {
      
-        $emailLogRecordID = null;
 
-        $cleanedTo = $to;
-        $cleanedCc = array_diff($cc,$cleanedTo, $bcc); // We can't CC/BCC someone already in the TO list.
-        $cleanedBcc = array_diff($bcc,$cleanedTo,$cleanedCc);
+        $cleanedTo  = array_unique(array_map('strtolower',$to));
+        $cleanedCc  = array_unique(array_diff(array_map('strtolower',$cc),$cleanedTo,array_map('strtolower',$bcc))); // We can't CC/BCC someone already in the TO list.
+        $cleanedBcc = array_unique(array_diff(array_map('strtolower',$bcc),$cleanedTo,$cleanedCc));
+        
+        if (isset(AllItdqTables::$EMAIL_LOG)) {
+            $emailLogRecordID = self::prelog($cleanedTo, $subject, $message, null, $cleanedCc, $cleanedBcc);
+        }
+        
+        
         
         $status = '';
         $resp = true;
@@ -35,21 +40,54 @@ class BlueMail
             if(!empty(trim($emailAddress))){
                 $resp = $resp ? $mail->addAddress($emailAddress) : $resp;
             }
+            if(!$resp){
+                $status = "Errored";
+                $response = array('response'=>"Message has not been sent. Unable to addAddress $emailAddress");
+                $responseObject = json_encode($response);
+                if ($emailLogRecordID) {
+                    self::updatelog($emailLogRecordID, $responseObject);
+                }
+                return array('sendResponse' => $response, 'Status'=>$status);
+            }
         }
         
+
 
 
         foreach ($cleanedCc as $emailAddress){
             if(!empty(trim($emailAddress))){
                 $resp = $resp ? $mail->addCC($emailAddress) : $resp;
             }
+            if(!$resp){
+                $status = "Errored";
+                $response = array('response'=>"Message has not been sent.  Unable to addCC $emailAddress");
+                $responseObject = json_encode($response);
+                if ($emailLogRecordID) {
+                    self::updatelog($emailLogRecordID, $responseObject);
+                }
+                return array('sendResponse' => $response, 'Status'=>$status);
+            }            
         }
+                
+        
         
         foreach ($cleanedBcc as $emailAddress){
             if(!empty(trim($emailAddress))){
                 $resp = $resp ? $mail->addBCC($emailAddress) : $resp;
             }
+            if(!$resp){
+                $status = "Errored";
+                $response = array('response'=>"Message has not been sent.  Unable to addBCC $emailAddress");
+                $responseObject = json_encode($response);
+                if ($emailLogRecordID) {
+                    self::updatelog($emailLogRecordID, $responseObject);
+                }                
+                return array('sendResponse' => $response, 'Status'=>$status);
+            }
         }
+        
+
+        
         $mail->Subject= $subject;
         $mail->body= $message;
         
@@ -83,10 +121,6 @@ class BlueMail
 
                 // no BREAK - need to drop through to proper email.
                 case 'on':
-                    if (isset(AllItdqTables::$EMAIL_LOG)) {
-                        $emailLogRecordID = self::prelog($to, $subject, $message, null, $cc, $bcc);
-                    }
-
                     $mail->SMTPDebug = SMTP::DEBUG_OFF; // Enable verbose debug output ; SMTP::DEBUG_OFF
                     $mail->isSMTP(); // Send using SMTP
                     $mail->Host = 'na.relay.ibm.com'; // Set the SMTP server to send through
@@ -119,9 +153,6 @@ class BlueMail
                     break;
 
                 default:
-
-                    var_dump($_ENV['email']);
-
                     $response = array(
                         'response' => "email disabled in this environment, did not initiate send"
                     );
@@ -132,6 +163,15 @@ class BlueMail
                         self::updatelog($emailLogRecordID, $responseObject);
                     }
                     break;
+            }
+        } else {
+            $response = array(
+                'response' => "Something went wrong adding attachments."
+            );
+            $status = 'Errored';
+            $responseObject = json_encode($response);
+            if ($emailLogRecordID) {
+                self::updatelog($emailLogRecordID, $responseObject);
             }
         }
         return array('sendResponse' => $response, 'Status'=>$status);
@@ -195,7 +235,7 @@ class BlueMail
     static function updatelog($recordId, $result)
     {
         $sql  = " UPDATE " . $GLOBALS['Db2Schema'] . "." . AllItdqTables::$EMAIL_LOG;
-        $sql .= " SET RESPONSE = '" . db2_escape_string($result) . "'" ;
+        $sql .= " SET RESPONSE = '" . db2_escape_string($result) . "', SENT_TIMESTAMP = CURRENT TIMESTAMP " ;
         $sql .= " WHERE RECORD_ID= " . db2_escape_string($recordId) . "; ";
 
         $rs = db2_exec($GLOBALS['conn'], $sql);
