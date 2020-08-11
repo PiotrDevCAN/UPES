@@ -156,7 +156,8 @@ function personRecord() {
 						   url: "ajax/pesEmailDetails.php",
 					       type: 'POST',
 					       data : {country:data.country,					    	       
-					    	       account:data.account
+					    	       account:data.account,
+                                   cnum:data.cnum
 					    	       },
 					       success: function(result){
 					    	   $('.btnSendPesEmail').removeClass('spinning');		    	 
