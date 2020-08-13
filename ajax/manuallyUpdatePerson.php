@@ -16,6 +16,7 @@ set_time_limit(0);
 ob_start();
 
 $accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+$emailResponse = null;
 
 try {
     $references = explode(":", $_POST['personAccount']);
