@@ -148,14 +148,14 @@ class AccountPersonRecord extends DbRecord
 
     private static $pesClearedProvisionalEmail = 'Hello &&candidate&&,
                                               <br/>Due to the recent situation we understand that many people will be unable to meet with fellow IBM\'ers to have their documents Certified.  We have implemented a \'provisional clearance\' process and will be accepting all documents without certification - however these documents will require to be certified as soon as the restrictions are lifted.
-                                              <br/>Therefore I can confirm that you have provisionally passed  &&accountName&& PES Screening, effective from &&effectiveDate&&
+                                              <br/>Therefore I can confirm that you have provisionally passed  &&accountName&& PES Screening.
                                               <br/>Please note that this will not give you full PES clearance, and your account may not recognise Provisional Clearance, therefore, if you can get your documents certified correctly (as per below) please do so.
                                               <br/>When sending your document please only send to the PES team.
                                               <br/><b>The Certification MUST be done by another IBM’er</b>, to confirm that they have seen the original document. The following statement should be handwritten on <b>each document</b>, on the <b>same side as the image</b>.
                                               <br/><span style=\'text-align:center;color:red\'>True & Certified Copy<br/>Name of certifier  in BLOCK CAPITALS<br/>IBM Serial number of certifier<br/>Certification Date<br/>Signature of certifier<br/></span>
                                               <br/>If you need any more information regarding your PES clearance, please let me know.
                                               <br/>Many Thanks for your cooperation,';
-    private static $pesClearedProvisionalEmailPattern = array('/&&candidate&&/','/&&effectiveDate&&/','/&&accountName&&/');
+    private static $pesClearedProvisionalEmailPattern = array('/&&candidate&&/','/&&accountName&&/');
 
 
    //  public static $pesTaskId = array('lbgvetpr@uk.ibm.com'); // Only first entry will be used as the "contact" in the PES status emails.
@@ -609,9 +609,9 @@ class AccountPersonRecord extends DbRecord
                 // Only during covid
                 $pattern   = self::$pesClearedProvisionalEmailPattern;
                 $emailBody = self::$pesClearedProvisionalEmail;
-                $pesClearedDateObj = \DateTime::createFromFormat('Y-m-d', $this->PES_CLEARED_DATE);
-                $pesClearedDate = $pesClearedDateObj ? $pesClearedDateObj->format('D dS M Y') : $this->PES_CLEARED_DATE;
-                $replacements = array($fullName,$pesClearedDate, $account);
+//                 $pesClearedDateObj = \DateTime::createFromFormat('Y-m-d', $this->PES_CLEARED_DATE);
+//                 $pesClearedDate = $pesClearedDateObj ? $pesClearedDateObj->format('D dS M Y') : $this->PES_CLEARED_DATE;
+                $replacements = array($fullName, $account);
                 $title = "PES($account) Status Change";
                 !empty($emailAddress) ? $to[] = $emailAddress : null;
                 !empty($requestor)    ? $to[] = $requestor : null;
