@@ -65,8 +65,9 @@ try {
     print_r($e->getTrace());
 }
 
-
-print_r($emailResponse['sendResponse']['response'],true);
+if(is_array($emailResponse)){
+    print_r($emailResponse['sendResponse']['response'],true);
+}
 
 $messages = ob_get_clean();
 ob_start();
