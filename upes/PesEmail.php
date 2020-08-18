@@ -84,11 +84,18 @@ class PesEmail {
     }
 
     static function findEmailBody($account,$country, $emailAddress){
+
+        if(is_array($emailAddress)){
+            $email = $emailAddress[0];
+        } else {
+            $email = $emailAddress;
+        }
+        
         if(empty($account) or empty($country)){
             throw new Exception('Incorrect parms passed');
         }
 
-        $intExt = stripos($emailAddress, ".ibm.com") !== false ? null : "_ext" ;
+        $intExt = stripos($email, ".ibm.com") !== false ? null : "_ext" ;
 
         $emailBodyName = CountryTable::getEmailBodyNameForCountry($country);
 

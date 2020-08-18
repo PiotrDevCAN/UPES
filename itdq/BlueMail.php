@@ -3,6 +3,7 @@ namespace itdq;
 
 use itdq\AllItdqTables;
 use itdq\AuditTable;
+use upes\PesEmail;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -42,7 +43,7 @@ class BlueMail
             }
             if(!$resp){
                 $status = "Errored";
-                $response = array('response'=>"Message has not been sent. Unable to addAddress $emailAddress");
+                $response = array('response'=>"Did not try to send email. Unable to addAddress $emailAddress");
                 $responseObject = json_encode($response);
                 if ($emailLogRecordID) {
                     self::updatelog($emailLogRecordID, $responseObject);
@@ -51,16 +52,13 @@ class BlueMail
             }
         }
         
-
-
-
         foreach ($cleanedCc as $emailAddress){
             if(!empty(trim($emailAddress))){
                 $resp = $resp ? $mail->addCC($emailAddress) : $resp;
             }
             if(!$resp){
                 $status = "Errored";
-                $response = array('response'=>"Message has not been sent.  Unable to addCC $emailAddress");
+                $response = array('response'=>"Did not try to send email.  Unable to addCC $emailAddress");
                 $responseObject = json_encode($response);
                 if ($emailLogRecordID) {
                     self::updatelog($emailLogRecordID, $responseObject);
@@ -68,8 +66,6 @@ class BlueMail
                 return array('sendResponse' => $response, 'Status'=>$status);
             }            
         }
-                
-        
         
         foreach ($cleanedBcc as $emailAddress){
             if(!empty(trim($emailAddress))){
@@ -77,7 +73,7 @@ class BlueMail
             }
             if(!$resp){
                 $status = "Errored";
-                $response = array('response'=>"Message has not been sent.  Unable to addBCC $emailAddress");
+                $response = array('response'=>"Did not try to send email.  Unable to addBCC $emailAddress");
                 $responseObject = json_encode($response);
                 if ($emailLogRecordID) {
                     self::updatelog($emailLogRecordID, $responseObject);
@@ -85,94 +81,85 @@ class BlueMail
                 return array('sendResponse' => $response, 'Status'=>$status);
             }
         }
+       
         
-
+        foreach ($attachments as $attachment){
+            
+            $attachmentPath = "../" . PesEmail::EMAIL_ROOT_ATTACHMENTS . "/". PesEmail::EMAIL_APPLICATION_FORMS . "/" . $attachment['filename'];         
+            $resp = $resp ? $mail->addAttachment($attachmentPath,$attachment['filename'],'base64',$attachment['content_type']) : $resp;
+            if(!$resp){
+                $status = "Errored";
+                $response = array('response'=>"Did not try to send email.  Attachment $attachment not found");
+                if ($emailLogRecordID) {
+                    self::updatelog($emailLogRecordID, $responseObject);
+                }  
+                
+                return array('sendResponse' => $response, 'Status'=>$status);
+            }
+        }
+        
         
         $mail->Subject= $subject;
         $mail->body= $message;
         
-        if($resp && $attachments){
-            foreach ($attachments as $attachment){
-                $resp = $resp ? $mail->addAttachment($attachment) : $resp;
-                if(!$resp){
-                    $status = "Errored";
-                    $response = array('response'=>"Message has not been sent.  Attachment $attachment not found");
+        
+        switch (trim($_ENV['email'])) {
+            case 'dev':
+            case 'user':
+                // We're in DEV mode for emails - override the recipients.
+                // But if we're in "batch" mode, the ssoEmail doesn't contain a valid email address, so send it to devemailid or me.
+                if (filter_var($_SESSION['ssoEmail'], FILTER_VALIDATE_EMAIL)) {
+                    $localEmail = $_SESSION['ssoEmail'];
+                } else {
+                    $localEmail = ! empty($_ENV['devemailid']) ? $_ENV['devemailid'] : 'daniero@uk.ibm.com';
                 }
-            }
-        }
-        if ($resp) {
-            switch (trim($_ENV['email'])) {
-                case 'dev':
-                case 'user':
-                    // We're in DEV mode for emails - override the recipients.
-                    // But if we're in "batch" mode, the ssoEmail doesn't contain a valid email address, so send it to devemailid or me.
-                    if (filter_var($_SESSION['ssoEmail'], FILTER_VALIDATE_EMAIL)) {
-                        $localEmail = $_SESSION['ssoEmail'];
-                    } else {
-                        $localEmail = ! empty($_ENV['devemailid']) ? $_ENV['devemailid'] : 'daniero@uk.ibm.com';
-                    }
-
-                    $recipient = $_ENV['email'] == 'user' ? $localEmail : $_ENV['devemailid'];
-                    $mail->clearAllRecipients();
-                    $mail->addAddress($recipient);
-                    $mail->clearCCs();
-                    $mail->clearBCCs();
-                    $mail->Subject = "**" . $_ENV['environment'] . "**" . $subject;
-
+                
+                $recipient = $_ENV['email'] == 'user' ? $localEmail : $_ENV['devemailid'];
+                $mail->clearAllRecipients();
+                $mail->addAddress($recipient);
+                $mail->clearCCs();
+                $mail->clearBCCs();
+                $mail->Subject = "**" . $_ENV['environment'] . "**" . $subject;
+                
                 // no BREAK - need to drop through to proper email.
-                case 'on':
-                    $mail->SMTPDebug = SMTP::DEBUG_OFF; // Enable verbose debug output ; SMTP::DEBUG_OFF
-                    $mail->isSMTP(); // Send using SMTP
-                    $mail->Host = 'na.relay.ibm.com'; // Set the SMTP server to send through
-                    $mail->SMTPAuth = false;
-                    $mail->SMTPAutoTLS = false;
-                    $mail->Port = 25;
-
-                    $mail->setFrom($replyto);
-                    $mail->isHTML(true);
-
-                    $mail->Body = $message;
-
-                    if (! $mail->send()) {
-                        $response = array(
-                            'response' => 'Mailer error: ' . $mail->ErrorInfo
-                        );
-                        $status = 'error sending';
-                        throw new \Exception('Error trying to send email :' . $subject);
-                    } else {
-                        $response = array(
-                            'response' => 'Message has been sent.'
-                        );
-                        $status = 'sent';
-                    }
-
-                    $responseObject = json_encode($response);
-                    if ($emailLogRecordID) {
-                        self::updatelog($emailLogRecordID, $responseObject);
-                    }
-                    break;
-
-                default:
-                    $response = array(
-                        'response' => "email disabled in this environment, did not initiate send"
+            case 'on':
+                $mail->SMTPDebug = SMTP::DEBUG_OFF; // Enable verbose debug output ; SMTP::DEBUG_OFF
+                $mail->isSMTP(); // Send using SMTP
+                $mail->Host = 'na.relay.ibm.com'; // Set the SMTP server to send through
+                $mail->SMTPAuth = false;
+                $mail->SMTPAutoTLS = false;
+                $mail->Port = 25;
+                
+                $mail->setFrom($replyto);
+                $mail->isHTML(true);
+                
+                $mail->Body = $message;
+                
+                if (! $mail->send()) {
+                    $response = array('response' => 'Mailer error: ' . $mail->ErrorInfo);
+                    $status = 'error sending';
+                } else {
+                    $response = array('response' => 'Message has been sent.');
+                    $status = 'sent';
+                }                
+                $responseObject = json_encode($response);
+                error_log(print_r($responseObject,true));
+                if ($emailLogRecordID) {
+                    self::updatelog($emailLogRecordID, $responseObject);
+                }
+                break;
+                
+            default:
+                $response = array(
+                'response' => "email disabled in this environment, did not initiate send"
                     );
-                    $responseObject = json_encode($response);
-                    $status = 'email feature disabled, nothing sent';
-
-                    if ($emailLogRecordID) {
-                        self::updatelog($emailLogRecordID, $responseObject);
-                    }
-                    break;
-            }
-        } else {
-            $response = array(
-                'response' => "Something went wrong adding attachments."
-            );
-            $status = 'Errored';
-            $responseObject = json_encode($response);
-            if ($emailLogRecordID) {
-                self::updatelog($emailLogRecordID, $responseObject);
-            }
+                $responseObject = json_encode($response);
+                $status = 'email feature disabled, nothing sent';
+                
+                if ($emailLogRecordID) {
+                    self::updatelog($emailLogRecordID, $responseObject);
+                }
+                break;
         }
         return array('sendResponse' => $response, 'Status'=>$status);
     }
