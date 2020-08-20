@@ -29,6 +29,8 @@ if( isset($_ENV['ssldsn']) )
     //    $conn_string = $driver . $dsn;     # Non-SSL
     $conn_string = $driver . $ssl_dsn; # SSL
     
+    error_log($conn_string);
+    
     $conn=false;
     $attempts = 0;
 
