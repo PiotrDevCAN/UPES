@@ -20,7 +20,7 @@
 		//returns boolean
 		public function ensureAuthorized()
 		{
-		    if(isset($_SESSION['uid']) && isset($_SESSION['exp']) && ($_SESSION['exp']-300) > time()) return true;
+			if(isset($_SESSION['uid']) && isset($_SESSION['exp']) && ($_SESSION['exp']-300) > time()) return true;
 
 			switch ($this->technology) {
 				case "openidconnect":
@@ -36,7 +36,7 @@
 		{
 			switch ($this->technology) {
 				case "openidconnect":
-				    return $this->verifyCodeOpenIDConnect($response['code']);
+					return $this->verifyCodeOpenIDConnect($response['code']);
 					break;
 			}
 		}
@@ -46,13 +46,12 @@
 		//verifies openID response
 		private function verifyCodeOpenIDConnect($code)
 		{
-		    $url = $this->config->token_url[strtolower($_ENV['SSO_environment'])];
-		    	    
+		    $url = $this->config->token_url;
 
 		    $fields = array(
 				'code' => $code,
-				'client_id' => $this->config->client_id[strtolower($_ENV['SSO_environment'])],
-				'client_secret' => $this->config->client_secret[strtolower($_ENV['SSO_environment'])],
+				'client_id' => $this->config->client_id,
+				'client_secret' => $this->config->client_secret,
 				'redirect_uri' => $this->config->redirect_url,
 				'grant_type' => 'authorization_code'
 			);
@@ -65,11 +64,11 @@
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postvars);
 
-			$curl_result = curl_exec($ch);
-			curl_close($ch);
-			
-			return  $this->processOpenIDConnectCallback($curl_result);
+			$result = curl_exec($ch);
 
+			curl_close($ch);
+
+			return $this->processOpenIDConnectCallback($result);
 		}
 
 		//processes openid data and sets session
@@ -82,17 +81,19 @@
 				if(isset($token_response->error)) throw new Exception('Error happened while authenticating. Please, try again later.');
 
 				if ( isset( $token_response->id_token ) ) {
-					$jwt_arr = explode('.', $token_response->id_token );			
+					$jwt_arr = explode('.', $token_response->id_token );
 					$encoded = $jwt_arr[1];
 					$decoded = "";
 					for ($i=0; $i < ceil(strlen($encoded)/4); $i++)
 						$decoded = $decoded . base64_decode(substr($encoded,$i*4,4));
-					$userData = json_decode( $decoded, true );			
+					$userData = json_decode( $decoded, true );
 				} else {
 					return false;
 				}
 
-				// use this to debug returned values from w3id/IBM ID service if you got to else in the condition below
+				//use this to debug returned values from w3id/IBM ID service if you got to else in the condition below
+				//var_dump($userData);
+				//die();
 
 				//if using this code on w3ID
 				if(isset($userData) && !empty($userData)
@@ -154,6 +155,7 @@
 		private function authenticateOpenIDConnect()
 		{
 		    $authorizedUrL = $this->generateOpenIDConnectAuthorizeURL();
+		    error_log(__CLASS__ . __FUNCTION__ . __LINE__. " About to pass to  : " . $authorizedUrL);
 		    header("Access-Control-Allow-Origin: *");
 			header("Location: ".$authorizedUrL);
 			exit();
@@ -164,8 +166,8 @@
 		private function generateOpenIDConnectAuthorizeURL()
 		{
 			$current_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-			$authorizeString = $this->config->authorize_url[strtolower($_ENV['SSO_environment'])] . "?scope=openid&response_type=code&client_id=".$this->config->client_id[strtolower($_ENV['SSO_environment'])]."&state=".urlencode($current_link)."&redirect_uri=".$this->config->redirect_url;
-			return $authorizeString;
+			$authorizeString = $this->config->authorize_url . "?scope=openid&response_type=code&client_id=".$this->config->client_id."&state=".urlencode($current_link)."&redirect_uri=".$this->config->redirect_url;
+            return $authorizeString;
 		}
 
 		//loads openidconnect
@@ -190,11 +192,11 @@
 		private function verifyOpenIDConnectConfig($config)
 		{
 			if(isset($config) && !empty($config)
-			    && isset($config->authorize_url[strtolower($_ENV['SSO_environment'])]) && !empty($config->authorize_url[strtolower($_ENV['SSO_environment'])])
-			    && isset($config->token_url[strtolower($_ENV['SSO_environment'])]) && !empty($config->token_url[strtolower($_ENV['SSO_environment'])])
-			    && isset($config->introspect_url[strtolower($_ENV['SSO_environment'])]) && !empty($config->introspect_url[strtolower($_ENV['SSO_environment'])])
-				&& isset($config->client_id[strtolower($_ENV['SSO_environment'])]) && !empty($config->client_id[strtolower($_ENV['SSO_environment'])])
-				&& isset($config->client_secret[strtolower($_ENV['SSO_environment'])]) && !empty($config->client_secret[strtolower($_ENV['SSO_environment'])])
+			    && isset($config->authorize_url) && !empty($config->authorize_url)
+			    && isset($config->token_url) && !empty($config->token_url)
+			    && isset($config->introspect_url) && !empty($config->introspect_url)
+				&& isset($config->client_id) && !empty($config->client_id)
+				&& isset($config->client_secret) && !empty($config->client_secret)
 				&& isset($config->redirect_url) && !empty($config->redirect_url)
 				)
 			{
