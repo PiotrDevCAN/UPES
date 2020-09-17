@@ -137,7 +137,7 @@ $(document).ready(function(){
         ],
        columns:  [{ data: "ACTION"
                   },{
-                    data: "EMAIL_ADDRESS"
+                    data: "EMAIL_ADDRESS", visible:false
                   },{
                     data: "CNUM"
                   },{
@@ -149,11 +149,11 @@ $(document).ready(function(){
                   },{
                     data: "PES_REQUESTOR", visible:false
                   },{
-                    data: "REQUESTED", render: { _:'display', sort:'sort' },
+                    data: "REQUESTED", render: { _:'display', sort:'sort' }, visible:false
                   },{
                     data: "PES_LEVEL"
                   },{
-                    data: "PES_LEVEL_DESCRIPTION"
+                    data: "PES_LEVEL_DESCRIPTION", visible:false
                   },{
                     data: "PROCESSING_STATUS", render: { _:'display', sort:'sort' },
                   },{
