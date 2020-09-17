@@ -99,13 +99,15 @@ class AccountPersonRecord extends DbRecord
     const PES_STATUS_LEFT_IBM       = 'Left IBM';
     const PES_STATUS_STAGE_1        = 'Stage 1 Completed';
     const PES_STATUS_STAGE_2        = 'Stage 2 Completed';
+    const PES_STATUS_MOVER          = 'Mover';
+    
 
     static public $pesStatus = array(AccountPersonRecord::PES_STATUS_CLEARED,AccountPersonRecord::PES_STATUS_DECLINED,AccountPersonRecord::PES_STATUS_EXCEPTION,
                                      AccountPersonRecord::PES_STATUS_FAILED,AccountPersonRecord::PES_STATUS_PES_PROGRESSING,AccountPersonRecord::PES_STATUS_STARTER_REQUESTED,
                                      AccountPersonRecord::PES_STATUS_PROVISIONAL,AccountPersonRecord::PES_STATUS_REMOVED,AccountPersonRecord::PES_STATUS_REVOKED,
                                      AccountPersonRecord::PES_STATUS_CANCEL_REQ,AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED,AccountPersonRecord::PES_STATUS_TBD,
                                      AccountPersonRecord::PES_STATUS_RECHECK_REQ,AccountPersonRecord::PES_STATUS_LEFT_IBM,AccountPersonRecord::PES_STATUS_STAGE_1,
-                                     AccountPersonRecord::PES_STATUS_STAGE_2
+                                     AccountPersonRecord::PES_STATUS_STAGE_2, AccountPersonRecord::PES_STATUS_MOVER
     );
 
 //     PES PRocessing
