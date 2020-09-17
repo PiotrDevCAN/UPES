@@ -457,6 +457,7 @@ class AccountPersonRecord extends DbRecord
                     <option value='<?=AccountPersonRecord::PES_STATUS_LEFT_IBM;?>'><?=AccountPersonRecord::PES_STATUS_LEFT_IBM;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_STAGE_1;?>'><?=AccountPersonRecord::PES_STATUS_STAGE_1;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_STAGE_2;?>'><?=AccountPersonRecord::PES_STATUS_STAGE_2;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_MOVER;?>'><?=AccountPersonRecord::PES_STATUS_MOVER;?></option>
                     </select>
                  </div>
                  <label for='pes_date' class='col-md-1 control-label '>Date</label>
