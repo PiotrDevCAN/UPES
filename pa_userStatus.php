@@ -162,6 +162,8 @@ $(document).ready(function(){
                     data: "PES_STATUS"
                   },{
                     data: "PES_CLEARED_DATE"
+                  },{
+                    data: "DATE_LAST_CHASED"
                   }]
 	});
 
