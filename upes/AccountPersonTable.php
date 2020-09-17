@@ -66,10 +66,10 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
         switch (trim($records)){
             case self::PES_TRACKER_RECORDS_ACTIVE :
-                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "') ";
+                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "','" . AccountPersonRecord::PES_STATUS_MOVER. "') ";
                 break;
             case self::PES_TRACKER_RECORDS_ACTIVE_PLUS :
-                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ . "','" . AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "','" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "','" . AccountPersonRecord::PES_STATUS_REMOVED. "','" . AccountPersonRecord::PES_STATUS_CLEARED. "') ";
+                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ . "','" . AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "','" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "','" . AccountPersonRecord::PES_STATUS_REMOVED. "','" . AccountPersonRecord::PES_STATUS_CLEARED. "','" . AccountPersonRecord::PES_STATUS_MOVER. "') ";
                 break;
             case self::PES_TRACKER_RECORDS_ACTIVE_REQUESTED :
                 $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_STAGE_1. "','" . AccountPersonRecord::PES_STATUS_STAGE_2. "','" . AccountPersonRecord::PES_STATUS_RECHECK_REQ. "') ";

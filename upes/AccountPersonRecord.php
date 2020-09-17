@@ -325,6 +325,8 @@ class AccountPersonRecord extends DbRecord
             case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_STAGE_1 && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_STAGE_2 && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_MOVER && $_SESSION['isPesTeam'] :
+                
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesStatus' aria-label='Left Align' ";
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
                 $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";

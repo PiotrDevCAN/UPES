@@ -57,6 +57,7 @@ try {
             case AccountPersonRecord::PES_STATUS_REVOKED;
             case AccountPersonRecord::PES_STATUS_STAGE_1;
             case AccountPersonRecord::PES_STATUS_STAGE_2;
+            case AccountPersonRecord::PES_STATUS_MOVER;
                 $notificationStatus = 'Email not applicable';
                 break;
             case AccountPersonRecord::PES_STATUS_PROVISIONAL;  // Temp req to send special email during covid
