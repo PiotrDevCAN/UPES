@@ -817,10 +817,11 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $row['PES_CLEARED_DATE'] = $clearedDateDisplay;
 
         $recheckDateObj = \DateTime::createFromFormat('Y-m-d', $row['PES_RECHECK_DATE']);
-        $recheckDateDisplay =  $recheckDateObj ? $recheckDateObj->format('d-m-Y') : $row['PES_RECHECK_DATE'];
-
-
-
+        $recheckDateDisplay =  $recheckDateObj ? $recheckDateObj->format('d-m-Y') : $row['PES_RECHECK_DATE'];        
+        
+        $chasedDateObj = \DateTime::createFromFormat('Y-m-d', $row['DATE_LAST_CHASED']);
+        $chasedDateDisplay =  $chasedDateObj ? $chasedDateObj->format('d-m-Y') : $row['DATE_LAST_CHASED'];
+        $row['DATE_LAST_CHASED'] = $chasedDateDisplay;
 
         $pesLevel = $row['PES_LEVEL'];
         $pesLevelRef = $row['PES_LEVEL_REF'];

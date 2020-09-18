@@ -43,7 +43,7 @@ include_once 'includes/modalCancelPesRequestConfirm.html';
 
 <table id='userStatusTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Action</th><th>Email</th><th>CNUM</th><th>Full Name</th><th >Account</th><th >Country Of Residence</th><th>Requestor</th><th>Requested</th><th >Pes Level</th><th >Pes Description</th><th>Process Status</th><th>Process Status Changed</th><th >Pes Status</th><th>Cleared Date</th></tr>
+<tr><th>Action</th><th>Email</th><th>CNUM</th><th>Full Name</th><th >Account</th><th >Country Of Residence</th><th>Requestor</th><th>Requested</th><th >Pes Level</th><th >Pes Description</th><th>Process Status</th><th>Process Status Changed</th><th >Pes Status</th><th>Cleared Date</th><th>Date Last Chased</th></tr>
 </thead>
 </table>
 </div>
