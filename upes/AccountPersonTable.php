@@ -172,20 +172,20 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         <table id='pesTrackerTable' class='table table-striped table-bordered table-condensed '  style='width:100%'>
 		<thead>
 		<tr class='' ><th>Person Details</th><th>Account</th><th>Requestor</th>
-		<th width="5px">Consent Form</th>
-		<th width="5px">Proof or Right to Work</th>
-		<th width="5px">Proof of ID</th>
-		<th width="5px">Proof of Residence</th>
-		<th width="5px">Credit Check</th>
-		<th width="5px">Financial Sanctions</th>
-		<th width="5px">Criminal Records Check</th>
-		<th width="5px">Proof of Activity</th>
-		<th width="5px">Qualifications</th>
-		<th width="5px">Directors</th>
-		<th width="5px">Media</th>
-		<th width="5px">Membership</th>
-		<th width="5px">NI Evidence</th>
-		<th>Process Status</th><th>PES Status</th><th>Comment</th></tr>
+		<th width="4px">Consent Form</th>
+		<th width="4px">Proof or Right to Work</th>
+		<th width="4px">Proof of ID</th>
+		<th width="4px">Proof of Residence</th>
+		<th width="4px">Credit Check</th>
+		<th width="4px">Financial Sanctions</th>
+		<th width="4px">Criminal Records Check</th>
+		<th width="4px">Proof of Activity</th>
+		<th width="4px">Qualifications</th>
+		<th width="4px">Directors</th>
+		<th width="4px">Media</th>
+		<th width="4px">Membership</th>
+		<th width="4px">NI Evidence</th>
+		<th>Process Status</th><th width="15px">PES Status</th><th>Comment</th></tr>
 		<tr class='searchingRow wrap'>
 		<td>Email Address</td>
 		<td>Account</td>
@@ -209,6 +209,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 		<?php
 
         foreach ($allRows as $row){
+            $row = array_map('trim', $row);
             $today = new \DateTime();
             $date = DateTime::createFromFormat('Y-m-d', $row['PES_DATE_REQUESTED']);
             $age  = !empty($row['PES_DATE_REQUESTED']) ?  $date->diff($today)->format('%R%a days') : null ;
@@ -257,11 +258,12 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
             </span>
             <?php
             $dateLastChased = !empty($row['DATE_LAST_CHASED']) ? DateTime::createFromFormat('Y-m-d', $row['DATE_LAST_CHASED']) : null;
-            $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d M Y') : null;
+            $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d M y') : null;
+            $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $this->extractLastChasedLevelFromComment($row['COMMENT']) . $dateLastChasedFormatted : $dateLastChasedFormatted;
             $alertClass = !empty($row['DATE_LAST_CHASED']) ? self::getAlertClassForPesChasedDate($row['DATE_LAST_CHASED']) : 'alert-info';
             ?>
             <div class='alert <?=$alertClass;?>'>
-            <input class="form-control input-sm pesDateLastChased" value="<?=$dateLastChasedFormatted?>" type="text" placeholder='Last Chased' data-toggle='tooltip' title='PES Date Last Chased' data-upesref='<?=$upesref?>'  data-accountid='<?=$accountId?>'  data-account='<?=$account?>'>
+            <input class="form-control input-sm pesDateLastChased" value="<?=$dateLastChasedWithLevel?>" type="text" placeholder='Last Chased' data-toggle='tooltip' title='PES Date Last Chased' data-upesref='<?=$upesref?>'  data-accountid='<?=$accountId?>'  data-account='<?=$account?>'>
             </div>
             <span style='white-space:nowrap' >
             <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='One'  data-toggle="tooltip" data-placement="top" title="Chaser One" ><i>1</i></a>
@@ -285,6 +287,16 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 		$table = ob_get_clean();
 		return $table;
     }
+    
+    
+    function extractLastChasedLevelFromComment($comment){
+        $findChasedComment = strpos($comment, 'Automated PES Chaser Level');
+        $level = substr($comment, $findChasedComment+27,6);
+        $level = substr($level,0,strpos($level," "));   
+        $levelMap = array('One'=>'(L1) ','Two'=>'(L2) ','Three'=>'(L3) ');
+        return $levelMap[$level];
+    }
+    
 
 
 
