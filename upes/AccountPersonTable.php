@@ -188,7 +188,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 		<th>Process Status</th><th width="15px">PES Status</th><th>Comment</th></tr>
 		<tr class='searchingRow wrap'>
 		<td>Email Address</td>
-		<td>Account</td>
+		<td class='shortSearch'>Account</td>
 		<td>Requestor</td>
 		<td class='nonSearchable'>Consent</td>
 		<td class='nonSearchable'>Right to Work</td>
@@ -203,7 +203,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 		<td class='nonSearchable'>Media</td>
 		<td class='nonSearchable'>Membership</td>
 		<td class='nonSearchable'>NI Evidence</td>
-		<td>Process Status</td><td>PES Status</td><td>Comment</td></tr>
+		<td>Process Status</td><td class='shortSearch'>PES Status</td><td>Comment</td></tr>
 		</thead>
 		<tbody>
 		<?php

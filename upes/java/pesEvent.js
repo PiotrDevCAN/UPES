@@ -140,10 +140,17 @@ function pesEvent() {
 		    	        $(this).html(title + '<input class="secondInput" type="hidden"  />' );
 		    	    } );		    		
 		    		
-		    	    $('#pesTrackerTable thead td').not('.nonSearchable').each( function () {
+		    	    $('#pesTrackerTable thead td').not('.nonSearchable').not('.shortSearch').each( function () {
 		    	        var title = $(this).text();
 		    	        $(this).html('<input class="firstInput" type="text" size="10" placeholder="Search '+title+'" />' );
 		    	    });
+
+		    	    $('.shortSearch').each( function () {
+		    	        var title = $(this).text();
+		    	        $(this).html('<input class="firstInput" type="text" size="5" placeholder="Search '+title+'" />' );
+		    	    });
+
+
 		    	    
 		    	    $('.btnTogglePesTrackerStatusDetails').remove();
 		    		
