@@ -140,7 +140,7 @@ function pesEvent() {
 		    	        $(this).html(title + '<input class="secondInput" type="hidden"  />' );
 		    	    } );		    		
 		    		
-		    	    $('#pesTrackerTable thead td').each( function () {
+		    	    $('#pesTrackerTable thead td').not('.nonSearchable').each( function () {
 		    	        var title = $(this).text();
 		    	        $(this).html('<input class="firstInput" type="text" size="10" placeholder="Search '+title+'" />' );
 		    	    });

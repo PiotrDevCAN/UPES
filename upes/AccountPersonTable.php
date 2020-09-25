@@ -172,37 +172,37 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         <table id='pesTrackerTable' class='table table-striped table-bordered table-condensed '  style='width:100%'>
 		<thead>
 		<tr class='' ><th>Person Details</th><th>Account</th><th>Requestor</th>
-		<th width="4px">Consent Form</th>
-		<th width="4px">Proof or Right to Work</th>
-		<th width="4px">Proof of ID</th>
-		<th width="4px">Proof of Residence</th>
-		<th width="4px">Credit Check</th>
-		<th width="4px">Financial Sanctions</th>
-		<th width="4px">Criminal Records Check</th>
-		<th width="4px">Proof of Activity</th>
-		<th width="4px">Qualifications</th>
-		<th width="4px">Directors</th>
-		<th width="4px">Media</th>
-		<th width="4px">Membership</th>
-		<th width="4px">NI Evidence</th>
+		<th >Consent Form</th>
+		<th>Proof or Right to Work</th>
+		<th>Proof of ID</th>
+		<th>Proof of Residence</th>
+		<th>Credit Check</th>
+		<th>Financial Sanctions</th>
+		<th>Criminal Records Check</th>
+		<th>Proof of Activity</th>
+		<th>Qualifications</th>
+		<th>Directors</th>
+		<th>Media</th>
+		<th>Membership</th>
+		<th>NI Evidence</th>
 		<th>Process Status</th><th width="15px">PES Status</th><th>Comment</th></tr>
 		<tr class='searchingRow wrap'>
 		<td>Email Address</td>
 		<td>Account</td>
 		<td>Requestor</td>
-		<td>Consent</td>
-		<td>Right to Work</td>
-		<td>ID</td>
-		<td>Residence</td>
-		<td>Credit Check</td>
-		<td>Financial Sanctions</td>
-		<td>Criminal Records Check</td>
-		<td>Proof of Activity</td>
-		<td>Qualifications</td>
-		<td>Directors</td>
-		<td>Media</td>
-		<td>Membership</td>
-		<td>NI Evidence</td>
+		<td class='nonSearchable'>Consent</td>
+		<td class='nonSearchable'>Right to Work</td>
+		<td class='nonSearchable'>ID</td>
+		<td class='nonSearchable'>Residence</td>
+		<td class='nonSearchable'>Credit Check</td>
+		<td class='nonSearchable'>Financial Sanctions</td>
+		<td class='nonSearchable'>Criminal Records Check</td>
+		<td class='nonSearchable'>Proof of Activity</td>
+		<td class='nonSearchable'>Qualifications</td>
+		<td class='nonSearchable'>Directors</td>
+		<td class='nonSearchable'>Media</td>
+		<td class='nonSearchable'>Membership</td>
+		<td class='nonSearchable'>NI Evidence</td>
 		<td>Process Status</td><td>PES Status</td><td>Comment</td></tr>
 		</thead>
 		<tbody>
@@ -226,14 +226,16 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
             $requestedDisplay = $requestedObj ? $requestedObj->format('d-m-Y') : $requested;
 
             $formattedIdentityField = self::formatEmailFieldOnTracker($row);
-
+            $requestor = strlen($row['PES_REQUESTOR']) > 20 ? substr($row['PES_REQUESTOR'],0,20) . "....." : $row['PES_REQUESTOR'];
+            
             ?>
             <tr class='<?=$upesref;?> personDetails' data-upesref='<?=$upesref;?>' data-accountid='<?=$accountId;?>' data-account='<?=$account;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$requestor;?>'   >
             <td class='formattedEmailTd'>
             <div class='formattedEmailDiv'><?=$formattedIdentityField;?></div>
             </td>
             <td><?=$row['ACCOUNT']?><br/><?=$row['PES_LEVEL']; ?><br/><?=$row['PES_LEVEL_DESCRIPTION']; ?></td>
-            <td><?=$row['PES_REQUESTOR']?><br/><small><?=$requestedDisplay;?><br/><?=$age?></small></td>
+            
+            <td><?=$requestor?><br/><small><?=$requestedDisplay;?><br/><?=$age?></small></td>
 
             <?php
             foreach (self::PES_TRACKER_STAGES as $stage) {
@@ -259,7 +261,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
             <?php
             $dateLastChased = !empty($row['DATE_LAST_CHASED']) ? DateTime::createFromFormat('Y-m-d', $row['DATE_LAST_CHASED']) : null;
             $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d M y') : null;
-            $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $this->extractLastChasedLevelFromComment($row['COMMENT']) . $dateLastChasedFormatted : $dateLastChasedFormatted;
+            $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $dateLastChasedFormatted . $this->extractLastChasedLevelFromComment($row['COMMENT']) : $dateLastChasedFormatted;
             $alertClass = !empty($row['DATE_LAST_CHASED']) ? self::getAlertClassForPesChasedDate($row['DATE_LAST_CHASED']) : 'alert-info';
             ?>
             <div class='alert <?=$alertClass;?>'>
@@ -292,9 +294,10 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
     function extractLastChasedLevelFromComment($comment){
         $findChasedComment = strpos($comment, 'Automated PES Chaser Level');
         $level = substr($comment, $findChasedComment+27,6);
-        $level = substr($level,0,strpos($level," "));   
-        $levelMap = array('One'=>'(L1) ','Two'=>'(L2) ','Three'=>'(L3) ');
-        return $levelMap[$level];
+        $level = " (" . substr($level,0,strpos($level," ")) . ")";   
+//         $levelMap = array('One'=>'(L1) ','Two'=>'(L2) ','Three'=>'(L3) ');
+//         return $levelMap[$level];
+       return $level;
     }
     
 
@@ -505,21 +508,25 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
                 $alertClass='alert-info';
                 break;
         }
+        
 
-        $formattedField = $row['EMAIL_ADDRESS'] . "<br/><small>";
-        $formattedField.= "<i>" . $row['PASSPORT_FIRST_NAME'] . "&nbsp;<b>" . $row['PASSPORT_LAST_NAME'] . "</b></i><br/>";
-        $formattedField.= $row['FULL_NAME'] . "</b></small><br/>Ref: " . $row['UPES_REF'];
-        $formattedField.= "<br/>CNUM: " . $row['CNUM'];
-        $formattedField.= "<br/>" . $row['IBM_STATUS'] . ":" . $row['COUNTRY'];
-        $formattedField.= "<br/>Resides:&nbsp;" . $row['COUNTRY_OF_RESIDENCE'];
-        $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
 
-        $formattedField.="<span style='white-space:nowrap' >
-            <button class='btn btn-xs btn-danger  btnPesPriority accessPes accessCdi' data-pespriority='1'  data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='High' ><span class='glyphicon glyphicon-king' ></button>
-            <button class='btn btn-xs btn-warning btnPesPriority accessPes accessCdi' data-pespriority='2' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Medium' ><span class='glyphicon glyphicon-knight' ></button>
-            <button class='btn btn-xs btn-success btnPesPriority accessPes accessCdi' data-pespriority='3' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Low'><span class='glyphicon glyphicon-pawn' ></button>
-            <button class='btn btn-xs btn-info    btnPesPriority accessPes accessCdi' data-pespriority='99'    data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></button>
-            </span>";
+       $emailAddress = strlen($row['EMAIL_ADDRESS']) > 20 ? substr($row['EMAIL_ADDRESS'],0,20) . "....." : $row['EMAIL_ADDRESS'];
+
+       $formattedField = $emailAddress . "<br/><small>";
+       $formattedField.= "<i>" . $row['PASSPORT_FIRST_NAME'] . "&nbsp;<b>" . $row['PASSPORT_LAST_NAME'] . "</b></i><br/>";
+       $formattedField.= $row['FULL_NAME'] . "</b></small><br/>Ref: " . $row['UPES_REF'];
+       $formattedField.= "<br/>CNUM: " . $row['CNUM'];
+       $formattedField.= "<br/>" . $row['IBM_STATUS'] . ":" . $row['COUNTRY'];
+       $formattedField.= "<br/>Resides:&nbsp;" . $row['COUNTRY_OF_RESIDENCE'];
+       $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
+
+       $formattedField.="<span style='white-space:nowrap' >
+           <button class='btn btn-xs btn-danger  btnPesPriority accessPes accessCdi' data-pespriority='1'  data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='High' ><span class='glyphicon glyphicon-king' ></button>
+           <button class='btn btn-xs btn-warning btnPesPriority accessPes accessCdi' data-pespriority='2' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Medium' ><span class='glyphicon glyphicon-knight' ></button>
+           <button class='btn btn-xs btn-success btnPesPriority accessPes accessCdi' data-pespriority='3' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Low'><span class='glyphicon glyphicon-pawn' ></button>
+           <button class='btn btn-xs btn-info    btnPesPriority accessPes accessCdi' data-pespriority='99'    data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></button>
+           </span>";
 
 
         return $formattedField;
