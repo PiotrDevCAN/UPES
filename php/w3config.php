@@ -82,7 +82,7 @@ $meta = array(
     'keywords' => 'screening tracker tool',
 
     // web site owner, can be different from feedback owner
-    'owner' => 'carrabooth@uk.ibm.com@uk.ibm.com',
+    'owner' => 'carrabooth@uk.ibm.com',
 
     // The Feedback Meta Tag will be used to automatically route
     // feedback email received through the central Intranet Feedback

@@ -226,10 +226,11 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
             $requestedDisplay = $requestedObj ? $requestedObj->format('d-m-Y') : $requested;
 
             $formattedIdentityField = self::formatEmailFieldOnTracker($row);
+            $originalRequestor = $row['PES_REQUESTOR'];
             $requestor = strlen($row['PES_REQUESTOR']) > 20 ? substr($row['PES_REQUESTOR'],0,20) . "....." : $row['PES_REQUESTOR'];
             
             ?>
-            <tr class='<?=$upesref;?> personDetails' data-upesref='<?=$upesref;?>' data-accountid='<?=$accountId;?>' data-account='<?=$account;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$requestor;?>'   >
+            <tr class='<?=$upesref;?> personDetails' data-upesref='<?=$upesref;?>' data-accountid='<?=$accountId;?>' data-account='<?=$account;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$originalRequestor;?>'   >
             <td class='formattedEmailTd'>
             <div class='formattedEmailDiv'><?=$formattedIdentityField;?></div>
             </td>
