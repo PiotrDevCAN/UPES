@@ -227,6 +227,7 @@ class PesEmail {
         $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
 
         $sendResponse = BlueMail::send_mail(array($emailAddress), "PES Reminder - $fullName($upesref) on $account", $emailBody,$pesTaskid,array($requestor));
+              
         return $sendResponse;
 
 

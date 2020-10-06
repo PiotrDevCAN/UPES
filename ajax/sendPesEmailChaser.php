@@ -20,6 +20,7 @@ $emailAddress = $_POST['emailaddress'];
 $pesEmailObj = new PesEmail();
 $emailResponse = $pesEmailObj->sendPesEmailChaser($upesref, $account, $emailAddress, $_POST['chaser'], $_POST['requestor']);
 $emailStatus = $emailResponse['Status'];
+$emailMessage = $emailResponse['sendResponse']['response'];
 
 $messages = ob_get_contents();
 $success = strlen($messages)==0;
@@ -46,6 +47,7 @@ if($success){
     try {
         $pesTracker->savePesComment($upesref, $accountId, "Automated PES Chaser Level " . $_POST['chaser'] . " sent to " . $_POST['emailaddress']);
         $pesTracker->savePesComment($upesref, $accountId, "Automated PES Chaser Email Status :  " . $emailStatus);
+        $pesTracker->savePesComment($upesref, $accountId, "Automated PES Chaser Email Response :  " . $emailMessage);
 
         $comment = $pesTracker->getPesComment($upesref, $accountId);
         $response['comment'] = $comment;

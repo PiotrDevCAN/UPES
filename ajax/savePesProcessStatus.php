@@ -40,11 +40,13 @@ try {
                   $emailResponse = $pesEmailObj->sendPesProcessStatusChangedConfirmation($upesref,$account,  $fullname, $requestor, trim($_POST['processStatus']));
                   $response['emailResponse'] = $emailResponse;
             default:
+                $emailResponse = null;
             break;
         }
 
     }
-
+  
+    is_array($emailResponse) ? $comment = $pesTracker->savePesComment($upesref,$accountid, "savePesProcessStatus (" . $_POST['processStatus'] .  ")  sendMail: " . $emailResponse['sendResponse']['response']) : null;
 
     $now = new DateTime();
     $row = array('UPES_REF'=>$upesref, 'ACCOUNT_ID'=>$accountid, 'PROCESSING_STATUS'=>$_POST['processStatus'],'PROCESSING_STATUS_CHANGED'=>$now->format('Y-m-d H:i:s'));

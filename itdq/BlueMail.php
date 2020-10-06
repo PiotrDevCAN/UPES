@@ -29,9 +29,6 @@ class BlueMail
         if (isset(AllItdqTables::$EMAIL_LOG)) {
             $emailLogRecordID = self::prelog($cleanedTo, $subject, $message, null, $cleanedCc, $cleanedBcc);
         }
-        
-        
-        
         $status = '';
         $resp = true;
 
@@ -58,12 +55,12 @@ class BlueMail
             }
             if(!$resp){
                 $status = "Errored";
-                $response = array('response'=>"Did not try to send email.  Unable to addCC $emailAddress");
+                $response = array('response'=>"Unable to addCC $emailAddress");
                 $responseObject = json_encode($response);
                 if ($emailLogRecordID) {
                     self::updatelog($emailLogRecordID, $responseObject);
                 }
-                return array('sendResponse' => $response, 'Status'=>$status);
+                // return array('sendResponse' => $response, 'Status'=>$status);   Don't fail just because we could add the CC
             }            
         }
         
@@ -73,12 +70,13 @@ class BlueMail
             }
             if(!$resp){
                 $status = "Errored";
-                $response = array('response'=>"Did not try to send email.  Unable to addBCC $emailAddress");
+                $currentResponse = is_array($response) ?  $response['response'] : null;
+                $response = array('response'=>"$currentResponse : Unable to addBCC $emailAddress");
                 $responseObject = json_encode($response);
                 if ($emailLogRecordID) {
                     self::updatelog($emailLogRecordID, $responseObject);
                 }                
-                return array('sendResponse' => $response, 'Status'=>$status);
+                // return array('sendResponse' => $response, 'Status'=>$status);
             }
         }
        
@@ -89,11 +87,11 @@ class BlueMail
             $resp = $resp ? $mail->addAttachment($attachmentPath,$attachment['filename'],'base64',$attachment['content_type']) : $resp;
             if(!$resp){
                 $status = "Errored";
-                $response = array('response'=>"Did not try to send email.  Attachment $attachment not found");
+                $currentResponse = is_array($response) ?  $response['response'] : null;
+                $response = array('response'=>"$currentResponse : Did not try to send email.  Attachment $attachment not found");
                 if ($emailLogRecordID) {
                     self::updatelog($emailLogRecordID, $responseObject);
-                }  
-                
+                }                  
                 return array('sendResponse' => $response, 'Status'=>$status);
             }
         }
@@ -161,6 +159,9 @@ class BlueMail
                 }
                 break;
         }
+        
+        error_log('BlueMail status' . $status);
+        error_log('BlueMail sendResponse' . print_r($response,true));
         return array('sendResponse' => $response, 'Status'=>$status);
     }
 

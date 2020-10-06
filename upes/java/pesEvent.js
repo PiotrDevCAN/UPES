@@ -314,6 +314,7 @@ function pesEvent() {
 		    	          requestor : requestor
 		    	   	   },
 		       success: function(result){
+			       console.log(result);
 		           var resultObj = JSON.parse(result);
 		           if(resultObj.success==true){
 		        	   buttonObj.parents('div:first').siblings('div.pesProcessStatusDisplay').html(resultObj.formattedStatusField);	

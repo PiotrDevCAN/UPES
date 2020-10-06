@@ -587,6 +587,10 @@ class AccountPersonRecord extends DbRecord
         $message = preg_replace(self::$pesEmailPatterns, $replacements, self::$pesEmailBody);
 
         $response = \itdq\BlueMail::send_mail($to, 'uPES Starter Request - ' . $name . " ("  . $account . ") ", $message, $pesTaskid);
+        
+        $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+        $pesTracker->savePesComment($this->UPES_REF,$this->ACCOUNT_ID, "saveNotificationToPesTaskid sendMail: " . $response['sendResponse']['response']);
+        
 
         return $response;
     }
@@ -655,6 +659,11 @@ class AccountPersonRecord extends DbRecord
         AuditTable::audit(print_r($message,true),AuditTable::RECORD_TYPE_DETAILS);
 
         $response = \itdq\BlueMail::send_mail($to, $title ,$message, $pesTaskid, $cc);
+        
+        $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+        $pesTracker->savePesComment($this->UPES_REF,$this->ACCOUNT_ID, "sendPesStatusChangedEmail sendMail: " . $response['sendResponse']['response']);
+        
+        
         return $response;
     }
 
