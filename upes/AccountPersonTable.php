@@ -460,16 +460,9 @@ public $lastSelectSql;
         }
 
         $row = db2_fetch_assoc($preparedStmt);
-        if(!$row){
-            echo db2_stmt_error();
-            echo db2_stmt_errormsg();
-            error_log($this->lastSelectSql);
-            error_log(db2_stmt_error());
-            error_log(db2_stmt_errormsg());
-            throw new \Exception('Unable to fetch PES Comment for ' . $uposref . ":" . $account_id );
-        }      
         
-        return $row['COMMENT'];
+        $comment = isset($row['COMMENT']) ? $row['COMMENT'] : ""; // when boarding there is no comment to return yet.
+        return  $comment;
     }
 
 
