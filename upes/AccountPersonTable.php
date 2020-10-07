@@ -61,6 +61,8 @@ const PROCESS_STATUS_REQUESTOR = 'Requestor';
 const PROCESS_STATUS_CRC = 'CRC';
 const PROCESS_STATUS_UNKOWN = 'Unknown';
 
+public $lastSelectSql;
+
 
     static function returnPesEventsTable($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null){
 
@@ -434,6 +436,8 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         $sql.= " WHERE UPES_REF=?  and ACCOUNT_ID = ? ";
 
         $preparedStmt = db2_prepare($GLOBALS['conn'], $sql);
+        
+        $this->lastSelectSql = $sql;
 
         if($preparedStmt){
             $_SESSION['preparedGetPesCommentStmt'] = $preparedStmt;
@@ -456,6 +460,15 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
         }
 
         $row = db2_fetch_assoc($preparedStmt);
+        if(!$row){
+            echo db2_stmt_error();
+            echo db2_stmt_errormsg();
+            error_log($this->lastSelectSql);
+            error_log(db2_stmt_error());
+            error_log(db2_stmt_errormsg());
+            throw new \Exception('Unable to fetch PES Comment for ' . $uposref . ":" . $account_id );
+        }      
+        
         return $row['COMMENT'];
     }
 
