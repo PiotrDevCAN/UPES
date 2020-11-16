@@ -59,10 +59,12 @@ $reports          = new NavBarMenu("Reports",'accessCdi accessPesTeam accessRepo
 $overviewByAccount= new NavbarOption('By Account', 'pr_byAccount.php','accessCdi accessPesTeam accessReports');
 $processStatus    = new NavbarOption('Process Status', 'pr_processStatus.php','accessCdi accessPesTeam accessReports');
 $recheckUpcoming  = new NavbarOption('Upcoming Rechecks', 'pr_upcomingRechecks.php','accessCdi accessPesTeam');
+$miCleared        = new NavbarOption('MI Cleared', 'pr_miReportCleared.php','accessCdi accessPesTeam');
 
 $reports->addOption($overviewByAccount);
 $reports->addOption($processStatus);
 $reports->addOption($recheckUpcoming);
+$reports->addOption($miCleared);
 
 $navbar->addMenu($cdiAdmin);
 $navbar->addMenu($admin);
