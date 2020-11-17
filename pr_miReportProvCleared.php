@@ -9,12 +9,20 @@ $months = array('','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','
 $twelveMonthsAgo = new DateTime("first day of this month");
 
 $sql = "";
-$sql.= " select trim(A.ACCOUNT) as ACCOUNT, YEAR(PES_DATE_RESPONDED) as YEAR, MONTH(PES_DATE_RESPONDED) as MONTH, count(*) as Prov_Cleared ";
-$sql.= " from ";
-$sql.= "  ( select distinct  PES_STATUS, PES_DATE_RESPONDED, ACCOUNT_ID ";
+$sql.= " select trim(A.ACCOUNT) as ACCOUNT, YEAR(PES_DATE_RESPONDED) as YEAR, MONTH(PES_DATE_RESPONDED) as MONTH, count(distinct UPES_REF) as Prov_Cleared ";
+$sql.= " from ( ";
+$sql.= " select distinct  PES_STATUS, PES_DATE_RESPONDED, ACCOUNT_ID, UPES_REF ";
+$sql.= " FROM ( ";
+$sql.= " select distinct  PES_STATUS, PES_DATE_RESPONDED, ACCOUNT_ID, UPES_REF ";
 $sql.= " from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON_HIST .  "  ";
 $sql.= " where PES_STATUS = '" . AccountPersonRecord::PES_STATUS_PROVISIONAL . "' ";
 $sql.= " AND PES_DATE_RESPONDED >= date('" . $twelveMonthsAgo->format('Y-m-d') . "') - 11 Months ";
+$sql.= " UNION ";
+$sql.= "  select distinct  PES_STATUS, PES_DATE_RESPONDED, ACCOUNT_ID, UPES_REF ";
+$sql.= " from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON_HIST .  "  ";
+$sql.= " where PES_STATUS = '" . AccountPersonRecord::PES_STATUS_PROVISIONAL . "' ";
+$sql.= " AND PES_DATE_RESPONDED >= date('" . $twelveMonthsAgo->format('Y-m-d') . "') - 11 Months ";
+$sql.= " ) ";
 $sql.= " ) as AH ";
 $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT .  " AS A ";
 $sql.= " on AH.ACCOUNT_ID = A.ACCOUNT_ID "; 
