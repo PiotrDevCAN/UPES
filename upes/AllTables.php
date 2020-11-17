@@ -13,6 +13,7 @@ class AllTables
 {
     public static $ACCOUNT            = 'ACCOUNT';
     public static $ACCOUNT_PERSON     = 'ACCOUNT_PERSON';
+    public static $ACCOUNT_PERSON_HIST= 'ACCOUNT_PERSON_HIST';
 
     public static $CONTRACT           = 'CONTRACT';
     public static $COUNTRY            = 'COUNTRY';
