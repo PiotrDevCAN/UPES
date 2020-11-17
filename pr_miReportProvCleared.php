@@ -19,7 +19,7 @@ $sql.= " where PES_STATUS = '" . AccountPersonRecord::PES_STATUS_PROVISIONAL . "
 $sql.= " AND PES_DATE_RESPONDED >= date('" . $twelveMonthsAgo->format('Y-m-d') . "') - 11 Months ";
 $sql.= " UNION ";
 $sql.= "  select distinct  PES_STATUS, PES_DATE_RESPONDED, ACCOUNT_ID, UPES_REF ";
-$sql.= " from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON_HIST .  "  ";
+$sql.= " from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON .  "  ";
 $sql.= " where PES_STATUS = '" . AccountPersonRecord::PES_STATUS_PROVISIONAL . "' ";
 $sql.= " AND PES_DATE_RESPONDED >= date('" . $twelveMonthsAgo->format('Y-m-d') . "') - 11 Months ";
 $sql.= " ) ";

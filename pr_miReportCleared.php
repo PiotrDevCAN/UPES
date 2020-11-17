@@ -9,7 +9,7 @@ $twelveMonthsAgo = new DateTime("first day of this month");
 
 $sql = "";
 $sql.= " select trim(A.ACCOUNT) as ACCOUNT, YEAR(PES_CLEARED_DATE) as YEAR, MONTH(PES_CLEARED_DATE) as MONTH, count(*) as Cleared ";
-$sql.= " from UPES.ACCOUNT_PERSON as AP ";
+$sql.= " from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
 $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A  ";
 $sql.= " on AP.ACCOUNT_ID = A.ACCOUNT_ID "; 
 $sql.= " where PES_CLEARED_DATE >= date('" . $twelveMonthsAgo->format('Y-m-d') . "') - 11 Months ";
