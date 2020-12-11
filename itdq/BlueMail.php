@@ -22,9 +22,9 @@ class BlueMail
     {
      
 
-        $cleanedTo  = array_unique(array_map('strtolower',$to));
-        $cleanedCc  = array_unique(array_diff(array_map('strtolower',$cc),$cleanedTo,array_map('strtolower',$bcc))); // We can't CC/BCC someone already in the TO list.
-        $cleanedBcc = array_unique(array_diff(array_map('strtolower',$bcc),$cleanedTo,$cleanedCc));
+        $cleanedTo  = array_unique(array_map('trim',(array_map('strtolower',$to))));
+        $cleanedCc  = array_unique(array_map('trim',array_diff(array_map('strtolower',$cc),$cleanedTo,array_map('strtolower',$bcc)))); // We can't CC/BCC someone already in the TO list.
+        $cleanedBcc = array_unique(array_map('trim',array_diff(array_map('strtolower',$bcc),$cleanedTo,$cleanedCc)));
         
         if (isset(AllItdqTables::$EMAIL_LOG)) {
             $emailLogRecordID = self::prelog($cleanedTo, $subject, $message, null, $cleanedCc, $cleanedBcc);
