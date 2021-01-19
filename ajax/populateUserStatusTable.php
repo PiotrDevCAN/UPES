@@ -32,6 +32,9 @@ $sql.= " ON AP.PES_LEVEL = PL.PES_LEVEL_REF ";
 $sql.= " WHERE A.ACCOUNT is not null and AP.UPES_REF is not null ";
 $sql.= $_SESSION['isPesTeam'] ? null : $sqlToAllowPeopleToSeeRequestsForTheirAccounts;
 
+error_log(__FILE__ . __LINE__ . $_SESSION['ssoEmail']);
+error_log($sql);
+
 
 $rs = db2_exec($GLOBALS['conn'], $sql);
 
