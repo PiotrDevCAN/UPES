@@ -21,7 +21,7 @@ class PesEmail {
     const EMAIL_BODIES             = 'emailBodies';
     const EMAIL_APPLICATION_FORMS  = 'applicationForms';
 
-    const APPLICATION_FORM_GLOBAL = 'FSS Global Application Form v2.0.doc';
+    const APPLICATION_FORM_GLOBAL = 'FSS Global Application Form v2.2+.doc';
     const APPLICATION_FORM_ODC    = 'ODC application form v3.0.xls';
     const APPLICATION_FORM_OWENS  = 'Owens_Consent_Form.pdf';
 
