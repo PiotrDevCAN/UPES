@@ -24,9 +24,10 @@ class PesEmail {
     const APPLICATION_FORM_GLOBAL = 'FSS Global Application Form v2.2+.doc';
     const APPLICATION_FORM_ODC    = 'ODC application form v3.0.xls';
     const APPLICATION_FORM_OWENS  = 'Owens_Consent_Form.pdf';
+    const APPLICATION_FORM_VF     = 'VF Overseas Consent Form.pdf';
 
     const EMAIL_SUBJECT          = "IBM Confidential: URGENT - &&account_name&&  Pre Employment Screening- &&serial_number&& &&candidate_name&&";
-    const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS);
+    const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS,'vf'=>self::APPLICATION_FORM_VF);
 
     static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
 
@@ -51,6 +52,16 @@ class PesEmail {
         fclose($handle);
         return base64_encode($applicationForm);
 
+    }
+    
+    static private function getVfConsentForm(){
+        //$filename = "../emailAttachments/New Overseas Consent Form GDPR.pdf";
+        $filename = "../" .  self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_VF;
+        $handle = fopen($filename, "r",true);
+        $applicationForm = fread($handle, filesize($filename));
+        fclose($handle);
+        return base64_encode($applicationForm);
+        
     }
 
     static private function getOdcApplicationForm(){
@@ -170,6 +181,10 @@ class PesEmail {
                 $encodedAdditional = self::getOwensConsentForm();
                 $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_OWENS,'content_type'=>'application/pdf','data'=>$encodedAdditional);
                 break;
+            case 'vf':
+                $encodedAdditional = self::getVfConsentForm();
+                $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_VF,'content_type'=>'application/pdf','data'=>$encodedAdditional);
+                break;                
             default:
                 null;
                 break;
