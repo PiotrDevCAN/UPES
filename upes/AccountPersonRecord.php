@@ -29,6 +29,10 @@ ALTER TABLE UPES_DEV.ACCOUNT_PERSON ADD VERSIONING USE HISTORY TABLE UPES_DEV.AC
 ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD CONSTRAINT "AccPer_PK" PRIMARY KEY ("ACCOUNT_ID","UPES_REF" ) ENFORCED;
 ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ALTER COLUMN "PES_RECHECK_DATE" SET DATA TYPE DATE;
 ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD COLUMN "COUNTRY_OF_RESIDENCE" CHAR(50);
+ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD COLUMN "OFFBOARDED_DATE" DATE;
+ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD COLUMN "OFFBOARDED_BY" CHAR(80);
+
+
 
  *
  */
@@ -69,6 +73,9 @@ class AccountPersonRecord extends DbRecord
     protected $COMMENT;
     protected $PRIORITY;
     protected $COUNTRY_OF_RESIDENCE;
+    
+    protected $OFFBOARDED_DATE;
+    protected $OFFBOARDED_BY;
 
     const PES_EVENT_CONSENT        = 'Consent Form';
     const PES_EVENT_WORK           = 'Right to Work';
@@ -283,7 +290,11 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= "<span class='glyPesInitiate glyphicon glyphicon-plane ' aria-hidden='true'></span>";
                 $pesStatusWithButton.= "</button>&nbsp;";
                 break;
+            case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && $_SESSION['isPesTeam'] ;
+            
+            $recheck      = ($status==AccountPersonRecord::PES_STATUS_RECHECK_REQ) ? 'yes' : 'no' ;
+            $aeroplaneColor= ($status==AccountPersonRecord::PES_STATUS_RECHECK_REQ)? 'yellow' : 'green' ;
 
             $missing = !empty($emailAddress) ? '' : ' Email Address';
             $missing.= !empty($fullName) ? '' : ' Full Name';
@@ -307,7 +318,7 @@ class AccountPersonRecord extends DbRecord
             $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='$tooltip'";
             $pesStatusWithButton.= " $disabled  ";
             $pesStatusWithButton.= " > ";
-            $pesStatusWithButton.= "<span class='glyphicon glyphicon-send ' aria-hidden='true' ></span>";
+            $pesStatusWithButton.= "<span class='glyphicon glyphicon-send ' aria-hidden='true' style='color:$aeroplaneColor' ></span>";
 
             $pesStatusWithButton.= "</button>&nbsp;";
             case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && $_SESSION['isPesTeam'] :
@@ -322,7 +333,7 @@ class AccountPersonRecord extends DbRecord
             case $status == AccountPersonRecord::PES_STATUS_LEFT_IBM && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_PROVISIONAL && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_TBD && $_SESSION['isPesTeam'] :
-            case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
+          //  case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_STAGE_1 && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_STAGE_2 && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_MOVER && $_SESSION['isPesTeam'] :
@@ -342,8 +353,8 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= "<span class='glyphicon glyphicon-edit ' aria-hidden='true'></span>";
                 $pesStatusWithButton.= "</button>";
                 break;
-            case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && !$_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && !$_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && !$_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && !$_SESSION['isPesTeam'] ;
             $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesCancel accessRestrict accessFm' aria-label='Left Align' ";
             $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";

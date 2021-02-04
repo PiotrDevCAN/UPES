@@ -164,7 +164,11 @@ $(document).ready(function(){
                     data: "PES_CLEARED_DATE"
                   },{
                     data: "DATE_LAST_CHASED"
-                  }]
+                  }] ,
+       drawCallback: function( settings ) {
+                      $('.btn-info').parent('td').parent('tr').addClass('warning');
+                      $('.btn-info').parent('td').parent('tr').children('td').css({'font-style':'italic'});                      
+                  }             
 	});
 
 	$(document).on('click','button.cancelPesRequest',function(){
@@ -228,6 +232,7 @@ $(document).ready(function(){
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
 	        	}
 		});
+	
 
 	});
 
@@ -505,6 +510,51 @@ $(document).ready(function(){
 			});
 	});
 
+
+	$(document).on('click','button.toggleBoarded',function(){
+		$(this).addClass('spinning').attr('disabled',false);
+		var upesref = $(this).data('upesref');
+		var accountid = $(this).data('accountid');
+		var boarded = $(this).data('boarded');
+		$.ajax({
+			type:'post',
+		  	url: '/ajax/toggleBoardedStatus.php',
+		  	data:{upesRef: upesref,
+		  		accountId: accountid,
+		  		boarded: boarded },
+	      	success: function(response) {
+	      		var responseObj = JSON.parse(response);
+	      		if(responseObj.success){
+		    	    $('.spinning').removeClass('spinning').attr('disabled',false);
+		    	    userStatusTable.ajax.reload();
+				} else {
+		    	    $('.spinning').removeClass('spinning').attr('disabled',false);
+	                $('#modalError .modal-body').html(responseObj.Messages);
+	                $('#modalError .modal-body').addClass('bg-danger');
+	                $('#modalError').modal('show');
+				}
+          	},
+	      	fail: function(response){
+					console.log('Failed');
+					console.log(response);
+	                $('#modalError .modal-body').html("<h2>Json call to toggle boarded status FAILED.</h2><br>Tell Rob(" + __FILE__ + __LINE__ + ")" );
+	                $('#modalError .modal-body').addClass('bg-warning');
+	                $('#modalError').modal('show');
+	                $(submitBtn).removeClass('spinning').attr('disabled',false);
+				},
+	      	error: function(error){
+	        		console.log('Ajax error');
+	        		console.log(error.statusText);
+	                $('#modalError .modal-body').html("<h2>Json call to toggle boarded status Errord :<br/>" + error.statusText + "</h2>Tell Rob(" + __FILE__ + __LINE__ + ")" );
+	                $('#modalError .modal-body').addClass('bg-warning');
+	                $('#modalError').modal('show');
+	                $(submitBtn).removeClass('spinning').attr('disabled',false);
+	        	}
+		});
+
+	});
+
+	
 
 
 

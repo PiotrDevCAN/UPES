@@ -809,6 +809,12 @@ public $lastSelectSql;
         $row['ACCOUNT'] = array('display'=>"$account<br/><small>($countryOfResidence)<small>", 'sort'=>$account);
 
         $row['ACTION'] = '';
+        
+        $onOrOffBoardingIcon     = empty($row['OFFBOARDED_DATE']) ? "glyphicon-log-out" : "glyphicon-log-in";
+        $onOrOffBoardingTitle    = empty($row['OFFBOARDED_DATE']) ? "offboard" : "re-board. Offboarded:" . $row['OFFBOARDED_DATE'] . " By:" . $row['OFFBOARDED_BY'] ;
+        $onOrOffBoardingBtnClass = empty($row['OFFBOARDED_DATE']) ? "btn-warning" : "btn-info";
+        $boarded = empty($row['OFFBOARDED_DATE']) ? 'yes' : 'no';
+        
 
         switch ($row['PES_STATUS']) {
             case AccountPersonRecord::PES_STATUS_CLEARED:
@@ -817,6 +823,10 @@ public $lastSelectSql;
                 $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson ' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
                                   <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                                 </button>";
+                $row['ACTION'].= "<br/>";
+                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded ' aria-label='Left Align' data-accountid='" .$accountId  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded .  "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
+                                  <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "'  data-upesref='" . $upesref  . "'  data-boarded='" . "'></span>
+                                  </button>";
                 break;
 
              default:
@@ -825,8 +835,12 @@ public $lastSelectSql;
                                 </button>";
                 $row['ACTION'].= "&nbsp;";
                 $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "'data-toggle='tooltip' title='Cancel PES Request' >
-              <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
-              </button>";
+                                  <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
+                                  </button>";
+                $row['ACTION'].= "<br/>";
+                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded ' aria-label='Left Align' data-accountid='" .$accountId . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded. "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
+                                  <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "'  data-upesref='" . $upesref  . "'  data-boarded='" . $boarded . "'></span>
+                                  </button>";
                 break;
         }
 
@@ -1105,6 +1119,50 @@ public $lastSelectSql;
         return $data;
     }
 
+    
+    static function offboardFromAccount( $accountId=null, $upesref=null){
+        
+        db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
+        
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
+        $sql.= " SET OFFBOARDED_DATE= current date ";
+        $sql.= "     ,OFFBOARDED_BY ='" . db2_escape_string($_SESSION['ssoEmail']) . "' ";
+        $sql.= " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
+        $sql.= " AND UPES_REF='" . db2_escape_string($upesref) . "' ";
+        
+        $rs = db2_exec($GLOBALS['conn'], $sql);
+        
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+        
+       
+        db2_commit($GLOBALS['conn']);
+        db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_ON);
+    }
+    
+    static function reboardToAccount( $accountId=null, $upesref=null){
+        
+        db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
+        
+        $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
+        $sql.= " SET OFFBOARDED_DATE=null ";
+        $sql.= "     ,OFFBOARDED_BY =null ";
+        $sql.= " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
+        $sql.= " AND UPES_REF='" . db2_escape_string($upesref) . "' ";
+        
+        $rs = db2_exec($GLOBALS['conn'], $sql);
+        
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+        
+        
+        db2_commit($GLOBALS['conn']);
+        db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_ON);
+    }
 
 
 
