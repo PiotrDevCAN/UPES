@@ -8,6 +8,7 @@ $pesEmailObj = new PesEmail();
 
 try {
    // $emailDetails = $pesEmailObj->getEmailDetails($_POST['upesref'],  $_POST['account'], $_POST['country'],$_POST['ibmstatus']);
+    $recheck = $_POST['recheck']=='yes';
    $emailDetails = PesEmail::determinePesApplicationForms($_POST['country']);
 
 } catch ( \Exception $e) {
@@ -29,7 +30,8 @@ $success = strlen($messages)==0;
 unset($emailDetails['attachments']); // dont need them at this point.
 $emailDetails['success'] = $success;
 $emailDetails['messages'] = $messages;
-$emailDetails['cnum'] = $_GET['cnum'];
+$emailDetails['cnum'] = $_REQUEST['cnum'];
+$emailDetails['recheck'] = $_REQUEST['recheck'];
 
 
 ob_clean();

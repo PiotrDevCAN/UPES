@@ -94,9 +94,9 @@ class PesEmail {
         return base64_encode($xlsAttachment);
     }
 
-    static function findEmailBody($account,$country, $emailAddress){
-
-        if(is_array($emailAddress)){
+    static function findEmailBody($account,$country, $emailAddress, $recheck='no'){
+        
+         if(is_array($emailAddress)){
             $email = $emailAddress[0];
         } else {
             $email = $emailAddress;
@@ -110,10 +110,11 @@ class PesEmail {
 
         $emailBodyName = CountryTable::getEmailBodyNameForCountry($country);
 
+        $emailPrefix = strtolower($recheck)=='yes' ? 'recheck' : 'request';
 
-        $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/request_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
-        $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//request_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
-
+        $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//" .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        
         $pathsToTry = array($pathToAccountBody,$pathToDefaultBody);
 
         $pathFound = false;
@@ -130,7 +131,7 @@ class PesEmail {
     }
 
 
-    static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail){
+    static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail, $recheck='no'){
         $loader = new Loader();
         $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
 
@@ -142,7 +143,7 @@ class PesEmail {
         $nameOfApplicationForm = $applicationFormDetails['nameOfApplicationForm'];
         $pesAttachments        = $applicationFormDetails['pesAttachments'];
 
-        $emailBodyFile = PesEmail::findEmailBody($account, $country, $candidateEmail);
+        $emailBodyFile = PesEmail::findEmailBody($account, $country, $candidateEmail, $recheck);
         $pesTaskid = $allPesTaskid[$account];
 
         include $emailBodyFile;

@@ -103,6 +103,7 @@ class AccountPersonRecord extends DbRecord
     const PES_STATUS_CANCEL_CONFIRMED = 'Cancel Confirmed';
     const PES_STATUS_TBD            = 'TBD';
     const PES_STATUS_RECHECK_REQ    = 'Recheck Req';
+    const PES_STATUS_RECHECK_PROGRESSING = 'Recheck Progressing';
     const PES_STATUS_LEFT_IBM       = 'Left IBM';
     const PES_STATUS_STAGE_1        = 'Stage 1 Completed';
     const PES_STATUS_STAGE_2        = 'Stage 2 Completed';
@@ -315,6 +316,7 @@ class AccountPersonRecord extends DbRecord
             $pesStatusWithButton.= " data-upesref='$upesRef' ";
             $pesStatusWithButton.= " data-status='$status' ";
             $pesStatusWithButton.= " data-ibmstatus='$ibmStatus' ";
+            $pesStatusWithButton.= " data-recheck='$recheck' ";
             $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='$tooltip'";
             $pesStatusWithButton.= " $disabled  ";
             $pesStatusWithButton.= " > ";
@@ -555,6 +557,10 @@ class AccountPersonRecord extends DbRecord
   <div class="form-group">
     <label for="pesEmailApplicationForm">Application Forms</label>
     <textarea class="form-control" id="pesEmailApplicationForm" name="pesEmailApplicationForm" disabled ></textarea>
+  </div>
+   <div class="form-group">
+    <label for="pesEmailRecheck">Recheck</label>
+    <input type="text" class="form-control" id="pesEmailRecheck" name="pesEmailRecheck" disabled >
   </div>
 </form>
 </div>

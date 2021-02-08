@@ -157,19 +157,21 @@ function personRecord() {
 					       type: 'POST',
 					       data : {country:data.country,					    	       
 					    	       account:data.account,
-                                   cnum:data.cnum
+                                   cnum:data.cnum,
+						   		   recheck:data.recheck
 					    	       },
 					       success: function(result){
 					    	   $('.btnSendPesEmail').removeClass('spinning');		    	 
 					           var resultObj = JSON.parse(result);
-					           if(resultObj.success==true){
+					           if(resultObj.success==true){						
 					        	    $('#pesEmailUpesRef').val(data.upesref);
 					   				$('#pesEmailFullName').val(data.fullname);
 					   				$('#pesEmailAddress').val(data.emailaddress);
 					   				$('#pesEmailCountry').val(data.country);
 					   				$('#pesEmailAccount').val(data.account);
 					   				$('#pesEmailAccountId').val(data.accountid );
-					   				$('#pesEmailCnum').val(data.cnum);					   				
+					   				$('#pesEmailCnum').val(data.cnum);	
+									$('#pesEmailRecheck').val(data.recheck);
 					   				$('#pesEmailApplicationForm').val(''); // clear it out the first time.
 					   				var arrayLength = resultObj.pesAttachments.length;
 					   				for (var i = 0; i < arrayLength; i++) {
@@ -195,6 +197,7 @@ function personRecord() {
 					var account = $('#pesEmailAccount').val();
 					var accountid = $('#pesEmailAccountId').val();
 					var cnum = $('#pesEmailCnum').val();
+					var recheck = $('#pesEmailRecheck').val();
 					   $.ajax({
 						   url: "ajax/sendPesEmail.php",
 					       type: 'POST',
@@ -202,7 +205,8 @@ function personRecord() {
 					    	   	    country:country,
 					    	       account:account,
 					    	       accountid:accountid,
-					    	       cnum:cnum				    	       
+					    	       cnum:cnum,
+   						   		   recheck:recheck				    	       
 					    	       },
 					       success: function(result){
 					    	  $('#confirmSendPesEmail').removeClass('spinning');	  		    	   					    	   
