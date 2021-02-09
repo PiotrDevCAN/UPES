@@ -339,6 +339,7 @@ class AccountPersonRecord extends DbRecord
             case $status == AccountPersonRecord::PES_STATUS_STAGE_1 && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_STAGE_2 && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_MOVER && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING && $_SESSION['isPesTeam'] :
                 
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesStatus' aria-label='Left Align' ";
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
@@ -356,23 +357,24 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= "</button>";
                 break;
             case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && !$_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING && !$_SESSION['isPesTeam'] ;
             case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && !$_SESSION['isPesTeam'] :
-            case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && !$_SESSION['isPesTeam'] ;
-            $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesCancel accessRestrict accessFm' aria-label='Left Align' ";
-            $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
-            $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";
-            $pesStatusWithButton.= " data-account='" . $account . "' ";
-            $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
-            $pesStatusWithButton.= " data-pesdaterequested='" .trim($row['PES_DATE_REQUESTED']) . "' ";
-            $pesStatusWithButton.= " data-pesrequestor='" .trim($row['PES_REQUESTOR']) . "' ";
-            $pesStatusWithButton.= " data-pesstatus='" .$status . "' ";
-            $pesStatusWithButton.= array_key_exists('PASSPORT_FIRST_NAME', $row) ?  " data-passportfirst='" .$passportFirst . "' " : null;
-            $pesStatusWithButton.= array_key_exists('PASSPORT_LAST_NAME', $row) ? " data-passportlastname='" .$passportLastname . "' " : null;
-            $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='Cancel PES Request'";
-            $pesStatusWithButton.= " > ";
-            $pesStatusWithButton.= "<span class='glyphicon glyphicon-erase ' aria-hidden='true' ></span>";
-            $pesStatusWithButton.= "</button>";
-            break;
+            case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && !$_SESSION['isPesTeam'] ;          
+                $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesCancel accessRestrict accessFm' aria-label='Left Align' ";
+                $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
+                $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";
+                $pesStatusWithButton.= " data-account='" . $account . "' ";
+                $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
+                $pesStatusWithButton.= " data-pesdaterequested='" .trim($row['PES_DATE_REQUESTED']) . "' ";
+                $pesStatusWithButton.= " data-pesrequestor='" .trim($row['PES_REQUESTOR']) . "' ";
+                $pesStatusWithButton.= " data-pesstatus='" .$status . "' ";
+                $pesStatusWithButton.= array_key_exists('PASSPORT_FIRST_NAME', $row) ?  " data-passportfirst='" .$passportFirst . "' " : null;
+                $pesStatusWithButton.= array_key_exists('PASSPORT_LAST_NAME', $row) ? " data-passportlastname='" .$passportLastname . "' " : null;
+                $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='Cancel PES Request'";
+                $pesStatusWithButton.= " > ";
+                $pesStatusWithButton.= "<span class='glyphicon glyphicon-erase ' aria-hidden='true' ></span>";
+                $pesStatusWithButton.= "</button>";
+                break;
             case $status == AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED && $_SESSION['isPesTeam'] :
             default:
                 break;
@@ -469,6 +471,7 @@ class AccountPersonRecord extends DbRecord
                     <option value='<?=AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED;?>'><?=AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_TBD;?>'><?=AccountPersonRecord::PES_STATUS_TBD;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_RECHECK_REQ;?>'><?=AccountPersonRecord::PES_STATUS_RECHECK_REQ;?></option>
+                    <option value='<?=AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING;?>'><?=AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_LEFT_IBM;?>'><?=AccountPersonRecord::PES_STATUS_LEFT_IBM;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_STAGE_1;?>'><?=AccountPersonRecord::PES_STATUS_STAGE_1;?></option>
                     <option value='<?=AccountPersonRecord::PES_STATUS_STAGE_2;?>'><?=AccountPersonRecord::PES_STATUS_STAGE_2;?></option>
