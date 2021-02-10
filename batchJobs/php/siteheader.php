@@ -13,3 +13,4 @@ include "splClassLoader.php";
 include "connect.php";
 
 $_SESSION['ssoEmail'] = 'Scheduled Job';
+$GLOBALS['Db2Schema'] = strtoupper($_ENV['environment']);

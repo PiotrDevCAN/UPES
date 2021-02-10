@@ -105,12 +105,19 @@ class PesEmail {
         if(empty($account) or empty($country)){
             throw new Exception('Incorrect parms passed');
         }
-
+        
+        $offboarded = AccountPersonTable::offboardedStatusFromEmail($email, $account);
+        if($offboarded){
+            $pathToRecheckOffboarded = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//" .  "recheck_offboarded.php";
+            return $pathToRecheckOffboarded;
+        }
+ 
         $intExt = stripos($email, ".ibm.com") !== false ? null : "_ext" ;
 
         $emailBodyName = CountryTable::getEmailBodyNameForCountry($country);
 
         $emailPrefix = strtolower($recheck)=='yes' ? 'recheck' : 'request';
+        $intExt      = strtolower($recheck)=='yes' ? null : $intExt; // For recheck email there is no difference.
 
         $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//" .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";

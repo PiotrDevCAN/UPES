@@ -1165,6 +1165,26 @@ public $lastSelectSql;
         db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_ON);
     }
 
+    
+    static function offboardedStatusFromEmail($email=null, $accountId=null){
+        $sql = " SELECT OFFBOARDED_DATE FROM " . $GLOBALS['Db2Schema'] . "." . allTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . allTables::$PERSON . " AS P ";
+        $sql.= " ON AP.UPES_REF = P.UPES_REF ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . allTables::$ACCOUNT . " AS A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " WHERE upper(P.EMAIL_ADDRESS) = upper('" . db2_escape_string(strtoupper(trim($email))) . "') " ;
+        $sql.= " AND upper(A.ACCOUNT)=upper('" . db2_escape_string(strtoupper(trim($accountId))) . "') " ;
+       
+        $resultSet = db2_exec($GLOBALS['conn'], $sql);
+        if(!$resultSet){
+            DbTable::displayErrorMessage($resultSet, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+        
+        $row = db2_fetch_assoc($resultSet);
+        return !empty($row['OFFBOARDED_DATE']);
+
+    }
 
 
 
