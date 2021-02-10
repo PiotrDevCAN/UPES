@@ -6,9 +6,10 @@ class slack {
 
     protected $url;
 
-    const CHANNEL_SM_CDI      = 'sm_cognitive_delivery';
+    const CHANNEL_SM_CDI       = 'sm_cognitive_delivery';
     const CHANNEL_SM_CDI_AUDIT = 'sm_cdi_audit';
-    const CHANNEL_GENERAL     = 'general';
+    const CHANNEL_GENERAL      = 'general';
+    const CHANNEL_UPES_AUDIT   = 'upes_audit';
 
     const CHANNEL_RTB_WINTEL_OFFSHORE = 'rtb-wintel_offshore';
     const CHANNEL_BAU_D_ELT = 'bau_d_elt';
@@ -23,7 +24,7 @@ class slack {
         $this->url[self::CHANNEL_SM_CDI_AUDIT]        = 'https://hooks.slack.com/services/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';
         $this->url[self::CHANNEL_GENERAL]             = 'https://hooks.slack.com/services/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';
         $this->url[self::CHANNEL_BAU_D_ELT]           = 'https://hooks.slack.com/services/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';
-
+        $this->url[self::CHANNEL_UPES_AUDIT]          = 'https://hooks.slack.com/services/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';
         $this->url[self::CHANNEL_RTB_WINTEL_OFFSHORE] = 'https://hooks.slack.com/services/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';
 //        $this->url[self::CHANNEL_POLYTEST]            = 'https://hooks.slack.com/services/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';
 
@@ -36,8 +37,6 @@ class slack {
         $ch = curl_init( $url );
 
         $messageToSlack = '{"text":"' . $message . '"}';
-
-        var_dump($messageToSlack);
 
         curl_setopt( $ch, CURLOPT_POSTFIELDS,$messageToSlack );
         curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Content-Length: ' . strlen($messageToSlack)));

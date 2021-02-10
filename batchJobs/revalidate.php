@@ -13,7 +13,7 @@ use itdq\slack;
 $slack = new slack();
 
 AuditTable::audit("Revalidation invoked.",AuditTable::RECORD_TYPE_REVALIDATION);
-$slack->sendMessageToChannel("Revalidation invoked.", slack::CHANNEL_UPES_AUDIT);
+$slack->sendMessageToChannel("Revalidation invoked.(" . $_ENV['environment']. ") ", slack::CHANNEL_UPES_AUDIT);
 
 set_time_limit(60);
 
@@ -27,8 +27,8 @@ db2_commit($GLOBALS['conn']);
 $activeIbmErsPredicate = "   ( trim(BLUEPAGES_STATUS) = '' or BLUEPAGES_STATUS is null or trim(BLUEPAGES_STATUS) =  '" . PersonRecord::BLUEPAGES_STATUS_FOUND . "') ";
 $activeIbmErsPredicate.= " and ( lower(trim(EMAIL_ADDRESS)) like '%ibm.com' )";
 $allNonLeavers = $loader->load('CNUM',allTables::$PERSON, $activeIbmErsPredicate ); //
-AuditTable::audit("Revalidation will check " . count($allNonLeavers) . " people currently flagged as found.",AuditTable::RECORD_TYPE_REVALIDATION);
-$slack->sendMessageToChannel("Revalidation will check " . count($allNonLeavers) . " people currently flagged as found.", slack::CHANNEL_UPES_AUDIT);
+AuditTable::audit("Revalidation  will check " . count($allNonLeavers) . " people currently flagged as found.",AuditTable::RECORD_TYPE_REVALIDATION);
+$slack->sendMessageToChannel("Revalidation (" . $_ENV['environment']. ") will check " . count($allNonLeavers) . " people currently flagged as found.", slack::CHANNEL_UPES_AUDIT);
 
 
 $chunkedCnum = array_chunk($allNonLeavers, 100);
@@ -50,7 +50,7 @@ foreach ($chunkedCnum as $key => $cnumList){
 $potentialLeaver = $allNonLeavers;
 
 AuditTable::audit("Revalidation found " . count($potentialLeaver) . "  leavers.",AuditTable::RECORD_TYPE_REVALIDATION);
-$slack->sendMessageToChannel("Revalidation found " . count($potentialLeaver) . "  leavers.", slack::CHANNEL_UPES_AUDIT);
+$slack->sendMessageToChannel("Revalidation (" . $_ENV['environment']. ") found " . count($potentialLeaver) . "  leavers.", slack::CHANNEL_UPES_AUDIT);
 
 PersonTable::setCnumsToFound($allFound);
 
@@ -59,6 +59,6 @@ if($potentialLeaver){
 }
 
 AuditTable::audit("Revalidation completed.",AuditTable::RECORD_TYPE_REVALIDATION);
-$slack->sendMessageToChannel("Revalidation completed.", slack::CHANNEL_UPES_AUDIT);
+$slack->sendMessageToChannel("Revalidation (" . $_ENV['environment']. ") completed.", slack::CHANNEL_UPES_AUDIT);
 
 db2_commit($GLOBALS['conn']);
