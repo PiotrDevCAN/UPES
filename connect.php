@@ -1,13 +1,15 @@
 <?php
 
-function tryConnect($conn_string){
-    error_log("Attempting Pconnect to DB2 from Pod:" . $_ENV['HOSTNAME'] . ":" . $conn_string);
-    $preConnect = microtime(true);  
-    $connection =  db2_pconnect( $conn_string, "", "" );
-    $postConnect = microtime(true);
-    error_log("Db2 Pconnect took:" . (float)($postConnect-$preConnect));
-    error_log("Db2 Pconnection:" . print_r($connection,true));
-    return $connection;
+if(!function_exists("tryConnect")){
+    function tryConnect($conn_string){
+        error_log("Attempting Pconnect to DB2 from Pod:" . $_ENV['HOSTNAME'] . ":" . $conn_string);
+        $preConnect = microtime(true);  
+        $connection =  db2_pconnect( $conn_string, "", "" );
+        $postConnect = microtime(true);
+        error_log("Db2 Pconnect took:" . (float)($postConnect-$preConnect));
+        error_log("Db2 Pconnection:" . print_r($connection,true));
+        return $connection;
+    }
 }
 
 

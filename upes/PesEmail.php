@@ -299,7 +299,7 @@ class PesEmail {
 
         $emailBody = $pesEmail;
 
-        $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "UPES Upcoming Rechecks", $emailBody,self::$notifyPesEmailAddresses['to'],self::$notifyPesEmailAddresses['cc']);
+        $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "UPES Upcoming Rechecks", $emailBody,self::$notifyPesEmailAddresses['to'][0],self::$notifyPesEmailAddresses['cc']);
         return $sendResponse;
 
 
@@ -317,7 +317,7 @@ class PesEmail {
         $pesEmail.= "<p>No upcoming rechecks have been found</p>";
         $emailBody = $pesEmail;
 
-        $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "Upcoming Rechecks-None", $emailBody,self::$notifyPesEmailAddresses['to'],self::$notifyPesEmailAddresses['cc']);
+        $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "Upcoming Rechecks-None", $emailBody,self::$notifyPesEmailAddresses['to'][0],self::$notifyPesEmailAddresses['cc']);
         return $sendResponse;
 
 

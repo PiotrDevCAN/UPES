@@ -100,7 +100,6 @@ class BlueMail
         $mail->Subject= $subject;
         $mail->body= $message;
         
-        
         switch (trim($_ENV['email'])) {
             case 'dev':
             case 'user':
