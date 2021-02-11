@@ -85,7 +85,7 @@ public $lastSelectSql;
                 $pesStatusPredicate.= " AND AP.PROCESSING_STATUS_CHANGED > current timestamp - 31 days  ";
                 break;
             case self::PES_TRACKER_RECORDS_ALL :
-                $pesStatusPredicate = "  ";
+                $pesStatusPredicate = " 1=1 ";
                 break;
             default:
                 $pesStatusPredicate = 'pass a parm muppet ';
@@ -143,9 +143,6 @@ public $lastSelectSql;
         $sql.= " AND " . $pesStatusPredicate;
         $sql.= !empty($upesRef) ? " AND AP.UPES_REF='" . db2_escape_string($upesRef)  . "' " : null;
         $sql.= !empty($accountId) ? " AND AP.ACCOUNT_ID='" . db2_escape_string($accountId)  . "' " : null;
-
-        var_dump($sql);
-        
         
         $rs = db2_exec($GLOBALS['conn'], $sql);
 
@@ -159,14 +156,9 @@ public $lastSelectSql;
             case self::PES_TRACKER_RETURN_RESULTS_AS_ARRAY:
                 $report = array();
                 while(($row=db2_fetch_assoc($rs))==true){
-                    
-                    var_dump($row);
-                    
                     $report[] = array_map('trim',$row);
                 }
-                
-                var_dump($report);
-                
+               
                 return $report;
             break;
             case self::PES_TRACKER_RETURN_RESULTS_AS_RESULT_SET:
@@ -489,7 +481,7 @@ public $lastSelectSql;
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
             throw new \Exception("Failed to update Pes Priority: $pesPriority for $upesRef");
-        }
+        }   
 
         return true;
     }
