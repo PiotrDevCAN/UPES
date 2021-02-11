@@ -144,18 +144,29 @@ public $lastSelectSql;
         $sql.= !empty($upesRef) ? " AND AP.UPES_REF='" . db2_escape_string($upesRef)  . "' " : null;
         $sql.= !empty($accountId) ? " AND AP.ACCOUNT_ID='" . db2_escape_string($accountId)  . "' " : null;
 
+        var_dump($sql);
+        
+        
         $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
             throw new \Exception('Error in ' . __METHOD__ . " running $sql");
         }
+        
+        
         switch ($returnResultsAs) {
             case self::PES_TRACKER_RETURN_RESULTS_AS_ARRAY:
                 $report = array();
                 while(($row=db2_fetch_assoc($rs))==true){
+                    
+                    var_dump($row);
+                    
                     $report[] = array_map('trim',$row);
                 }
+                
+                var_dump($report);
+                
                 return $report;
             break;
             case self::PES_TRACKER_RETURN_RESULTS_AS_RESULT_SET:

@@ -45,6 +45,9 @@ try {
 }
 
 $data = AccountPersonTable::returnPesEventsTable('Active', AccountPersonTable::PES_TRACKER_RETURN_RESULTS_AS_ARRAY,$_POST['upesref'],$_POST['accountid']);
+
+var_dump($data);
+
 $pesStatusField = AccountPersonRecord::getPesStatusWithButtons($data[0]);
 $processingStatusField =  AccountPersonTable::formatProcessingStatusCell($data[0]);
 
