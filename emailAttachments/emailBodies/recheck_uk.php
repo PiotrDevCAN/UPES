@@ -1,6 +1,6 @@
 <?php
 $emailBody = <<<endOfEmailBody
-Hello &&firstName&&,
+Hello &&candidate_first_name&&,
 <p>You have PES clearance for a UKI IBM FSS account that has a revalidation requirement.  It is within 8 weeks of your revalidation date.</p>
 <p>If you would like to retain your PES Clearance, please see the below requirements.</p>
 Please return the following documents:
