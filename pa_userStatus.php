@@ -21,8 +21,9 @@ unset($allCountries['India']);
 $pesLevelByAccount  = PesLevelTable::prepareJsonArraysForPesSelection();
 $allContractAccountMapping = ContractTable::prepareJsonObjectMappingContractToAccount();
 
-
-
+$isCdi     = $_SESSION['isCdi']     ? ".not('.accessCdi')"       : null; 
+$isPesTeam = $_SESSION['isPesTeam'] ? ".not('.accessPesTeam')"   : null;
+$isUser    = $_SESSION['isUser']    ? ".not('.accessUser')"      : null;
 ?>
 <div class='container'>
 
@@ -167,7 +168,8 @@ $(document).ready(function(){
                   }] ,
        drawCallback: function( settings ) {
                       $('.btn-info').parent('td').parent('tr').addClass('warning');
-                      $('.btn-info').parent('td').parent('tr').children('td').css({'font-style':'italic'});                      
+                      $('.btn-info').parent('td').parent('tr').children('td').css({'font-style':'italic'});    
+                      $('button.accessRestrict')<?=$isCdi?><?=$isPesTeam?><?=$isUser?>.remove();                  
                   }             
 	});
 

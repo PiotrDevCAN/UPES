@@ -824,17 +824,17 @@ public $lastSelectSql;
             case AccountPersonRecord::PES_STATUS_CLEARED:
             case AccountPersonRecord::PES_STATUS_CANCEL_REQ:
             case AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED:
-                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson ' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
+                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
                                   <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                                 </button>";
                 $row['ACTION'].= "<br/>";
-                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded ' aria-label='Left Align' data-accountid='" .$accountId  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded .  "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
+                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded .  "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
                                   <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "'  data-upesref='" . $upesref  . "'  data-boarded='" . "'></span>
                                   </button>";
                 break;
 
              default:
-                 $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson ' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
+                 $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
                                   <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                                 </button>";
                 $row['ACTION'].= "&nbsp;";
@@ -842,7 +842,7 @@ public $lastSelectSql;
                                   <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
                                   </button>";
                 $row['ACTION'].= "<br/>";
-                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded ' aria-label='Left Align' data-accountid='" .$accountId . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded. "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
+                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded. "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
                                   <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "'  data-upesref='" . $upesref  . "'  data-boarded='" . $boarded . "'></span>
                                   </button>";
                 break;
@@ -869,7 +869,7 @@ public $lastSelectSql;
 
         $pesLevel = $row['PES_LEVEL'];
         $pesLevelRef = $row['PES_LEVEL_REF'];
-        $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel ' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "' data-plupesref='" . $upesref . "' data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "'  data-plRequestor='" . $requestor ."'  data-plClearedDate='" . $clearedDateDisplay ."'  data-plRecheckDate='" . $recheckDateDisplay ."' data-toggle='tooltip' title='Edit Request Details' >
+        $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "' data-plupesref='" . $upesref . "' data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "'  data-plRequestor='" . $requestor ."'  data-plClearedDate='" . $clearedDateDisplay ."'  data-plRecheckDate='" . $recheckDateDisplay ."' data-toggle='tooltip' title='Edit Request Details' >
                           <span class='glyphicon glyphicon-edit aria-hidden='true' ></span>
                           </button>&nbsp;" . $pesLevel;
 
