@@ -51,14 +51,19 @@ class PersonRecord extends DbRecord
 
   function displayForm($mode)
     {
-        $notEditable = $mode == FormClass::$modeEDIT ? ' disabled ' : '';
+        $notEditable  = $mode == FormClass::$modeEDIT ? ' disabled ' : '';
+        $ibmerLabel   = $mode == FormClass::$modeEDIT ? 'CNUM'   : 'Lookup IBMer';
+        $showIbmer    = $mode == FormClass::$modeEDIT ? 'hidden' : 'text';
+        $showCnum     = $mode == FormClass::$modeEDIT ? 'text'   : 'hidden';
+        $cnumEditable = $mode == FormClass::$modeEDIT ? ''   : 'disabled';
         ?>
         <form id='personForm' class="form-horizontal" method='post'>
          <div class="form-group" >
-            <label for='CNUM' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='IBM CNUM if applicable'>Lookup IBMer</label>
+            <label for='CNUM' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='IBM CNUM if applicable'><?=$ibmerLabel?></label>
         	<div class='col-md-4'>
-				<input id='ibmer' name='ibmer' class='form-control typeahead' <?=$notEditable;?>  value='<?=!empty($this->FULL_NAME) ? $this->FULL_NAME :null ; ?>'/>
-				<input id='CNUM' name='CNUM' class='form-control' type='hidden' <?=$notEditable;?> value='<?=!empty($this->CNUM) ? $this->CNUM :null ; ?>' />
+				<input id='ibmer' name='ibmer' type='<?=$showIbmer?>' class='form-control typeahead' <?=$notEditable;?>  value='<?=!empty($this->FULL_NAME) ? $this->FULL_NAME :null ; ?>'/>
+				<input id='CNUM' name='CNUM' type='<?=$showCnum?>'class='form-control'  <?=$cnumEditable;?> value='<?=!empty($this->CNUM) ? $this->CNUM :null ; ?>' />
+				<input id='oldCNUM' name='oldCNUM' type='hidden'class='form-control'  value='<?=!empty($this->CNUM) ? $this->CNUM :null ; ?>' />
             </div>
         </div>
         <div class="form-group" >
