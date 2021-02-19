@@ -941,9 +941,10 @@ public $lastSelectSql;
         $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . allTables::$ACCOUNT . " as A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
         $sql.= " WHERE 1=1 ";
-        $sql.= " AND AP.PES_STATUS != '" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "' ";
-        $sql.= " and AP.PES_RECHECK_DATE is not null ";
-        $sql.= " and AP.PES_RECHECK_DATE < CURRENT DATE + 56 DAYS ";
+//        $sql.= " AND AP.PES_STATUS != '" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "' ";
+            $sql.= " AND AP.PES_STATUS = '" . AccountPersonRecord::PES_STATUS_CLEARED . "' ";
+            $sql.= " and AP.PES_RECHECK_DATE is not null ";
+            $sql.= " and AP.PES_RECHECK_DATE < CURRENT DATE + 56 DAYS ";
         $rs = db2_exec($localConnection, $sql);
 
         if(!$rs){
