@@ -650,8 +650,11 @@ public $lastSelectSql;
 
         $db2AutoCommit = db2_autocommit($GLOBALS['conn']);
         db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
+        $now = new \DateTime();
 
-        $dateToUse = empty($dateToUse) ? " current date " : " date('" . db2_escape_string($dateToUse) . "') ";
+        $dateToUse =  empty($dateToUse) ? $now->format('Y-m-d') : $dateToUse;
+        
+        $db2DateToUse =" date('" . db2_escape_string($dateToUse) . "') ";
 
 
         if(!$upesref or !$accountid or !$status){
@@ -659,7 +662,7 @@ public $lastSelectSql;
         }
 
         $requestor = empty($requestor) ? $_SESSION['ssoEmail'] : $requestor;
-
+        
         switch ($status) {
             case AccountPersonRecord::PES_STATUS_STARTER_REQUESTED:
             case AccountPersonRecord::PES_STATUS_RECHECK_REQ:
@@ -673,7 +676,7 @@ public $lastSelectSql;
             case AccountPersonRecord::PES_STATUS_CLEARED:
 //            case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
                 $dateField = 'PES_CLEARED_DATE';
-                self::setPesRescheckDate($upesref,$accountid, $requestor);
+                self::setPesRescheckDate($upesref,$accountid, $requestor, $dateToUse ); // too Soon, we've not set the new Cleared Date
                 break;
             case AccountPersonRecord::PES_STATUS_PROVISIONAL:
             default:
@@ -681,7 +684,7 @@ public $lastSelectSql;
                 break;
         }
         $sql  = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
-        $sql .= " SET $dateField = $dateToUse , PES_STATUS='" . db2_escape_string($status)  . "' ";
+        $sql .= " SET $dateField = $db2DateToUse , PES_STATUS='" . db2_escape_string($status)  . "' ";
         $sql .= !empty($pesStatusDetails) ? " , PES_STATUS_DETAILS='" . db2_escape_string($pesStatusDetails) . "' " : null;
         $sql .= trim($status)==AccountPersonRecord::PES_STATUS_STARTER_REQUESTED ? ", PES_REQUESTOR='" . db2_escape_string($requestor) . "' " : null;
         $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' and ACCOUNT_ID='" . db2_escape_string($accountid)  . "' ";
@@ -706,7 +709,7 @@ public $lastSelectSql;
         return true;
     }
 
-    function setPesRescheckDate($upesref=null,$accountid=null, $requestor=null){
+    function setPesRescheckDate($upesref=null,$accountid=null, $requestor=null, $clearedDate= null){
         if(!$upesref or !$accountid){
             throw new \Exception('No UPES_REF/ACCOUNTID provided in ' . __METHOD__);
         }
@@ -727,19 +730,27 @@ public $lastSelectSql;
             }
         }
 
-        $sql  = " SELECT PES_CLEARED_DATE FROM  " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
-        $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
-
-        $cleared = db2_exec($GLOBALS['conn'], $sql);
-
-        if(!$cleared){
-            DbTable::displayErrorMessage($cleared, __CLASS__, __METHOD__, $sql);
-            return false;
+        if(empty($clearedDate)){
+            // They've not supplied one, so go get it.
+            $sql  = " SELECT PES_CLEARED_DATE FROM  " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
+            $sql .= " WHERE UPES_REF='" . db2_escape_string($upesref) . "' AND ACCOUNT_ID='" . db2_escape_string($accountid) . "' ";
+            
+            $cleared = db2_exec($GLOBALS['conn'], $sql);
+            
+            if(!$cleared){
+                DbTable::displayErrorMessage($cleared, __CLASS__, __METHOD__, $sql);
+                return false;
+            }
+            
+            $row = db2_fetch_assoc($cleared);
+            
+            $clearedDate = $row['PES_CLEARED_DATE'];
         }
+            
+        
 
-        $row = db2_fetch_assoc($cleared);
 
-        $pes_cleared_obj = !empty($row['PES_CLEARED_DATE']) ? \DateTime::createFromFormat('Y-m-d', $row['PES_CLEARED_DATE']) : new \DateTime();
+        $pes_cleared_obj = !empty($clearedDate) ? \DateTime::createFromFormat('Y-m-d', $clearedDate) : new \DateTime();
         $pes_cleared_sql = "DATE('" . $pes_cleared_obj->format('Y-m-d') . "') ";
 
         $sql  = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
@@ -942,9 +953,9 @@ public $lastSelectSql;
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
         $sql.= " WHERE 1=1 ";
 //        $sql.= " AND AP.PES_STATUS != '" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "' ";
-            $sql.= " AND AP.PES_STATUS = '" . AccountPersonRecord::PES_STATUS_CLEARED . "' ";
-            $sql.= " and AP.PES_RECHECK_DATE is not null ";
-            $sql.= " and AP.PES_RECHECK_DATE < CURRENT DATE + 56 DAYS ";
+        $sql.= " AND AP.PES_STATUS = '" . AccountPersonRecord::PES_STATUS_CLEARED . "' ";
+        $sql.= " and AP.PES_RECHECK_DATE is not null ";
+        $sql.= " and AP.PES_RECHECK_DATE < CURRENT DATE + 56 DAYS ";
         $rs = db2_exec($localConnection, $sql);
 
         if(!$rs){
