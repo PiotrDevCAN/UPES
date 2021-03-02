@@ -19,10 +19,10 @@ $allAccounts = $loader->load('ACCOUNT',AllTables::$ACCOUNT);
 $db2Report = AccountPersonTable::upcomingRechecksByAccount();
 
 foreach ($db2Report as $row) {
-   $report[$row['ACCOUNT']][$row['MONTH']." ".$row['YEAR']] = $row['RESOURCES'];
+    $monthWithLeadingZero = substr("0" . $row['MONTH'],-2);
+    $report[$row['ACCOUNT']][$monthWithLeadingZero." ".$row['YEAR']] = $row['RESOURCES'];
+  
 }
-
-
 ?>
 <div class='container'>
 <div class='row'>
