@@ -23,6 +23,7 @@ class AllTables
     public static $PERSON             = 'PERSON';
 
     public static $PES_LEVELS         = 'PES_LEVELS';
+    public static $PES_STATUS_AUDIT   = 'PES_STATUS_AUDIT';
 
     public static $TRACE              = 'TRACE';
     public static $TRACE_CONTROL      = 'TRACE_CONTROL';

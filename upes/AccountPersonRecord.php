@@ -116,7 +116,10 @@ class AccountPersonRecord extends DbRecord
                                      AccountPersonRecord::PES_STATUS_CANCEL_REQ,AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED,AccountPersonRecord::PES_STATUS_TBD,
                                      AccountPersonRecord::PES_STATUS_RECHECK_REQ,AccountPersonRecord::PES_STATUS_LEFT_IBM,AccountPersonRecord::PES_STATUS_STAGE_1,
                                      AccountPersonRecord::PES_STATUS_STAGE_2, AccountPersonRecord::PES_STATUS_MOVER
-    );
+        );
+
+    static public $pesAuditableStatus = array(AccountPersonRecord::PES_STATUS_CLEARED,AccountPersonRecord::PES_STATUS_PROVISIONAL,AccountPersonRecord::PES_STATUS_RECHECK_REQ);
+
 
 //     PES PRocessing
 //     Starter Requested

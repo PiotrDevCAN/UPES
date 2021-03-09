@@ -39,6 +39,7 @@ $countries      = new NavBarOption('Manage Countries','pa_manageCountries.php','
 $tracker        = new NavBarOption('Tracker','pc_pesTracker.php','accessCdi accessPesTeam');
 $mailConvert    = new NavBarOption('Notes ID to Email','pa_mailConvert.php','accessCdi accessPesTeam');
 $manualStatus   = new NavBarOption('Manual Status update','pa_statusUpdate.php','accessCdi accessPesTeam');
+$pesStatusAudit = new NavBarOption('PES Status Change Log','pa_statusChangeLog.php','accessCdi accessPesTeam');
 $admin->addOption($accounts);
 $admin->addOption($contracts);
 $admin->addOption($pesLevels);
@@ -46,6 +47,7 @@ $admin->addOption($countries);
 $admin->addOption($tracker);
 $admin->addOption($mailConvert);
 $admin->addOption($manualStatus);
+$admin->addOption($pesStatusAudit);
 
 $user          = new NavBarMenu("uPES",'accessCdi accessPesTeam accessUser ' );
 $userAdd       = new NavBarOption('Add to PES','pu_userAdd.php','accessCdi accessPesTeam accessUser ');

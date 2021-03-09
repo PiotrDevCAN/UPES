@@ -647,6 +647,12 @@ public $lastSelectSql;
     }
 
     function setPesStatus($upesref=null,$accountid= null, $status=null,$requestor=null, $pesStatusDetails=null,$dateToUse=null){
+        
+        $loader = new Loader();
+        $cnums = $loader->loadIndexed('CNUM','UPES_REF',AllTables::$PERSON," UPES_REF='" . db2_escape_string($upesref) . "'");
+        $emails = $loader->loadIndexed('EMAIL_ADDRESS','UPES_REF',AllTables::$PERSON," UPES_REF='" . db2_escape_string($upesref) . "'");
+        $accounts = $loader->loadIndexed('ACCOUNT','ACCOUNT_ID',AllTables::$ACCOUNT," ACCOUNT_ID='" . db2_escape_string($accountid) . "'");
+        
 
         $db2AutoCommit = db2_autocommit($GLOBALS['conn']);
         db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
@@ -700,8 +706,9 @@ public $lastSelectSql;
         $pesTracker->savePesComment($upesref, $accountid,  "PES_STATUS set to :" . $status );
 
         AuditTable::audit("PES Status set for:" . $upesref . "/" . $accountid ." To : " . $status . " By:" . $requestor,AuditTable::RECORD_TYPE_AUDIT);
-
-
+        
+        in_array($status,AccountPersonRecord::$pesAuditableStatus) ? PesStatusAuditTable::insertRecord($cnums[$upesref], $emails[$upesref], $accounts[$accountid], $status, $dateToUse) : null;
+       
         db2_commit($GLOBALS['conn']);
         db2_autocommit($GLOBALS['conn'],$db2AutoCommit);
 
