@@ -118,7 +118,7 @@ public $lastSelectSql;
         $sql.= ", AP.MEMBERSHIP ";
         $sql.= ", AP.NI_EVIDENCE ";
         $sql.= ", AP.PROCESSING_STATUS ";
-        $sql.= ", AP.PROCESSING_STATUS_CHANGED ";
+        $sql.= ", ADD_HOURS(AP.PROCESSING_STATUS_CHANGED, 1) AS PROCESSING_STATUS_CHANGED ";
         $sql.= ", AP.DATE_LAST_CHASED ";
         $sql.= ", AP.PES_STATUS ";
         $sql.= ", AP.PES_STATUS_DETAILS ";

@@ -10,8 +10,12 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+function ob_html_compress($buf){
+    return str_replace(array("\n","\r"),'',$buf);
+}
+
 Trace::pageOpening($_SERVER['PHP_SELF']);
-ob_start();
+// ob_start();
 
 $sqlToAllowPeopleToSeeRequestsForTheirAccounts = " AND A.ACCOUNT_ID in ( ";
 $sqlToAllowPeopleToSeeRequestsForTheirAccounts.= "     SELECT DISTINCT ACCOUNT_ID from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
@@ -20,7 +24,7 @@ $sqlToAllowPeopleToSeeRequestsForTheirAccounts.= " OR P.EMAIL_ADDRESS = '" . db2
 
 
 $sql = " SELECT '' AS ACTION, P.EMAIL_ADDRESS,P.CNUM,  P.FULL_NAME, A.ACCOUNT, PL.PES_LEVEL, PL.PES_LEVEL_DESCRIPTION, PL.PES_LEVEL_REF ";
-$sql.= " , AP.PES_STATUS,AP.PES_CLEARED_DATE, AP.ACCOUNT_ID, AP.UPES_REF, AP.PES_REQUESTOR, AP.PES_DATE_REQUESTED,AP.COUNTRY_OF_RESIDENCE, AP.PROCESSING_STATUS, AP.PROCESSING_STATUS_CHANGED, AP.PES_RECHECK_DATE ";
+$sql.= " , AP.PES_STATUS,AP.PES_CLEARED_DATE, AP.ACCOUNT_ID, AP.UPES_REF, AP.PES_REQUESTOR, AP.PES_DATE_REQUESTED,AP.COUNTRY_OF_RESIDENCE, AP.PROCESSING_STATUS, ADD_HOURS(AP.PROCESSING_STATUS_CHANGED, 1) AS PROCESSING_STATUS_CHANGED, AP.PES_RECHECK_DATE ";
 $sql.= " , AP.DATE_LAST_CHASED ";
 $sql.= " , AP.OFFBOARDED_DATE, AP.OFFBOARDED_BY ";
 $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
@@ -51,6 +55,16 @@ while(($row=db2_fetch_assoc($rs))==true){
 
 $messages = ob_get_clean();
 $Success = empty($messages);
+
+if (isset($_SERVER['HTTP_ACCEPT_ENCODING'])) {
+    if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) {
+        ob_start("ob_gzhandler");
+    } else {
+        ob_start("ob_html_compress");
+    }
+} else {
+    ob_start("ob_html_compress");
+}
 
 $response = array('data'=>$data,'success'=>$Success,'messages'=>$messages, 'sql'=>$sql);
 echo json_encode($response);

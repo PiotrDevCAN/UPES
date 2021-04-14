@@ -92,11 +92,11 @@ foreach ($allAccounts as $accountName){
 </div>
 
 <script>
-var miReport;
+var miReportTable;
 
 $(document).ready(function(){
     // DataTable
-    miReport.table = $('#miReport').DataTable({
+    miReportTable = $('#miReport').DataTable({
     	order: [[ 0, 'desc' ]],
         dom: 'Brti',
         buttons: [

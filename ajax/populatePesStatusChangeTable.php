@@ -13,7 +13,7 @@ error_reporting(E_ALL);
 Trace::pageOpening($_SERVER['PHP_SELF']);
 ob_start();
 
-$sql = " SELECT * ";
+$sql = " SELECT P.CNUM, P.EMAIL_ADDRESS, P.ACCOUNT, P.PES_STATUS, P.PES_CLEARED_DATE, P.UPDATER, ADD_HOURS(P.UPDATED, 1) AS UPDATED ";
 $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_STATUS_AUDIT . " as P ";
 $sql.= " ORDER BY UPDATED DESC ";
 
@@ -34,8 +34,8 @@ while(($row=db2_fetch_assoc($rs))==true){
 }
 
 $messages = ob_get_clean();
-$Success = empty($messages);
+$success = empty($messages);
 
-$response = array('data'=>$data,'success'=>$Success,'messages'=>$messages, 'sql'=>$sql);
+$response = array('data'=>$data,'success'=>$success,'messages'=>$messages, 'sql'=>$sql);
 echo json_encode($response);
 Trace::pageLoadComplete($_SERVER['PHP_SELF']);
