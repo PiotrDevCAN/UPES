@@ -34,8 +34,6 @@ try {
 
  //   $formattedEmailField = AccountPersonTable::formatEmailFieldOnTracker($accountPersonData);
 
-
-
 //     $personData['ACCOUNT_ID'] = $accountPersonData['ACCOUNT_ID'];
 //     $personData['PRIORITY'] = $accountPersonData['PRIORITY'];
 
@@ -81,7 +79,6 @@ try {
     } else {
         $notificationStatus = 'Email was suppressed.';
     }
-
 
     AuditTable::audit("PES Status Email:" . $notificationStatus ,AuditTable::RECORD_TYPE_DETAILS);
 
