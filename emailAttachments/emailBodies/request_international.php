@@ -5,7 +5,7 @@ $emailBody = <<<endOfEmailBody
 <ul>
 <li>Fully completed Application Form(s) :<br/>&&name_of_application_form&&</li>
 <li>A Certified copy of the photo page of your Passport or ID Card along with your VISA/Work Permit if required</li>
-<li>If your ID card does not contain your current address, please send a certified copy of a utility bill (not mobile)/Bank statement (less than 3 months old) - as evidence of your current address</li>
+<li>If your ID card does not contain your current address, please send a certified copy of a utility bill/Bank statement (less than 3 months old) - as evidence of your current address</li>
 <li>An email from your IBM Manager confirming your IBM Start Date <b>OR</b> a screen print from the relevant page of the 'Work Day' system.<br/>*<b>Further information and evidence</b> may be required *</li>
 </ul>
 <p><b>The Certification MUST be done by an IBM'er<b>, to confirm that they have seen the original document. Either physically by another IBM’er or Virtually by your IBM Manager.<p>
@@ -18,7 +18,7 @@ The following statement should be added on each document, on the same side as th
 <p>This will not give you full PES clearance for the account, so if you can get them certified correctly (ie another IBM'er seeing the document and signing) please do so.</p>
 <p>Many Thanks for your cooperation,</p>
 <p>&&account_name&& &nbsp; PES Team</p>
-<p>Rachele Smith - Global PES Compliance Officer<br/>Zoe O'Flaherty - Global PES compliance Officer<br/>Carra Booth - Global PES SME - Please note I work Monday - Friday 10 - 2:30</p>
+<p>Rachele Smith - Global PES Compliance Officer<br/>Zoe O'Flaherty - Global PES compliance Officer<br/>Jean Dover - Global PES Team Leader<br/>Carra Booth - Global PES SME</p>
 <p><small>Phone: 44-131 656 0870 | Tie-Line: 37 580870<br/>E-mail: <a href='mailto:&&pestaskid&&'>&&pestaskid&&</a></small></p>
 <p>IBM UK PES Team<br/>Atria One, 5th Floor<br/>144 Morrison Street, Edinburgh, EH3 8EX</br>United Kingdom</br>**Please input IBM UK Ltd, as we share a building**</p>
 endOfEmailBody;
