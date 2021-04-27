@@ -38,11 +38,11 @@ include_once 'includes/modalDeleteAccountConfirm.html';
 
 <div class='container'>
 
-<div class='col-sm-6 col-sm-offset-1'>
+<div class='col-sm-10 col-sm-offset-1'>
 
 <table id='accountTable' class='table table-responsive table-striped' >
 <thead>
-<tr><th>Action</th><th>Account Id</th><th class='searchable' >Account</th><th class='searchable' >PES Taskid</th></tr>
+<tr><th>Action</th><th>Account Id</th><th class='searchable' >Account</th><th class='searchable' >Account Type</th><th class='searchable' >PES Taskid</th></tr>
 </thead>
 </table>
 </div>
@@ -56,7 +56,6 @@ var accountTable;
 $(document).ready(function(){
 
 console.log(accounts);
-
 
 	$('#accountsForm').submit(function(e){
 		console.log(e);
@@ -131,6 +130,8 @@ console.log(accounts);
                     data: "ACCOUNT_ID"
                   },{
                     data: "ACCOUNT"
+				  },{
+                    data: "ACCOUNT_TYPE"
                   },{
                     data: "TASKID"
                   }]
@@ -151,11 +152,11 @@ console.log(accounts);
  		var account = $(e.target).data('account');
  		$('#ACCOUNT').val($(e.target).data('account'));
  		$('#ACCOUNT_ID').val($(e.target).data('accountid'));
+		$('#ACCOUNT_TYPE').val($(e.target).data('accounttype'));
  		$('#TASKID').val($(e.target).data('taskid'));
 		$('#mode').val('<?=FormClass::$modeEDIT?>');
 		$(button).removeClass('spinning');
 	});
-
 
 	$(document).on('click','.confirmAccountDelete',function(e){
  		var accountid = $('#confirmDeleteAccountId').val();

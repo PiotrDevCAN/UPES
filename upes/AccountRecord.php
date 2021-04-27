@@ -3,13 +3,22 @@ namespace upes;
 
 use itdq\DbRecord;
 use itdq\FormClass;
+use itdq\Loader;
 
 class AccountRecord extends DbRecord
 {
     protected $ACCOUNT_ID;
     protected $ACCOUNT;
     protected $TASKID;
+    protected $ACCOUNT_TYPE;
 
+    const ACCOUNT_TYPE_FSS = 'FSS';
+    const ACCOUNT_TYPE_NONE_FSS = 'NON-FSS';
+
+    static public $accountTypes = array(
+        AccountRecord::ACCOUNT_TYPE_FSS,
+        AccountRecord::ACCOUNT_TYPE_NONE_FSS
+    );
 
     function displayForm($mode)
     {
@@ -29,12 +38,25 @@ class AccountRecord extends DbRecord
         </div>
 
         <div class="form-group required" id="taskidGroup">
+            <label for='ACCOUNT_TYPE' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Account Type'>Account Type</label>
+        	<div class='col-md-3'>
+                <select id='ACCOUNT_TYPE' class='select2 form-control' name='ACCOUNT_TYPE' <?=$notEditable?> >
+        		<option value=''></option>
+        		<?php
+        		foreach (self::$accountTypes as $accountType) {
+        		    ?><option value='<?=$accountType ?>'><?=$accountType?></option><?php
+        		}
+        		?>
+        		</select>
+            </div>
+        </div>
+
+        <div class="form-group required" id="taskidGroup">
             <label for='TASKID' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='PES Taskid'>PES Taskid</label>
         	<div class='col-md-3'>
 				<input id='TASKID' name='TASKID' class='form-control' />
             </div>
         </div>
-
 
    		<div class='form-group'>
    		<div class='col-sm-offset-2 -col-md-3'>

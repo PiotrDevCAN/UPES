@@ -22,8 +22,6 @@ use itdq\Loader;
  *
  *
  */
-
-
 class AccountTable extends DbTable
 {
 
@@ -57,13 +55,14 @@ class AccountTable extends DbTable
         $accountId = $row['ACCOUNT_ID'];
         $account   = $row['ACCOUNT'];
         $taskid    = $row['TASKID'];
+        $accountType    = $row['ACCOUNT_TYPE'];
 
-        $row['ACTION'] = "<button type='button' class='btn btn-primary btn-xs editAccountName ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'data-taskid='" . $taskid . "'  data-toggle='tooltip' title='Edit Account Name' >
-              <span class='glyphicon glyphicon-edit editAccountName'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'   ></span>
+        $row['ACTION'] = "<button type='button' class='btn btn-primary btn-xs editAccountName ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'data-taskid='" . $taskid . "' data-accounttype='" . $accountType . "' data-toggle='tooltip' title='Edit Account Name' >
+              <span class='glyphicon glyphicon-edit editAccountName'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'data-taskid='" . $taskid . "' data-accounttype='" . $accountType . "'   ></span>
               </button>";
         $row['ACTION'].= "&nbsp;";
-        $row['ACTION'].= "<button type='button' class='btn btn-warning btn-xs deleteAccount ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'   data-toggle='tooltip' title='Delete Account'>
-              <span class='glyphicon glyphicon-trash deleteAccount' aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "' ></span>
+        $row['ACTION'].= "<button type='button' class='btn btn-warning btn-xs deleteAccount ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "'data-taskid='" . $taskid . "' data-accounttype='" . $accountType . "' data-toggle='tooltip' title='Delete Account'>
+              <span class='glyphicon glyphicon-trash deleteAccount' aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'data-taskid='" . $taskid . "' data-accounttype='" . $accountType . "' ></span>
               </button>";
     }
 

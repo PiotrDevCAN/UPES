@@ -7,13 +7,10 @@ use upes\AccountRecord;
 use upes\AccountTable;
 use upes\AllTables;
 
-
-
 Trace::pageOpening($_SERVER['PHP_SELF']);
 
 set_time_limit(0);
 ob_start();
-
 
 try {
     $accountRecord = new AccountRecord();
@@ -37,7 +34,7 @@ $messages = ob_get_clean();
 ob_start();
 $success = empty($messages);
 if($success){
-    $messages = " Account: " . $accountRecordData['ACCOUNT'] . "<br/>Account Id:" . $accountId . "<br/><br/>PES Taskid:" . $accountRecordData['TASKID'] . "<br/>";
+    $messages = " Account: " . $accountRecordData['ACCOUNT'] . "<br/>Account Id:" . $accountId . "<br/>Account Type:" . $accountRecordData['ACCOUNT_TYPE'] . "<br/><br/>PES Taskid:" . $accountRecordData['TASKID'] . "<br/>";
     $messages.= $_POST['mode']==FormClass::$modeDEFINE ? "Created" : "Updated" ;
 }
 

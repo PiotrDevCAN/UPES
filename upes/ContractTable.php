@@ -50,11 +50,11 @@ class ContractTable extends DbTable
         $contract   = trim($row['CONTRACT']);
 
         $row['ACTION'] = "<button type='button' class='btn btn-primary btn-xs editContractName ' aria-label='Left Align' data-contractid='" .$contractId . "' data-contract='" . $contract . "' data-accountid='" . $accountId . "'  data-toggle='tooltip' title='Edit Account Name' >
-              <span class='glyphicon glyphicon-edit editAccountName'  aria-hidden='true' data-contractid='" .$contractId . "' data-contract='" . $contract . "' data-accountid='" . $accountId . "'   ></span>
+              <span class='glyphicon glyphicon-edit editContractName'  aria-hidden='true' data-contractid='" .$contractId . "' data-contract='" . $contract . "' data-accountid='" . $accountId . "'   ></span>
               </button>";
         $row['ACTION'].= "&nbsp;";
         $row['ACTION'].= "<button type='button' class='btn btn-warning btn-xs deleteContract ' aria-label='Left Align' data-contractid='" .$contractId . "' data-contract='" . $contract . "' data-accountid='" . $accountId . "'    data-toggle='tooltip' title='Delete Account'>
-              <span class='glyphicon glyphicon-trash deleteAccount' aria-hidden='true' data-contractid='" .$contractId . "' data-contract='" . $contract . "' data-accountid='" . $accountId . "'  ></span>
+              <span class='glyphicon glyphicon-trash deleteContract' aria-hidden='true' data-contractid='" .$contractId . "' data-contract='" . $contract . "' data-accountid='" . $accountId . "'  ></span>
               </button>";
     }
 
