@@ -53,7 +53,6 @@ class AccountPersonRecord extends DbRecord
     protected $PES_CLEARED_DATE;
     protected $PES_RECHECK_DATE;
 
-
     protected $CONSENT;
     protected $RIGHT_TO_WORK;
     protected $PROOF_OF_ID;
@@ -164,7 +163,7 @@ class AccountPersonRecord extends DbRecord
                                               <br/>Therefore I can confirm that you have provisionally passed  &&accountName&& PES Screening.
                                               <br/><b>Please note that this will not give you full PES clearance, and your account may not recognise Provisional Clearance, therefore, if you can get your documents certified correctly (as per below) please do so.</b>
                                               <br/>When sending your document please only send to the PES team.
-                                              <br/><b>The Certification MUST be done by another IBM’er</b>, to confirm that they have seen the original document. The following statement should be handwritten on <b>each document</b>, on the <b>same side as the image</b>.
+                                              <br/><b>The Certification MUST be done by another IBMï¿½er</b>, to confirm that they have seen the original document. The following statement should be handwritten on <b>each document</b>, on the <b>same side as the image</b>.
                                               <br/><span style=\'text-align:center;color:red\'>True & Certified Copy<br/>Name of certifier  in BLOCK CAPITALS<br/>IBM Serial number of certifier<br/>Certification Date<br/>Signature of certifier<br/></span>
                                               <br/>If you need any more information regarding your PES clearance, please let me know.
                                               <br/>Many Thanks for your cooperation,';
@@ -408,12 +407,12 @@ class AccountPersonRecord extends DbRecord
 
             <!-- Modal content-->
         <div class="modal-content">
+        <form id='psmForm' class="form-horizontal"  method='post'>
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Amend PES Status</h4>
             </div>
           <div class="modal-body" >
-          <form id='psmForm' class="form-horizontal"  method='post'>
 
           <div class="panel panel-default">
           <div class="panel-heading">

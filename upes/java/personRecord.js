@@ -199,32 +199,30 @@ function personRecord() {
 					var cnum = $('#pesEmailCnum').val();
 					var recheck = $('#pesEmailRecheck').val();
 					   $.ajax({
-						   url: "ajax/sendPesEmail.php",
-					       type: 'POST',
-					       data : { upesref:upesref,
-					    	   	    country:country,
-					    	       account:account,
-					    	       accountid:accountid,
-					    	       cnum:cnum,
-   						   		   recheck:recheck				    	       
-					    	       },
-					       success: function(result){
-					    	  $('#confirmSendPesEmail').removeClass('spinning');	  		    	   					    	   
-					    	  $('#confirmSendPesEmailModal').modal('hide');
-					    	  
-					    	  var resultObj = JSON.parse(result);
-					    	  
-					    	  $('.pesComments[data-upesacc="' + upesref + accountid + '"]').html('<small>' + resultObj.comment + '</small>');
-					    	  $('.pesStatusTd[data-upesacc="' + upesref + accountid + '"]').html(resultObj.pesStatus);	
-					    	  $('.pesProcessStatusDisplay[data-upesacc="' + upesref + accountid + '"]').html(resultObj.processingStatus);
-					    	 //  $('.pesStatusField[data-upesref="' + upesref + '"]').siblings('.btnSendPesEmail').remove();
-					    	 
-					           
-					      }
+							url: "ajax/sendPesEmail.php",
+							type: 'POST',
+							data : { 
+								upesref:upesref,
+								country:country,
+								account:account,
+								accountid:accountid,
+								cnum:cnum,
+								recheck:recheck				    	       
+							},
+					       	success: function(result){
+								$('#confirmSendPesEmail').removeClass('spinning');	  		    	   					    	   
+								$('#confirmSendPesEmailModal').modal('hide');
+								
+								var resultObj = JSON.parse(result);
+								
+								$('.pesComments[data-upesacc="' + upesref + accountid + '"]').html('<small>' + resultObj.comment + '</small>');
+								$('.pesStatusTd[data-upesacc="' + upesref + accountid + '"]').html(resultObj.pesStatus);	
+								$('.pesProcessStatusDisplay[data-upesacc="' + upesref + accountid + '"]').html(resultObj.processingStatus);
+					    		//  $('.pesStatusField[data-upesref="' + upesref + '"]').siblings('.btnSendPesEmail').remove();
+					    	}
 					   });
 					});	  
 		  }
-
 }
 
 $( document ).ready(function() {

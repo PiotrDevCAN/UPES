@@ -31,12 +31,10 @@ class PesEmail {
 
     static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
 
-
     static private function getGlobalApplicationForm(){
         // LLoyds Global Application Form v1.4.doc
         // $filename = "../emailAttachments/LLoyds Global Application Form v1.4.doc";
         $filename = "../". self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_GLOBAL;
-
 
         $handle = fopen($filename, "r");
         $applicationForm = fread($handle, filesize($filename));
@@ -94,8 +92,10 @@ class PesEmail {
         return base64_encode($xlsAttachment);
     }
 
-    static function findEmailBody($account,$country, $emailAddress, $recheck='no'){
+    static function findEmailBody($account, $country, $emailAddress, $recheck='no'){
         
+        $loader = new Loader();
+
          if(is_array($emailAddress)){
             $email = $emailAddress[0];
         } else {
@@ -119,10 +119,17 @@ class PesEmail {
         $emailPrefix = strtolower($recheck)=='yes' ? 'recheck' : 'request';
         $intExt      = strtolower($recheck)=='yes' ? null : $intExt; // For recheck email there is no difference.
 
+        $accountType = '';
+        $accountTypes = $loader->load('ACCOUNT_TYPE',allTables::$ACCOUNT, " ACCOUNT = '" . $account . "'" );
+        foreach ($accountTypes as $value) {
+            $accountType = $value;
+        }
+
+        $pathToAccountTypeBody = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $accountType ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//" .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         
-        $pathsToTry = array($pathToAccountBody,$pathToDefaultBody);
+        $pathsToTry = array($pathToAccountTypeBody, $pathToAccountBody,$pathToDefaultBody);
 
         $pathFound = false;
         $pathIndex = 0;
