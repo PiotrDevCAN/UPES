@@ -63,10 +63,8 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
 public $lastSelectSql;
 
-
     static function returnPesEventsTable($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null){
 
-        
         switch (trim($records)){
             case self::PES_TRACKER_RECORDS_ACTIVE :
                 $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ .  "','" . AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING .  "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "','" . AccountPersonRecord::PES_STATUS_MOVER. "') ";
@@ -92,7 +90,6 @@ public $lastSelectSql;
                 break;
         }
       
-
         $sql = " SELECT P.CNUM ";
         $sql.= ", P.UPES_REF ";
         $sql.= ", P.EMAIL_ADDRESS ";
@@ -130,7 +127,6 @@ public $lastSelectSql;
         $sql.= ", PL.PES_LEVEL ";
         $sql.= ", PL.PES_LEVEL_DESCRIPTION ";
 
-
         $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
         $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
         $sql.= " ON P.UPES_REF = AP.UPES_REF ";
@@ -152,7 +148,6 @@ public $lastSelectSql;
             throw new \Exception('Error in ' . __METHOD__ . " running $sql");
         }
         
-        
         switch ($returnResultsAs) {
             case self::PES_TRACKER_RETURN_RESULTS_AS_ARRAY:
                 $report = array();
@@ -169,7 +164,6 @@ public $lastSelectSql;
                 break;
            }
         }
-
 
     function buildTable($records='Active'){
         $allRows = self::returnPesEventsTable($records,self::PES_TRACKER_RETURN_RESULTS_AS_ARRAY);
@@ -223,6 +217,7 @@ public $lastSelectSql;
             $cnum = $row['CNUM'];
             $upesref = $row['UPES_REF'];
             $accountId = $row['ACCOUNT_ID'];
+            $accountType = $row['ACCOUNT_TYPE'];
             $account = $row['ACCOUNT'];
             $fullName = $row['FULL_NAME'];
             $emailaddress = $row['EMAIL_ADDRESS'];
@@ -236,7 +231,7 @@ public $lastSelectSql;
             $requestor = strlen($row['PES_REQUESTOR']) > 20 ? substr($row['PES_REQUESTOR'],0,20) . "....." : $row['PES_REQUESTOR'];
             
             ?>
-            <tr class='<?=$upesref;?> personDetails' data-upesref='<?=$upesref;?>' data-accountid='<?=$accountId;?>' data-account='<?=$account;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$originalRequestor;?>'   >
+            <tr class='<?=$upesref;?> personDetails' data-upesref='<?=$upesref;?>' data-accountid='<?=$accountId;?>' data-accounttype='<?=$accountType;?>' data-account='<?=$account;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$originalRequestor;?>'   >
             <td class='formattedEmailTd'>
             <div class='formattedEmailDiv'><?=$formattedIdentityField;?></div>
             </td>
@@ -272,7 +267,7 @@ public $lastSelectSql;
             $alertClass = !empty($row['DATE_LAST_CHASED']) ? self::getAlertClassForPesChasedDate($row['DATE_LAST_CHASED']) : 'alert-info';
             ?>
             <div class='alert <?=$alertClass;?>'>
-            <input class="form-control input-sm pesDateLastChased" value="<?=$dateLastChasedWithLevel?>" type="text" placeholder='Last Chased' data-toggle='tooltip' title='PES Date Last Chased' data-upesref='<?=$upesref?>'  data-accountid='<?=$accountId?>'  data-account='<?=$account?>'>
+            <input class="form-control input-sm pesDateLastChased" value="<?=$dateLastChasedWithLevel?>" type="text" placeholder='Last Chased' data-toggle='tooltip' title='PES Date Last Chased' data-upesref='<?=$upesref?>'  data-accountid='<?=$accountId?>' data-accounttype='<?=$accountType;?>' data-account='<?=$account?>'>
             </div>
             <span style='white-space:nowrap' >
             <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='One'  data-toggle="tooltip" data-placement="top" title="Chaser One" ><i>1</i></a>
@@ -282,7 +277,7 @@ public $lastSelectSql;
             </div>
             </td>
             <td class='nonSearchable pesStatusTd' data-upesacc='<?=$upesref.$accountId;?>' data-upesref='<?=$upesref;?>'><?=AccountPersonRecord::getPesStatusWithButtons($row)?></td>
-            <td class='pesCommentsTd'><textarea rows="3" cols="20"  data-upesref='<?=$upesref?>' data-accountid='<?=$accountId?>'></textarea><br/>
+            <td class='pesCommentsTd'><textarea rows="3" cols="20"  data-upesref='<?=$upesref?>' data-accountid='<?=$accountId?>' data-accounttype='<?=$accountType;?>'></textarea><br/>
             <button class='btn btn-default btn-xs btnPesSaveComment accessPes accessCdi' data-setpesto='Yes' data-toggle="tooltip" data-placement="top" title="Save Comment" ><span class="glyphicon glyphicon-save" ></span></button>
             <div class='pesComments' data-upesacc='<?=$upesref.$accountId;?>' data-upesref='<?=$upesref?>'><small><?=$row['COMMENT']?></small></div>
             </td>
@@ -533,10 +528,10 @@ public $lastSelectSql;
        $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
 
        $formattedField.="<span style='white-space:nowrap' >
-           <button class='btn btn-xs btn-danger  btnPesPriority accessPes accessCdi' data-pespriority='1'  data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='High' ><span class='glyphicon glyphicon-king' ></button>
-           <button class='btn btn-xs btn-warning btnPesPriority accessPes accessCdi' data-pespriority='2' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Medium' ><span class='glyphicon glyphicon-knight' ></button>
-           <button class='btn btn-xs btn-success btnPesPriority accessPes accessCdi' data-pespriority='3' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Low'><span class='glyphicon glyphicon-pawn' ></button>
-           <button class='btn btn-xs btn-info    btnPesPriority accessPes accessCdi' data-pespriority='99'    data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></button>
+           <button class='btn btn-xs btn-danger  btnPesPriority accessPes accessCdi' data-pespriority='1'  data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='High' ><span class='glyphicon glyphicon-king' ></button>
+           <button class='btn btn-xs btn-warning btnPesPriority accessPes accessCdi' data-pespriority='2' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='Medium' ><span class='glyphicon glyphicon-knight' ></button>
+           <button class='btn btn-xs btn-success btnPesPriority accessPes accessCdi' data-pespriority='3' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='Low'><span class='glyphicon glyphicon-pawn' ></button>
+           <button class='btn btn-xs btn-info    btnPesPriority accessPes accessCdi' data-pespriority='99'    data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></button>
            </span>";
 
 
@@ -824,6 +819,7 @@ public $lastSelectSql;
     static function addButtonsForPeopleReport($row){
         $account = $row['ACCOUNT'];
         $accountId = $row['ACCOUNT_ID'];
+        $accountType = $row['ACCOUNT_TYPE'];
         $upesref = $row['UPES_REF'];
         $email = $row['EMAIL_ADDRESS'];
         $fullname = $row['FULL_NAME'];
@@ -847,8 +843,8 @@ public $lastSelectSql;
                                   <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                                 </button>";
                 $row['ACTION'].= "<br/>";
-                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded .  "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
-                                  <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "'  data-upesref='" . $upesref  . "'  data-boarded='" . "'></span>
+                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId  . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded .  "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
+                                  <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . "'></span>
                                   </button>";
                 break;
 
@@ -857,12 +853,12 @@ public $lastSelectSql;
                                   <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                                 </button>";
                 $row['ACTION'].= "&nbsp;";
-                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "'data-toggle='tooltip' title='Cancel PES Request' >
-                                  <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
+                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "'data-toggle='tooltip' title='Cancel PES Request' >
+                                  <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
                                   </button>";
                 $row['ACTION'].= "<br/>";
-                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded. "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
-                                  <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "'  data-upesref='" . $upesref  . "'  data-boarded='" . $boarded . "'></span>
+                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded. "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
+                                  <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . $boarded . "'></span>
                                   </button>";
                 break;
         }
