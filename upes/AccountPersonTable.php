@@ -611,7 +611,7 @@ public $lastSelectSql;
     }
 
 
-    function setPesProcessStatus($upesref, $accountid,$processStatus){
+    function setPesProcessStatus($upesref, $accountid, $processStatus){
         $preparedStmt = $this->prepareProcessStatusUpdate();
         $data = array($processStatus,$upesref,$accountid);
 
@@ -619,7 +619,7 @@ public $lastSelectSql;
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
-            throw new \Exception("Failed to update PES Process Status $processStatus for $cnum");
+            throw new \Exception("Failed to update PES Process Status $processStatus for $upesref / $accountid");
         }
 
         return true;
@@ -677,7 +677,7 @@ public $lastSelectSql;
             case AccountPersonRecord::PES_STATUS_CLEARED:
 //            case AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL:
                 $dateField = 'PES_CLEARED_DATE';
-                self::setPesRescheckDate($upesref,$accountid, $requestor, $dateToUse ); // too Soon, we've not set the new Cleared Date
+                $this->setPesRescheckDate($upesref,$accountid, $requestor, $dateToUse ); // too Soon, we've not set the new Cleared Date
                 break;
             case AccountPersonRecord::PES_STATUS_PROVISIONAL:
             default:

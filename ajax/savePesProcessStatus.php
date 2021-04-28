@@ -14,11 +14,9 @@ $fullname = trim($_POST['fullname']);
 $emailAddress = trim($_POST['emailaddress']);
 $requestor = trim($_POST['requestor']);
 
-
 try {
     $pesEmailObj = new PesEmail();
     $response['emailResponse']='dummy'; // Remove this when using emailobj
-
 
     $pesTracker = new AccountPersonTable( AllTables::$ACCOUNT_PERSON );
     $pesTracker->setPesProcessStatus($upesref, $accountid,$_POST['processStatus']);
