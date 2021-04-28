@@ -157,6 +157,7 @@ function personRecord() {
 					       type: 'POST',
 					       data : {country:data.country,					    	       
 					    	       account:data.account,
+								   accounttype:data.accounttype,
                                    cnum:data.cnum,
 						   		   recheck:data.recheck
 					    	       },

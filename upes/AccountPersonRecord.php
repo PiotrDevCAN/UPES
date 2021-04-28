@@ -271,6 +271,7 @@ class AccountPersonRecord extends DbRecord
         $ibmStatus   = trim($row['IBM_STATUS']);
         $account     = trim($row['ACCOUNT']);
         $accountid   = trim($row['ACCOUNT_ID']);
+        $accounttype   = trim($row['ACCOUNT_TYPE']);
         $passportFirst    = array_key_exists('PASSPORT_FIRST_NAME', $row) ? $row['PASSPORT_FIRST_NAME'] : null;
         $passportLastname = array_key_exists('PASSPORT_LAST_NAME', $row)    ? $row['PASSPORT_LAST_NAME'] : null;
         $fullName    = trim($row['FULL_NAME']);
@@ -287,6 +288,7 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
                 $pesStatusWithButton.= " data-account='" .$account . "' ";
                 $pesStatusWithButton.= " data-accountid='" .$accountid . "' ";
+                $pesStatusWithButton.= " data-accounttype='" .$accounttype . "' ";
                 $pesStatusWithButton.= " data-pesstatus='$status' ";
                 $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='Initiate PES Request'";
                 $pesStatusWithButton.= " > ";
@@ -313,6 +315,7 @@ class AccountPersonRecord extends DbRecord
             $pesStatusWithButton.= " data-emailaddress='$emailAddress' ";
             $pesStatusWithButton.= " data-account='" . $account . "' ";
             $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
+            $pesStatusWithButton.= " data-accounttype='" . $accounttype . "' ";
             $pesStatusWithButton.= " data-fullname='$fullName' ";
             $pesStatusWithButton.= " data-country='$country' ";
             $pesStatusWithButton.= " data-upesref='$upesRef' ";
@@ -348,6 +351,7 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";
                 $pesStatusWithButton.= " data-account='" . $account . "' ";
                 $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
+                $pesStatusWithButton.= " data-accounttype='" . $accounttype . "' ";
                 $pesStatusWithButton.= " data-pesdaterequested='" .trim($row['PES_DATE_REQUESTED']) . "' ";
                 $pesStatusWithButton.= " data-pesrequestor='" .trim($row['PES_REQUESTOR']) . "' ";
                 $pesStatusWithButton.= " data-pesstatus='" .$status . "' ";
@@ -367,6 +371,7 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";
                 $pesStatusWithButton.= " data-account='" . $account . "' ";
                 $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
+                $pesStatusWithButton.= " data-accounttype='" . $accounttype . "' ";
                 $pesStatusWithButton.= " data-pesdaterequested='" .trim($row['PES_DATE_REQUESTED']) . "' ";
                 $pesStatusWithButton.= " data-pesrequestor='" .trim($row['PES_REQUESTOR']) . "' ";
                 $pesStatusWithButton.= " data-pesstatus='" .$status . "' ";

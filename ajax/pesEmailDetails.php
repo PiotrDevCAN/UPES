@@ -1,15 +1,26 @@
 <?php
 
+use itdq\Loader;
+use upes\AllTables;
 use upes\PesEmail;
-
 
 ob_start();
 $pesEmailObj = new PesEmail();
 
 try {
-   // $emailDetails = $pesEmailObj->getEmailDetails($_POST['upesref'],  $_POST['account'], $_POST['country'],$_POST['ibmstatus']);
+    // $loader = new Loader();
+
+    // $accountType = '';
+    // $accountTypes = $loader->load('ACCOUNT_TYPE',AllTables::$ACCOUNT, " ACCOUNT = '" . $_POST['account'] . "'" );
+    // foreach ($accountTypes as $value) {
+    //     $accountType = $value;
+    // }
+
+    // $_POST['accounttype'];
+
+    // $emailDetails = $pesEmailObj->getEmailDetails($_POST['upesref'],  $_POST['account'], $_POST['country'],$_POST['ibmstatus']);
     $recheck = $_POST['recheck']=='yes';
-   $emailDetails = PesEmail::determinePesApplicationForms($_POST['country']);
+    $emailDetails = PesEmail::determinePesApplicationForms($_POST['country'], $_POST['accounttype']);
 
 } catch ( \Exception $e) {
     switch ($e->getCode()) {

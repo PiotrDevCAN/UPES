@@ -21,20 +21,31 @@ class PesEmail {
     const EMAIL_BODIES             = 'emailBodies';
     const EMAIL_APPLICATION_FORMS  = 'applicationForms';
 
-    const APPLICATION_FORM_GLOBAL = 'FSS Global Application Form v2.2+.doc';
-    const APPLICATION_FORM_ODC    = 'ODC application form v3.0.xls';
-    const APPLICATION_FORM_OWENS  = 'Owens_Consent_Form.pdf';
-    const APPLICATION_FORM_VF     = 'VF Overseas Consent Form.pdf';
+    const APPLICATION_FORM_GLOBAL_FSS       = 'FSS Global Application Form v2.2+.doc';
+    const APPLICATION_FORM_GLOBAL_NON_FSS   = 'PES Global Application Form v1.1.doc';
+    const APPLICATION_FORM_ODC              = 'ODC application form v3.0.xls';
+    const APPLICATION_FORM_OWENS            = 'Owens_Consent_Form.pdf';
+    const APPLICATION_FORM_VF               = 'VF Overseas Consent Form.pdf';
 
     const EMAIL_SUBJECT          = "IBM Confidential: URGENT - &&account_name&&  Pre Employment Screening- &&serial_number&& &&candidate_name&&";
     const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS,'vf'=>self::APPLICATION_FORM_VF);
 
     static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
 
-    static private function getGlobalApplicationForm(){
+    static private function getGlobalFSSApplicationForm(){
         // LLoyds Global Application Form v1.4.doc
         // $filename = "../emailAttachments/LLoyds Global Application Form v1.4.doc";
-        $filename = "../". self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_GLOBAL;
+        $filename = "../". self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_GLOBAL_FSS;
+
+        $handle = fopen($filename, "r");
+        $applicationForm = fread($handle, filesize($filename));
+        fclose($handle);
+        return base64_encode($applicationForm);
+    }
+
+    static private function getGlobalNonFSSApplicationForm(){
+        // $filename = "../emailAttachments/LLoyds Global Application Form v1.4.doc";
+        $filename = "../". self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_GLOBAL_NON_FSS;
 
         $handle = fopen($filename, "r");
         $applicationForm = fread($handle, filesize($filename));
@@ -92,7 +103,7 @@ class PesEmail {
         return base64_encode($xlsAttachment);
     }
 
-    static function findEmailBody($account, $country, $emailAddress, $recheck='no'){
+    static function findEmailBody($account, $accountType, $country, $emailAddress, $recheck='no'){
         
         $loader = new Loader();
 
@@ -119,17 +130,11 @@ class PesEmail {
         $emailPrefix = strtolower($recheck)=='yes' ? 'recheck' : 'request';
         $intExt      = strtolower($recheck)=='yes' ? null : $intExt; // For recheck email there is no difference.
 
-        $accountType = '';
-        $accountTypes = $loader->load('ACCOUNT_TYPE',allTables::$ACCOUNT, " ACCOUNT = '" . $account . "'" );
-        foreach ($accountTypes as $value) {
-            $accountType = $value;
-        }
-
         $pathToAccountTypeBody = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $accountType ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//" .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         
-        $pathsToTry = array($pathToAccountTypeBody, $pathToAccountBody,$pathToDefaultBody);
+        $pathsToTry = array($pathToAccountTypeBody, $pathToAccountBody, $pathToDefaultBody);
 
         $pathFound = false;
         $pathIndex = 0;
@@ -149,15 +154,21 @@ class PesEmail {
         $loader = new Loader();
         $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
 
+        $accountType = '';
+        $accountTypes = $loader->load('ACCOUNT_TYPE',AllTables::$ACCOUNT, " ACCOUNT = '" . $account . "'" );
+        foreach ($accountTypes as $value) {
+            $accountType = $value;
+        }
+
         $emailSubjectPattern = array('/&&account_name&& /','/&&serial_number&&/','/&&candidate_name&&/');
         $emailBodyPattern    = array('/&&candidate_first_name&&/','/&&name_of_application_form&&/','/&&account_name&& /','/&&pestaskid&&/');
         $emailBody = '';// overwritten by include
 
-        $applicationFormDetails = self::determinePesApplicationForms($country);
+        $applicationFormDetails = self::determinePesApplicationForms($country, $accountType);
         $nameOfApplicationForm = $applicationFormDetails['nameOfApplicationForm'];
         $pesAttachments        = $applicationFormDetails['pesAttachments'];
 
-        $emailBodyFile = PesEmail::findEmailBody($account, $country, $candidateEmail, $recheck);
+        $emailBodyFile = PesEmail::findEmailBody($account, $accountType, $country, $candidateEmail, $recheck);
         $pesTaskid = $allPesTaskid[$account];
 
         include $emailBodyFile;
@@ -175,17 +186,26 @@ class PesEmail {
         return $email ? BlueMail::send_mail($candidateEmail, $subject, $email, $pesTaskid,array(),array(),false,$pesAttachments) : false;
     }
 
-    static function determinePesApplicationForms($country){
+    static function determinePesApplicationForms($country, $accountType){
 
         $additionalApplicationFormDetails = CountryTable::getAdditionalAttachmentsNameCountry($country);
 
-        $nameOfApplicationForm = "<ul><li><i>" . self::APPLICATION_FORM_GLOBAL . "</i></li>";
+        $nameOfApplicationForm = "<ul><li><i>" . self::APPLICATION_FORM_GLOBAL_FSS . "</i></li>";
         $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
         $nameOfApplicationForm.= "</ul>";
 
         $pesAttachments = array();
-        $encodedApplicationForm = self::getGlobalApplicationForm();
-        $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_GLOBAL,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
+
+        switch ($accountType) {
+            case AccountRecord::ACCOUNT_TYPE_FSS:
+                $encodedApplicationForm = self::getGlobalFSSApplicationForm();
+                $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_GLOBAL_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
+                break;
+            case AccountRecord::ACCOUNT_TYPE_NONE_FSS:
+                $encodedApplicationForm = self::getGlobalNonFSSApplicationForm();
+                $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_GLOBAL_NON_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
+                break;
+        }
 
         switch ($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) {
             case 'odc':

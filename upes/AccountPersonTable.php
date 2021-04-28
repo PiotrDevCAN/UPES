@@ -98,6 +98,7 @@ public $lastSelectSql;
         $sql.= ", P.EMAIL_ADDRESS ";
         $sql.= ", A.ACCOUNT ";
         $sql.= ", A.ACCOUNT_ID ";
+        $sql.= ", A.ACCOUNT_TYPE ";
         $sql.= ", P.PASSPORT_FIRST_NAME ";
         $sql.= ", P.PASSPORT_LAST_NAME ";
         $sql.= ", case when P.PASSPORT_FIRST_NAME is null then P.FULL_NAME else P.PASSPORT_FIRST_NAME CONCAT ' ' CONCAT P.PASSPORT_LAST_NAME end as FULL_NAME  ";
