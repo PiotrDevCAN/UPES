@@ -670,27 +670,39 @@ class AccountPersonRecord extends DbRecord
                 $to[] = $pesTaskid;
                 !empty($requestor) ? $cc[] = $requestor : null;
                 $cc[] = $_SESSION['ssoEmail'];
-
-
+                break;
             default:
-
+                $pattern = '';
+                $emailBody = '';
+                $title = '';
+                $replacements = '';
                 break;
         }
 
-        AuditTable::audit(print_r($pattern,true),AuditTable::RECORD_TYPE_DETAILS);
-        AuditTable::audit(print_r($replacements,true),AuditTable::RECORD_TYPE_DETAILS);
-        AuditTable::audit(print_r($emailBody,true),AuditTable::RECORD_TYPE_DETAILS);
+        if (!empty($pattern) && !empty($emailBody) && !empty($title) && !empty($replacements)) {
 
-        $message = preg_replace($pattern, $replacements, $emailBody);
+          AuditTable::audit(print_r($pattern,true),AuditTable::RECORD_TYPE_DETAILS);
+          AuditTable::audit(print_r($replacements,true),AuditTable::RECORD_TYPE_DETAILS);
+          AuditTable::audit(print_r($emailBody,true),AuditTable::RECORD_TYPE_DETAILS);
+  
+          $message = preg_replace($pattern, $replacements, $emailBody);
+  
+          AuditTable::audit(print_r($message,true),AuditTable::RECORD_TYPE_DETAILS);
+  
+          $response = \itdq\BlueMail::send_mail($to, $title ,$message, $pesTaskid, $cc);
+          
+          $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+          $pesTracker->savePesComment($this->UPES_REF,$this->ACCOUNT_ID, "sendPesStatusChangedEmail sendMail: " . $response['sendResponse']['response']);
+          
+        } else {
 
-        AuditTable::audit(print_r($message,true),AuditTable::RECORD_TYPE_DETAILS);
+          $response = false;
+        
+          $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
+          $pesTracker->savePesComment($this->UPES_REF,$this->ACCOUNT_ID, "sendPesStatusChangedEmail sendMail: Message has been sent.");
+          
+        }
 
-        $response = \itdq\BlueMail::send_mail($to, $title ,$message, $pesTaskid, $cc);
-        
-        $pesTracker = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
-        $pesTracker->savePesComment($this->UPES_REF,$this->ACCOUNT_ID, "sendPesStatusChangedEmail sendMail: " . $response['sendResponse']['response']);
-        
-        
         return $response;
     }
 
