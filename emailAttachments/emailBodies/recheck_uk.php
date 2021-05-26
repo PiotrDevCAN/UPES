@@ -5,7 +5,7 @@ Hello &&candidate_first_name&&,
 <p>If you would like to retain your PES Clearance, please see the below requirements.</p>
 Please return the following documents:
 <ul>
-<li>Fully completed Application Form	Form(s) :<br/>&&name_of_application_form&&</li>
+<li>Fully completed Application Form(s) :<br/>&&name_of_application_form&&</li>
 <li>A Certified copy of the photopage of your Passport or Full Current ID Card/Photocard Driving Licence.</li>
 <li>A Certified copy of a utility bill (not mobile)/Bank/credit Card statement (less than 3 months old) - as evidence of your current address</li>
 </ul>

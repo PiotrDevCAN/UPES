@@ -149,7 +149,6 @@ class PesEmail {
         return false;
     }
 
-
     static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail, $recheck='no'){
         $loader = new Loader();
         $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
@@ -166,6 +165,7 @@ class PesEmail {
 
         $applicationFormDetails = self::determinePesApplicationForms($country, $accountType);
         $nameOfApplicationForm = $applicationFormDetails['nameOfApplicationForm'];
+
         $pesAttachments        = $applicationFormDetails['pesAttachments'];
 
         $emailBodyFile = PesEmail::findEmailBody($account, $accountType, $country, $candidateEmail, $recheck);
@@ -175,7 +175,7 @@ class PesEmail {
         $subjectReplacements = array($account,$serial,$candidateName);
         $subject = preg_replace($emailSubjectPattern, $subjectReplacements, PesEmail::EMAIL_SUBJECT);
 
-        $emailBodyReplacements = array($candidate_first_name,$nameOfApplicationForm,$account,$pesTaskid);
+        $emailBodyReplacements = array($candidate_first_name, $nameOfApplicationForm, $account, $pesTaskid);
 
         $email = preg_replace($emailBodyPattern, $emailBodyReplacements, $emailBody);
 
@@ -190,18 +190,24 @@ class PesEmail {
 
         $additionalApplicationFormDetails = CountryTable::getAdditionalAttachmentsNameCountry($country);
 
-        $nameOfApplicationForm = "<ul><li><i>" . self::APPLICATION_FORM_GLOBAL_FSS . "</i></li>";
-        $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
-        $nameOfApplicationForm.= "</ul>";
-
         $pesAttachments = array();
 
         switch ($accountType) {
             case AccountRecord::ACCOUNT_TYPE_FSS:
+
+                $nameOfApplicationForm = "<ul><li><i>" . self::APPLICATION_FORM_GLOBAL_FSS . "</i></li>";
+                $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
+                $nameOfApplicationForm.= "</ul>";
+
                 $encodedApplicationForm = self::getGlobalFSSApplicationForm();
                 $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_GLOBAL_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
                 break;
             case AccountRecord::ACCOUNT_TYPE_NONE_FSS:
+
+                $nameOfApplicationForm = "<ul><li><i>" . self::APPLICATION_FORM_GLOBAL_NON_FSS . "</i></li>";
+                $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
+                $nameOfApplicationForm.= "</ul>";
+                
                 $encodedApplicationForm = self::getGlobalNonFSSApplicationForm();
                 $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_GLOBAL_NON_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
                 break;
@@ -227,37 +233,6 @@ class PesEmail {
         return array('pesAttachments'=> $pesAttachments,'nameOfApplicationForm'=>$nameOfApplicationForm);
     }
 
-
-
-
-
-//     function getEmailDetails($upesRef, $account, $country, $ibmStatus){
-
-//         $person = array('ACCOUNT'=>$account,'COUNTRY'=>$country,'STATUS'=>$ibmStatus);
-
-//         $attachments[] = $this->findFiles($person,self::CONSENT_PATTERN, self::EMAIL_SUB_CONSENT, self::EMAIL_ROUTE_ATTACHMENTS);
-
-
-//         $emailBody = $this->findFiles($person,self::CONSENT_PATTERN, self::EMAIL_SUB_CONSENT, self::EMAIL_BODIES);
-
-//         return array('filename'=> $pesEmailBodyFilename, 'attachments'=>$attachments);
-//     }
-
-
-//     function sendPesEmail($firstName, $lastName, $emailAddress, $country, $openseat, $cnum){
-//             $emailDetails = $this->getEmailDetails($emailAddress, $country);
-//             $emailBodyFileName = $emailDetails['filename'];
-//             $pesAttachments = $emailDetails['attachments'];
-//             $replacements = array($firstName,$openseat);
-
-//             include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/' . $emailBodyFileName;
-//             $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
-
-//             $sendResponse = BlueMail::send_mail(array($emailAddress), "NEW URGENT - Pre Employment Screening - $cnum : $firstName, $lastName", $emailBody,'LBGVETPR@uk.ibm.com',array(),array(),false,$pesAttachments);
-//             return $sendResponse;
-
-//     }
-
     function sendPesEmailChaser($upesref, $account, $emailAddress, $chaserLevel){
 
         $loader = new Loader();
@@ -279,8 +254,6 @@ class PesEmail {
         $sendResponse = BlueMail::send_mail(array($emailAddress), "PES Reminder - $fullName($upesref) on $account", $emailBody,$pesTaskid,array($requestor));
               
         return $sendResponse;
-
-
     }
 
     function sendPesProcessStatusChangedConfirmation($upesref, $account,  $fullname, $emailAddress, $processStatus, $requestor=null){
@@ -299,7 +272,6 @@ class PesEmail {
 
         return BlueMail::send_mail(array($emailAddress), "PES Status Change - $fullname($upesref) : $account", $emailBody,$pesTaskid, array($requestor));
     }
-
 
     static function notifyPesTeamOfUpcomingRechecks($detialsOfPeopleToBeRechecked=null){
 
@@ -328,10 +300,7 @@ class PesEmail {
 
         $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "UPES Upcoming Rechecks", $emailBody,self::$notifyPesEmailAddresses['to'][0],self::$notifyPesEmailAddresses['cc']);
         return $sendResponse;
-
-
     }
-
 
     static function notifyPesTeamNoUpcomingRechecks(){
 
@@ -346,8 +315,6 @@ class PesEmail {
 
         $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "Upcoming Rechecks-None", $emailBody,self::$notifyPesEmailAddresses['to'][0],self::$notifyPesEmailAddresses['cc']);
         return $sendResponse;
-
-
     }
 
     static function notifyPesTeamLeaversFound($detailsOfLeavers){
@@ -390,11 +357,7 @@ class PesEmail {
         $emailBody = $pesEmail;
 
         $sendResponse = BlueMail::send_mail(self::$notifyPesEmailAddresses['to'], "uPES Notification of Leavers", $emailBody,self::$notifyPesEmailAddresses['to'][0],self::$notifyPesEmailAddresses['cc']);
+        
         return $sendResponse;
-
-
     }
-
-
-
 }
