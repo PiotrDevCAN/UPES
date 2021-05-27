@@ -1,4 +1,4 @@
-	/*
+/*
  *
  *
  *
@@ -11,54 +11,46 @@ $.expr[":"].contains = $.expr.createPseudo(function(arg) {
 });
 
 function searchTable(){
-	  var filter = $('#pesTrackerTableSearch').val().toUpperCase();
+	var filter = $('#pesTrackerTableSearch').val().toUpperCase();
 
-	  if(filter.length > 3){
-		  $('#pesTrackerTable tr').hide();
-		  $('#pesTrackerTable th').parent('tr').show();
-		  
-		  $('#pesTrackerTable tbody tr').children('td').not('.nonSearchable').each(function(){
-			  var text = $(this).text().trim().replace(/[\xA0]/gi, ' ').replace(/  /g,'').toUpperCase();
-			  if(text.indexOf(filter) > -1){
-				  var tr = $(this).parent('tr').show();
-			  }
-		  });		  
-	  } else {
-		  $('#pesTrackerTable tr').show	()
-	  }
+	if(filter.length > 3){
+		$('#pesTrackerTable tr').hide();
+		$('#pesTrackerTable th').parent('tr').show();
+		
+		$('#pesTrackerTable tbody tr').children('td').not('.nonSearchable').each(function(){
+			var text = $(this).text().trim().replace(/[\xA0]/gi, ' ').replace(/  /g,'').toUpperCase();
+			if(text.indexOf(filter) > -1){
+				var tr = $(this).parent('tr').show();
+			}
+		});		  
+	} else {
+		$('#pesTrackerTable tr').show	()
+	}
 }
-
-
-
-
 
 function pesEvent() {
 
   this.init = function(){
     console.log('+++ Function +++ pesEvent.init');
     
-    $(document).on('ready',function(){
-        $('.pesDateLastChased').datepicker({
-        	dateFormat: 'dd M yy',
-    		maxDate:0,
-            onSelect: function(dateText) {
-            	var cnum = $(this).data('cnum');
-            	var pesevent = new pesEvent();
-            	pesevent.saveDateLastChased(dateText, cnum, this);
-              }		
-    		}
-        ).on("change", function() {
-            alert("Got change event from field");
-        });
-    });	
-    
-    
+    // $(document).on('ready',function(){
+    //     $('.pesDateLastChased').datepicker({
+    //     	dateFormat: 'dd M yy',
+    // 		maxDate:0,
+    //         onSelect: function(dateText) {
+    //         	var cnum = $(this).data('cnum');
+    //         	var pesevent = new pesEvent();
+    //         	pesevent.saveDateLastChased(dateText, cnum, this);
+    //           }		
+    // 		}
+    //     ).on("change", function() {
+    //         alert("Got change event from field");
+    //     });
+    // });
     
     console.log('--- Function --- pesEvent.init');
   },   
-    
 
-  
   this.listenForBtnRecordSelection = function() {
 	  $(document).on('click','.btnRecordSelection', function(){
 		  $('.btnRecordSelection').removeClass('active');
@@ -116,94 +108,95 @@ function pesEvent() {
 	  });
   },
   
-  
-  
-  
   this.populatePesTracker = function(records){
  
-	  var buttons = $('.btnRecordSelection');	  
-  
-	  $('#pesTrackerTableDiv').html('<i class="fa fa-spinner fa-spin" style="font-size:68px"></i>');
+	var buttons = $('.btnRecordSelection');	  
 
-	  pesTrackerTable = $.ajax({
-		  	url: "ajax/populatePesTrackerTable.php",
-		  	type: 'POST',
-		  	data : { records: records,
-		  			},
-		    success: function(result){
-		    	var resultObj = JSON.parse(result);
-		    	if(resultObj.success){
-		    		$('#pesTrackerTableDiv').html(resultObj.table);	
+	$('#pesTrackerTableDiv').html('<i class="fa fa-spinner fa-spin" style="font-size:68px"></i>');
 
-		    		$('#pesTrackerTable thead th').each( function () {
-		    	        var title = $(this).text();
-		    	        $(this).html(title + '<input class="secondInput" type="hidden"  />' );
-		    	    } );		    		
-		    		
-		    	    $('#pesTrackerTable thead td').not('.nonSearchable').not('.shortSearch').each( function () {
-		    	        var title = $(this).text();
-		    	        $(this).html('<input class="firstInput" type="text" size="10" placeholder="Search '+title+'" />' );
-		    	    });
+	pesTrackerTable = $.ajax({
+		url: "ajax/populatePesTrackerTable.php",
+		type: 'POST',
+		data : { records: records,
+				},
+		success: function(result){
+			var resultObj = JSON.parse(result);
+			if(resultObj.success){
+				$('#pesTrackerTableDiv').html(resultObj.table);	
 
-		    	    $('.shortSearch').each( function () {
-		    	        var title = $(this).text();
-		    	        $(this).html('<input class="firstInput" type="text" size="5" placeholder="Search '+title+'" />' );
-		    	    });
+				$('#pesTrackerTable thead th').each( function () {
+					var title = $(this).text();
+					$(this).html(title + '<input class="secondInput" type="hidden"  />' );
+				} );		    		
+				
+				$('#pesTrackerTable thead td').not('.nonSearchable').not('.shortSearch').each( function () {
+					var title = $(this).text();
+					$(this).html('<input class="firstInput" type="text" size="10" placeholder="Search '+title+'" />' );
+				});
 
+				$('.shortSearch').each( function () {
+					var title = $(this).text();
+					$(this).html('<input class="firstInput" type="text" size="5" placeholder="Search '+title+'" />' );
+				});
 
-		    	    
-		    	    $('.btnTogglePesTrackerStatusDetails').remove();
-		    		
-		    	} else {
-		    		$('#pesTrackerTableDiv').html(resultObj.messages);
-		    	}		    	
-		    }
-	  });
-      // Apply the search
-    
-	        $(document).on( 'keyup change', '.firstInput', function (e) {
-	        	var searchFor = this.value;
-	        	var col = $(this).parent().index();      	
-	        	var searchCol = col + 1;
-	        	if(searchFor.length >= 3){
-		        	$('#pesTrackerTable tbody tr').hide();	        	
-		        	$('#pesTrackerTable tbody td:nth-child(' + searchCol + '):contains(' + searchFor + ')	').parent().show();	        		
-	        	} else {
-	        		$('#pesTrackerTable tbody tr').show();
-	        	}
+				$('.btnTogglePesTrackerStatusDetails').remove();
 
-	       } );
+				// $('.pesDateLastChased').datepicker({
+				// 	// dateFormat: 'dd M yy',
+				// 	dateFormat: 'dd/mm/y',
+				// 	maxDate:0,
+				// 	onSelect: function(dateText) {
+				// 		var cnum = $(this).data('cnum');
+				// 		var pesevent = new pesEvent();
+				// 		pesevent.saveDateLastChased(dateText, cnum, this);
+				// 		}		
+				// 	}
+				// ).on("change", function() {
+				// 	alert("Got change event from field");
+				// });
 
+			} else {
+				$('#pesTrackerTableDiv').html(resultObj.messages);
+			}		    	
+		}
+	});
 
-	  
-	  
-	  
+	// Apply the search
+	$(document).on( 'keyup change', '.firstInput', function (e) {
+		var searchFor = this.value;
+		var col = $(this).parent().index();      	
+		var searchCol = col + 1;
+		if(searchFor.length >= 3){
+			$('#pesTrackerTable tbody tr').hide();	        	
+			$('#pesTrackerTable tbody td:nth-child(' + searchCol + '):contains(' + searchFor + ')	').parent().show();	        		
+		} else {
+			$('#pesTrackerTable tbody tr').show();
+		}
+
+	} );
   }
   
-  
-  this.saveDateLastChased = function(date,cnum, field){
-	  var parentDiv = $(field).parent('div');
-	  $.ajax({
-		  	url: "ajax/savePesDateLastChased.php",
-		  	type: 'POST',
-		  	data : { cnum: cnum,
-		  		     date: date
-		  			},
-		    success: function(result){
-		    	var resultObj = JSON.parse(result);
-		    	pesevent = new pesEvent();
-		    	pesevent.getAlertClassForPesChasedDate(field);
-		    	buttonObj.parents('td').parent('tr').children('td.pesCommentsTd').children('div.pesComments').html(resultObj.comment);
-		    }
-	  });
-  }
+//   this.saveDateLastChased = function(date,cnum, field){
+// 	  var parentDiv = $(field).parent('div');
+// 	  $.ajax({
+// 		  	url: "ajax/savePesDateLastChased.php",
+// 		  	type: 'POST',
+// 		  	data : { cnum: cnum,
+// 		  		     date: date
+// 		  			},
+// 		    success: function(result){
+// 		    	var resultObj = JSON.parse(result);
+// 		    	pesevent = new pesEvent();
+// 		    	pesevent.getAlertClassForPesChasedDate(field);
+// 		    	buttonObj.parents('td').parent('tr').children('td.pesCommentsTd').children('div.pesComments').html(resultObj.comment);
+// 		    }
+// 	  });
+//   }
   
   this.listenForComment = function() {
 	  $('textarea').on('input', function(){	  
 	  });
   }, 
-  
-  
   
   this.listenForSavePesComment = function() {
 	  $(document).on('click','.btnPesSaveComment', function(){
@@ -231,7 +224,6 @@ function pesEvent() {
 	  	});
   }
 
-  
   this.listenForPesStageValueChange = function(){
 	  $(document).on('click','.btnPesStageValueChange', function(){  
 		  var personDetails = $(this).parents('.personDetails');
@@ -269,8 +261,7 @@ function pesEvent() {
 		   });
 	  });
   }
-  
-  
+
   this.getAlertClassForPesStage = function(pesStageValue){
       switch (pesStageValue) {
       case 'Yes':
@@ -285,9 +276,9 @@ function pesEvent() {
       default:
           var alertClass = ' alert-info ';
           break;
-  }
-  return alertClass;
-}
+  	  }
+  	  return alertClass;
+	}
   
   this.listenForPesProcessStatusChange = function(){
 	  $(document).on('click','.btnProcessStatusChange', function(){  
@@ -325,7 +316,6 @@ function pesEvent() {
 		   });
 	  });
   },
-  
   
   this.listenForPesPriorityChange = function(){
 	  $(document).on('click','.btnPesPriority', function(){  
@@ -366,25 +356,22 @@ function pesEvent() {
 	  $(priorityField).removeClass('alert-danger');
 	  $(priorityField).removeClass('alert-info'); 
 
-	  
-	  
 	  switch(priority){
-	  case 1:
-		  $(priorityField).addClass('alert-danger');	  
-		  break;
-	  case 2:
-		  $(priorityField).addClass('alert-warning');
-		  break;
-	  case 3:
-		  $(priorityField).addClass('alert-success');
-		  break;			  
-	  default :
-		  $(priorityField).addClass('alert-info');
-		  break;
-	  }			  
-  } ,
+		case 1:
+			$(priorityField).addClass('alert-danger');	  
+			break;
+		case 2:
+			$(priorityField).addClass('alert-warning');
+			break;
+		case 3:
+			$(priorityField).addClass('alert-success');
+			break;			  
+		default :
+			$(priorityField).addClass('alert-info');
+			break;
+		}			  
+	} ,
 
-  
   this.getAlertClassForPesChasedDate = function(dateField){
 	  
 	  $(dateField).parent('div').removeClass('alert-success');
@@ -491,7 +478,6 @@ function pesEvent() {
             console.log($('#pes_date').val());
             console.log($('#pes_date_db2').val());
 	    	
-	    	
 	    	$('#savePesStatus').attr('disabled',true).addClass('spinning');
 	        var form = document.getElementById('psmForm');
 	        var formValid = form.checkValidity();
@@ -529,12 +515,9 @@ function pesEvent() {
 	        return false;
 	      });
 	  }
-
-  
-  
 }
 
 $( document ).ready(function() {	  
-	  var Pesevent = new pesEvent();
-	  Pesevent.init();
-	});
+	var Pesevent = new pesEvent();
+	Pesevent.init();
+});

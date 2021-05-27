@@ -14,27 +14,26 @@ td {
 	cursor: hand;
 }
 
-
 .required .control-label:after {
   content:"*";
   color:red;
 }
 
 .glyphicon.spinningsm {
-		    animation: spin 1s infinite linear;
-		    -webkit-animation: spin2 1s infinite linear;
-			font-size: 1em;
-		}
+	animation: spin 1s infinite linear;
+	-webkit-animation: spin2 1s infinite linear;
+	font-size: 1em;
+}
 
-		@keyframes spin {
-		    from { transform: scale(1) rotate(0deg);}
-		    to { transform: scale(1) rotate(360deg);}
-		}
+@keyframes spin {
+	from { transform: scale(1) rotate(0deg);}
+	to { transform: scale(1) rotate(360deg);}
+}
 
-		@-webkit-keyframes spin2 {
-		    from { -webkit-transform: rotate(0deg);}
-		    to { -webkit-transform: rotate(360deg);}
-		}
+@-webkit-keyframes spin2 {
+	from { -webkit-transform: rotate(0deg);}
+	to { -webkit-transform: rotate(360deg);}
+}
 
 th { font-size: 11px; }
 td { font-size: 10px; }
@@ -100,10 +99,10 @@ dropdown-menu > li > a {
 
 .panel-body {
     padding: 15px;
-        padding-top: 15px;
-        padding-right: 15px;
-        padding-bottom: 5px;
-        padding-left: 15px;
+	padding-top: 15px;
+	padding-right: 15px;
+	padding-bottom: 5px;
+	padding-left: 15px;
 }
 
 .select2-container .select2-selection--single {
@@ -226,7 +225,6 @@ dropdown-menu > li > a {
  transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s
 }
 
-
 .dataTables_processing {
       top: 64px !important;
       z-index: 11000 !important;
@@ -244,11 +242,16 @@ dropdown-menu > li > a {
 	
 }
 
-
 .pesComments {
 	overflow-y: auto;
     height: 100px;
 }
 
+.pesDateLastChased {
+	font-size: 12px;
+	background-color: #fff; 
+	padding: 5px; 
+	color: #000;
+}
 
 input.uppercase { text-transform: uppercase; }

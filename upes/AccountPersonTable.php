@@ -55,6 +55,13 @@ const PES_TRACKER_STAGE_NI_EVIDENCE    = 'NI Evidence';
 
 const PES_TRACKER_STAGES =  array('CONSENT','RIGHT_TO_WORK','PROOF_OF_ID','PROOF_OF_RESIDENCY','CREDIT_CHECK','FINANCIAL_SANCTIONS','CRIMINAL_RECORDS_CHECK','PROOF_OF_ACTIVITY','QUALIFICATIONS','DIRECTORS','MEDIA','MEMBERSHIP','NI_EVIDENCE');
 
+const CHASER_LEVEL_ONE = 'One';
+const CHASER_LEVEL_TWO = 'Two';
+const CHASER_LEVEL_THREE = 'Three';
+
+const LEVEL_MAP = array('One'=>'(L1)','Two'=>'(L2)','Three'=>'(L3)');
+const LEVEL_MAP_NUMBER = array('One'=>'1','Two'=>'2','Three'=>'3');
+
 const PROCESS_STATUS_PES = 'PES';
 const PROCESS_STATUS_USER = 'User';
 const PROCESS_STATUS_REQUESTOR = 'Requestor';
@@ -262,17 +269,24 @@ public $lastSelectSql;
             </span>
             <?php
             $dateLastChased = !empty($row['DATE_LAST_CHASED']) ? DateTime::createFromFormat('Y-m-d', $row['DATE_LAST_CHASED']) : null;
-            $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d M y') : null;
-            $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $dateLastChasedFormatted . $this->extractLastChasedLevelFromComment($row['COMMENT']) : $dateLastChasedFormatted;
+            
+            // $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d M y') : null;
+            // $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $dateLastChasedFormatted . $this->extractLastChasedLevelFromComment($row['COMMENT']) : $dateLastChasedFormatted;
+            
+            $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d/m/y') : null;
+            $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $dateLastChasedFormatted . $this->extractLastChasedLevelAsNumberFromComment($row['COMMENT']) : $dateLastChasedFormatted;
+            
+            $dateLastChasedWithLevelText = !empty($dateLastChasedWithLevel) ? $dateLastChasedWithLevel : 'Last Chased';
+
             $alertClass = !empty($row['DATE_LAST_CHASED']) ? self::getAlertClassForPesChasedDate($row['DATE_LAST_CHASED']) : 'alert-info';
             ?>
             <div class='alert <?=$alertClass;?>'>
-            <input class="form-control input-sm pesDateLastChased" value="<?=$dateLastChasedWithLevel?>" type="text" placeholder='Last Chased' data-toggle='tooltip' title='PES Date Last Chased' data-upesref='<?=$upesref?>'  data-accountid='<?=$accountId?>' data-accounttype='<?=$accountType;?>' data-account='<?=$account?>'>
+            <p class='pesDateLastChased'><?=$dateLastChasedWithLevelText?></p>
             </div>
             <span style='white-space:nowrap' >
-            <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='One'  data-toggle="tooltip" data-placement="top" title="Chaser One" ><i>1</i></a>
-            <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='Two'  data-toggle="tooltip" data-placement="top" title="Chaser Two" ><i>2</i></a>
-            <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='Three' data-toggle="tooltip" data-placement="top" title="Chaser Three"><i>3</i></a>
+            <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='<?=self::CHASER_LEVEL_ONE;?>'  data-toggle="tooltip" data-placement="top" title="Chaser One" ><i>1</i></a>
+            <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='<?=self::CHASER_LEVEL_TWO;?>'  data-toggle="tooltip" data-placement="top" title="Chaser Two" ><i>2</i></a>
+            <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='<?=self::CHASER_LEVEL_THREE;?>' data-toggle="tooltip" data-placement="top" title="Chaser Three"><i>3</i></a>
             </span>
             </div>
             </td>
@@ -292,19 +306,20 @@ public $lastSelectSql;
 		return $table;
     }
     
-    
     function extractLastChasedLevelFromComment($comment){
         $findChasedComment = strpos($comment, 'Automated PES Chaser Level');
         $level = substr($comment, $findChasedComment+27,6);
         $level = " (" . substr($level,0,strpos($level," ")) . ")";   
-//         $levelMap = array('One'=>'(L1) ','Two'=>'(L2) ','Three'=>'(L3) ');
-//         return $levelMap[$level];
-       return $level;
+        // return self::LEVEL_MAP[$level];
+        return $level;
     }
-    
 
-
-
+    function extractLastChasedLevelAsNumberFromComment($comment){
+        $findChasedComment = strpos($comment, 'Automated PES Chaser Level');
+        $level = substr($comment, $findChasedComment+27,6);
+        $level = substr($level,0,strpos($level," "));
+        return " <b>(" . self::LEVEL_MAP_NUMBER[$level] . ")</b>";
+    }
 
     function displayTable($records='Active Initiated'){
         ?>
@@ -610,7 +625,6 @@ public $lastSelectSql;
         return $preparedStmt;
     }
 
-
     function setPesProcessStatus($upesref, $accountid, $processStatus){
         $preparedStmt = $this->prepareProcessStatusUpdate();
         $data = array($processStatus,$upesref,$accountid);
@@ -624,7 +638,6 @@ public $lastSelectSql;
 
         return true;
     }
-
 
     function setPesDateLastChased($upesref, $accountId, $dateLastChased){
 
@@ -749,10 +762,7 @@ public $lastSelectSql;
             
             $clearedDate = $row['PES_CLEARED_DATE'];
         }
-            
         
-
-
         $pes_cleared_obj = !empty($clearedDate) ? \DateTime::createFromFormat('Y-m-d', $clearedDate) : new \DateTime();
         $pes_cleared_sql = "DATE('" . $pes_cleared_obj->format('Y-m-d') . "') ";
 
@@ -786,7 +796,6 @@ public $lastSelectSql;
 
         return true;
     }
-
 
     function getTracker($records=self::PES_TRACKER_RECORDS_ACTIVE, Spreadsheet $spreadsheet){
         $sheet = 1;
@@ -896,9 +905,7 @@ public $lastSelectSql;
         $row['PROCESSING_STATUS'] =  array('display'=>$processingStatus . "<br/><small>" . $processingStatusDisplayed . "</small>", 'sort'=>$processingStatus);
 
         return $row;
-
     }
-
 
     static function cancelPesRequest( $accountId=null, $upesref=null){
 
@@ -940,8 +947,6 @@ public $lastSelectSql;
 
         db2_commit($GLOBALS['conn']);
         db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_ON);
-
-
     }
 
     function notifyRecheckDateApproaching(){
@@ -1020,9 +1025,7 @@ public $lastSelectSql;
         }
 
         return false;
-
     }
-
 
     static function statusByAccount(){
         $sql = " SELECT A.ACCOUNT, AP.PES_STATUS, count(*) as RESOURCES ";
@@ -1050,7 +1053,6 @@ public $lastSelectSql;
         }
 
         return $report;
-
     }
 
     static function processStatusByAccount(){
@@ -1079,7 +1081,6 @@ public $lastSelectSql;
         }
 
         return $report;
-
     }
 
     static function upcomingRechecksByAccount(){
@@ -1110,7 +1111,6 @@ public $lastSelectSql;
         return $report;
 
     }
-
 
     static function getEmailAddressAccountArray(){
         $data = array();
@@ -1183,7 +1183,6 @@ public $lastSelectSql;
         db2_commit($GLOBALS['conn']);
         db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_ON);
     }
-
     
     static function offboardedStatusFromEmail($email=null, $accountId=null){
         $sql = " SELECT OFFBOARDED_DATE FROM " . $GLOBALS['Db2Schema'] . "." . allTables::$ACCOUNT_PERSON . " AS AP ";
@@ -1204,7 +1203,4 @@ public $lastSelectSql;
         return !empty($row['OFFBOARDED_DATE']);
 
     }
-
-
-
 }
