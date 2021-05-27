@@ -31,13 +31,8 @@ ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ALTER COLUMN "PES_RECHECK_DATE" SET DATA
 ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD COLUMN "COUNTRY_OF_RESIDENCE" CHAR(50);
 ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD COLUMN "OFFBOARDED_DATE" DATE;
 ALTER TABLE "UPES_DEV"."ACCOUNT_PERSON" ADD COLUMN "OFFBOARDED_BY" CHAR(80);
-
-
-
  *
  */
-
-
 
 class AccountPersonRecord extends DbRecord
 {
@@ -108,17 +103,15 @@ class AccountPersonRecord extends DbRecord
     const PES_STATUS_STAGE_2        = 'Stage 2 Completed';
     const PES_STATUS_MOVER          = 'Mover';
     
-
     static public $pesStatus = array(AccountPersonRecord::PES_STATUS_CLEARED,AccountPersonRecord::PES_STATUS_DECLINED,AccountPersonRecord::PES_STATUS_EXCEPTION,
                                      AccountPersonRecord::PES_STATUS_FAILED,AccountPersonRecord::PES_STATUS_PES_PROGRESSING,AccountPersonRecord::PES_STATUS_STARTER_REQUESTED,
                                      AccountPersonRecord::PES_STATUS_PROVISIONAL,AccountPersonRecord::PES_STATUS_REMOVED,AccountPersonRecord::PES_STATUS_REVOKED,
                                      AccountPersonRecord::PES_STATUS_CANCEL_REQ,AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED,AccountPersonRecord::PES_STATUS_TBD,
                                      AccountPersonRecord::PES_STATUS_RECHECK_REQ,AccountPersonRecord::PES_STATUS_LEFT_IBM,AccountPersonRecord::PES_STATUS_STAGE_1,
                                      AccountPersonRecord::PES_STATUS_STAGE_2, AccountPersonRecord::PES_STATUS_MOVER
-        );
+    );
 
     static public $pesAuditableStatus = array(AccountPersonRecord::PES_STATUS_CLEARED,AccountPersonRecord::PES_STATUS_PROVISIONAL,AccountPersonRecord::PES_STATUS_RECHECK_REQ);
-
 
 //     PES PRocessing
 //     Starter Requested
@@ -132,7 +125,6 @@ class AccountPersonRecord extends DbRecord
        ,AccountPersonRecord::PES_STATUS_RECHECK_REQ,AccountPersonRecord::PES_STATUS_STAGE_1,AccountPersonRecord::PES_STATUS_STAGE_2
     );
 
-
     static public $pesEvents = array('Consent Form','Right to Work','Proof of Id','Residency','Credit Check','Financial Sanctions','Criminal Records Check','Activity','Qualifications','Directors','Media','Membership');
 
     private static $pesEmailBody = 'Please initiate PES check for the following individual : Name : &&name&&, Account : &&account&&, Requested By : &&requestor&&, Requested Timestamp : &&requested&&';
@@ -142,9 +134,6 @@ class AccountPersonRecord extends DbRecord
         '/&&requestor&&/',
         '/&&requested&&/',
     );
-
-
-
 
     private static $pesClearedEmail = 'Hello &&candidate&&,
                                               <br/>I can confirm that you have successfully passed &&accountName&& PES Screening, effective from &&effectiveDate&&
@@ -169,11 +158,7 @@ class AccountPersonRecord extends DbRecord
                                               <br/>Many Thanks for your cooperation,';
     private static $pesClearedProvisionalEmailPattern = array('/&&candidate&&/','/&&accountName&&/');
 
-
    //  public static $pesTaskId = array('lbgvetpr@uk.ibm.com'); // Only first entry will be used as the "contact" in the PES status emails.
-
-
-
 
     function displayForm($mode)
     {
@@ -185,8 +170,8 @@ class AccountPersonRecord extends DbRecord
         <form id='accountPersonForm' class="form-horizontal" method='post'>
         <div class="form-group" >
             <label for='UPES_REF' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Email Address'>Email Address</label>
-        	<div class='col-md-3'>
-			<select id='UPES_REF' class='form-group select2' name='UPES_REF'  >
+        	  <div class='col-md-3'>
+			      <select id='UPES_REF' class='form-group select2' name='UPES_REF'  >
         		<option value=''></option>
         		<?php
         		foreach ($allEmail as $upesRef => $emailAddress) {
@@ -199,7 +184,7 @@ class AccountPersonRecord extends DbRecord
 
         <div class="form-group required">
             <label for='contract_id' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract'>Contract</label>
-        	<div class='col-md-3'>
+        	  <div class='col-md-3'>
         		<select id='contract_id' class='form-group select2' name='contract_id' disabled >
         		<option value=''></option>
         		</select>
@@ -208,18 +193,17 @@ class AccountPersonRecord extends DbRecord
         </div>
         <div class="form-group required " >
             <label for='PES_LEVEL' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Not applicable on all contracts'>PES Level</label>
-        	<div class='col-md-3'>
+        	  <div class='col-md-3'>
         		<select id='PES_LEVEL' class='form-group select2' name='PES_LEVEL' <?=$notEditable?> data-placeholder='Select Pes Level' disabled >
         		<option value=''></option>
-
         		</select>
             </div>
         </div>
 
         <div class="form-group required" >
             <label for='COUNTRY_OF_RESIDENCE' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Country'>Country of Residence</label>
-        	<div class='col-md-3'>
-			<select id='COUNTRY_OF_RESIDENCE' class='form-group select2' name='COUNTRY_OF_RESIDENCE' required  >
+        	  <div class='col-md-3'>
+			      <select id='COUNTRY_OF_RESIDENCE' class='form-group select2' name='COUNTRY_OF_RESIDENCE' required  >
         		<option value=''></option>
         		<option value='India' data-country='India' <?=$this->COUNTRY_OF_RESIDENCE=='India' ? ' selected ': null;?>>India</option>
         		<option value='UK'    data-country='UK' <?=$this->COUNTRY_OF_RESIDENCE=='UK' ? ' selected ': null;?>>UK</option>
@@ -237,32 +221,37 @@ class AccountPersonRecord extends DbRecord
 
         <div class="form-group required " >
             <label for='FULL_NAME' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Full Name'>Full Name</label>
-        	<div class='col-md-3'>
-				<input id='FULL_NAME' name='FULL_NAME' class='form-control' disabled />
+        	  <div class='col-md-3'>
+				    <input id='FULL_NAME' name='FULL_NAME' class='form-control' disabled />
             </div>
         </div>
 
-    	<input id='PES_REQUESTOR' name='PES_REQUESTOR' type='hidden'  value='<?=$_SESSION['ssoEmail']?>'/>
-    	<input id='PES_STATUS' name='PES_STATUS' type='hidden'  value='<?=AccountPersonRecord::PES_STATUS_STARTER_REQUESTED;?>'/>
+        <div class="form-group required " >
+            <label for='PES_REQUESTOR' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Requestor Name'>Requestor Name</label>
+        	  <div class='col-md-3'>
+				    <input id='PES_REQUESTOR' name='PES_REQUESTOR' class='form-control' disabled value='<?=$_SESSION['ssoEmail']?>' />
+            </div>
+        </div>
+
+    	<input id='PES_REQUESTOR_OLD' name='PES_REQUESTOR_OLD' type='hidden' value='<?=$_SESSION['ssoEmail']?>'/>
+    	<input id='PES_STATUS' name='PES_STATUS' type='hidden' value='<?=AccountPersonRecord::PES_STATUS_STARTER_REQUESTED;?>'/>
 
    		<div class='form-group'>
    		<div class='col-sm-offset-2 -col-md-3'>
         <?php
-   		$this->formHiddenInput('mode',$mode,'mode');
+        $this->formHiddenInput('mode',$mode,'mode');
         $allButtons = array();
-   		$submitButton = $mode==FormClass::$modeEDIT ?  $this->formButton('submit','Submit','updatePerson',null,'Update') :  $this->formButton('submit','Submit','savePerson',null,'Submit');
-   		$resetButton  = $this->formButton('reset','Reset','resetPersonForm',null,'Reset','btn-warning');
-   		$allButtons[] = $submitButton;
-   		$allButtons[] = $resetButton;
-   		$this->formBlueButtons($allButtons);
-  		?>
+        $submitButton = $mode==FormClass::$modeEDIT ?  $this->formButton('submit','Submit','updatePerson',null,'Update') :  $this->formButton('submit','Submit','savePerson',null,'Submit');
+        $resetButton  = $this->formButton('reset','Reset','resetPersonForm',null,'Reset','btn-warning');
+        $allButtons[] = $submitButton;
+        $allButtons[] = $resetButton;
+        $this->formBlueButtons($allButtons);
+        ?>
   		</div>
   		</div>
 	</form>
     <?php
     }
-
-
 
     static function getPesStatusWithButtons($row){
         $cnum = trim($row['CNUM']);
@@ -399,9 +388,7 @@ class AccountPersonRecord extends DbRecord
 //        }
 
         return $pesStatusWithButton;
-
     }
-
 
     function amendPesStatusModal(){
         $now = new \DateTime();

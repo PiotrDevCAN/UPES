@@ -1145,10 +1145,10 @@ public $lastSelectSql;
         db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
         
         $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
-        $sql.= " SET OFFBOARDED_DATE= current date ";
-        $sql.= "     ,OFFBOARDED_BY ='" . db2_escape_string($_SESSION['ssoEmail']) . "' ";
-        $sql.= " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
-        $sql.= " AND UPES_REF='" . db2_escape_string($upesref) . "' ";
+        $sql.= " SET OFFBOARDED_DATE = current date ";
+        $sql.= "     ,OFFBOARDED_BY = '" . db2_escape_string($_SESSION['ssoEmail']) . "' ";
+        $sql.= " WHERE ACCOUNT_ID = '" . db2_escape_string($accountId) . "' ";
+        $sql.= " AND UPES_REF = '" . db2_escape_string($upesref) . "' ";
         
         $rs = db2_exec($GLOBALS['conn'], $sql);
         
@@ -1167,10 +1167,10 @@ public $lastSelectSql;
         db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
         
         $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON;
-        $sql.= " SET OFFBOARDED_DATE=null ";
-        $sql.= "     ,OFFBOARDED_BY =null ";
-        $sql.= " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
-        $sql.= " AND UPES_REF='" . db2_escape_string($upesref) . "' ";
+        $sql.= " SET OFFBOARDED_DATE = null ";
+        $sql.= "     ,OFFBOARDED_BY = null ";
+        $sql.= " WHERE ACCOUNT_ID = '" . db2_escape_string($accountId) . "' ";
+        $sql.= " AND UPES_REF = '" . db2_escape_string($upesref) . "' ";
         
         $rs = db2_exec($GLOBALS['conn'], $sql);
         

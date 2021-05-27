@@ -35,10 +35,6 @@ include_once 'includes/modalError.html';
 ?>
 </div>
 
-
-
-
-
 <script>
 
 function changePesLevels(dataCategory){
@@ -49,7 +45,6 @@ function changePesLevels(dataCategory){
     })
     .attr('disabled',false)
     .attr('required',true);
-
 };
 
 $(document).ready(function(){
@@ -71,8 +66,6 @@ $(document).ready(function(){
 		width: '100%',
 		placeholder:'Country of Residence'
 	});
-
-
 
 	$('#contract_id').change(function(e){
 		console.log(e);
@@ -112,8 +105,6 @@ $(document).ready(function(){
 		$('#contract_id').val('').trigger('change');
 		});
 
-
-
 	$('#UPES_REF').change(function(e){
 		var upesRef = $('#UPES_REF').val();
 		var fullName = upesrefToNameMapping[upesRef];
@@ -124,9 +115,6 @@ $(document).ready(function(){
 			$('#contract_id').attr('disabled',true).trigger('change');
 		}
 	});
-
-
-
 
 	$('#accountPersonForm').submit(function(e){
 		console.log(e);
@@ -200,11 +188,6 @@ $(document).ready(function(){
 
 });
 </script>
-
-
-
-
-
 
 <?php
 Trace::pageLoadComplete($_SERVER['PHP_SELF']);
