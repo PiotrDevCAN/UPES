@@ -158,9 +158,9 @@ $(document).ready(function(){
                   },{
                     data: "DATE_LAST_CHASED"
                   },{
-                    data: "OFFBOARDED_DATE"
+                    data: "OFFBOARDED_DATE", visible:false
                   },{
-                    data: "OFFBOARDED_BY"
+                    data: "OFFBOARDED_BY", visible:false
                   }] ,
        drawCallback: function( settings ) {
                       $('.btn-info').parent('td').parent('tr').addClass('warning');
