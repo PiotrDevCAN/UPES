@@ -26,10 +26,10 @@ db2_commit($GLOBALS['conn']);
 
 $activeIbmErsPredicate = "   ( trim(BLUEPAGES_STATUS) = '' or BLUEPAGES_STATUS is null or trim(BLUEPAGES_STATUS) =  '" . PersonRecord::BLUEPAGES_STATUS_FOUND . "') ";
 $activeIbmErsPredicate.= " and ( lower(trim(EMAIL_ADDRESS)) like '%ibm.com' )";
-$allNonLeavers = $loader->load('CNUM',allTables::$PERSON, $activeIbmErsPredicate ); //
+$allNonLeaversRaw = $loader->load('CNUM',allTables::$PERSON, $activeIbmErsPredicate );
+$allNonLeavers = array_change_key_case($allNonLeaversRaw, CASE_UPPER);
 AuditTable::audit("Revalidation  will check " . count($allNonLeavers) . " people currently flagged as found.",AuditTable::RECORD_TYPE_REVALIDATION);
 $slack->sendMessageToChannel("Revalidation (" . $_ENV['environment']. ") will check " . count($allNonLeavers) . " people currently flagged as found.", slack::CHANNEL_UPES_AUDIT);
-
 
 $chunkedCnum = array_chunk($allNonLeavers, 100);
 $detailsFromBp = "&mail";
@@ -40,7 +40,7 @@ foreach ($chunkedCnum as $key => $cnumList){
     $bpEntries[$key] = BluePages::getDetailsFromCnumSlapMulti($cnumList, $detailsFromBp);
     foreach ($bpEntries[$key]->search->entry as $bpEntry){
         set_time_limit(40);
-        $serial = substr($bpEntry->dn,4,9);
+        $serial = strtoupper(substr($bpEntry->dn,4,9));
         unset($allNonLeavers[$serial]);
         $allFound[] = $serial;
     }
