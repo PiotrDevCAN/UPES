@@ -8,11 +8,9 @@ $emailBody = <<<endOfEmailBody
 <li>A Certified copy of the photo page of your Passport along with your VISA/Work Permit if required</li>
 <li>A Certified copy of your current full Driving Licence photocard or utility bill/Bank statement (less than 3 months old) - as evidence of your current address<br/>
 </ul>
-<p><b>The Certification MUST be done by an IBM'er<b>, to confirm that they have seen the original document. Either physically by another IBM’er or Virtually by your IBM Manager.<p>
-The following statement should be added on each document, on the same side as the image, or an email can be sent directly to the PES team by your certifier to confirm which documents have been viewed.
-</p>
+<p><b>The Certification MUST be done by an IBM'er<b>, to confirm that they have seen the original document. Either physically by another IBM’er or Virtually (over webex) by your IBM Manager.<p> For Physical - The following statement should be added on each document, on the same side as the image.</p>
 <h4><span style='color:red'><center>True & Certified Copy<br/>Name of certifier in BLOCK CAPITALS<br/>IBM Serial number of certifier<br/>Certification Date<br/>Signature of certifier</center></span></h4>
-<p>If you have any questions, you do not have any of the listed documents or are unsure about the process please contact the PES Team.</p>
+<p>or Virtual - an email can be sent directly to the PES team by your certifier <b>to confirm which original documents have been viewed, over video conferencing, along with the date and time they were viewed.<b><p>
 <p><b>Please Note</b></p>
 <p>If you are unable to get your documents certified (physically or virtually), we do have a provisional clearance process and will accept documents without certification - however these documents will need to be certified as soon as the restrictions are lifted or as soon as you can.</p>
 <p>This will not give you full PES clearance for the account, so if you can get them certified correctly (ie another IBM'er seeing the document and signing) please do so.</p>
