@@ -21,8 +21,8 @@ class PesEmail {
     const EMAIL_BODIES             = 'emailBodies';
     const EMAIL_APPLICATION_FORMS  = 'applicationForms';
 
-    const APPLICATION_FORM_GLOBAL_FSS       = 'FSS Global Application Form v2.2+.doc';
-    const APPLICATION_FORM_GLOBAL_NON_FSS   = 'PES Global Application Form v1.1.doc';
+    const APPLICATION_FORM_GLOBAL_FSS       = 'FSS Global Application Form v2.5.doc';
+    const APPLICATION_FORM_GLOBAL_NON_FSS   = 'PES Global Application Form v1.2.doc';
     const APPLICATION_FORM_ODC              = 'ODC application form v3.0.xls';
     const APPLICATION_FORM_OWENS            = 'Owens_Consent_Form.pdf';
     const APPLICATION_FORM_VF               = 'VF Overseas Consent Form.pdf';
@@ -31,6 +31,18 @@ class PesEmail {
     const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS,'vf'=>self::APPLICATION_FORM_VF);
 
     static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
+
+    static private function getAccountPath($account){
+        switch(strtolower($account)) {
+            case 'lloyds ce':
+                $path = 'Lloyds';
+                break;
+            default:
+                $path = $account;
+                break;
+        }
+        return $path;
+    }
 
     static private function getGlobalFSSApplicationForm(){
         // LLoyds Global Application Form v1.4.doc
@@ -60,7 +72,6 @@ class PesEmail {
         $applicationForm = fread($handle, filesize($filename));
         fclose($handle);
         return base64_encode($applicationForm);
-
     }
     
     static private function getVfConsentForm(){
@@ -69,8 +80,7 @@ class PesEmail {
         $handle = fopen($filename, "r",true);
         $applicationForm = fread($handle, filesize($filename));
         fclose($handle);
-        return base64_encode($applicationForm);
-        
+        return base64_encode($applicationForm);   
     }
 
     static private function getOdcApplicationForm(){
@@ -127,11 +137,13 @@ class PesEmail {
 
         $emailBodyName = CountryTable::getEmailBodyNameForCountry($country);
 
+        $accountPath = self::getAccountPath($account);
+
         $emailPrefix = strtolower($recheck)=='yes' ? 'recheck' : 'request';
         $intExt      = strtolower($recheck)=='yes' ? null : $intExt; // For recheck email there is no difference.
 
         $pathToAccountTypeBody = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $accountType ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
-        $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $account ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $accountPath ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//" .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         
         $pathsToTry = array($pathToAccountTypeBody, $pathToAccountBody, $pathToDefaultBody);
