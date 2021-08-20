@@ -17,9 +17,11 @@ class PesEmail {
     const EMAIL_PATTERN = '/(.*?)email(.*?).(.*?)/i';
     const APPLICATION_PATTERN = '/(.*?)application(.*?).(.*?)/i';
 
-    const EMAIL_ROOT_ATTACHMENTS   = 'emailAttachments';
-    const EMAIL_BODIES             = 'emailBodies';
-    const EMAIL_APPLICATION_FORMS  = 'applicationForms';
+    const EMAIL_ROOT_ATTACHMENTS     = 'emailAttachments';
+    const EMAIL_SUBDIRECTORY_IBM     = 'IBM';
+    const EMAIL_SUBDIRECTORY_KYNDRYL = 'Kyndryl';
+    const EMAIL_APPLICATION_FORMS    = 'applicationForms';
+    const EMAIL_BODIES               = 'emailBodies';
 
     const APPLICATION_FORM_GLOBAL_FSS       = 'FSS Global Application Form v2.5.doc';
     const APPLICATION_FORM_GLOBAL_NON_FSS   = 'PES Global Application Form v1.2.doc';
@@ -31,6 +33,36 @@ class PesEmail {
     const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS,'vf'=>self::APPLICATION_FORM_VF);
 
     static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
+
+    static private function getCompanySubdirectory(){
+        $isKyndryl = stripos($_ENV['environment'], 'newco');
+        if ($isKyndryl === false) {
+            $directory = self::EMAIL_SUBDIRECTORY_IBM;
+        } else {
+            $directory = self::EMAIL_SUBDIRECTORY_KYNDRYL;
+        }
+        return $directory;
+    }
+
+    static private function getRootAttachmentsDirectory(){
+        return self::EMAIL_ROOT_ATTACHMENTS . "/" . self::getCompanySubdirectory();
+    }
+
+    static private function getApplicationFormsDirectory(){
+        return self::getRootAttachmentsDirectory() . "/" . self::EMAIL_APPLICATION_FORMS;
+    }
+
+    static private function getApplicationFormsDirectoryPath(){
+        return "../" . self::getApplicationFormsDirectory() . "/";
+    }
+
+    static private function getEmailBodiesDirectory(){
+        return self::getRootAttachmentsDirectory() . "/" . self::EMAIL_BODIES;
+    }
+
+    static private function getEmailBodiesDirectoryPath(){
+        return "../" . self::getEmailBodiesDirectory() . "/";
+    }
 
     static private function getAccountPath($account){
         switch(strtolower($account)) {
@@ -44,64 +76,48 @@ class PesEmail {
         return $path;
     }
 
-    static private function getGlobalFSSApplicationForm(){
-        // LLoyds Global Application Form v1.4.doc
-        // $filename = "../emailAttachments/LLoyds Global Application Form v1.4.doc";
-        $filename = "../". self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_GLOBAL_FSS;
-
-        $handle = fopen($filename, "r");
+    static private function getApplicationFormFile($formName){
+        $filename = self::getDirectoryPathToAttachmentFile($formName);
+        $handle = fopen($filename, "r",true);
         $applicationForm = fread($handle, filesize($filename));
         fclose($handle);
         return base64_encode($applicationForm);
+    }
+
+    static private function getGlobalFSSApplicationForm(){
+        return self::getApplicationFormFile(self::APPLICATION_FORM_GLOBAL_FSS);
     }
 
     static private function getGlobalNonFSSApplicationForm(){
-        // $filename = "../emailAttachments/LLoyds Global Application Form v1.4.doc";
-        $filename = "../". self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_GLOBAL_NON_FSS;
-
-        $handle = fopen($filename, "r");
-        $applicationForm = fread($handle, filesize($filename));
-        fclose($handle);
-        return base64_encode($applicationForm);
+        return self::getApplicationFormFile(self::APPLICATION_FORM_GLOBAL_NON_FSS);
     }
 
     static private function getOwensConsentForm(){
-        //$filename = "../emailAttachments/New Overseas Consent Form GDPR.pdf";
-        $filename = "../" .  self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_OWENS;
-        $handle = fopen($filename, "r",true);
-        $applicationForm = fread($handle, filesize($filename));
-        fclose($handle);
-        return base64_encode($applicationForm);
+        return self::getApplicationFormFile(self::APPLICATION_FORM_OWENS);
     }
     
     static private function getVfConsentForm(){
-        //$filename = "../emailAttachments/New Overseas Consent Form GDPR.pdf";
-        $filename = "../" .  self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_VF;
-        $handle = fopen($filename, "r",true);
-        $applicationForm = fread($handle, filesize($filename));
-        fclose($handle);
-        return base64_encode($applicationForm);   
+        return self::getApplicationFormFile(self::APPLICATION_FORM_VF);
     }
 
     static private function getOdcApplicationForm(){
-        //$inputFileName = '../emailAttachments/ODC application form V2.0.xls';
-        $inputFileName = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/". self::EMAIL_APPLICATION_FORMS . "/" . self::APPLICATION_FORM_ODC;
+        $inputFileName = self::getDirectoryPathToAttachmentFile(self::APPLICATION_FORM_ODC);
         /** Load $inputFileName to a Spreadsheet Object  **/
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
 
         // $spreadsheet = new Spreadsheet();
         // Set document properties
         $spreadsheet->getProperties()->setCreator('uPES')
-        ->setLastModifiedBy('uPES')
-        ->setTitle('PES Application Form generated by uPES')
-        ->setSubject('PES Application')
-        ->setDescription('PES Application Form generated by uPES')
-        ->setKeywords('office 2007 openxml php upes tracker')
-        ->setCategory('category');
+            ->setLastModifiedBy('uPES')
+            ->setTitle('PES Application Form generated by uPES')
+            ->setSubject('PES Application')
+            ->setDescription('PES Application Form generated by uPES')
+            ->setKeywords('office 2007 openxml php upes tracker')
+            ->setCategory('category');
 
         $spreadsheet->getActiveSheet()
-        ->getCell('C17')
-        ->setValue('Emp no. here');
+            ->getCell('C17')
+            ->setValue('Emp no. here');
 
         $spreadsheet->setActiveSheetIndex(0);
 //         ob_clean();
@@ -111,6 +127,10 @@ class PesEmail {
         $xlsAttachment = ob_get_clean();
 
         return base64_encode($xlsAttachment);
+    }
+
+    static public function getDirectoryPathToAttachmentFile($fileName){        
+        return self::getApplicationFormsDirectoryPath() . $fileName;
     }
 
     static function findEmailBody($account, $accountType, $country, $emailAddress, $recheck='no'){
@@ -129,7 +149,7 @@ class PesEmail {
         
         $offboarded = AccountPersonTable::offboardedStatusFromEmail($email, $account);
         if($offboarded){
-            $pathToRecheckOffboarded = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//" .  "recheck_offboarded.php";
+            $pathToRecheckOffboarded = self::getEmailBodiesDirectoryPath() . "/" .  "recheck_offboarded.php";
             return $pathToRecheckOffboarded;
         }
  
@@ -142,9 +162,9 @@ class PesEmail {
         $emailPrefix = strtolower($recheck)=='yes' ? 'recheck' : 'request';
         $intExt      = strtolower($recheck)=='yes' ? null : $intExt; // For recheck email there is no difference.
 
-        $pathToAccountTypeBody = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $accountType ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
-        $pathToAccountBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "/" . $accountPath ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
-        $pathToDefaultBody     = "../" . self::EMAIL_ROOT_ATTACHMENTS . "/" . self::EMAIL_BODIES . "//" .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToAccountTypeBody = self::getEmailBodiesDirectoryPath() . $accountType ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToAccountBody     = self::getEmailBodiesDirectoryPath() . $accountPath ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToDefaultBody     = self::getEmailBodiesDirectoryPath() . "/" .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         
         $pathsToTry = array($pathToAccountTypeBody, $pathToAccountBody, $pathToDefaultBody);
 
@@ -260,7 +280,7 @@ class PesEmail {
         $emailBodyFileName = 'chaser' . trim($chaserLevel) . ".php";
         $replacements = array($fullName,$account);
 
-        include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/' . $emailBodyFileName;
+        include_once self::getEmailBodiesDirectory() . '/' . $emailBodyFileName;
         $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
 
         $sendResponse = BlueMail::send_mail(array($emailAddress), "PES Reminder - $fullName($upesref) on $account", $emailBody,$pesTaskid,array($requestor));
@@ -279,7 +299,7 @@ class PesEmail {
         $emailBodyFileName = 'processStatus' . trim($processStatus) . ".php";
         $replacements = array($fullname, $account);
 
-        include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/' . $emailBodyFileName;
+        include_once self::getEmailBodiesDirectory() . '/' . $emailBodyFileName;
         $emailBody = preg_replace($pesEmailPattern, $replacements, $pesEmail);
 
         return BlueMail::send_mail(array($emailAddress), "PES Status Change - $fullname($upesref) : $account", $emailBody,$pesTaskid, array($requestor));
@@ -290,7 +310,7 @@ class PesEmail {
         $now = new \DateTime();
         $pesEmail = null;          // Will be overridden when we include_once from emailBodies later.
 
-        include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/recheckReport.php';
+        include_once self::getEmailBodiesDirectory() . '/recheckReport.php';
 
         $pesEmail.= "<h4>Generated by uPes: " . $now->format('jS M Y') . "</h4>";
 
@@ -319,7 +339,7 @@ class PesEmail {
         $now = new \DateTime();
         $pesEmail = null;          // Will be overridden when we include_once from emailBodies later.
 
-        include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/recheckReport.php';
+        include_once self::getEmailBodiesDirectory() . '/recheckReport.php';
 
         $pesEmail.= "<h4>Generated by uPes: " . $now->format('jS M Y') . "</h4>";
         $pesEmail.= "<p>No upcoming rechecks have been found</p>";
@@ -341,7 +361,7 @@ class PesEmail {
         $now = new \DateTime();
         $pesEmail = null;          // Will be overridden when we include_once from emailBodies later.
 
-        include_once self::EMAIL_ROOT_ATTACHMENTS . '/' . self::EMAIL_BODIES . '/leaversFound.php';
+        include_once self::getEmailBodiesDirectory() . '/leaversFound.php';
 
         $pesEmail.= "<h4>Generated by uPes: " . $now->format('jS M Y') . "</h4>";
 

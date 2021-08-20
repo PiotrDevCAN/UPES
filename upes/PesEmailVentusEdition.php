@@ -22,9 +22,7 @@ class PesEmailVentusEdition {
     const EMAIL_SUB_APPLICATON    = 'applicationForms';
     const EMAIL_SUB_BODIES        = 'emailBodies';
 
-
     private function getLloydsGlobalApplicationForm(){
-        // LLoyds Global Application Form v1.4.doc
         $filename = "../emailAttachments/LLoyds Global Application Form v1.4.doc";
         $handle = fopen($filename, "r");
         $applicationForm = fread($handle, filesize($filename));

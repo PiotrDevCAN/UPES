@@ -79,11 +79,10 @@ class BlueMail
                 // return array('sendResponse' => $response, 'Status'=>$status);
             }
         }
-       
         
         foreach ($attachments as $attachment){
             
-            $attachmentPath = "../" . PesEmail::EMAIL_ROOT_ATTACHMENTS . "/". PesEmail::EMAIL_APPLICATION_FORMS . "/" . $attachment['filename'];         
+            $attachmentPath = PesEmail::getDirectoryPathToAttachmentFile($attachment['filename']);            
             $resp = $resp ? $mail->addAttachment($attachmentPath,$attachment['filename'],'base64',$attachment['content_type']) : $resp;
             if(!$resp){
                 $status = "Errored";
@@ -95,7 +94,6 @@ class BlueMail
                 return array('sendResponse' => $response, 'Status'=>$status);
             }
         }
-        
         
         $mail->Subject= $subject;
         $mail->body= $message;
