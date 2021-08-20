@@ -18,13 +18,21 @@ class PesEmail {
     const APPLICATION_PATTERN = '/(.*?)application(.*?).(.*?)/i';
 
     const EMAIL_ROOT_ATTACHMENTS     = 'emailAttachments';
+    const EMAIL_SUBDIRECTORY_COMMON  = 'common';
     const EMAIL_SUBDIRECTORY_IBM     = 'IBM';
     const EMAIL_SUBDIRECTORY_KYNDRYL = 'Kyndryl';
     const EMAIL_APPLICATION_FORMS    = 'applicationForms';
     const EMAIL_BODIES               = 'emailBodies';
 
-    const APPLICATION_FORM_GLOBAL_FSS       = 'FSS Global Application Form v2.5.doc';
-    const APPLICATION_FORM_GLOBAL_NON_FSS   = 'PES Global Application Form v1.2.doc';
+    // files for IBM
+    const IBM_APPLICATION_FORM_GLOBAL_FSS       = 'FSS Global Application Form v2.5.doc';
+    const IBM_APPLICATION_FORM_GLOBAL_NON_FSS   = 'PES Global Application Form v1.2.doc';
+
+    // files for Kyndryl
+    const KYNDRYL_APPLICATION_FORM_GLOBAL_FSS       = 'Kyndryl FSS Global Application Form v1.1.doc';
+    const KYNDRYL_APPLICATION_FORM_GLOBAL_NON_FSS   = 'Kyndryl PES Global Application Form v1.1.doc';
+
+    // common file for both companies
     const APPLICATION_FORM_ODC              = 'ODC application form v3.0.xls';
     const APPLICATION_FORM_OWENS            = 'Owens_Consent_Form.pdf';
     const APPLICATION_FORM_VF               = 'VF Overseas Consent Form.pdf';
@@ -34,13 +42,32 @@ class PesEmail {
 
     static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
 
-    static private function getCompanySubdirectory(){
+    static private function checkIfIsKyndryl(){
         $isKyndryl = stripos($_ENV['environment'], 'newco');
         if ($isKyndryl === false) {
-            $directory = self::EMAIL_SUBDIRECTORY_IBM;
+            return false;
         } else {
-            $directory = self::EMAIL_SUBDIRECTORY_KYNDRYL;
+            return true;
         }
+    }
+
+    static private function getCommonSubdirectoryName(){
+        $directory = self::EMAIL_SUBDIRECTORY_COMMON;
+        return $directory;
+    }
+
+    static private function getEmailApplicationFormsDirectoryName(){
+        $directory = self::EMAIL_APPLICATION_FORMS;
+        return $directory;
+    }
+
+    static private function getEmailBodiesDirectoryName(){
+        $directory = self::EMAIL_BODIES;
+        return $directory;
+    }
+
+    static private function getCompanySubdirectory(){
+        $directory = self::checkIfIsKyndryl() === true ? self::EMAIL_SUBDIRECTORY_KYNDRYL : self::EMAIL_SUBDIRECTORY_IBM;
         return $directory;
     }
 
@@ -48,16 +75,28 @@ class PesEmail {
         return self::EMAIL_ROOT_ATTACHMENTS . "/" . self::getCompanySubdirectory();
     }
 
+    static private function getRootAttachmentsCommonDirectory(){
+        return self::EMAIL_ROOT_ATTACHMENTS . "/" . self::getCommonSubdirectoryName();
+    }
+
     static private function getApplicationFormsDirectory(){
-        return self::getRootAttachmentsDirectory() . "/" . self::EMAIL_APPLICATION_FORMS;
+        return self::getRootAttachmentsDirectory() . "/" . self::getEmailApplicationFormsDirectoryName();
+    }
+
+    static private function getApplicationFormsCommonDirectory(){
+        return self::getRootAttachmentsCommonDirectory() . "/" . self::getEmailApplicationFormsDirectoryName();
+    }
+    
+    static private function getEmailBodiesDirectory(){
+        return self::getRootAttachmentsDirectory() . "/" . self::getEmailBodiesDirectoryName();
     }
 
     static private function getApplicationFormsDirectoryPath(){
         return "../" . self::getApplicationFormsDirectory() . "/";
     }
 
-    static private function getEmailBodiesDirectory(){
-        return self::getRootAttachmentsDirectory() . "/" . self::EMAIL_BODIES;
+    static private function getApplicationFormsCommonDirectoryPath(){
+        return "../" . self::getApplicationFormsCommonDirectory() . "/";
     }
 
     static private function getEmailBodiesDirectoryPath(){
@@ -76,32 +115,45 @@ class PesEmail {
         return $path;
     }
 
-    static private function getApplicationFormFile($formName){
-        $filename = self::getDirectoryPathToAttachmentFile($formName);
+    static private function getApplicationFormFile($filename){
         $handle = fopen($filename, "r",true);
         $applicationForm = fread($handle, filesize($filename));
         fclose($handle);
         return base64_encode($applicationForm);
     }
 
+    static private function getApplicationFormCompanyFile($formName){
+        $filename = self::getDirectoryPathToAttachmentFile($formName);
+        return static::getApplicationFormFile($filename);
+    }
+
+    static private function getApplicationFormCommonFile($formName){
+        $filename = self::getDirectoryPathToCommonAttachmentFile($formName);
+        return static::getApplicationFormFile($filename);
+    }
+
     static private function getGlobalFSSApplicationForm(){
-        return self::getApplicationFormFile(self::APPLICATION_FORM_GLOBAL_FSS);
+        $fileName = self::checkIfIsKyndryl() === true ? self::KYNDRYL_APPLICATION_FORM_GLOBAL_FSS : self::IBM_APPLICATION_FORM_GLOBAL_FSS;
+        return self::getApplicationFormCompanyFile($fileName);
     }
 
     static private function getGlobalNonFSSApplicationForm(){
-        return self::getApplicationFormFile(self::APPLICATION_FORM_GLOBAL_NON_FSS);
+        $fileName = self::checkIfIsKyndryl() === true ? self::KYNDRYL_APPLICATION_FORM_GLOBAL_NON_FSS : self::IBM_APPLICATION_FORM_GLOBAL_NON_FSS;
+        return self::getApplicationFormCompanyFile($fileName);
     }
 
     static private function getOwensConsentForm(){
-        return self::getApplicationFormFile(self::APPLICATION_FORM_OWENS);
+        $fileName = self::APPLICATION_FORM_OWENS;
+        return self::getApplicationFormCommonFile($fileName);
     }
     
     static private function getVfConsentForm(){
-        return self::getApplicationFormFile(self::APPLICATION_FORM_VF);
+        $fileName = self::APPLICATION_FORM_VF;
+        return self::getApplicationFormCommonFile($fileName);
     }
 
     static private function getOdcApplicationForm(){
-        $inputFileName = self::getDirectoryPathToAttachmentFile(self::APPLICATION_FORM_ODC);
+        $inputFileName = self::getDirectoryPathToCommonAttachmentFile(self::APPLICATION_FORM_ODC);
         /** Load $inputFileName to a Spreadsheet Object  **/
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
 
@@ -131,6 +183,10 @@ class PesEmail {
 
     static public function getDirectoryPathToAttachmentFile($fileName){        
         return self::getApplicationFormsDirectoryPath() . $fileName;
+    }
+
+    static public function getDirectoryPathToCommonAttachmentFile($fileName){        
+        return self::getApplicationFormsCommonDirectoryPath() . $fileName;
     }
 
     static function findEmailBody($account, $accountType, $country, $emailAddress, $recheck='no'){
@@ -227,21 +283,21 @@ class PesEmail {
         switch ($accountType) {
             case AccountRecord::ACCOUNT_TYPE_FSS:
 
-                $nameOfApplicationForm = "<ul><li><i>" . self::APPLICATION_FORM_GLOBAL_FSS . "</i></li>";
+                $nameOfApplicationForm = "<ul><li><i>" . self::IBM_APPLICATION_FORM_GLOBAL_FSS . "</i></li>";
                 $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
                 $nameOfApplicationForm.= "</ul>";
 
                 $encodedApplicationForm = self::getGlobalFSSApplicationForm();
-                $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_GLOBAL_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
+                $pesAttachments[] = array('filename'=>self::IBM_APPLICATION_FORM_GLOBAL_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
                 break;
             case AccountRecord::ACCOUNT_TYPE_NONE_FSS:
 
-                $nameOfApplicationForm = "<ul><li><i>" . self::APPLICATION_FORM_GLOBAL_NON_FSS . "</i></li>";
+                $nameOfApplicationForm = "<ul><li><i>" . self::IBM_APPLICATION_FORM_GLOBAL_NON_FSS . "</i></li>";
                 $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
                 $nameOfApplicationForm.= "</ul>";
                 
                 $encodedApplicationForm = self::getGlobalNonFSSApplicationForm();
-                $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_GLOBAL_NON_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
+                $pesAttachments[] = array('filename'=>self::IBM_APPLICATION_FORM_GLOBAL_NON_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
                 break;
         }
 
