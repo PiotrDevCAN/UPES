@@ -12,12 +12,15 @@ $plannedOutages = new PlannedOutages();
 include ('UserComms/responsiveOutages_V2.php');
 
 $navBarImage = ""; //a small image to displayed at the top left of the nav bar
-$navBarBrand = array(strtoupper($_ENV['environment']),"index.php");
+$brandLabel = stripos($_ENV['environment'], 'newco') ? str_replace("_NEWCO","[Kyndryl]",strtoupper($_ENV['environment'])) : strtoupper($_ENV['environment']);
+$brandLabel = str_replace("_UT"," UT ",$brandLabel);
+$brandLabel = str_replace("_DEV"," DEV",$brandLabel);
 $navBarSearch = false;
 
 $pageDetails = explode("/", $_SERVER['PHP_SELF']);
 $page = isset($pageDetails[2]) ? $pageDetails[2] : $pageDetails[1];
 
+$navBarBrand = array($brandLabel,"index.php");
 $navbar = new Navbar($navBarImage, $navBarBrand,$navBarSearch);
 
 $cdiAdmin       = new NavbarMenu("CDI Admin");
@@ -40,6 +43,7 @@ $tracker        = new NavBarOption('Tracker','pc_pesTracker.php','accessCdi acce
 $mailConvert    = new NavBarOption('Notes ID to Email','pa_mailConvert.php','accessCdi accessPesTeam');
 $manualStatus   = new NavBarOption('Manual Status update','pa_statusUpdate.php','accessCdi accessPesTeam');
 $pesStatusAudit = new NavBarOption('PES Status Change Log','pa_statusChangeLog.php','accessCdi accessPesTeam');
+$BPLookUp       = new NavbarOption('Blue Pages Lookup Form','pa_BPLookupForm.php','accessCdi accessPesTeam');
 $admin->addOption($accounts);
 $admin->addOption($contracts);
 $admin->addOption($pesLevels);
@@ -48,6 +52,7 @@ $admin->addOption($tracker);
 $admin->addOption($mailConvert);
 $admin->addOption($manualStatus);
 $admin->addOption($pesStatusAudit);
+$admin->addOption($BPLookUp);
 
 $user          = new NavBarMenu("uPES",'accessCdi accessPesTeam accessUser ' );
 $userAdd       = new NavBarOption('Add to PES','pu_userAdd.php','accessCdi accessPesTeam accessUser ');

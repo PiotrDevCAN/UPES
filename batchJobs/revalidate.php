@@ -8,8 +8,6 @@ use itdq\AuditTable;
 use itdq\DbTable;
 use itdq\slack;
 
-
-
 $slack = new slack();
 
 AuditTable::audit("Revalidation invoked.",AuditTable::RECORD_TYPE_REVALIDATION);

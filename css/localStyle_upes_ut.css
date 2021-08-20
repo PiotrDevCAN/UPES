@@ -4,6 +4,10 @@ body {
     padding-top: 65px;
 }
 
+.navbar-default {
+	background-color: #0065e3 !important;
+}
+
 table.dataTable th, table.dataTable td {
 	white-space: wrap;
 	font-size: 15px;

@@ -18,8 +18,13 @@ body {
 
 <div class="container">
 <!-- 	<div class="jumbotron"> -->
-		<h1 id='welcomeJumotron'><em>uPES</em> UKI Pre-Employment Screening</h1>
-<!-- 	</div> -->
+		<?php
+			$ibmerLabel = '<em>uPES</em> UKI Pre-Employment Screening';
+			$kyndrylerLabel = '<em>uPES</em> Pre-Employment Screening Tracked - For Kyndryl Employees ONLY';
+			$label = stripos($_ENV['environment'], 'newco') ? $kyndrylerLabel : $ibmerLabel;
+		?>
+		<h1 id='welcomeJumotron'><p><?=$label?></p></h1>
+		</div> -->
 </div>
 
 <?php
