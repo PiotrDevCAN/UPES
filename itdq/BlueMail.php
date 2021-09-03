@@ -33,7 +33,7 @@ class BlueMail
         $resp = true;
 
         $mail = new PHPMailer();
-        $response = array('');
+        $response = '';
         foreach ($cleanedTo as $emailAddress){
             if(!empty(trim($emailAddress))){
                 $resp = $resp ? $mail->addAddress($emailAddress) : $resp;
@@ -82,8 +82,7 @@ class BlueMail
         
         foreach ($attachments as $attachment){
             
-            $attachmentPath = PesEmail::getDirectoryPathToAttachmentFile($attachment['filename']);   
-            var_dump($attachmentPath);         
+            $attachmentPath = PesEmail::getDirectoryPathToAttachmentFile($attachment['filename']);            
             $resp = $resp ? $mail->addAttachment($attachmentPath,$attachment['filename'],'base64',$attachment['content_type']) : $resp;
             if(!$resp){
                 $status = "Errored";

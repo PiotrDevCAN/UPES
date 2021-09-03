@@ -132,28 +132,54 @@ class PesEmail {
         return static::getApplicationFormFile($filename);
     }
 
+    static private function getGlobalFSSApplicationFormFileName(){
+        $fileName = self::checkIfIsKyndryl() === true ? self::KYNDRYL_APPLICATION_FORM_GLOBAL_FSS : self::IBM_APPLICATION_FORM_GLOBAL_FSS;        
+        return $fileName;
+    }
+
+    static private function getGlobalNonFSSApplicationFormFileName(){
+        $fileName = self::checkIfIsKyndryl() === true ? self::KYNDRYL_APPLICATION_FORM_GLOBAL_NON_FSS : self::IBM_APPLICATION_FORM_GLOBAL_NON_FSS;
+        return $fileName;
+    }
+
     static private function getGlobalFSSApplicationForm(){
-        $fileName = self::checkIfIsKyndryl() === true ? self::KYNDRYL_APPLICATION_FORM_GLOBAL_FSS : self::IBM_APPLICATION_FORM_GLOBAL_FSS;
+        $fileName = self::getGlobalFSSApplicationFormFileName();
         return self::getApplicationFormCompanyFile($fileName);
     }
 
     static private function getGlobalNonFSSApplicationForm(){
-        $fileName = self::checkIfIsKyndryl() === true ? self::KYNDRYL_APPLICATION_FORM_GLOBAL_NON_FSS : self::IBM_APPLICATION_FORM_GLOBAL_NON_FSS;
+        $fileName = self::getGlobalNonFSSApplicationFormFileName();
         return self::getApplicationFormCompanyFile($fileName);
     }
 
-    static private function getOwensConsentForm(){
+    static private function getOdcApplicationFormFileName(){
+        $fileName = self::APPLICATION_FORM_ODC;
+        return $fileName;
+    }
+
+    static private function getOwensConsentFormFileName(){
         $fileName = self::APPLICATION_FORM_OWENS;
+        return $fileName;
+    }
+
+    static private function getVfConsentFormFileName(){
+        $fileName = self::APPLICATION_FORM_VF;
+        return $fileName;
+    }
+
+    static private function getOwensConsentForm(){
+        $fileName = self::getOwensConsentFormFileName();
         return self::getApplicationFormCommonFile($fileName);
     }
     
     static private function getVfConsentForm(){
-        $fileName = self::APPLICATION_FORM_VF;
+        $fileName = self::getVfConsentFormFileName();
         return self::getApplicationFormCommonFile($fileName);
     }
 
     static private function getOdcApplicationForm(){
-        $inputFileName = self::getDirectoryPathToCommonAttachmentFile(self::APPLICATION_FORM_ODC);
+        $fileName = self::getOdcApplicationFormFileName();
+        $inputFileName = self::getDirectoryPathToCommonAttachmentFile($fileName);
         /** Load $inputFileName to a Spreadsheet Object  **/
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
 
@@ -282,37 +308,42 @@ class PesEmail {
 
         switch ($accountType) {
             case AccountRecord::ACCOUNT_TYPE_FSS:
-
-                $nameOfApplicationForm = "<ul><li><i>" . self::IBM_APPLICATION_FORM_GLOBAL_FSS . "</i></li>";
+                $filename = self::getGlobalFSSApplicationFormFileName();
+                
+                $nameOfApplicationForm = "<ul><li><i>" . $filename . "</i></li>";
                 $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
                 $nameOfApplicationForm.= "</ul>";
 
                 $encodedApplicationForm = self::getGlobalFSSApplicationForm();
-                $pesAttachments[] = array('filename'=>self::IBM_APPLICATION_FORM_GLOBAL_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
+                $pesAttachments[] = array('filename'=>$filename,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
                 break;
             case AccountRecord::ACCOUNT_TYPE_NONE_FSS:
+                $filename = self::getGlobalNonFSSApplicationFormFileName();
 
-                $nameOfApplicationForm = "<ul><li><i>" . self::IBM_APPLICATION_FORM_GLOBAL_NON_FSS . "</i></li>";
+                $nameOfApplicationForm = "<ul><li><i>" . $filename . "</i></li>";
                 $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
                 $nameOfApplicationForm.= "</ul>";
                 
                 $encodedApplicationForm = self::getGlobalNonFSSApplicationForm();
-                $pesAttachments[] = array('filename'=>self::IBM_APPLICATION_FORM_GLOBAL_NON_FSS,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
+                $pesAttachments[] = array('filename'=>$filename,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
                 break;
         }
 
         switch ($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) {
             case 'odc':
                 $encodedAdditional = self::getOdcApplicationForm();
-                $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_ODC,'content_type'=>'application/msword','data'=>$encodedAdditional);
+                $fileName = self::getOdcApplicationFormFileName();
+                $pesAttachments[] = array('filename'=>$fileName,'content_type'=>'application/msword','data'=>$encodedAdditional);
                 break;
             case 'owens':
                 $encodedAdditional = self::getOwensConsentForm();
-                $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_OWENS,'content_type'=>'application/pdf','data'=>$encodedAdditional);
+                $fileName = self::getOwensConsentFormFileName();
+                $pesAttachments[] = array('filename'=>$fileName,'content_type'=>'application/pdf','data'=>$encodedAdditional);
                 break;
             case 'vf':
                 $encodedAdditional = self::getVfConsentForm();
-                $pesAttachments[] = array('filename'=>self::APPLICATION_FORM_VF,'content_type'=>'application/pdf','data'=>$encodedAdditional);
+                $fileName = self::getVfConsentFormFileName();
+                $pesAttachments[] = array('filename'=>$fileName,'content_type'=>'application/pdf','data'=>$encodedAdditional);
                 break;                
             default:
                 null;
