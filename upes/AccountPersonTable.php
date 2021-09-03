@@ -717,7 +717,9 @@ public $lastSelectSql;
         
         echo '<pre>';
         var_dump($upesref);
+        var_dump($cnums);
         var_dump($cnums[$upesref]);
+        var_dump(in_array($upesref, $cnums));
         echo '</pre>';
 
         in_array($upesref, $cnums) ? $cnum = $cnums[$upesref] : $cnum = '';
