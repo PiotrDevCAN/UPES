@@ -286,37 +286,37 @@ class AccountPersonRecord extends DbRecord
                 break;
             case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && $_SESSION['isPesTeam'] ;
-            
-            $recheck      = ($status==AccountPersonRecord::PES_STATUS_RECHECK_REQ) ? 'yes' : 'no' ;
-            $aeroplaneColor= ($status==AccountPersonRecord::PES_STATUS_RECHECK_REQ)? 'yellow' : 'green' ;
+              
+                $recheck      = ($status==AccountPersonRecord::PES_STATUS_RECHECK_REQ) ? 'yes' : 'no' ;
+                $aeroplaneColor= ($status==AccountPersonRecord::PES_STATUS_RECHECK_REQ)? 'yellow' : 'green' ;
 
-            $missing = !empty($emailAddress) ? '' : ' Email Address';
-            $missing.= !empty($fullName) ? '' : ' Full Name';
-            $missing.= !empty($country) ? '' : ' Country';
-            $valid = empty(trim($missing));
-            $disabled = $valid ? '' : 'disabled';
-            $tooltip = $valid ? 'Confirm PES Email details' : "Missing $missing";
+                $missing = !empty($emailAddress) ? '' : ' Email Address';
+                $missing.= !empty($fullName) ? '' : ' Full Name';
+                $missing.= !empty($country) ? '' : ' Country';
+                $valid = empty(trim($missing));
+                $disabled = $valid ? '' : 'disabled';
+                $tooltip = $valid ? 'Confirm PES Email details' : "Missing $missing";
 
+                $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnSendPesEmail accessRestrict accessPmo accessFm' ";
+                $pesStatusWithButton.= "aria-label='Left Align' ";
+                $pesStatusWithButton.= " data-cnum='$cnum' ";
+                $pesStatusWithButton.= " data-emailaddress='$emailAddress' ";
+                $pesStatusWithButton.= " data-account='" . $account . "' ";
+                $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
+                $pesStatusWithButton.= " data-accounttype='" . $accounttype . "' ";
+                $pesStatusWithButton.= " data-fullname='$fullName' ";
+                $pesStatusWithButton.= " data-country='$country' ";
+                $pesStatusWithButton.= " data-upesref='$upesRef' ";
+                $pesStatusWithButton.= " data-status='$status' ";
+                $pesStatusWithButton.= " data-ibmstatus='$ibmStatus' ";
+                $pesStatusWithButton.= " data-recheck='$recheck' ";
+                $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='$tooltip'";
+                $pesStatusWithButton.= " $disabled  ";
+                $pesStatusWithButton.= " > ";
+                $pesStatusWithButton.= "<span class='glyphicon glyphicon-send ' aria-hidden='true' style='color:$aeroplaneColor' ></span>";
 
-            $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnSendPesEmail accessRestrict accessPmo accessFm' ";
-            $pesStatusWithButton.= "aria-label='Left Align' ";
-            $pesStatusWithButton.= " data-cnum='$cnum' ";
-            $pesStatusWithButton.= " data-emailaddress='$emailAddress' ";
-            $pesStatusWithButton.= " data-account='" . $account . "' ";
-            $pesStatusWithButton.= " data-accountid='" . $accountid . "' ";
-            $pesStatusWithButton.= " data-accounttype='" . $accounttype . "' ";
-            $pesStatusWithButton.= " data-fullname='$fullName' ";
-            $pesStatusWithButton.= " data-country='$country' ";
-            $pesStatusWithButton.= " data-upesref='$upesRef' ";
-            $pesStatusWithButton.= " data-status='$status' ";
-            $pesStatusWithButton.= " data-ibmstatus='$ibmStatus' ";
-            $pesStatusWithButton.= " data-recheck='$recheck' ";
-            $pesStatusWithButton.= " data-toggle='tooltip' data-placement='top' title='$tooltip'";
-            $pesStatusWithButton.= " $disabled  ";
-            $pesStatusWithButton.= " > ";
-            $pesStatusWithButton.= "<span class='glyphicon glyphicon-send ' aria-hidden='true' style='color:$aeroplaneColor' ></span>";
-
-            $pesStatusWithButton.= "</button>&nbsp;";
+                $pesStatusWithButton.= "</button>&nbsp;";
+                
             case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && $_SESSION['isPesTeam'] :
             case $status == AccountPersonRecord::PES_STATUS_CANCEL_REQ && $_SESSION['isPesTeam'] :
 //            case $status == AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL && $_SESSION['isPesTeam'] :
