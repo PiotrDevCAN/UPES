@@ -714,15 +714,9 @@ public $lastSelectSql;
         $pesTracker->savePesComment($upesref, $accountid,  "PES_STATUS set to :" . $status );
 
         AuditTable::audit("PES Status set for:" . $upesref . "/" . $accountid ." To : " . $status . " By:" . $requestor,AuditTable::RECORD_TYPE_AUDIT);
-        
-        echo '<pre>';
-        var_dump($upesref);
-        var_dump($cnums);
-        var_dump($cnums[$upesref]);
-        var_dump(in_array($upesref, $cnums));
-        echo '</pre>';
 
-        in_array($upesref, $cnums) ? $cnum = $cnums[$upesref] : $cnum = '';
+        // in_array($upesref, $cnums) ? $cnum = $cnums[$upesref] : $cnum = '';
+        array_key_exists($upesref, $cnums) ? $cnum = $cnums[$upesref] : $cnum = '';
 
         in_array($status,AccountPersonRecord::$pesAuditableStatus) ? PesStatusAuditTable::insertRecord($cnum, $emails[$upesref], $accounts[$accountid], $status, $dateToUse) : null;
        
