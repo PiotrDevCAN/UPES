@@ -268,8 +268,6 @@ class AccountPersonRecord extends DbRecord
         $country     = trim($row['COUNTRY_OF_RESIDENCE']);
         $status      = trim($row['PES_STATUS']);
 
-        $_SESSION['isPesTeam'] = true;
-
         $pesStatusWithButton = '';
         $pesStatusWithButton.= "<span class='pesStatusField' data-upesref='" . $upesRef . "' data-account='" . $account . "' data-accountid='" . $accountid . "'  >" .  $status . "</span><br/>";
         switch (true) {
