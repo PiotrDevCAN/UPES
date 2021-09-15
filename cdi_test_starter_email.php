@@ -24,6 +24,8 @@ $names = explode(" ", $personRecordData['FULL_NAME']);
 
 db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
 
+echo get_include_path();
+
 try {
 
     $sendResponse = PesEmail::sendPesApplicationForms($account, $country, $personRecordData['CNUM'],  $personRecordData['FULL_NAME'], $names[0],array($personRecordData['EMAIL_ADDRESS']),$recheck);
