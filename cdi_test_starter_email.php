@@ -26,6 +26,9 @@ db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
 
 echo get_include_path();
 
+echo realpath('../emailAttachments/Kyndryl/applicationForms/Kyndryl FSS Global Application Form v1.1.doc') . PHP_EOL;
+echo realpath('../emailAttachments/Kyndryl/applicationForms/Kyndryl ODC Application Form v1.0.xls') . PHP_EOL;
+
 try {
 
     $sendResponse = PesEmail::sendPesApplicationForms($account, $country, $personRecordData['CNUM'],  $personRecordData['FULL_NAME'], $names[0],array($personRecordData['EMAIL_ADDRESS']),$recheck);
