@@ -10,7 +10,7 @@ use upes\PersonTable;
 $upesref = '818950';
 $account = 'Lloyds';
 $accountid = '1330';
-$country = 'IN';
+$country = 'India';
 $recheck = 'no';
 
 ob_start();
@@ -26,7 +26,7 @@ db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
 
 try {
 
-    $sendResponse = PesEmail::sendPesApplicationForms($account, $country, $personRecordData['CNUM'],  $personRecordData['FULL_NAME'], $names[0],array($personRecordData['EMAIL_ADDRESS']),$_POST['recheck']);
+    $sendResponse = PesEmail::sendPesApplicationForms($account, $country, $personRecordData['CNUM'],  $personRecordData['FULL_NAME'], $names[0],array($personRecordData['EMAIL_ADDRESS']),$recheck);
 
     // $indicateRecheck = strtolower($_POST['recheck']) == 'yes' ? "(recheck)" : null;
     // $nextStatus = strtolower($_POST['recheck']) == 'yes' ? AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING : AccountPersonRecord::PES_STATUS_PES_PROGRESSING ;
