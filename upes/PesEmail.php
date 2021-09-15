@@ -199,7 +199,7 @@ class PesEmail {
 
     static private function getOdcApplicationForm(){
         $fileName = self::getOdcApplicationFormFileName();
-        $inputFileName = self::getDirectoryPathToCommonAttachmentFile($fileName);
+        $inputFileName = self::getDirectoryPathToAttachmentFile($fileName);
         /** Load $inputFileName to a Spreadsheet Object  **/
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
 
