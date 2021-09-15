@@ -53,9 +53,7 @@ $processingStatusField =  AccountPersonTable::formatProcessingStatusCell($data[0
 db2_commit($GLOBALS['conn']);
 db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_ON);
 
-
 $pesCommentField = $data[0]['COMMENT'];
-
 
 $messages = ob_get_clean();
 ob_start();
@@ -69,7 +67,7 @@ $emailDetails['comment'] = $pesCommentField;
 $emailDetails['pesStatus'] = $pesStatusField;
 $emailDetails['processingStatus'] = $processingStatusField;
 $emailDetails['data'] = $data[0];
-
+$emailDetails['sendResponse'] = $sendResponse;
 
 ob_clean();
 echo json_encode($emailDetails);

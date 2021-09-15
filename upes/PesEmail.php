@@ -27,18 +27,20 @@ class PesEmail {
     // files for IBM
     const IBM_APPLICATION_FORM_GLOBAL_FSS       = 'FSS Global Application Form v2.5.doc';
     const IBM_APPLICATION_FORM_GLOBAL_NON_FSS   = 'PES Global Application Form v1.2.doc';
+    const IBM_APPLICATION_FORM_ODC              = 'ODC application form v3.0.xls';
 
     // files for Kyndryl
     const KYNDRYL_APPLICATION_FORM_GLOBAL_FSS       = 'Kyndryl FSS Global Application Form v1.1.doc';
     const KYNDRYL_APPLICATION_FORM_GLOBAL_NON_FSS   = 'Kyndryl PES Global Application Form v1.1.doc';
+    const KYNDRYL_APPLICATION_FORM_ODC              = 'Kyndryl ODC Application Form v1.0.xls';
 
     // common file for both companies
-    const APPLICATION_FORM_ODC              = 'ODC application form v3.0.xls';
+    // const APPLICATION_FORM_ODC              = 'ODC application form v3.0.xls';
     const APPLICATION_FORM_OWENS            = 'Owens_Consent_Form.pdf';
     const APPLICATION_FORM_VF               = 'VF Overseas Consent Form.pdf';
 
     const EMAIL_SUBJECT          = "IBM Confidential: URGENT - &&account_name&&  Pre Employment Screening- &&serial_number&& &&candidate_name&&";
-    const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS,'vf'=>self::APPLICATION_FORM_VF);
+    // const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS,'vf'=>self::APPLICATION_FORM_VF);
 
     static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
 
@@ -49,6 +51,24 @@ class PesEmail {
         } else {
             return true;
         }
+    }
+
+    static private function getApplicationFormFileNameByKey($key = ''){
+        switch($key) {
+            case 'odc':
+                $fileName = self::getOdcApplicationFormFileName();
+                break;
+            case 'owens':
+                $fileName = self::APPLICATION_FORM_OWENS;
+                break;
+            case 'vf':
+                $fileName = self::APPLICATION_FORM_VF;
+                break;
+            default:
+                $fileName = '';
+                break;
+        }
+        return $fileName;
     }
 
     static private function getCommonSubdirectoryName(){
@@ -153,7 +173,7 @@ class PesEmail {
     }
 
     static private function getOdcApplicationFormFileName(){
-        $fileName = self::APPLICATION_FORM_ODC;
+        $fileName = self::checkIfIsKyndryl() === true ? self::KYNDRYL_APPLICATION_FORM_ODC : self::IBM_APPLICATION_FORM_ODC;        
         return $fileName;
     }
 
@@ -279,7 +299,6 @@ class PesEmail {
 
         $applicationFormDetails = self::determinePesApplicationForms($country, $accountType);
         $nameOfApplicationForm = $applicationFormDetails['nameOfApplicationForm'];
-
         $pesAttachments        = $applicationFormDetails['pesAttachments'];
 
         $emailBodyFile = PesEmail::findEmailBody($account, $accountType, $country, $candidateEmail, $recheck);
@@ -311,7 +330,7 @@ class PesEmail {
                 $filename = self::getGlobalFSSApplicationFormFileName();
                 
                 $nameOfApplicationForm = "<ul><li><i>" . $filename . "</i></li>";
-                $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
+                $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::getApplicationFormFileNameByKey($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) . "</i></li>" : null;
                 $nameOfApplicationForm.= "</ul>";
 
                 $encodedApplicationForm = self::getGlobalFSSApplicationForm();
@@ -321,7 +340,7 @@ class PesEmail {
                 $filename = self::getGlobalNonFSSApplicationFormFileName();
 
                 $nameOfApplicationForm = "<ul><li><i>" . $filename . "</i></li>";
-                $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::APPLICATION_FORM_KEY[$additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']] . "</i></li>" : null;
+                $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::getApplicationFormFileNameByKey($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) . "</i></li>" : null;
                 $nameOfApplicationForm.= "</ul>";
                 
                 $encodedApplicationForm = self::getGlobalNonFSSApplicationForm();
