@@ -25,9 +25,9 @@ try {
 
     $indicateRecheck = strtolower($_POST['recheck']) == 'yes' ? "(recheck)" : null;
     $nextStatus = strtolower($_POST['recheck']) == 'yes' ? AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING : AccountPersonRecord::PES_STATUS_PES_PROGRESSING ;
-    
+
     $accountPersonTable->setPesStatus($_POST['upesref'],$_POST['accountid'],$nextStatus,'PES Application form sent:' . $sendResponse['Status']);
-    $accountPersonTable->savePesComment($_POST['upesref'],$_POST['accountid'],  "PES application forms $indicateRecheck sent:" . $sendResponse['Status'] );
+    $accountPersonTable->savePesComment($_POST['upesref'],$_POST['accountid'], "PES application forms $indicateRecheck sent:" . $sendResponse['Status'] );
 
     $accountPersonTable->setPesProcessStatus($_POST['upesref'],$_POST['accountid'],AccountPersonTable::PROCESS_STATUS_USER);
     $accountPersonTable->savePesComment($_POST['upesref'],$_POST['accountid'],  "Process Status set to " . AccountPersonTable::PROCESS_STATUS_USER );
