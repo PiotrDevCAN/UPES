@@ -304,54 +304,44 @@ class PesEmail {
 
     static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail, $recheck='no'){
         
+        // $appForms = PesEmail::getApplicationFormsDirectoryPath();
+        // $appFormsPath = PesEmail::getApplicationFormsDirectory();
 
-        // current directory
-        // $cwd = getcwd() . "\n";
-        // $files1 = scandir($cwd);
-        // print_r($files1);
+        // $appFormsCommon = PesEmail::getApplicationFormsCommonDirectoryPath();
+        // $appFormsCommonPath = PesEmail::getApplicationFormsCommonDirectory();
 
-        // /var/www/html
-        
-        $appForms = PesEmail::getApplicationFormsDirectoryPath();
-        $appFormsPath = PesEmail::getApplicationFormsDirectory();
+        // $emailBodies = PesEmail::getEmailBodiesDirectoryPath();
+        // $emailBodiesPath = PesEmail::getEmailBodiesDirectory();
 
-        $appFormsCommon = PesEmail::getApplicationFormsCommonDirectoryPath();
-        $appFormsCommonPath = PesEmail::getApplicationFormsCommonDirectory();
+        // echo '<br> appForms ';
+        // var_dump(file_exists($appForms));
+        // $files2 = scandir($appForms);
+        // print_r($files2);
 
-        $emailBodies = PesEmail::getEmailBodiesDirectoryPath();
-        $emailBodiesPath = PesEmail::getEmailBodiesDirectory();
+        // echo '<br> appForms PATH ';
+        // var_dump(file_exists($appFormsPath));
+        // $files2 = scandir($appFormsPath);
+        // print_r($files2);
 
-        echo '<br> appForms ';
-        var_dump(file_exists($appForms));
-        $files2 = scandir($appForms);
-        print_r($files2);
+        // echo '<br> appFormsCommon ';
+        // var_dump(file_exists($appFormsCommon));
+        // $files2 = scandir($appFormsCommon);
+        // print_r($files2);
 
-        echo '<br> appForms PATH ';
-        var_dump(file_exists($appFormsPath));
-        $files2 = scandir($appFormsPath);
-        print_r($files2);
+        // echo '<br> appFormsCommonPath PATH ';
+        // var_dump(file_exists($appFormsCommonPath));
+        // $files2 = scandir($appFormsCommonPath);
+        // print_r($files2);
 
-        echo '<br> appFormsCommon ';
-        var_dump(file_exists($appFormsCommon));
-        $files2 = scandir($appFormsCommon);
-        print_r($files2);
+        // echo '<br> emailBodies ';
+        // var_dump(file_exists($emailBodies));
+        // $files2 = scandir($emailBodies);
+        // print_r($files2);
 
-        echo '<br> appFormsCommonPath PATH ';
-        var_dump(file_exists($appFormsCommonPath));
-        $files2 = scandir($appFormsCommonPath);
-        print_r($files2);
-
-        echo '<br> emailBodies ';
-        var_dump(file_exists($emailBodies));
-        $files2 = scandir($emailBodies);
-        print_r($files2);
-
-        echo '<br> emailBodiesPath PATH ';
-        var_dump(file_exists($emailBodiesPath));
-        $files2 = scandir($emailBodiesPath);
-        print_r($files2);
-
-
+        // echo '<br> emailBodiesPath PATH ';
+        // var_dump(file_exists($emailBodiesPath));
+        // $files2 = scandir($emailBodiesPath);
+        // print_r($files2);
         
         $loader = new Loader();
         $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
@@ -384,10 +374,6 @@ class PesEmail {
         if(!$email){
             throw new \Exception('Error preparing Pes Application Form email');
         }
-
-echo '<pre>';
-var_dump($pesAttachments);
-echo '<pre>';
 
         return $email ? BlueMail::send_mail($candidateEmail, $subject, $email, $pesTaskid,array(),array(),false,$pesAttachments) : false;
     }
