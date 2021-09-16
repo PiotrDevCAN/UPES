@@ -170,10 +170,16 @@ class PesEmail {
     }
 
     static private function getApplicationFormFile($filename){
+        
+        echo '<pre>';
+        var_dump($filename);
+        echo '</pre>';
+
         $handle = fopen($filename, "r", true);
         $applicationForm = fread($handle, filesize($filename));
         fclose($handle);
-        return base64_encode($applicationForm);
+        // return base64_encode($applicationForm);
+        return null;
     }
 
     static private function getApplicationFormCompanyFile($formName){
