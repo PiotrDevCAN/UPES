@@ -302,47 +302,55 @@ class PesEmail {
         return false;
     }
 
-    static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail, $recheck='no'){
+    static function testParam($dir = ''){
+        echo '<br> BROWSING DIRECTORY = ' . $dir;
+        echo '<pre>';
+        var_dump(file_exists($dir));
+        $files2 = scandir($dir);
+        print_r($files2);
+        foreach ($files2 as $value) {
+            if($value === '.' || $value === '..') {continue;} 
+            echo '<br> file size ';
+            var_dump(filesize($dir . DIRECTORY_SEPARATOR . $value));
+            echo '<br> file exists ';
+            var_dump(file_exists($dir . DIRECTORY_SEPARATOR . $value));
+        }
+        echo '</pre>';
+    }
+
+    static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail, $recheck='no', $test = false){
         
-        // $appForms = PesEmail::getApplicationFormsDirectoryPath();
-        // $appFormsPath = PesEmail::getApplicationFormsDirectory();
+        if ($test === true) {
+            
+            $appForms = PesEmail::getApplicationFormsDirectoryPath();
+            $appFormsPath = PesEmail::getApplicationFormsDirectory();
 
-        // $appFormsCommon = PesEmail::getApplicationFormsCommonDirectoryPath();
-        // $appFormsCommonPath = PesEmail::getApplicationFormsCommonDirectory();
+            $appFormsCommon = PesEmail::getApplicationFormsCommonDirectoryPath();
+            $appFormsCommonPath = PesEmail::getApplicationFormsCommonDirectory();
 
-        // $emailBodies = PesEmail::getEmailBodiesDirectoryPath();
-        // $emailBodiesPath = PesEmail::getEmailBodiesDirectory();
+            $emailBodies = PesEmail::getEmailBodiesDirectoryPath();
+            $emailBodiesPath = PesEmail::getEmailBodiesDirectory();
 
-        // echo '<br> appForms ';
-        // var_dump(file_exists($appForms));
-        // $files2 = scandir($appForms);
-        // print_r($files2);
+            $dir = $appForms;
+            self::testParam($dir);
 
-        // echo '<br> appForms PATH ';
-        // var_dump(file_exists($appFormsPath));
-        // $files2 = scandir($appFormsPath);
-        // print_r($files2);
+            $dir = $appFormsPath;
+            self::testParam($dir);
 
-        // echo '<br> appFormsCommon ';
-        // var_dump(file_exists($appFormsCommon));
-        // $files2 = scandir($appFormsCommon);
-        // print_r($files2);
+            $dir = $appFormsCommon;
+            self::testParam($dir);
 
-        // echo '<br> appFormsCommonPath PATH ';
-        // var_dump(file_exists($appFormsCommonPath));
-        // $files2 = scandir($appFormsCommonPath);
-        // print_r($files2);
+            $dir = $appFormsCommonPath;
+            self::testParam($dir);
 
-        // echo '<br> emailBodies ';
-        // var_dump(file_exists($emailBodies));
-        // $files2 = scandir($emailBodies);
-        // print_r($files2);
+            $dir = $emailBodies;
+            self::testParam($dir);
 
-        // echo '<br> emailBodiesPath PATH ';
-        // var_dump(file_exists($emailBodiesPath));
-        // $files2 = scandir($emailBodiesPath);
-        // print_r($files2);
-        
+            $dir = $emailBodiesPath;
+            self::testParam($dir);
+            
+        }
+
         $loader = new Loader();
         $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
 
