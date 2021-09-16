@@ -341,11 +341,25 @@ class PesEmail {
             $dir = $emailBodiesPath;
             self::testParam($dir);
 
-            echo '<br>' . self::getGlobalFSSApplicationFormFileName();
-            echo '<br>' . self::getGlobalNonFSSApplicationFormFileName();
-            echo '<br>' . self::getOdcApplicationFormFileName();
-            echo '<br>' . self::getOwensConsentFormFileName();
-            echo '<br>' . self::getVfConsentFormFileName();
+            $filename = self::getGlobalFSSApplicationFormFileName();
+            echo '<br>' . $filename;
+            echo '<br>' . self::getApplicationFormCompanyFile($filename);
+            
+            $filename = self::getGlobalNonFSSApplicationFormFileName();
+            echo '<br>' . $filename;
+            echo '<br>' . self::getApplicationFormCompanyFile($filename);
+
+            $filename = self::getOdcApplicationFormFileName();
+            echo '<br>' . $filename;
+            echo '<br>' . self::getOdcApplicationFormFile($filename);
+            
+            $filename = self::getOwensConsentFormFileName();
+            echo '<br>' . $filename;
+            echo '<br>' . self::getApplicationFormCommonFile($filename);
+            
+            $filename = self::getVfConsentFormFileName();
+            echo '<br>' . $filename;
+            echo '<br>' . self::getApplicationFormCommonFile($filename);
 
         }
 
