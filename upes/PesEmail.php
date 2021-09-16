@@ -135,13 +135,13 @@ class PesEmail {
     }
 
     static private function getApplicationFormsDirectoryPath(){
-        return "../" . self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
-        // return self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
+        // return "../" . self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
+        return self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
     }
 
     static private function getApplicationFormsCommonDirectoryPath(){
-        return "../" . self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
-        // return self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
+        // return "../" . self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
+        return self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
     }
 
     static public function getDirectoryPathToAttachmentFile($fileName){        
@@ -153,8 +153,8 @@ class PesEmail {
     }
 
     static private function getEmailBodiesDirectoryPath(){
-        return "../" . self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
-        // return self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
+        // return "../" . self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
+        return self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
     }
 
     static private function getAccountPath($account){
@@ -314,32 +314,32 @@ class PesEmail {
         
         if ($test === true) {
             
-            $appForms = PesEmail::getApplicationFormsDirectoryPath();
-            $appFormsPath = PesEmail::getApplicationFormsDirectory();
+            // $appForms = PesEmail::getApplicationFormsDirectoryPath();
+            // $appFormsPath = PesEmail::getApplicationFormsDirectory();
 
-            $appFormsCommon = PesEmail::getApplicationFormsCommonDirectoryPath();
-            $appFormsCommonPath = PesEmail::getApplicationFormsCommonDirectory();
+            // $appFormsCommon = PesEmail::getApplicationFormsCommonDirectoryPath();
+            // $appFormsCommonPath = PesEmail::getApplicationFormsCommonDirectory();
 
-            $emailBodies = PesEmail::getEmailBodiesDirectoryPath();
-            $emailBodiesPath = PesEmail::getEmailBodiesDirectory();
+            // $emailBodies = PesEmail::getEmailBodiesDirectoryPath();
+            // $emailBodiesPath = PesEmail::getEmailBodiesDirectory();
 
-            $dir = $appForms;
-            self::testParam($dir);
+            // $dir = $appForms;
+            // self::testParam($dir);
 
-            $dir = $appFormsPath;
-            self::testParam($dir);
+            // $dir = $appFormsPath;
+            // self::testParam($dir);
 
-            $dir = $appFormsCommon;
-            self::testParam($dir);
+            // $dir = $appFormsCommon;
+            // self::testParam($dir);
 
-            $dir = $appFormsCommonPath;
-            self::testParam($dir);
+            // $dir = $appFormsCommonPath;
+            // self::testParam($dir);
 
-            $dir = $emailBodies;
-            self::testParam($dir);
+            // $dir = $emailBodies;
+            // self::testParam($dir);
 
-            $dir = $emailBodiesPath;
-            self::testParam($dir);
+            // $dir = $emailBodiesPath;
+            // self::testParam($dir);
 
             $filename = self::getGlobalFSSApplicationFormFileName();
             echo '<br>' . $filename;
@@ -349,10 +349,6 @@ class PesEmail {
             echo '<br>' . $filename;
             echo '<br>' . self::getApplicationFormCompanyFile($filename);
 
-            $filename = self::getOdcApplicationFormFileName();
-            echo '<br>' . $filename;
-            echo '<br>' . self::getOdcApplicationFormFile($filename);
-            
             $filename = self::getOwensConsentFormFileName();
             echo '<br>' . $filename;
             echo '<br>' . self::getApplicationFormCommonFile($filename);
@@ -360,7 +356,10 @@ class PesEmail {
             $filename = self::getVfConsentFormFileName();
             echo '<br>' . $filename;
             echo '<br>' . self::getApplicationFormCommonFile($filename);
-
+            
+            $filename = self::getOdcApplicationFormFileName();
+            echo '<br>' . $filename;
+            echo '<br>' . self::getOdcApplicationFormFile($filename);
         }
 
         $loader = new Loader();
