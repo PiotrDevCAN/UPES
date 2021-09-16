@@ -64,10 +64,10 @@ class PesEmail {
                 $fileName = self::getOdcApplicationFormFileName();
                 break;
             case self::OWENS:
-                $fileName = self::APPLICATION_FORM_OWENS;
+                $fileName = self::getOwensConsentFormFileName();
                 break;
             case self::VF:
-                $fileName = self::APPLICATION_FORM_VF;
+                $fileName = self::getVfConsentFormFileName();
                 break;
             default:
                 $fileName = '';
