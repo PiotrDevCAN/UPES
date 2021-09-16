@@ -135,13 +135,13 @@ class PesEmail {
     }
 
     static private function getApplicationFormsDirectoryPath(){
-        // return "../" . self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
-        return self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
+        return "../" . self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
+        // return self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
     }
 
     static private function getApplicationFormsCommonDirectoryPath(){
-        // return "../" . self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
-        return self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
+        return "../" . self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
+        // return self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
     }
 
     static public function getDirectoryPathToAttachmentFile($fileName){        
@@ -153,8 +153,8 @@ class PesEmail {
     }
 
     static private function getEmailBodiesDirectoryPath(){
-        // return "../" . self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
-        return self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
+        return "../" . self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
+        // return self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
     }
 
     static private function getAccountPath($account){
