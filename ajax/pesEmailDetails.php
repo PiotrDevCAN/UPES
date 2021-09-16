@@ -8,17 +8,7 @@ ob_start();
 $pesEmailObj = new PesEmail();
 
 try {
-    // $loader = new Loader();
-
-    // $accountType = '';
-    // $accountTypes = $loader->load('ACCOUNT_TYPE',AllTables::$ACCOUNT, " ACCOUNT = '" . $_POST['account'] . "'" );
-    // foreach ($accountTypes as $value) {
-    //     $accountType = $value;
-    // }
-
-    // $_POST['accounttype'];
-
-    // $emailDetails = $pesEmailObj->getEmailDetails($_POST['upesref'],  $_POST['account'], $_POST['country'],$_POST['ibmstatus']);
+    
     $recheck = $_POST['recheck']=='yes';
     $emailDetails = PesEmail::determinePesApplicationForms($_POST['country'], $_POST['accounttype']);
 
