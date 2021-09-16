@@ -123,6 +123,14 @@ class PesEmail {
         return "../" . self::getEmailBodiesDirectory() . "/";
     }
 
+    static public function getDirectoryPathToAttachmentFile($fileName){        
+        return self::getApplicationFormsDirectoryPath() . $fileName;
+    }
+
+    static public function getDirectoryPathToCommonAttachmentFile($fileName){        
+        return self::getApplicationFormsCommonDirectoryPath() . $fileName;
+    }
+
     static private function getAccountPath($account){
         switch(strtolower($account)) {
             case 'lloyds ce':
@@ -225,14 +233,6 @@ class PesEmail {
         $xlsAttachment = ob_get_clean();
 
         return base64_encode($xlsAttachment);
-    }
-
-    static public function getDirectoryPathToAttachmentFile($fileName){        
-        return self::getApplicationFormsDirectoryPath() . $fileName;
-    }
-
-    static public function getDirectoryPathToCommonAttachmentFile($fileName){        
-        return self::getApplicationFormsCommonDirectoryPath() . $fileName;
     }
 
     static function findEmailBody($account, $accountType, $country, $emailAddress, $recheck='no'){

@@ -112,15 +112,18 @@ class PesEmailTest {
     }
 
     static private function getApplicationFormsDirectoryPath(){
-        return "../" . self::getApplicationFormsDirectory() . "/";
+        // return "../" . self::getApplicationFormsDirectory() . "/";
+        return self::getApplicationFormsDirectory() . "/";
     }
 
     static private function getApplicationFormsCommonDirectoryPath(){
-        return "../" . self::getApplicationFormsCommonDirectory() . "/";
+        // return "../" . self::getApplicationFormsCommonDirectory() . "/";
+        return self::getApplicationFormsCommonDirectory() . "/";
     }
 
     static private function getEmailBodiesDirectoryPath(){
-        return "../" . self::getEmailBodiesDirectory() . "/";
+        // return "../" . self::getEmailBodiesDirectory() . "/";
+        return self::getEmailBodiesDirectory() . "/";
     }
 
     static private function getAccountPath($account){
@@ -136,54 +139,6 @@ class PesEmailTest {
     }
 
     static private function getApplicationFormFile($filename){
-
-        // current directory
-        $cwd = getcwd() . "\n";
-        $files1 = scandir($cwd);
-        print_r($files1);
-        
-        $appForms = PesEmailTest::getApplicationFormsDirectoryPath();
-        $appFormsPath = PesEmailTest::getApplicationFormsDirectory();
-
-        $appFormsCommon = PesEmailTest::getApplicationFormsCommonDirectoryPath();
-        $appFormsCommonPath = PesEmailTest::getApplicationFormsCommonDirectory();
-
-        $emailBodies = PesEmailTest::getEmailBodiesDirectoryPath();
-        $emailBodiesPath = PesEmailTest::getEmailBodiesDirectory();
-
-        echo '<br> appForms ';
-        var_dump(file_exists($appForms));
-        $files2 = scandir($appForms);
-        print_r($files2);
-
-        echo '<br> appForms PATH ';
-        var_dump(file_exists($appFormsPath));
-        $files2 = scandir($appFormsPath);
-        print_r($files2);
-
-
-        echo '<br> appFormsCommon PATH ';
-        var_dump(file_exists($appFormsCommon));
-        $files2 = scandir($appFormsCommon);
-        print_r($files2);
-
-        echo '<br> appFormsCommonPath PATH ';
-        var_dump(file_exists($appFormsCommonPath));
-        $files2 = scandir($appFormsCommonPath);
-        print_r($files2);
-
-
-        echo '<br> emailBodies PATH ';
-        var_dump(file_exists($emailBodies));
-        $files2 = scandir($emailBodies);
-        print_r($files2);
-
-        echo '<br> emailBodiesPath PATH ';
-        var_dump(file_exists($emailBodiesPath));
-        $files2 = scandir($emailBodiesPath);
-        print_r($files2);
-
-
         $handle = fopen($filename, "r",true);
         $applicationForm = fread($handle, filesize($filename));
         fclose($handle);
@@ -332,6 +287,56 @@ class PesEmailTest {
     }
 
     static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail, $recheck='no'){
+        
+
+        // current directory
+        // $cwd = getcwd() . "\n";
+        // $files1 = scandir($cwd);
+        // print_r($files1);
+
+        // /var/www/html
+        
+        $appForms = PesEmailTest::getApplicationFormsDirectoryPath();
+        $appFormsPath = PesEmailTest::getApplicationFormsDirectory();
+
+        $appFormsCommon = PesEmailTest::getApplicationFormsCommonDirectoryPath();
+        $appFormsCommonPath = PesEmailTest::getApplicationFormsCommonDirectory();
+
+        $emailBodies = PesEmailTest::getEmailBodiesDirectoryPath();
+        $emailBodiesPath = PesEmailTest::getEmailBodiesDirectory();
+
+        echo '<br> appForms ';
+        var_dump(file_exists($appForms));
+        $files2 = scandir($appForms);
+        print_r($files2);
+
+        echo '<br> appForms PATH ';
+        var_dump(file_exists($appFormsPath));
+        $files2 = scandir($appFormsPath);
+        print_r($files2);
+
+        echo '<br> appFormsCommon ';
+        var_dump(file_exists($appFormsCommon));
+        $files2 = scandir($appFormsCommon);
+        print_r($files2);
+
+        echo '<br> appFormsCommonPath PATH ';
+        var_dump(file_exists($appFormsCommonPath));
+        $files2 = scandir($appFormsCommonPath);
+        print_r($files2);
+
+        echo '<br> emailBodies ';
+        var_dump(file_exists($emailBodies));
+        $files2 = scandir($emailBodies);
+        print_r($files2);
+
+        echo '<br> emailBodiesPath PATH ';
+        var_dump(file_exists($emailBodiesPath));
+        $files2 = scandir($emailBodiesPath);
+        print_r($files2);
+
+
+        
         $loader = new Loader();
         $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
 
