@@ -12,6 +12,10 @@ try {
     $recheck = $_POST['recheck']=='yes';
     $emailDetails = PesEmail::determinePesApplicationForms($_POST['country'], $_POST['accounttype']);
 
+    echo '<pre>';
+    var_dump($emailDetails);
+    echo '</pre>';
+
 } catch ( \Exception $e) {
     switch ($e->getCode()) {
         case 803:

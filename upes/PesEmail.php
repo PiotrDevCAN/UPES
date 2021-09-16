@@ -343,19 +343,19 @@ class PesEmail {
 
             $filename = self::getGlobalFSSApplicationFormFileName();
             echo '<br>' . $filename;
-            // echo '<br>' . self::getApplicationFormCompanyFile($filename);
+            echo '<br>' . self::getApplicationFormCompanyFile($filename);
             
             $filename = self::getGlobalNonFSSApplicationFormFileName();
             echo '<br>' . $filename;
-            // echo '<br>' . self::getApplicationFormCompanyFile($filename);
+            echo '<br>' . self::getApplicationFormCompanyFile($filename);
 
             $filename = self::getOwensConsentFormFileName();
             echo '<br>' . $filename;
-            // echo '<br>' . self::getApplicationFormCommonFile($filename);
+            echo '<br>' . self::getApplicationFormCommonFile($filename);
             
             $filename = self::getVfConsentFormFileName();
             echo '<br>' . $filename;
-            // echo '<br>' . self::getApplicationFormCommonFile($filename);
+            echo '<br>' . self::getApplicationFormCommonFile($filename);
             
             $filename = self::getOdcApplicationFormFileName();
             echo '<br>' . $filename;
