@@ -71,7 +71,7 @@ class PesEmail {
         return $fileName;
     }
 
-    static private function getCommonSubdirectoryName(){
+    static private function getCommonEmailSubdirectoryName(){
         $directory = self::EMAIL_SUBDIRECTORY_COMMON;
         return $directory;
     }
@@ -96,7 +96,7 @@ class PesEmail {
     }
 
     static private function getRootAttachmentsCommonDirectory(){
-        return self::EMAIL_ROOT_ATTACHMENTS . "/" . self::getCommonSubdirectoryName();
+        return self::EMAIL_ROOT_ATTACHMENTS . "/" . self::getCommonEmailSubdirectoryName();
     }
 
     static private function getApplicationFormsDirectory(){

@@ -42,7 +42,14 @@ class PesEmailTest {
     const EMAIL_SUBJECT          = "IBM Confidential: URGENT - &&account_name&&  Pre Employment Screening- &&serial_number&& &&candidate_name&&";
     // const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS,'vf'=>self::APPLICATION_FORM_VF);
 
-    static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
+    static private $notifyPesEmailAddresses = array(
+        'to' => array(
+            'carrabooth@uk.ibm.com'
+            ),
+        'cc' => array(
+            'Rsmith1@uk.ibm.com'
+        )
+    );
 
     static private function checkIfIsKyndryl(){
         $isKyndryl = stripos($_ENV['environment'], 'newco');
@@ -71,8 +78,22 @@ class PesEmailTest {
         return $fileName;
     }
 
-    static private function getCommonSubdirectoryName(){
+    static private function getEmailRootAttachmentsName(){
+        $directory = self::EMAIL_ROOT_ATTACHMENTS;
+        return $directory;
+    }
+
+    static private function getEmailCommonSubdirectoryName(){
         $directory = self::EMAIL_SUBDIRECTORY_COMMON;
+        return $directory;
+    }
+
+    static private function getEmailIBMSubdirectoryName(){
+        $directory = self::EMAIL_SUBDIRECTORY_IBM;
+        return $directory;
+    }
+    static private function getEmailKyndrylSubdirectoryName(){
+        $directory = self::EMAIL_SUBDIRECTORY_KYNDRYL;
         return $directory;
     }
 
@@ -86,44 +107,44 @@ class PesEmailTest {
         return $directory;
     }
 
-    static private function getCompanySubdirectory(){
-        $directory = self::checkIfIsKyndryl() === true ? self::EMAIL_SUBDIRECTORY_KYNDRYL : self::EMAIL_SUBDIRECTORY_IBM;
+    static private function getEmailCompanySubdirectory(){
+        $directory = self::checkIfIsKyndryl() === true ? self::getEmailKyndrylSubdirectoryName() : self::getEmailIBMSubdirectoryName();
         return $directory;
     }
 
     static private function getRootAttachmentsDirectory(){
-        return self::EMAIL_ROOT_ATTACHMENTS . "/" . self::getCompanySubdirectory();
+        return self::getEmailRootAttachmentsName() . DIRECTORY_SEPARATOR . self::getEmailCompanySubdirectory();
     }
 
     static private function getRootAttachmentsCommonDirectory(){
-        return self::EMAIL_ROOT_ATTACHMENTS . "/" . self::getCommonSubdirectoryName();
+        return self::getEmailRootAttachmentsName() . DIRECTORY_SEPARATOR . self::getEmailCommonSubdirectoryName();
     }
 
     static private function getApplicationFormsDirectory(){
-        return self::getRootAttachmentsDirectory() . "/" . self::getEmailApplicationFormsDirectoryName();
+        return self::getRootAttachmentsDirectory() . DIRECTORY_SEPARATOR . self::getEmailApplicationFormsDirectoryName();
     }
 
     static private function getApplicationFormsCommonDirectory(){
-        return self::getRootAttachmentsCommonDirectory() . "/" . self::getEmailApplicationFormsDirectoryName();
+        return self::getRootAttachmentsCommonDirectory() . DIRECTORY_SEPARATOR . self::getEmailApplicationFormsDirectoryName();
     }
     
     static private function getEmailBodiesDirectory(){
-        return self::getRootAttachmentsDirectory() . "/" . self::getEmailBodiesDirectoryName();
+        return self::getRootAttachmentsDirectory() . DIRECTORY_SEPARATOR . self::getEmailBodiesDirectoryName();
     }
 
     static private function getApplicationFormsDirectoryPath(){
-        // return "../" . self::getApplicationFormsDirectory() . "/";
-        return self::getApplicationFormsDirectory() . "/";
+        // return "../" . self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
+        return self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
     }
 
     static private function getApplicationFormsCommonDirectoryPath(){
-        // return "../" . self::getApplicationFormsCommonDirectory() . "/";
-        return self::getApplicationFormsCommonDirectory() . "/";
+        // return "../" . self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
+        return self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
     }
 
     static private function getEmailBodiesDirectoryPath(){
-        // return "../" . self::getEmailBodiesDirectory() . "/";
-        return self::getEmailBodiesDirectory() . "/";
+        // return "../" . self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
+        return self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
     }
 
     static private function getAccountPath($account){
@@ -254,7 +275,7 @@ class PesEmailTest {
         
         $offboarded = AccountPersonTable::offboardedStatusFromEmail($email, $account);
         if($offboarded){
-            $pathToRecheckOffboarded = self::getEmailBodiesDirectoryPath() . "/" .  "recheck_offboarded.php";
+            $pathToRecheckOffboarded = self::getEmailBodiesDirectoryPath() . DIRECTORY_SEPARATOR .  "recheck_offboarded.php";
             return $pathToRecheckOffboarded;
         }
  
@@ -267,9 +288,9 @@ class PesEmailTest {
         $emailPrefix = strtolower($recheck)=='yes' ? 'recheck' : 'request';
         $intExt      = strtolower($recheck)=='yes' ? null : $intExt; // For recheck email there is no difference.
 
-        $pathToAccountTypeBody = self::getEmailBodiesDirectoryPath() . $accountType ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
-        $pathToAccountBody     = self::getEmailBodiesDirectoryPath() . $accountPath ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
-        $pathToDefaultBody     = self::getEmailBodiesDirectoryPath() . "/" .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToAccountTypeBody = self::getEmailBodiesDirectoryPath() . $accountType . DIRECTORY_SEPARATOR . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToAccountBody     = self::getEmailBodiesDirectoryPath() . $accountPath . DIRECTORY_SEPARATOR . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToDefaultBody     = self::getEmailBodiesDirectoryPath() . DIRECTORY_SEPARATOR .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         
         $pathsToTry = array($pathToAccountTypeBody, $pathToAccountBody, $pathToDefaultBody);
 
