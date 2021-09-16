@@ -138,11 +138,51 @@ class PesEmailTest {
     static private function getApplicationFormFile($filename){
 
         // current directory
-        echo getcwd() . "\n";
-
-        $dir    = '../emailAttachments/Kyndryl/applicationForms';
-        $files1 = scandir($dir);
+        $cwd = getcwd() . "\n";
+        $files1 = scandir($cwd);
         print_r($files1);
+        
+        $appForms = PesEmailTest::getApplicationFormsDirectoryPath();
+        $appFormsPath = PesEmailTest::getApplicationFormsDirectory();
+
+        $appFormsCommon = PesEmailTest::getApplicationFormsCommonDirectoryPath();
+        $appFormsCommonPath = PesEmailTest::getApplicationFormsCommonDirectory();
+
+        $emailBodies = PesEmailTest::getEmailBodiesDirectoryPath();
+        $emailBodiesPath = PesEmailTest::getEmailBodiesDirectory();
+
+        echo '<br> appForms ';
+        var_dump(file_exists($appForms));
+        $files2 = scandir($appForms);
+        print_r($files2);
+
+        echo '<br> appForms PATH ';
+        var_dump(file_exists($appFormsPath));
+        $files2 = scandir($appFormsPath);
+        print_r($files2);
+
+
+        echo '<br> appFormsCommon PATH ';
+        var_dump(file_exists($appFormsCommon));
+        $files2 = scandir($appFormsCommon);
+        print_r($files2);
+
+        echo '<br> appFormsCommonPath PATH ';
+        var_dump(file_exists($appFormsCommonPath));
+        $files2 = scandir($appFormsCommonPath);
+        print_r($files2);
+
+
+        echo '<br> emailBodies PATH ';
+        var_dump(file_exists($emailBodies));
+        $files2 = scandir($emailBodies);
+        print_r($files2);
+
+        echo '<br> emailBodiesPath PATH ';
+        var_dump(file_exists($emailBodiesPath));
+        $files2 = scandir($emailBodiesPath);
+        print_r($files2);
+
 
         $handle = fopen($filename, "r",true);
         $applicationForm = fread($handle, filesize($filename));
