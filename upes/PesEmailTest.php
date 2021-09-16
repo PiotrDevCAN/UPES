@@ -42,14 +42,7 @@ class PesEmailTest {
     const EMAIL_SUBJECT          = "IBM Confidential: URGENT - &&account_name&&  Pre Employment Screening- &&serial_number&& &&candidate_name&&";
     // const APPLICATION_FORM_KEY   = array(''=>'','odc'=>self::APPLICATION_FORM_ODC,'owens'=>self::APPLICATION_FORM_OWENS,'vf'=>self::APPLICATION_FORM_VF);
 
-    static private $notifyPesEmailAddresses = array(
-        'to' => array(
-            'carrabooth@uk.ibm.com'
-            ),
-        'cc' => array(
-            'Rsmith1@uk.ibm.com'
-        )
-    );
+    static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
 
     static private function checkIfIsKyndryl(){
         $isKyndryl = stripos($_ENV['environment'], 'newco');
@@ -76,6 +69,10 @@ class PesEmailTest {
                 break;
         }
         return $fileName;
+    }
+
+    static private function addDirectorySeparator($directory = ''){
+        return $directory . DIRECTORY_SEPARATOR;
     }
 
     static private function getEmailRootAttachmentsName(){
@@ -389,6 +386,10 @@ class PesEmailTest {
         if(!$email){
             throw new \Exception('Error preparing Pes Application Form email');
         }
+
+echo '<pre>';
+var_dump($pesAttachments);
+echo '<pre>';
 
         return $email ? BlueMail::send_mail($candidateEmail, $subject, $email, $pesTaskid,array(),array(),false,$pesAttachments) : false;
     }
