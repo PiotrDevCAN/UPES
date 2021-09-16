@@ -1,6 +1,6 @@
 <?php
 
-use upes\PesEmail;
+use upes\PesEmailTest;
 use upes\AccountPersonRecord;
 use upes\AccountPersonTable;
 use upes\AllTables;
@@ -14,7 +14,7 @@ $country = 'India';
 $recheck = 'no';
 
 ob_start();
-$pesEmailObj = new PesEmail();
+$pesEmailObj = new PesEmailTest();
 $accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 $personTable = new PersonTable(AllTables::$PERSON);
 $personRecord = new PersonRecord();
@@ -24,14 +24,9 @@ $names = explode(" ", $personRecordData['FULL_NAME']);
 
 db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
 
-echo get_include_path();
-
-echo realpath('../emailAttachments/Kyndryl/applicationForms/Kyndryl FSS Global Application Form v1.1.doc') . PHP_EOL;
-echo realpath('../emailAttachments/Kyndryl/applicationForms/Kyndryl ODC Application Form v1.0.xls') . PHP_EOL;
-
 try {
 
-    $sendResponse = PesEmail::sendPesApplicationForms($account, $country, $personRecordData['CNUM'],  $personRecordData['FULL_NAME'], $names[0],array($personRecordData['EMAIL_ADDRESS']),$recheck);
+    $sendResponse = PesEmailTest::sendPesApplicationForms($account, $country, $personRecordData['CNUM'],  $personRecordData['FULL_NAME'], $names[0],array($personRecordData['EMAIL_ADDRESS']),$recheck, true);
 
     // $indicateRecheck = strtolower($_POST['recheck']) == 'yes' ? "(recheck)" : null;
     // $nextStatus = strtolower($_POST['recheck']) == 'yes' ? AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING : AccountPersonRecord::PES_STATUS_PES_PROGRESSING ;
