@@ -409,7 +409,12 @@ echo '<pre>';
                 $nameOfApplicationForm.= "</ul>";
 
                 $encodedApplicationForm = self::getGlobalFSSApplicationForm();
-                $pesAttachments[] = array('filename'=>$filename,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
+                $pesAttachments[] = array(
+                    'filename'=>$filename,
+                    'content_type'=>'application/msword',
+                    'data'=>$encodedApplicationForm,
+                    'path'=>self::getDirectoryPathToAttachmentFile($filename)
+                );
                 break;
             case AccountRecord::ACCOUNT_TYPE_NONE_FSS:
                 $filename = self::getGlobalNonFSSApplicationFormFileName();
@@ -419,25 +424,45 @@ echo '<pre>';
                 $nameOfApplicationForm.= "</ul>";
                 
                 $encodedApplicationForm = self::getGlobalNonFSSApplicationForm();
-                $pesAttachments[] = array('filename'=>$filename,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
+                $pesAttachments[] = array(
+                    'filename'=>$filename,
+                    'content_type'=>'application/msword',
+                    'data'=>$encodedApplicationForm,
+                    'path'=>self::getDirectoryPathToAttachmentFile($filename)
+                );
                 break;
         }
 
         switch ($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) {
             case 'odc':
-                $encodedAdditional = self::getOdcApplicationForm();
                 $fileName = self::getOdcApplicationFormFileName();
-                $pesAttachments[] = array('filename'=>$fileName,'content_type'=>'application/msword','data'=>$encodedAdditional);
+                $encodedAdditional = self::getOdcApplicationForm();
+                $pesAttachments[] = array(
+                    'filename'=>$fileName,
+                    'content_type'=>'application/msword',
+                    'data'=>$encodedAdditional,
+                    'path'=>self::getDirectoryPathToAttachmentFile($fileName)
+                );
                 break;
             case 'owens':
-                $encodedAdditional = self::getOwensConsentForm();
                 $fileName = self::getOwensConsentFormFileName();
-                $pesAttachments[] = array('filename'=>$fileName,'content_type'=>'application/pdf','data'=>$encodedAdditional);
+                $encodedAdditional = self::getOwensConsentForm();
+                $pesAttachments[] = array(
+                    'filename'=>$fileName,
+                    'content_type'=>'application/pdf',
+                    'data'=>$encodedAdditional,
+                    'path'=>self::getDirectoryPathToCommonAttachmentFile($fileName)
+                );
                 break;
             case 'vf':
-                $encodedAdditional = self::getVfConsentForm();
                 $fileName = self::getVfConsentFormFileName();
-                $pesAttachments[] = array('filename'=>$fileName,'content_type'=>'application/pdf','data'=>$encodedAdditional);
+                $encodedAdditional = self::getVfConsentForm();
+                $pesAttachments[] = array(
+                    'filename'=>$fileName,
+                    'content_type'=>'application/pdf',
+                    'data'=>$encodedAdditional,
+                    'path'=>self::getDirectoryPathToCommonAttachmentFile($fileName)
+                );
                 break;                
             default:
                 null;

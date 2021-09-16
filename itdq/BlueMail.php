@@ -81,9 +81,7 @@ class BlueMail
         }
         
         foreach ($attachments as $attachment){
-            
-            $attachmentPath = PesEmail::getDirectoryPathToAttachmentFile($attachment['filename']);            
-            $resp = $resp ? $mail->addAttachment($attachmentPath,$attachment['filename'],'base64',$attachment['content_type']) : $resp;
+            $resp = $resp ? $mail->addAttachment($attachment['path'],$attachment['filename'],'base64',$attachment['content_type']) : $resp;
             if(!$resp){
                 $status = "Errored";
                 $currentResponse = is_array($response) ?  $response['response'] : null;
