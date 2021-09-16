@@ -10,7 +10,7 @@ use itdq\BlueMail;
 use itdq\slack;
 use itdq\Loader;
 
-class PesEmailTest {
+class PesEmail {
 
     const CONSENT_PATTERN = '/(.*?)consent(.*?).(.*?)/i';
     const ODC_PATTERN = '/(.*?)odc(.*?).(.*?)/i';
@@ -71,26 +71,8 @@ class PesEmailTest {
         return $fileName;
     }
 
-    static private function addDirectorySeparator($directory = ''){
-        return $directory . DIRECTORY_SEPARATOR;
-    }
-
-    static private function getEmailRootAttachmentsName(){
-        $directory = self::EMAIL_ROOT_ATTACHMENTS;
-        return $directory;
-    }
-
-    static private function getEmailCommonSubdirectoryName(){
+    static private function getCommonEmailSubdirectoryName(){
         $directory = self::EMAIL_SUBDIRECTORY_COMMON;
-        return $directory;
-    }
-
-    static private function getEmailIBMSubdirectoryName(){
-        $directory = self::EMAIL_SUBDIRECTORY_IBM;
-        return $directory;
-    }
-    static private function getEmailKyndrylSubdirectoryName(){
-        $directory = self::EMAIL_SUBDIRECTORY_KYNDRYL;
         return $directory;
     }
 
@@ -104,44 +86,49 @@ class PesEmailTest {
         return $directory;
     }
 
-    static private function getEmailCompanySubdirectory(){
-        $directory = self::checkIfIsKyndryl() === true ? self::getEmailKyndrylSubdirectoryName() : self::getEmailIBMSubdirectoryName();
+    static private function getCompanySubdirectory(){
+        $directory = self::checkIfIsKyndryl() === true ? self::EMAIL_SUBDIRECTORY_KYNDRYL : self::EMAIL_SUBDIRECTORY_IBM;
         return $directory;
     }
 
     static private function getRootAttachmentsDirectory(){
-        return self::getEmailRootAttachmentsName() . DIRECTORY_SEPARATOR . self::getEmailCompanySubdirectory();
+        return self::EMAIL_ROOT_ATTACHMENTS . "/" . self::getCompanySubdirectory();
     }
 
     static private function getRootAttachmentsCommonDirectory(){
-        return self::getEmailRootAttachmentsName() . DIRECTORY_SEPARATOR . self::getEmailCommonSubdirectoryName();
+        return self::EMAIL_ROOT_ATTACHMENTS . "/" . self::getCommonEmailSubdirectoryName();
     }
 
     static private function getApplicationFormsDirectory(){
-        return self::getRootAttachmentsDirectory() . DIRECTORY_SEPARATOR . self::getEmailApplicationFormsDirectoryName();
+        return self::getRootAttachmentsDirectory() . "/" . self::getEmailApplicationFormsDirectoryName();
     }
 
     static private function getApplicationFormsCommonDirectory(){
-        return self::getRootAttachmentsCommonDirectory() . DIRECTORY_SEPARATOR . self::getEmailApplicationFormsDirectoryName();
+        return self::getRootAttachmentsCommonDirectory() . "/" . self::getEmailApplicationFormsDirectoryName();
     }
     
     static private function getEmailBodiesDirectory(){
-        return self::getRootAttachmentsDirectory() . DIRECTORY_SEPARATOR . self::getEmailBodiesDirectoryName();
+        return self::getRootAttachmentsDirectory() . "/" . self::getEmailBodiesDirectoryName();
     }
 
     static private function getApplicationFormsDirectoryPath(){
-        // return "../" . self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
-        return self::getApplicationFormsDirectory() . DIRECTORY_SEPARATOR;
+        return "../" . self::getApplicationFormsDirectory() . "/";
     }
 
     static private function getApplicationFormsCommonDirectoryPath(){
-        // return "../" . self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
-        return self::getApplicationFormsCommonDirectory() . DIRECTORY_SEPARATOR;
+        return "../" . self::getApplicationFormsCommonDirectory() . "/";
     }
 
     static private function getEmailBodiesDirectoryPath(){
-        // return "../" . self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
-        return self::getEmailBodiesDirectory() . DIRECTORY_SEPARATOR;
+        return "../" . self::getEmailBodiesDirectory() . "/";
+    }
+
+    static public function getDirectoryPathToAttachmentFile($fileName){        
+        return self::getApplicationFormsDirectoryPath() . $fileName;
+    }
+
+    static public function getDirectoryPathToCommonAttachmentFile($fileName){        
+        return self::getApplicationFormsCommonDirectoryPath() . $fileName;
     }
 
     static private function getAccountPath($account){
@@ -248,14 +235,6 @@ class PesEmailTest {
         return base64_encode($xlsAttachment);
     }
 
-    static public function getDirectoryPathToAttachmentFile($fileName){        
-        return self::getApplicationFormsDirectoryPath() . $fileName;
-    }
-
-    static public function getDirectoryPathToCommonAttachmentFile($fileName){        
-        return self::getApplicationFormsCommonDirectoryPath() . $fileName;
-    }
-
     static function findEmailBody($account, $accountType, $country, $emailAddress, $recheck='no'){
         
         $loader = new Loader();
@@ -272,7 +251,7 @@ class PesEmailTest {
         
         $offboarded = AccountPersonTable::offboardedStatusFromEmail($email, $account);
         if($offboarded){
-            $pathToRecheckOffboarded = self::getEmailBodiesDirectoryPath() . DIRECTORY_SEPARATOR .  "recheck_offboarded.php";
+            $pathToRecheckOffboarded = self::getEmailBodiesDirectoryPath() . "/" .  "recheck_offboarded.php";
             return $pathToRecheckOffboarded;
         }
  
@@ -285,9 +264,9 @@ class PesEmailTest {
         $emailPrefix = strtolower($recheck)=='yes' ? 'recheck' : 'request';
         $intExt      = strtolower($recheck)=='yes' ? null : $intExt; // For recheck email there is no difference.
 
-        $pathToAccountTypeBody = self::getEmailBodiesDirectoryPath() . $accountType . DIRECTORY_SEPARATOR . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
-        $pathToAccountBody     = self::getEmailBodiesDirectoryPath() . $accountPath . DIRECTORY_SEPARATOR . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
-        $pathToDefaultBody     = self::getEmailBodiesDirectoryPath() . DIRECTORY_SEPARATOR .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToAccountTypeBody = self::getEmailBodiesDirectoryPath() . $accountType ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToAccountBody     = self::getEmailBodiesDirectoryPath() . $accountPath ."/" . $emailPrefix . "_"  .  $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
+        $pathToDefaultBody     = self::getEmailBodiesDirectoryPath() . "/" .  $emailPrefix . "_" . $emailBodyName['EMAIL_BODY_NAME'] . $intExt . ".php";
         
         $pathsToTry = array($pathToAccountTypeBody, $pathToAccountBody, $pathToDefaultBody);
 
@@ -305,56 +284,6 @@ class PesEmailTest {
     }
 
     static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail, $recheck='no'){
-        
-
-        // current directory
-        // $cwd = getcwd() . "\n";
-        // $files1 = scandir($cwd);
-        // print_r($files1);
-
-        // /var/www/html
-        
-        $appForms = PesEmailTest::getApplicationFormsDirectoryPath();
-        $appFormsPath = PesEmailTest::getApplicationFormsDirectory();
-
-        $appFormsCommon = PesEmailTest::getApplicationFormsCommonDirectoryPath();
-        $appFormsCommonPath = PesEmailTest::getApplicationFormsCommonDirectory();
-
-        $emailBodies = PesEmailTest::getEmailBodiesDirectoryPath();
-        $emailBodiesPath = PesEmailTest::getEmailBodiesDirectory();
-
-        echo '<br> appForms ';
-        var_dump(file_exists($appForms));
-        $files2 = scandir($appForms);
-        print_r($files2);
-
-        echo '<br> appForms PATH ';
-        var_dump(file_exists($appFormsPath));
-        $files2 = scandir($appFormsPath);
-        print_r($files2);
-
-        echo '<br> appFormsCommon ';
-        var_dump(file_exists($appFormsCommon));
-        $files2 = scandir($appFormsCommon);
-        print_r($files2);
-
-        echo '<br> appFormsCommonPath PATH ';
-        var_dump(file_exists($appFormsCommonPath));
-        $files2 = scandir($appFormsCommonPath);
-        print_r($files2);
-
-        echo '<br> emailBodies ';
-        var_dump(file_exists($emailBodies));
-        $files2 = scandir($emailBodies);
-        print_r($files2);
-
-        echo '<br> emailBodiesPath PATH ';
-        var_dump(file_exists($emailBodiesPath));
-        $files2 = scandir($emailBodiesPath);
-        print_r($files2);
-
-
-        
         $loader = new Loader();
         $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
 
@@ -372,12 +301,12 @@ class PesEmailTest {
         $nameOfApplicationForm = $applicationFormDetails['nameOfApplicationForm'];
         $pesAttachments        = $applicationFormDetails['pesAttachments'];
 
-        $emailBodyFile = PesEmailTest::findEmailBody($account, $accountType, $country, $candidateEmail, $recheck);
+        $emailBodyFile = PesEmail::findEmailBody($account, $accountType, $country, $candidateEmail, $recheck);
         $pesTaskid = $allPesTaskid[$account];
 
         include $emailBodyFile;
         $subjectReplacements = array($account,$serial,$candidateName);
-        $subject = preg_replace($emailSubjectPattern, $subjectReplacements, PesEmailTest::EMAIL_SUBJECT);
+        $subject = preg_replace($emailSubjectPattern, $subjectReplacements, PesEmail::EMAIL_SUBJECT);
 
         $emailBodyReplacements = array($candidate_first_name, $nameOfApplicationForm, $account, $pesTaskid);
 
@@ -386,10 +315,6 @@ class PesEmailTest {
         if(!$email){
             throw new \Exception('Error preparing Pes Application Form email');
         }
-
-echo '<pre>';
-var_dump($pesAttachments);
-echo '<pre>';
 
         return $email ? BlueMail::send_mail($candidateEmail, $subject, $email, $pesTaskid,array(),array(),false,$pesAttachments) : false;
     }
@@ -409,12 +334,7 @@ echo '<pre>';
                 $nameOfApplicationForm.= "</ul>";
 
                 $encodedApplicationForm = self::getGlobalFSSApplicationForm();
-                $pesAttachments[] = array(
-                    'filename'=>$filename,
-                    'content_type'=>'application/msword',
-                    'data'=>$encodedApplicationForm,
-                    'path'=>self::getDirectoryPathToAttachmentFile($filename)
-                );
+                $pesAttachments[] = array('filename'=>$filename,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
                 break;
             case AccountRecord::ACCOUNT_TYPE_NONE_FSS:
                 $filename = self::getGlobalNonFSSApplicationFormFileName();
@@ -424,45 +344,25 @@ echo '<pre>';
                 $nameOfApplicationForm.= "</ul>";
                 
                 $encodedApplicationForm = self::getGlobalNonFSSApplicationForm();
-                $pesAttachments[] = array(
-                    'filename'=>$filename,
-                    'content_type'=>'application/msword',
-                    'data'=>$encodedApplicationForm,
-                    'path'=>self::getDirectoryPathToAttachmentFile($filename)
-                );
+                $pesAttachments[] = array('filename'=>$filename,'content_type'=>'application/msword','data'=>$encodedApplicationForm);
                 break;
         }
 
         switch ($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) {
             case 'odc':
-                $fileName = self::getOdcApplicationFormFileName();
                 $encodedAdditional = self::getOdcApplicationForm();
-                $pesAttachments[] = array(
-                    'filename'=>$fileName,
-                    'content_type'=>'application/msword',
-                    'data'=>$encodedAdditional,
-                    'path'=>self::getDirectoryPathToAttachmentFile($fileName)
-                );
+                $fileName = self::getOdcApplicationFormFileName();
+                $pesAttachments[] = array('filename'=>$fileName,'content_type'=>'application/msword','data'=>$encodedAdditional);
                 break;
             case 'owens':
-                $fileName = self::getOwensConsentFormFileName();
                 $encodedAdditional = self::getOwensConsentForm();
-                $pesAttachments[] = array(
-                    'filename'=>$fileName,
-                    'content_type'=>'application/pdf',
-                    'data'=>$encodedAdditional,
-                    'path'=>self::getDirectoryPathToCommonAttachmentFile($fileName)
-                );
+                $fileName = self::getOwensConsentFormFileName();
+                $pesAttachments[] = array('filename'=>$fileName,'content_type'=>'application/pdf','data'=>$encodedAdditional);
                 break;
             case 'vf':
-                $fileName = self::getVfConsentFormFileName();
                 $encodedAdditional = self::getVfConsentForm();
-                $pesAttachments[] = array(
-                    'filename'=>$fileName,
-                    'content_type'=>'application/pdf',
-                    'data'=>$encodedAdditional,
-                    'path'=>self::getDirectoryPathToCommonAttachmentFile($fileName)
-                );
+                $fileName = self::getVfConsentFormFileName();
+                $pesAttachments[] = array('filename'=>$fileName,'content_type'=>'application/pdf','data'=>$encodedAdditional);
                 break;                
             default:
                 null;
