@@ -24,19 +24,19 @@ if(!$rs){
 
 while ($row=db2_fetch_assoc($rs)) {
 
-    $upesref = $row['UPES_REF'];
-    $account = $row['ACCOUNT'];
-    $accountid = $row['ACCOUNT_ID'];
-    $country = $row['COUNTRY'];
+    $upesref = trim($row['UPES_REF']);
+    $account = trim($row['ACCOUNT']);
+    $accountid = trim($row['ACCOUNT_ID']);
+    $country = trim($row['COUNTRY']);
     $recheck = 'no';
 
-    $cnum = $row['CNUM'];
-    $fullName = $row['FULL_NAME'];
-    $emailAddress = $row['EMAIL_ADDRESS'];
+    $cnum = trim($row['CNUM']);
+    $fullName = trim($row['FULL_NAME']);
+    $emailAddress = trim($row['EMAIL_ADDRESS']);
     $names = explode(" ", $fullName);
 
     echo '<pre>';
-    var_dump($row);
+    var_dump($emailAddress);
     echo '</pre>';
 
     // $accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
