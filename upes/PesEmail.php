@@ -171,9 +171,9 @@ class PesEmail {
 
     static private function getApplicationFormFile($fileName){
         
-        echo '<pre>';
-        var_dump($fileName);
-        echo '</pre>';
+        // echo '<pre>';
+        // var_dump($fileName);
+        // echo '</pre>';
 
         $handle = fopen($fileName, "r", true);
         $applicationForm = fread($handle, filesize($fileName));
@@ -407,9 +407,9 @@ class PesEmail {
 
         $additionalApplicationFormDetails = CountryTable::getAdditionalAttachmentsNameCountry($country);
 
-        echo '<pre>';
-        var_dump($fileName);
-        echo '</pre>';
+        // echo '<pre>';
+        // var_dump($additionalApplicationFormDetails);
+        // echo '</pre>';
         
         $pesAttachments = array();
         $nameOfApplicationForm = '';
