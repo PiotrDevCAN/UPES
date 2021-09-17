@@ -169,27 +169,27 @@ class PesEmail {
         return $path;
     }
 
-    static private function getApplicationFormFile($filename){
+    static private function getApplicationFormFile($fileName){
         
         echo '<pre>';
-        var_dump($filename);
+        var_dump($fileName);
         echo '</pre>';
 
-        $handle = fopen($filename, "r", true);
-        $applicationForm = fread($handle, filesize($filename));
+        $handle = fopen($fileName, "r", true);
+        $applicationForm = fread($handle, filesize($fileName));
         fclose($handle);
         // return base64_encode($applicationForm);
         return null;
     }
 
     static private function getApplicationFormCompanyFile($formName){
-        $filename = self::getDirectoryPathToAttachmentFile($formName);
-        return static::getApplicationFormFile($filename);
+        $fileName = self::getDirectoryPathToAttachmentFile($formName);
+        return static::getApplicationFormFile($fileName);
     }
 
     static private function getApplicationFormCommonFile($formName){
-        $filename = self::getDirectoryPathToCommonAttachmentFile($formName);
-        return static::getApplicationFormFile($filename);
+        $fileName = self::getDirectoryPathToCommonAttachmentFile($formName);
+        return static::getApplicationFormFile($fileName);
     }
 
     static private function getOdcApplicationFormFile($fileName){
@@ -347,25 +347,25 @@ class PesEmail {
             // $dir = $emailBodiesPath;
             // self::testParam($dir);
 
-            $filename = self::getGlobalFSSApplicationFormFileName();
-            echo '<br>' . $filename;
-            echo '<br>' . self::getApplicationFormCompanyFile($filename);
+            $fileName = self::getGlobalFSSApplicationFormFileName();
+            echo '<br>' . $fileName;
+            echo '<br>' . self::getApplicationFormCompanyFile($fileName);
             
-            $filename = self::getGlobalNonFSSApplicationFormFileName();
-            echo '<br>' . $filename;
-            echo '<br>' . self::getApplicationFormCompanyFile($filename);
+            $fileName = self::getGlobalNonFSSApplicationFormFileName();
+            echo '<br>' . $fileName;
+            echo '<br>' . self::getApplicationFormCompanyFile($fileName);
 
-            $filename = self::getOwensConsentFormFileName();
-            echo '<br>' . $filename;
-            echo '<br>' . self::getApplicationFormCommonFile($filename);
+            $fileName = self::getOwensConsentFormFileName();
+            echo '<br>' . $fileName;
+            echo '<br>' . self::getApplicationFormCommonFile($fileName);
             
-            $filename = self::getVfConsentFormFileName();
-            echo '<br>' . $filename;
-            echo '<br>' . self::getApplicationFormCommonFile($filename);
+            $fileName = self::getVfConsentFormFileName();
+            echo '<br>' . $fileName;
+            echo '<br>' . self::getApplicationFormCommonFile($fileName);
             
-            $filename = self::getOdcApplicationFormFileName();
-            echo '<br>' . $filename;
-            echo '<br>' . self::getOdcApplicationFormFile($filename);
+            $fileName = self::getOdcApplicationFormFileName();
+            echo '<br>' . $fileName;
+            echo '<br>' . self::getOdcApplicationFormFile($fileName);
         }
 
         $loader = new Loader();
@@ -408,41 +408,41 @@ class PesEmail {
         $additionalApplicationFormDetails = CountryTable::getAdditionalAttachmentsNameCountry($country);
 
         echo '<pre>';
-        var_dump($additionalApplicationFormDetails);
+        var_dump($fileName);
         echo '</pre>';
-
+        
         $pesAttachments = array();
         $nameOfApplicationForm = '';
 
         switch ($accountType) {
             case AccountRecord::ACCOUNT_TYPE_FSS:
-                $filename = self::getGlobalFSSApplicationFormFileName();
+                $fileName = self::getGlobalFSSApplicationFormFileName();
                 
-                $nameOfApplicationForm = "<ul><li><i>" . $filename . "</i></li>";
+                $nameOfApplicationForm = "<ul><li><i>" . $fileName . "</i></li>";
                 $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::getApplicationFormFileNameByKey($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) . "</i></li>" : null;
                 $nameOfApplicationForm.= "</ul>";
 
-                $encodedAttachmentFile = self::getApplicationFormCompanyFile($filename);
+                $encodedAttachmentFile = self::getApplicationFormCompanyFile($fileName);
                 $pesAttachments[] = array(
-                    'filename'=>$filename,
+                    'filename'=>$fileName,
                     'content_type'=>self::FILE_TYPE_WORD,
                     'data'=>$encodedAttachmentFile,
-                    'path'=>self::getDirectoryPathToAttachmentFile($filename)
+                    'path'=>self::getDirectoryPathToAttachmentFile($fileName)
                 );
                 break;
             case AccountRecord::ACCOUNT_TYPE_NONE_FSS:
-                $filename = self::getGlobalNonFSSApplicationFormFileName();
+                $fileName = self::getGlobalNonFSSApplicationFormFileName();
 
-                $nameOfApplicationForm = "<ul><li><i>" . $filename . "</i></li>";
+                $nameOfApplicationForm = "<ul><li><i>" . $fileName . "</i></li>";
                 $nameOfApplicationForm.= !empty($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) ? "<li><i>" . self::getApplicationFormFileNameByKey($additionalApplicationFormDetails['ADDITIONAL_APPLICATION_FORM']) . "</i></li>" : null;
                 $nameOfApplicationForm.= "</ul>";
 
-                $encodedAttachmentFile = self::getApplicationFormCompanyFile($filename);
+                $encodedAttachmentFile = self::getApplicationFormCompanyFile($fileName);
                 $pesAttachments[] = array(
-                    'filename'=>$filename,
+                    'filename'=>$fileName,
                     'content_type'=>self::FILE_TYPE_WORD,
                     'data'=>$encodedAttachmentFile,
-                    'path'=>self::getDirectoryPathToAttachmentFile($filename)
+                    'path'=>self::getDirectoryPathToAttachmentFile($fileName)
                 );
                 break;
         }
@@ -451,7 +451,7 @@ class PesEmail {
             case self::ODC:
                 $fileName = self::getOdcApplicationFormFileName();
 
-                $encodedAttachmentFile = self::getOdcApplicationFormFile($filename);
+                $encodedAttachmentFile = self::getOdcApplicationFormFile($fileName);
                 $pesAttachments[] = array(
                     'filename'=>$fileName,
                     'content_type'=>self::FILE_TYPE_WORD,
@@ -462,7 +462,7 @@ class PesEmail {
             case self::OWENS:
                 $fileName = self::getOwensConsentFormFileName();
 
-                $encodedAttachmentFile = self::getApplicationFormCommonFile($filename);
+                $encodedAttachmentFile = self::getApplicationFormCommonFile($fileName);
                 $pesAttachments[] = array(
                     'filename'=>$fileName,
                     'content_type'=>self::FILE_TYPE_PDF,
@@ -473,14 +473,14 @@ class PesEmail {
             case self::VF:
                 $fileName = self::getVfConsentFormFileName();
 
-                $encodedAttachmentFile = self::getApplicationFormCommonFile($filename);
+                $encodedAttachmentFile = self::getApplicationFormCommonFile($fileName);
                 $pesAttachments[] = array(
                     'filename'=>$fileName,
                     'content_type'=>self::FILE_TYPE_PDF,
                     'data'=>$encodedAttachmentFile,
                     'path'=>self::getDirectoryPathToCommonAttachmentFile($fileName)
                 );
-                break;                
+                break;
             default:
                 null;
                 break;
