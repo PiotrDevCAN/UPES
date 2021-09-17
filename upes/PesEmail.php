@@ -407,6 +407,10 @@ class PesEmail {
 
         $additionalApplicationFormDetails = CountryTable::getAdditionalAttachmentsNameCountry($country);
 
+        echo '<pre>';
+        var_dump($additionalApplicationFormDetails);
+        echo '</pre>';
+
         $pesAttachments = array();
         $nameOfApplicationForm = '';
 
