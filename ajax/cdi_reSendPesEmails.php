@@ -30,9 +30,9 @@ while ($row=db2_fetch_assoc($rs)) {
     $country = $row['COUNTRY'];
     $recheck = 'no';
 
-    $cnum = $personRecordData['CNUM'];
-    $fullName = $personRecordData['FULL_NAME'];
-    $emailAddress = $personRecordData['EMAIL_ADDRESS'];
+    $cnum = $row['CNUM'];
+    $fullName = $row['FULL_NAME'];
+    $emailAddress = $row['EMAIL_ADDRESS'];
     $names = explode(" ", $fullName);
 
     echo '<pre>';
