@@ -19,6 +19,8 @@ $names = explode(" ", $personRecordData['FULL_NAME']);
 
 db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
 
+$emailDetails = array();
+
 try {
 
     $sendResponse = PesEmail::sendPesApplicationForms($_POST['account'], $_POST['country'], $personRecordData['CNUM'],  $personRecordData['FULL_NAME'], $names[0],array($personRecordData['EMAIL_ADDRESS']),$_POST['recheck']);
@@ -59,7 +61,6 @@ $messages = ob_get_clean();
 ob_start();
 $success = strlen($messages)==0;
 
-unset($emailDetails['attachments']); // dont need them at this point.
 $emailDetails['success'] = $success;
 $emailDetails['messages'] = $messages;
 $emailDetails['cnum'] = $data[0]['CNUM'];
