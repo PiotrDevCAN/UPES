@@ -170,16 +170,10 @@ class PesEmail {
     }
 
     static private function getApplicationFormFile($fileName){
-        
-        // echo '<pre>';
-        // var_dump($fileName);
-        // echo '</pre>';
-
         $handle = fopen($fileName, "r", true);
         $applicationForm = fread($handle, filesize($fileName));
         fclose($handle);
-        // return base64_encode($applicationForm);
-        return null;
+        return base64_encode($applicationForm);
     }
 
     static private function getApplicationFormCompanyFile($formName){
@@ -300,73 +294,7 @@ class PesEmail {
         return false;
     }
 
-    static function testParam($dir = ''){
-        echo '<br> BROWSING DIRECTORY = ' . $dir;
-        echo '<pre>';
-        var_dump(file_exists($dir));
-        $files2 = scandir($dir);
-        print_r($files2);
-        foreach ($files2 as $value) {
-            if($value === '.' || $value === '..') {continue;} 
-            echo '<br> file size ';
-            var_dump(filesize($dir . DIRECTORY_SEPARATOR . $value));
-            echo '<br> file exists ';
-            var_dump(file_exists($dir . DIRECTORY_SEPARATOR . $value));
-        }
-        echo '</pre>';
-    }
-
-    static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail, $recheck='no', $test = false){
-        
-        if ($test === true) {
-            
-            // $appForms = PesEmail::getApplicationFormsDirectoryPath();
-            // $appFormsPath = PesEmail::getApplicationFormsDirectory();
-
-            // $appFormsCommon = PesEmail::getApplicationFormsCommonDirectoryPath();
-            // $appFormsCommonPath = PesEmail::getApplicationFormsCommonDirectory();
-
-            // $emailBodies = PesEmail::getEmailBodiesDirectoryPath();
-            // $emailBodiesPath = PesEmail::getEmailBodiesDirectory();
-
-            // $dir = $appForms;
-            // self::testParam($dir);
-
-            // $dir = $appFormsPath;
-            // self::testParam($dir);
-
-            // $dir = $appFormsCommon;
-            // self::testParam($dir);
-
-            // $dir = $appFormsCommonPath;
-            // self::testParam($dir);
-
-            // $dir = $emailBodies;
-            // self::testParam($dir);
-
-            // $dir = $emailBodiesPath;
-            // self::testParam($dir);
-
-            $fileName = self::getGlobalFSSApplicationFormFileName();
-            echo '<br>' . $fileName;
-            echo '<br>' . self::getApplicationFormCompanyFile($fileName);
-            
-            $fileName = self::getGlobalNonFSSApplicationFormFileName();
-            echo '<br>' . $fileName;
-            echo '<br>' . self::getApplicationFormCompanyFile($fileName);
-
-            $fileName = self::getOwensConsentFormFileName();
-            echo '<br>' . $fileName;
-            echo '<br>' . self::getApplicationFormCommonFile($fileName);
-            
-            $fileName = self::getVfConsentFormFileName();
-            echo '<br>' . $fileName;
-            echo '<br>' . self::getApplicationFormCommonFile($fileName);
-            
-            $fileName = self::getOdcApplicationFormFileName();
-            echo '<br>' . $fileName;
-            echo '<br>' . self::getOdcApplicationFormFile($fileName);
-        }
+    static function sendPesApplicationForms($account, $country, $serial,  $candidateName, $candidate_first_name, $candidateEmail, $recheck='no'){
 
         $loader = new Loader();
         $allPesTaskid = $loader->loadIndexed('TASKID','ACCOUNT',AllTables::$ACCOUNT);
@@ -407,10 +335,6 @@ class PesEmail {
 
         $additionalApplicationFormDetails = CountryTable::getAdditionalAttachmentsNameCountry($country);
 
-        // echo '<pre>';
-        // var_dump($additionalApplicationFormDetails);
-        // echo '</pre>';
-        
         $pesAttachments = array();
         $nameOfApplicationForm = '';
 

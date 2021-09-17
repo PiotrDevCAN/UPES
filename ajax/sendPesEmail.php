@@ -44,7 +44,7 @@ try {
     }
 }
 
-// can afford to code "ALL" here because we're supplying the UPESREF & ACcount ID - so will only get 1 record anyway
+// can afford to code "ALL" here because we're supplying the UPESREF & Account ID - so will only get 1 record anyway
 $data = AccountPersonTable::returnPesEventsTable(AccountPersonTable::PES_TRACKER_RECORDS_ALL, AccountPersonTable::PES_TRACKER_RETURN_RESULTS_AS_ARRAY,$_POST['upesref'],$_POST['accountid']);
 
 $pesStatusField = AccountPersonRecord::getPesStatusWithButtons($data[0]);
@@ -67,7 +67,7 @@ $emailDetails['comment'] = $pesCommentField;
 $emailDetails['pesStatus'] = $pesStatusField;
 $emailDetails['processingStatus'] = $processingStatusField;
 $emailDetails['data'] = $data[0];
-$emailDetails['sendResponse'] = $sendResponse;
+$emailDetails['sendResponse'] = $sendResponse['sendResponse'];
 
 ob_clean();
 echo json_encode($emailDetails);
