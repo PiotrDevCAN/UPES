@@ -23,7 +23,7 @@ $loader = new Loader();
 db2_commit($GLOBALS['conn']);
 
 $activeIbmErsPredicate = "   ( trim(BLUEPAGES_STATUS) = '' or BLUEPAGES_STATUS is null or trim(BLUEPAGES_STATUS) =  '" . PersonRecord::BLUEPAGES_STATUS_FOUND . "') ";
-$activeIbmErsPredicate.= " and ( lower(trim(EMAIL_ADDRESS)) like '%ibm.com' )";
+$activeIbmErsPredicate.= " and ( lower(trim(EMAIL_ADDRESS)) like '%ibm.com%' )";
 $allNonLeaversRaw = $loader->load('CNUM',allTables::$PERSON, $activeIbmErsPredicate );
 $allNonLeavers = array_change_key_case($allNonLeaversRaw, CASE_UPPER);
 AuditTable::audit("Revalidation  will check " . count($allNonLeavers) . " people currently flagged as found.",AuditTable::RECORD_TYPE_REVALIDATION);
