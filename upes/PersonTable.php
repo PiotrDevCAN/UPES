@@ -136,7 +136,6 @@ class PersonTable extends DbTable
         }
     }
 
-
     private static function setCnumsToNotFound($arrayOfCnum){
         $cnumString = implode("','", $arrayOfCnum);
         $cnumString = "('" . $cnumString . "') ";
@@ -201,9 +200,6 @@ class PersonTable extends DbTable
         }
     }
 
-
-
-
     static function FlagAsLeftIBM($arrayOfCnum){
 
         self::recordPesStatusPriorToLeftIBM($arrayOfCnum);
@@ -229,11 +225,11 @@ class PersonTable extends DbTable
         }
 
         PesEmail::notifyPesTeamLeaversFound($detailsOfLeavers);
-        PersonTable::setCnumsToNotFound($arrayOfCnum);
-        PersonTable::setCnumsToLeftIBM($arrayOfCnum);
+        
+        $chunkedCnum = array_chunk($arrayOfCnum, 100);
+        foreach ($chunkedCnum as $key => $cnumList){
+            PersonTable::setCnumsToNotFound($cnumList);
+            PersonTable::setCnumsToLeftIBM($cnumList);
+        }
     }
-
-
-
 }
-

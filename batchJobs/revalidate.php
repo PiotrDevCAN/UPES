@@ -50,7 +50,10 @@ $potentialLeaver = $allNonLeavers;
 AuditTable::audit("Revalidation found " . count($potentialLeaver) . "  leavers.",AuditTable::RECORD_TYPE_REVALIDATION);
 $slack->sendMessageToChannel("Revalidation (" . $_ENV['environment']. ") found " . count($potentialLeaver) . "  leavers.", slack::CHANNEL_UPES_AUDIT);
 
-PersonTable::setCnumsToFound($allFound);
+$chunkedAllFound = array_chunk($allFound, 100);
+foreach ($chunkedAllFound as $key => $allFoundCnumList){
+    PersonTable::setCnumsToFound($allFoundCnumList);
+}
 
 if($potentialLeaver){
     PersonTable::FlagAsLeftIBM($potentialLeaver);
