@@ -136,7 +136,7 @@ class PersonTable extends DbTable
         }
     }
 
-    private static function setCnumsToNotFound($arrayOfCnum){
+    static function setCnumsToNotFound($arrayOfCnum){
         $cnumString = implode("','", $arrayOfCnum);
         $cnumString = "('" . $cnumString . "') ";
         $sql = " UPDATE ";
@@ -150,7 +150,7 @@ class PersonTable extends DbTable
         }
     }
 
-    private static function setCnumsToLeftIBM($arrayOfCnum){
+    static function setCnumsToLeftIBM($arrayOfCnum){
         $cnumString = implode("','", $arrayOfCnum);
         $cnumString = "('" . $cnumString . "') ";
         $sql = " UPDATE ";
@@ -226,10 +226,10 @@ class PersonTable extends DbTable
 
         PesEmail::notifyPesTeamLeaversFound($detailsOfLeavers);
         
-        $chunkedCnum = array_chunk($arrayOfCnum, 100);
-        foreach ($chunkedCnum as $key => $cnumList){
-            PersonTable::setCnumsToNotFound($cnumList);
-            PersonTable::setCnumsToLeftIBM($cnumList);
-        }
+        // $chunkedCnum = array_chunk($arrayOfCnum, 100);
+        // foreach ($chunkedCnum as $key => $cnumList){
+        //     PersonTable::setCnumsToNotFound($cnumList);
+        //     PersonTable::setCnumsToLeftIBM($cnumList);
+        // }
     }
 }

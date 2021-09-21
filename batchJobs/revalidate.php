@@ -29,11 +29,11 @@ $allNonLeavers = array_change_key_case($allNonLeaversRaw, CASE_UPPER);
 AuditTable::audit("Revalidation  will check " . count($allNonLeavers) . " people currently flagged as found.",AuditTable::RECORD_TYPE_REVALIDATION);
 $slack->sendMessageToChannel("Revalidation (" . $_ENV['environment']. ") will check " . count($allNonLeavers) . " people currently flagged as found.", slack::CHANNEL_UPES_AUDIT);
 
-$chunkedCnum = array_chunk($allNonLeavers, 100);
 $detailsFromBp = "&mail";
 $bpEntries = array();
 $allFound = array();
 
+$chunkedCnum = array_chunk($allNonLeavers, 100);
 foreach ($chunkedCnum as $key => $cnumList){
     $bpEntries[$key] = BluePages::getDetailsFromCnumSlapMulti($cnumList, $detailsFromBp);
     foreach ($bpEntries[$key]->search->entry as $bpEntry){
@@ -56,7 +56,12 @@ foreach ($chunkedAllFound as $key => $allFoundCnumList){
 }
 
 if($potentialLeaver){
-    PersonTable::FlagAsLeftIBM($potentialLeaver);
+    $chunkedCnum = array_chunk($potentialLeaver, 100);
+    foreach ($chunkedCnum as $key => $cnumList){
+        PersonTable::FlagAsLeftIBM($cnumList);
+        PersonTable::setCnumsToNotFound($cnumList);
+        PersonTable::setCnumsToLeftIBM($cnumList);
+    }
 }
 
 AuditTable::audit("Revalidation completed.",AuditTable::RECORD_TYPE_REVALIDATION);
