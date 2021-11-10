@@ -150,6 +150,24 @@ class PersonTable extends DbTable
         }
     }
 
+    static function setCnumsStatusPriorToLeave($arrayOfCnum){
+        $cnumString = implode("','", $arrayOfCnum);
+        $cnumString = "('" . $cnumString . "') ";
+        $sql = " UPDATE ";
+        $sql.= $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " SET AP.PES_STATUS_PRIOR_LEAVE=AP.PES_STATUS ";
+        $sql.= " WHERE UPES_REF in (";
+        $sql.= "   SELECT UPES_REF ";
+        $sql.= "   FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        $sql.= "   WHERE P.CNUM in " . $cnumString;
+        $sql.= " ) ";
+
+        $rs = db2_exec($GLOBALS['conn'], $sql);
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+        }
+    }
+
     static function setCnumsToLeftIBM($arrayOfCnum){
         $cnumString = implode("','", $arrayOfCnum);
         $cnumString = "('" . $cnumString . "') ";

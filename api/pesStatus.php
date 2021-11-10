@@ -1,7 +1,5 @@
 <?php
 
-
-
 use upes\AllTables;
 
 if($_REQUEST['token']!= $token) {
@@ -9,8 +7,6 @@ if($_REQUEST['token']!= $token) {
     echo json_encode(array('success'=>false,'data'=>array(),'messages'=>'Invalid Token'));    
     return;    
 }
-
-
 
 $sql = " select AP.ACCOUNT_ID, P.CNUM, P.EMAIL_ADDRESS, PROCESSING_STATUS, PROCESSING_STATUS_CHANGED, COMMENT ";
 $sql.= ", PES_DATE_REQUESTED, PES_REQUESTOR, PES_DATE_RESPONDED, PES_STATUS_DETAILS, PES_STATUS";

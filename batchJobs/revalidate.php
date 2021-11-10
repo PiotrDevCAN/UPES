@@ -60,6 +60,7 @@ if($potentialLeaver){
     foreach ($chunkedCnum as $key => $cnumList){
         PersonTable::FlagAsLeftIBM($cnumList);
         PersonTable::setCnumsToNotFound($cnumList);
+        PersonTable::setCnumsStatusPriorToLeave($cnumList);
         PersonTable::setCnumsToLeftIBM($cnumList);
     }
 }

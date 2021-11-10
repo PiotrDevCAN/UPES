@@ -47,7 +47,7 @@ if(!$rs){
     DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
 }
 
-
+$data = array();
 while(($row=db2_fetch_assoc($rs))==true){
     $rowWithActionButtons = AccountPersonTable::addButtonsForPeopleReport(array_map('trim', $row));
     $data[] = $rowWithActionButtons;
