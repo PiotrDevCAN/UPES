@@ -6,9 +6,11 @@ $(document).ready(function(){
 	      datumTokenizer: Bloodhound.tokenizers.whitespace,
 		  queryTokenizer: Bloodhound.tokenizers.whitespace,
 		  remote: {
-			//    http://unified-profile.w3ibm.mybluemix.net
-			//	  http://w3-services1.w3-969.ibm.com
-			url: 'https://w3-services1.w3-969.ibm.com/myw3/unified-profile/v1/search/user?query=%QUERY&searchConfig=optimized_search',
+			//  http://unified-profile.w3ibm.mybluemix.net
+			//	http://w3-services1.w3-969.ibm.com
+			//  https://w3-services1.w3-969.ibm.com/myw3/unified-profile/v1/search/user
+			//	https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search
+			url: 'https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search?query=%QUERY&searchConfig=optimized_search',
 		    wildcard: '%QUERY',
 		    filter: function(data) {
 
@@ -26,9 +28,11 @@ $(document).ready(function(){
 	      datumTokenizer: Bloodhound.tokenizers.whitespace,
 		  queryTokenizer: Bloodhound.tokenizers.whitespace,
 		  remote: {
-			//    http://unified-profile.w3ibm.mybluemix.net
-			//	  http://w3-services1.w3-969.ibm.com
-			url: 'https://w3-services1.w3-969.ibm.com/myw3/unified-profile/v1/search/user?query=%QUERY&searchConfig=optimized_search',
+			//  http://unified-profile.w3ibm.mybluemix.net
+			//	http://w3-services1.w3-969.ibm.com
+			//  https://w3-services1.w3-969.ibm.com/myw3/unified-profile/v1/search/user
+			//	https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search
+			url: 'https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search?query=%QUERY&searchConfig=optimized_search',
 		    wildcard: '%QUERY',
 		    filter: function(data) {
 
@@ -55,7 +59,7 @@ $(document).ready(function(){
 		        'unable to find any IBMers that match the current query',
 		      '</div>'
 		    	].join('\n'),
-		  	suggestion: Handlebars.compile('<div> <img src="https://w3-services1.w3-969.ibm.com/myw3/unified-profile-photo/v1/image/{{cnum}}?type=bp&def=blue&s=50" alt="Profile" height="42" width="42"> <strong>{{value}}</strong><br/><small>{{preferredIdentity}}<br/>{{role}}</small></div>')
+		  	suggestion: Handlebars.compile('<div> <img src="https://unified-profile-api.us-south-k8s.intranet.ibm.com/v3/image/{{cnum}}?type=bp&def=blue&s=50" alt="Profile" height="42" width="42"> <strong>{{value}}</strong><br/><small>{{preferredIdentity}}<br/>{{role}}</small></div>')
 		  }
 		});
 	
@@ -71,7 +75,7 @@ $(document).ready(function(){
 		        'unable to find any IBMers that match the current query',
 		      '</div>'
 		    	].join('\n'),
-		  	suggestion: Handlebars.compile('<div> <img src="https://w3-services1.w3-969.ibm.com/myw3/unified-profile-photo/v1/image/{{cnum}}?type=bp&def=blue&s=50" alt="Profile" height="42" width="42"> <strong>{{value}}</strong><br/><small>{{preferredIdentity}}<br/>{{role}}</small></div>')
+		  	suggestion: Handlebars.compile('<div> <img src="https://unified-profile-api.us-south-k8s.intranet.ibm.com/v3/image/{{cnum}}?type=bp&def=blue&s=50" alt="Profile" height="42" width="42"> <strong>{{value}}</strong><br/><small>{{preferredIdentity}}<br/>{{role}}</small></div>')
 		  }
 		});
 	

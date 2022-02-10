@@ -1,3 +1,9 @@
-<script type="text/javascript" src="upes/java/typeahead.js"></script>
-<script type="text/javascript" src="upes/java/pesEvent.js"></script>
-<script type="text/javascript" src="upes/java/personRecord.js"></script>
+<?php
+
+//$hash = `git log -1 --pretty=%h`;
+$hash = rand(10,100);
+?>
+
+<script type="text/javascript" src="upes/java/typeahead.js?<?=$hash;?>"></script>
+<script type="text/javascript" src="upes/java/pesEvent.js?<?=$hash;?>"></script>
+<script type="text/javascript" src="upes/java/personRecord.js?<?=$hash;?>"></script>
