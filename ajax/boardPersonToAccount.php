@@ -18,7 +18,6 @@ ob_start();
 $loader = new Loader();
 $allAccounts = $loader->loadIndexed('ACCOUNT','ACCOUNT_ID',AllTables::$ACCOUNT);
 
-
 try {
     $accountPersonRecord = new AccountPersonRecord();
     $accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
@@ -26,7 +25,7 @@ try {
     $accountPersonRecord->setFromArray($accountPersonRecordData);
     $emailResponse = $accountPersonRecord->sendNotificationToPesTaskid();
 
-    $saveRecord = $accountPersonTable->insert($accountPersonRecord); // Only used to save NEW accountPersonRecords
+    $saveRecord = $accountPersonTable->insert($accountPersonRecord, false, false); // Only used to save NEW accountPersonRecords
 
 } catch (Exception $e) {
     echo $e->getCode();

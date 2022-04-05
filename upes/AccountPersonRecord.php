@@ -606,6 +606,7 @@ class AccountPersonRecord extends DbRecord
         $name  = $allPeople[$this->UPES_REF];
         $account = $allAccounts[$this->ACCOUNT_ID];
         $pesTaskid = $allPesTaskid[$this->ACCOUNT_ID];
+        $pesRequestor = $this->PES_REQUESTOR;
 
         $to = array();
         $to[] = $pesTaskid;
@@ -615,7 +616,7 @@ class AccountPersonRecord extends DbRecord
         $replacements = array(
             $name,
             $account,
-            $_SESSION['ssoEmail'],
+            $pesRequestor,
             $now->format('Y-m-d H:i:s'),
         );
         $message = preg_replace(self::$pesEmailPatterns, $replacements, self::$pesEmailBody);

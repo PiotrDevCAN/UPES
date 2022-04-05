@@ -78,7 +78,7 @@ class PesLevelTable extends DbTable
         $pesLevelByAccount = array();
 
         foreach ($pesLevels as $pesLevelRef => $pesLevel) {
-            $detailedPesLevels[$pesLevelRef] = $pesLevel . "(" . $pesDesc[$pesLevelRef] . ")";
+            $detailedPesLevels[$pesLevelRef] = $pesLevel . " (" . $pesDesc[$pesLevelRef] . ")";
         }
 
         foreach ($pesByAccount as $pesLevelRef=> $accountId){

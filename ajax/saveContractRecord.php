@@ -24,7 +24,7 @@ try {
 
     $contractRecord->setFromArray($contractRecordData);
 
-    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $contractTable->insert($contractRecord) : $contractTable->update($contractRecord);
+    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $contractTable->insert($contractRecord, false, false) : $contractTable->update($contractRecord);
     $contractId  = $_POST['mode']==FormClass::$modeDEFINE ? $contractTable->lastId() : $contractRecordData['ACCOUNT_ID'];
 
 } catch (Exception $e) {

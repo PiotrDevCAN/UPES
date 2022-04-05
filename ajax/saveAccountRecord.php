@@ -21,7 +21,7 @@ try {
 
     $accountRecord->setFromArray($accountRecordData);
 
-    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $accountTable->insert($accountRecord) : $accountTable->update($accountRecord);
+    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $accountTable->insert($accountRecord, false, false) : $accountTable->update($accountRecord);
     $accountId  = $_POST['mode']==FormClass::$modeDEFINE ? $accountTable->lastId() : $accountRecordData['ACCOUNT_ID'];
 
 } catch (Exception $e) {

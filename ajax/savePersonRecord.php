@@ -7,13 +7,10 @@ use upes\AllTables;
 use upes\PersonTable;
 use upes\PersonRecord;
 
-
-
 Trace::pageOpening($_SERVER['PHP_SELF']);
 
 set_time_limit(0);
 ob_start();
-
 
 try {
     $personRecord = new PersonRecord();
@@ -24,7 +21,7 @@ try {
 
     $personRecord->setFromArray($personRecordRecordData);
 
-    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $personTable->insert($personRecord) : $personTable->update($personRecord, false, false);
+    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $personTable->insert($personRecord, false, false) : $personTable->update($personRecord, false, false);
     $upesRef  = $_POST['mode']==FormClass::$modeDEFINE ? $personTable->lastId() : $personRecordRecordData['UPES_REF'];
 
 } catch (Exception $e) {

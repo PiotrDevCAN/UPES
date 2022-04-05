@@ -947,14 +947,14 @@ class DbTable
      * @param DbRecord $record
      * @return boolean
      */
-    function insert(DbRecord $record)
+    function insert(DbRecord $record, $populatedColumns = true, $nullColumns = true)
     {
         Trace::traceComment(null, __METHOD__, __LINE__);
-        $populated = false; // Only get columns that have values in them. 20130820 Move it to a Parm - so SAVE can set the value, so we can save zeros and nulls
+        // $populatedColumns = false; // Only get columns that have values in them. 20130820 Move it to a Parm - so SAVE can set the value, so we can save zeros and nulls
         $key = true; // We need KEY fields for the Insert to work
-        $null = false; // Don't return empty columns
+        // $nullColumns = false; // Don't return empty columns
         $db2 = FALSE;
-        $insertArray = $record->getColumns($populated, $key, $null, $db2);
+        $insertArray = $record->getColumns($populatedColumns, $key, $nullColumns, $db2);
         Trace::traceVariable($insertArray, __METHOD__, __LINE__);
         $preparedInsert = $this->prepareInsert($insertArray);
 
@@ -981,7 +981,6 @@ class DbTable
     function InsertFromArray(array $insertArray, $withTimings = false, $rollbackIfError = true)
     {
         $preparedInsert = $this->prepareInsert($insertArray);
-
 
         $insert = -microtime(true);
         $rs = @db2_execute($preparedInsert, $insertArray);
@@ -1017,8 +1016,11 @@ class DbTable
     {
         Trace::traceComment(null, __METHOD__, __LINE__);
         $pred = $this->buildKeyPredicate($record);
+        // $populatedColumns = false; // Only get columns that have values in them. 20130820 Move it to a Parm - so SAVE can set the value, so we can save zeros and nulls
+        $key = true; // We need KEY fields for the Update to work
+        // $nullColumns = false; // Don't return empty columns
         $db2 = FALSE;
-        $updateArray = $record->getColumns($populatedColumns, true, $nullColumns, $db2);
+        $updateArray = $record->getColumns($populatedColumns, $key, $nullColumns, $db2);
         Trace::traceVariable($updateArray, __METHOD__, __LINE__);
         $values = " SET";
         $sql = " UPDATE " . $GLOBALS['Db2Schema'] . ".$this->tableName ";
@@ -1093,7 +1095,19 @@ class DbTable
             Trace::traceVariable($rs, __METHOD__, __LINE__);
 
             if (! $rs) {
-                DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+                $this->lastDb2StmtError = db2_stmt_error();
+                $this->lastDb2StmtErrorMsg = db2_stmt_errormsg();
+    
+                echo "<BR/>Insert Array@<pre>" . __METHOD__ . __LINE__ ;
+                print_r($updateArray);
+                echo "</pre>";
+                self::displayErrorMessage($rs, __CLASS__, __METHOD__, $this->preparedInsertSQL, $this->pwd, $this->lastDb2StmtError, $this->lastDb2StmtErrorMsg, $updateArray);
+            } else {
+                $this->lastId = db2_last_insert_id($GLOBALS['conn']);
+            }
+            if (isset($_SESSION['log'])) {
+                Log::logEntry("DBTABLE SQL:" . str_replace($this->pwd, 'password', $this->preparedInsertSql), $this->pwd);
+                Log::logEntry("DBTABLE Data:" . serialize($updateArray), $this->pwd);
             }
             return $rs==true;
         } else {
@@ -1518,7 +1532,7 @@ class DbTable
             $inserted = false;
         } else {
             Trace::traceComment('Attempting Insert', __METHOD__, __LINE__);
-            $inserted = $this->insert($record);
+            $inserted = $this->insert($record, $populatedColumns, $nullColumns);
             $inserted = $inserted ? $inserted : null;
             $this->lastId = db2_last_insert_id($GLOBALS['conn']);
         }
@@ -1571,7 +1585,8 @@ class DbTable
 
         // var_dump($predicate);
 
-        return str_replace('define a primary key AND', ' ', str_replace("=''", " is null", $predicate));
+        // return str_replace('define a primary key AND', ' ', str_replace("=''", " is null", $predicate));
+        return str_replace('define a primary key AND', ' ', str_replace("=''", " = ''", $predicate));
     }
 
     /**
@@ -1961,7 +1976,10 @@ class DbTable
             @ob_end_clean();
         }
         $request = strlen(db2_escape_string($request)) > 1024 ? substr(db2_escape_string($request), 0, 1000) : db2_escape_string($request);
-        $sql .= " VALUES ('" . $userid . "','" . $_SERVER['PHP_SELF'] . "','" . db2_stmt_error() . "','" . db2_stmt_errormsg() . "','" . $backtrace . "','" . $request . "')";
+        
+        $db2_stmt_error = str_replace(['"',"'"], "", db2_stmt_error());
+        $db2_stmt_errormsg = str_replace(['"',"'"], "", db2_stmt_errormsg());
+        $sql .= " VALUES ('" . $userid . "','" . $_SERVER['PHP_SELF'] . "','" . $db2_stmt_error . "','" . $db2_stmt_errormsg . "','" . $backtrace . "','" . $request . "')";
 
         if (isset($_SESSION['phoneHome']) && class_exists('Email')) {
             $to = $_SESSION['phoneHome'];

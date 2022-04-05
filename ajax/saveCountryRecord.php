@@ -22,7 +22,7 @@ try {
 
     $countryRecord->setFromArray($countryRecordRecordData);
 
-    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $countryTable->insert($countryRecord) : $countryTable->update($countryRecord);
+    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $countryTable->insert($countryRecord, false, false) : $countryTable->update($countryRecord);
 
 } catch (Exception $e) {
     echo $e->getCode();

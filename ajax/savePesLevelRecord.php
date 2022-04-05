@@ -26,7 +26,7 @@ try {
 
     $pesLevelRecord->setFromArray($pesLevelRecordData);
 
-    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $pesLevelRecordTable->insert($pesLevelRecord) : $pesLevelRecordTable->update($pesLevelRecord);
+    $saveRecord = $_POST['mode']==FormClass::$modeDEFINE ? $pesLevelRecordTable->insert($pesLevelRecord, false, false) : $pesLevelRecordTable->update($pesLevelRecord);
 
     $pesLevelRef  = $_POST['mode']==FormClass::$modeDEFINE ? $pesLevelRecordTable->lastId() : $pesLevelRecordData['PES_LEVEL_REF'];
 

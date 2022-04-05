@@ -22,6 +22,9 @@ class AccountPersonTable extends DbTable {
 
 use xls;
 
+private $xlsDateFormat = 'd/m/Y';
+private $db2DateFormat = 'Y-m-d';
+
 protected $preparedStageUpdateStmts;
 protected $preparedTrackerInsert;
 protected $preparedGetPesCommentStmt;
@@ -600,7 +603,7 @@ public $lastSelectSql;
   		<button class='btn btn-warning btn-xs btnPesStageValueChange accessPes accessCdi'  data-setpesto='Prov' data-toggle="tooltip"  title="Stage Cleared Provisionally"><span class="glyphicon glyphicon-alert" ></span></button>
 	  	<br/>
 	  	<button class='btn btn-default btn-xs btnPesStageValueChange accessPes accessCdi' data-setpesto='N/A' data-toggle="tooltip"  title="Not applicable"><span class="glyphicon glyphicon-remove-sign" ></span></button>
-	  	<button class='btn btn-info btn-xs btnPesStageValueChange accessPes accessCdi'    data-setpesto='TBD'data-toggle="tooltip"  title="Clear Field"><span class="glyphicon glyphicon-erase" ></span></button>
+	  	<button class='btn btn-info btn-xs btnPesStageValueChange accessPes accessCdi'    data-setpesto='TBD' data-toggle="tooltip"  title="Clear Field"><span class="glyphicon glyphicon-erase" ></span></button>
 	  	</span>
 	  	</div>
         <?php
@@ -655,7 +658,7 @@ public $lastSelectSql;
         return true;
     }
 
-    function setPesStatus($upesref=null,$accountid= null, $status=null,$requestor=null, $pesStatusDetails=null,$dateToUse=null){
+    function setPesStatus($upesref=null, $accountid= null, $status=null, $requestor=null, $pesStatusDetails=null, $dateToUse=null){
         
         $loader = new Loader();
         $cnums = $loader->loadIndexed('CNUM','UPES_REF',AllTables::$PERSON," UPES_REF='" . db2_escape_string($upesref) . "'");
@@ -669,7 +672,6 @@ public $lastSelectSql;
         $dateToUse =  empty($dateToUse) ? $now->format('Y-m-d') : $dateToUse;
         
         $db2DateToUse =" date('" . db2_escape_string($dateToUse) . "') ";
-
 
         if(!$upesref or !$accountid or !$status){
             throw new \Exception('One or more of UPESREF/ACCOUNTID/STATUS not provided in ' . __METHOD__);
@@ -719,7 +721,26 @@ public $lastSelectSql;
         array_key_exists($upesref, $cnums) ? $cnum = $cnums[$upesref] : $cnum = '';
 
         in_array($status,AccountPersonRecord::$pesAuditableStatus) ? PesStatusAuditTable::insertRecord($cnum, $emails[$upesref], $accounts[$accountid], $status, $dateToUse) : null;
-       
+        /*
+        $now = new \DateTime();
+        $updateDate = $now->format('Y-m-d');
+        if(in_array($status,AccountPersonRecord::$pesAuditableStatus)) {
+            $pesStatusAuditRecord = new PesStatusAuditRecord();
+            $pesStatusAuditRecord->setFromArray(
+                array(
+                    'CNUM'=>$cnum, 
+                    'EMAIL_ADDRESS'=>$emails[$upesref], 
+                    'ACCOUNT'=>$accounts[$accountid], 
+                    'PES_STATUS'=>$status, 
+                    'PES_CLEARED_DATE'=>$dateToUse,
+                    'UPDATER'=>$_SESSION['ssoEmail'],
+                    'UPDATED'=>$updateDate
+                )
+            );
+            $pesStatusAuditTable = new PesStatusAuditTable(AllTables::$PES_STATUS_AUDIT);
+            $pesStatusAuditTable->saveRecord($pesStatusAuditRecord);
+        }
+        */
         db2_commit($GLOBALS['conn']);
         db2_autocommit($GLOBALS['conn'],$db2AutoCommit);
 
@@ -853,7 +874,7 @@ public $lastSelectSql;
                                   <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                                 </button>";
                 $row['ACTION'].= "<br/>";
-                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId  . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded .  "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
+                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId  . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded .  "' data-toggle='tooltip' title='$onOrOffBoardingTitle' >
                                   <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . "'></span>
                                   </button>";
                 break;
@@ -863,11 +884,11 @@ public $lastSelectSql;
                                   <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                                 </button>";
                 $row['ACTION'].= "&nbsp;";
-                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "'data-toggle='tooltip' title='Cancel PES Request' >
+                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "' data-toggle='tooltip' title='Cancel PES Request' >
                                   <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
                                   </button>";
                 $row['ACTION'].= "<br/>";
-                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded. "'data-toggle='tooltip' title='$onOrOffBoardingTitle' >
+                $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded. "' data-toggle='tooltip' title='$onOrOffBoardingTitle' >
                                   <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . $boarded . "'></span>
                                   </button>";
                 break;
@@ -976,7 +997,7 @@ public $lastSelectSql;
         while(($row=db2_fetch_assoc($rs))==true){
             $trimmedRow = array_map('trim', $row);
             $allRecheckers[] = $trimmedRow;
-            $this->setPesStatus($trimmedRow['UPES_REF'],$trimmedRow['ACCOUNT_ID'],AccountPersonRecord::PES_STATUS_RECHECK_REQ);;
+            $this->setPesStatus($trimmedRow['UPES_REF'],$trimmedRow['ACCOUNT_ID'],AccountPersonRecord::PES_STATUS_RECHECK_REQ);
             $this->resetForRecheck($trimmedRow['UPES_REF'],$trimmedRow['ACCOUNT_ID']);
             $slack->sendMessageToChannel("PES Recheck " . $trimmedRow['FULL_NAME'] . " on " . $trimmedRow['ACCOUNT'], slack::CHANNEL_UPES_AUDIT);
         }
@@ -1202,6 +1223,154 @@ public $lastSelectSql;
         
         $row = db2_fetch_assoc($resultSet);
         return !empty($row['OFFBOARDED_DATE']);
+    }
+    
+    function copyXlsxToDb2($fileName, $withTimings = false){
+        $elapsed = -microtime(true);
+        ob_start();
 
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($fileName);
+        $reader->setReadDataOnly(true);
+        $objPHPExcel  = $reader->load($fileName);
+
+        //  Get worksheet dimensions
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        //  Loop through each row of the worksheet in turn
+        $firstRow = false;
+        $columnHeaders = array();
+        $recordData = array();
+        $failedRecords = 0;
+        $autoCommit = db2_autocommit($GLOBALS['conn'],DB2_AUTOCOMMIT_OFF);
+        for ($row = 1; $row <= $highestRow; $row++){
+            set_time_limit(10);
+            $time = -microtime(true);
+            //  Read a row of data into an array
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row,
+                NULL,
+                TRUE,
+                FALSE);
+            //  Insert row data array into your database of choice here
+            if(!$firstRow){
+                foreach ($rowData[0] as $key => $value){
+                    if(!empty($value)){
+                        $columnHeaders[$key] = DbTable::toColumnName(strtoupper($value));
+                    }
+                }
+                // echo '<pre>';
+                // var_dump($columnHeaders);
+                // echo '</pre>';
+                $firstRow = true;
+            } else {
+                $prepareArrary = -microtime(true);
+                foreach ($rowData[0] as $key => $value) {
+                    if($key == 0 || !empty($value)){
+                        $recordData[$columnHeaders[$key]] = trim($value);
+                    }
+                }
+                $prepareArrary += microtime(true);
+                echo $withTimings ? "Row: $row Cnum " . $recordData['CNUM'] . " Prepare Array:" . sprintf('%f', $prepareArrary) . PHP_EOL : null;
+
+                // avoid trying to save empty rows.
+                // save the row to DB2
+                $convertDates = -microtime(true);
+                $recordDataWithDb2Dates = $recordData;
+
+                $date = date_create_from_format($this->xlsDateFormat, trim($recordData['NEW_CLEARED_DATE']));
+                if($date !== false){
+                    $adjustedData = $date->format($this->db2DateFormat);
+                    $recordDataWithDb2Dates['NEW_CLEARED_DATE'] = $adjustedData;
+                    
+                    $convertDates += microtime(true);
+                    echo  $withTimings ? "Row: $row Cnum " . $recordData['CNUM'] . " Convert Dates:" . sprintf('%f', $convertDates) . PHP_EOL : null;
+
+                    // echo '<pre>';
+                    // echo 'record data with db2 dates';
+                    // var_dump($recordDataWithDb2Dates);
+                    // echo '</pre>';
+
+                    // get UPES_REF
+                    if(!empty($recordData['CNUM'] )){
+                        $upesRef = PersonTable::getUpesrefFromCNUM($recordDataWithDb2Dates['CNUM']);
+                        // echo 'from CNUM';
+                    } else {
+                        $upesRef = PersonTable::getUpesrefFromEmail($recordDataWithDb2Dates['EMAIL']);
+                        // echo 'from EMAIL';
+                    }
+
+                    // echo '<pre>';
+                    // echo 'upes ref';
+                    // var_dump($upesRef);
+                    // echo '</pre>';
+
+                    // get ACCOUNT_ID
+                    $accountId = AccountTable::getAccountIdFromName($recordDataWithDb2Dates['ACCOUNT']);
+                    if (!empty($upesRef) && !empty($accountId)) {
+                            
+                        // update Account Person record
+                        $accountPersonRecordData = $this->getWithPredicate(" ACCOUNT_ID='" . $accountId . "' AND UPES_REF='" . $upesRef . "' ");
+                        if (!empty($accountPersonRecordData)) {
+                            try {
+                                $update = -microtime(true);
+
+                                $indicateRecheck = null;
+                                $requestor = $accountPersonRecordData['PES_REQUESTOR'];
+                                $pesStatusDetails = $accountPersonRecordData['PES_STATUS_DETAILS'];
+                                $this->setPesStatus($upesRef, $accountId, $recordDataWithDb2Dates['NEW_PES_STATUS'], $requestor, $pesStatusDetails, $recordDataWithDb2Dates['NEW_CLEARED_DATE']);
+                                $this->savePesComment($upesRef, $accountId, "PES application forms $indicateRecheck sent:" . '' );
+        
+                                $this->setPesProcessStatus($upesRef, $accountId, $recordDataWithDb2Dates['NEW_PROCESS_STATUS']);
+                                $this->savePesComment($upesRef, $accountId, "Process Status set to " . $recordDataWithDb2Dates['NEW_PROCESS_STATUS']);
+        
+                                $update += microtime(true);
+                                echo  $withTimings ?  "Row: $row Cnum " . $recordData['CNUM'] . " Update Row:" . sprintf('%f', $update) . PHP_EOL : null ;
+                            } catch (\Exception $e) {
+                                echo $e->getMessage();
+                                echo $e->getCode();
+                                var_dump($e->getTrace());
+                                die('here');
+                            }
+                        } else {
+                            echo "Account Person record not found. Failing data: CNUM=" . $recordDataWithDb2Dates['CNUM'] . ', ACCOUNT=' . $recordDataWithDb2Dates['ACCOUNT'] . PHP_EOL;
+                            $failedRecords++;
+                        }
+                    } else {
+                        echo "Account or Person record not found. Failing data: CNUM=" . $recordDataWithDb2Dates['CNUM'] . ', ACCOUNT=' . $recordDataWithDb2Dates['ACCOUNT'] . PHP_EOL;
+                        $failedRecords++;
+                    }
+                } else {
+                    echo "Invalid date format. Failing data: CNUM=" . $recordDataWithDb2Dates['CNUM'] . ', ACCOUNT=' . $recordDataWithDb2Dates['ACCOUNT'] . PHP_EOL;
+                    $failedRecords++;
+                }
+                $time += microtime(true);
+                echo  $withTimings ?  "Row: $row Cnum " . $recordData['CNUM'] . " Total Time:" . sprintf('%f', $time) . PHP_EOL : null;                
+            }
+        }
+
+        db2_commit($GLOBALS['conn']);  // Save what we have done.
+        db2_autocommit($GLOBALS['conn'],$autoCommit);
+
+        $response = ob_get_clean();
+        ob_start();
+        $errors = !empty($response);
+
+        // $recordsForLocation = $this->numberOfRecordsForLocation($secureAreaName);
+
+        $elapsed += microtime(true);
+        $dataRecords = $row-2;
+
+        echo $errors ? "<span style='color:red'><h2 >Errors writing to DB2 occured</h2><br/>" . $dataRecords . " Records Read from xlsx<br/>$failedRecords failed to update in DB<br/>Error Details Follow:<br/></span>" : "<span  style='color:green'><h3> Well that appears to have gone well !!</h3><br/>" . $dataRecords . " Records Read from xlsx<br/>$failedRecords failed to insert into DB</span>";
+        echo "<span style='color:blue'>";
+        echo "<br/>Load Run time : ". sprintf('%f Seconds', $elapsed);
+        $mSecPerRow = $elapsed / $row;
+        echo "<br/>Seconds/Record : " . sprintf('%f', $mSecPerRow) ;
+        $rowPerMsec = $row / $elapsed;
+        echo "<br/>Records/Second : " . sprintf('%f', $rowPerMsec) ;
+        echo "</span>";
+        echo "<hr/>";
+
+        echo $response;
     }
 }
