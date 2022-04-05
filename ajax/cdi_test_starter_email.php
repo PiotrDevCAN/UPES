@@ -31,7 +31,7 @@ try {
     // $indicateRecheck = strtolower($_POST['recheck']) == 'yes' ? "(recheck)" : null;
     // $nextStatus = strtolower($_POST['recheck']) == 'yes' ? AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING : AccountPersonRecord::PES_STATUS_PES_PROGRESSING ;
 
-    // $accountPersonTable->setPesStatus($upesref,$accountid,$nextStatus,'PES Application form sent:' . $sendResponse['Status']);
+    // $accountPersonTable->setPesStatus($upesref,$accountid,$nextStatus,$_SESSION['ssoEmail'],'PES Application form sent:' . $sendResponse['Status']);
     // $accountPersonTable->savePesComment($upesref,$accountid, "PES application forms $indicateRecheck sent:" . $sendResponse['Status'] );
 
     // $accountPersonTable->setPesProcessStatus($upesref,$accountid,AccountPersonTable::PROCESS_STATUS_USER);

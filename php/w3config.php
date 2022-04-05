@@ -55,7 +55,7 @@ $site = array(
 
     'email' => false,
     'emailId' => 'DoNotReply_upes@uk.ibm.com',
-    'devEmailId' => 'piotr.tajanowicz@ibm.com',
+    'devEmailId' => 'piotr.tajanowicz@ocean.ibm.com',
 
     'AuditLife' => '13 months',
     'AuditDetailsLife' => '6 months',
@@ -88,7 +88,7 @@ $meta = array(
     // feedback email received through the central Intranet Feedback
     // Form (w3.ibm.com/feedback) to the correct handler, without human
     // intervention.
-    'feedback' => 'piotr.tajanowicz@ibm.com',
+    'feedback' => 'piotr.tajanowicz@ocean.ibm.com',
 
     // security class for this web site
     'security' => 'IBM internal use only',

@@ -116,6 +116,25 @@ $(document).ready(function(){
 		}
 	});
 
+	$('#PES_REQUESTOR').on('keyup change',function(e){
+		var emailAddress = $('#PES_REQUESTOR').val();
+		var emailReg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+		var emailIBMReg = /(ibm.com)/i;
+		var emailOceanReg = /(ocean.ibm.com)/i;
+
+		console.log(emailAddress);
+
+		if(emailAddress==''){
+			$('#PES_REQUESTOR').css('background-color','inherit');
+		} else {
+			if(emailReg.test(emailAddress)){
+				$('#PES_REQUESTOR').css('background-color','LightGreen');
+			} else {
+				$('#PES_REQUESTOR').css('background-color','LightPink');
+			};
+		}
+	});
+
 	$('#accountPersonForm').submit(function(e){
 		console.log(e);
 		e.preventDefault();

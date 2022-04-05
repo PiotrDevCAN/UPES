@@ -76,7 +76,14 @@ class AccountTable extends DbTable
         $sql = " SELECT ACCOUNT FROM " . $GLOBALS['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT . " WHERE ACCOUNT_ID='" . db2_escape_string($accountId) . "' ";
         $rs = db2_exec($GLOBALS['conn'], $sql);
         $row = db2_fetch_assoc($rs);
-        return trim($row['ACCOUNT']);
+        return $row ? trim($row['ACCOUNT']) : false;
+    }
+
+    static function getAccountIdFromName($accountName){
+        $sql = " SELECT ACCOUNT_ID FROM " . $GLOBALS['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT . " WHERE ACCOUNT='" . db2_escape_string($accountName) . "' ";
+        $rs = db2_exec($GLOBALS['conn'], $sql);
+        $row = db2_fetch_assoc($rs);
+        return $row ? trim($row['ACCOUNT_ID']) : false;
     }
 }
 

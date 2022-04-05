@@ -16,9 +16,9 @@ var_dump($sendResponse);
 
 
 $data_json = '   {
-	"contact": "piotr.tajanowicz@ibm.com",
+	"contact": "piotr.tajanowicz@ocean.ibm.com",
 	"recipients": [
-		{"recipient": "piotr.tajanowicz@ibm.com"}
+		{"recipient": "piotr.tajanowicz@ocean.ibm.com"}
 	],
 	"subject": "Bluemix BlueMail Test Wed Sept 22 11:44:51 EDT 2015",
 	"message": "Testing the email service. Defaults selected."

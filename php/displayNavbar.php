@@ -27,12 +27,11 @@ $cdiAdmin       = new NavbarMenu("CDI Admin");
 $trace          = new NavbarOption('View Trace','pi_trace.php','accessCdi');
 $traceControl   = new NavbarOption('Trace Control','pi_traceControl.php','accessCdi');
 $traceDelete    = new NavbarOption('Trace Deletion', 'pi_traceDelete.php','accessCdi');
-$test           = new NavbarOption('Test', 'CDI_Test.php','accessCdi');
+// $test           = new NavbarOption('Test', 'CDI_Test.php','accessCdi');
 $cdiAdmin->addOption($trace);
 $cdiAdmin->addOption($traceControl);
 $cdiAdmin->addOption($traceDelete);
-$cdiAdmin->addOption($test);
-
+// $cdiAdmin->addOption($test);
 
 $admin          = new NavBarMenu("uPES Admin");
 $accounts       = new NavBarOption('Manage Accounts','pa_manageAccounts.php','accessCdi accessPesTeam');
@@ -44,6 +43,7 @@ $mailConvert    = new NavBarOption('Notes ID to Email','pa_mailConvert.php','acc
 $manualStatus   = new NavBarOption('Manual Status update','pa_statusUpdate.php','accessCdi accessPesTeam');
 $pesStatusAudit = new NavBarOption('PES Status Change Log','pa_statusChangeLog.php','accessCdi accessPesTeam');
 $BPLookUp       = new NavbarOption('Blue Pages Lookup Form','pa_BPLookupForm.php','accessCdi accessPesTeam');
+$uploadPerson   = new NavbarOption('Person Data Update form','pc_otPersonDataUpload.php','accessCdi accessPesTeam');
 $admin->addOption($accounts);
 $admin->addOption($contracts);
 $admin->addOption($pesLevels);
@@ -53,6 +53,7 @@ $admin->addOption($mailConvert);
 $admin->addOption($manualStatus);
 $admin->addOption($pesStatusAudit);
 $admin->addOption($BPLookUp);
+$admin->addOption($uploadPerson);
 
 $user          = new NavBarMenu("uPES",'accessCdi accessPesTeam accessUser ' );
 $userAdd       = new NavBarOption('Add to PES','pu_userAdd.php','accessCdi accessPesTeam accessUser ');
@@ -93,7 +94,6 @@ $isCdi        = stripos($_ENV['environment'], 'dev') ? ".not('.accessCdi')"     
 $isPesTeam    = stripos($_ENV['environment'], 'dev')  ? ".not('.accessPesTeam')"   : $isPesTeam;
 $isUser       = stripos($_ENV['environment'], 'dev')  ? ".not('.accessUser')"      : $isUser;
 
-
 $_SESSION['isCdi']       = !empty($isCdi)     ? true : false;
 $_SESSION['isPesTeam']   = !empty($isPesTeam) ? true : false;
 $_SESSION['isUser']      = !empty($isUser)    ? true : false;
@@ -107,8 +107,6 @@ $('.navbarMenu').not(':has(li)').remove();
 
 $('li[data-pagename="<?=$page;?>"]').addClass('active').closest('li.dropdown').addClass('active');
 <?php
-
-
 
 if($page != "index.php" && substr($page,0,3)!='cdi'){
 

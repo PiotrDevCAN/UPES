@@ -103,15 +103,31 @@ class AccountPersonRecord extends DbRecord
     const PES_STATUS_STAGE_2        = 'Stage 2 Completed';
     const PES_STATUS_MOVER          = 'Mover';
     
-    static public $pesStatus = array(AccountPersonRecord::PES_STATUS_CLEARED,AccountPersonRecord::PES_STATUS_DECLINED,AccountPersonRecord::PES_STATUS_EXCEPTION,
-                                     AccountPersonRecord::PES_STATUS_FAILED,AccountPersonRecord::PES_STATUS_PES_PROGRESSING,AccountPersonRecord::PES_STATUS_STARTER_REQUESTED,
-                                     AccountPersonRecord::PES_STATUS_PROVISIONAL,AccountPersonRecord::PES_STATUS_REMOVED,AccountPersonRecord::PES_STATUS_REVOKED,
-                                     AccountPersonRecord::PES_STATUS_CANCEL_REQ,AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED,AccountPersonRecord::PES_STATUS_TBD,
-                                     AccountPersonRecord::PES_STATUS_RECHECK_REQ,AccountPersonRecord::PES_STATUS_LEFT_IBM,AccountPersonRecord::PES_STATUS_STAGE_1,
-                                     AccountPersonRecord::PES_STATUS_STAGE_2, AccountPersonRecord::PES_STATUS_MOVER
+    static public $pesStatus = array(
+      AccountPersonRecord::PES_STATUS_CLEARED,
+      AccountPersonRecord::PES_STATUS_DECLINED,
+      AccountPersonRecord::PES_STATUS_EXCEPTION,
+      AccountPersonRecord::PES_STATUS_FAILED,
+      AccountPersonRecord::PES_STATUS_PES_PROGRESSING,
+      AccountPersonRecord::PES_STATUS_STARTER_REQUESTED,
+      AccountPersonRecord::PES_STATUS_PROVISIONAL,
+      AccountPersonRecord::PES_STATUS_REMOVED,
+      AccountPersonRecord::PES_STATUS_REVOKED,
+      AccountPersonRecord::PES_STATUS_CANCEL_REQ,
+      AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED,
+      AccountPersonRecord::PES_STATUS_TBD,
+      AccountPersonRecord::PES_STATUS_RECHECK_REQ,
+      AccountPersonRecord::PES_STATUS_LEFT_IBM,
+      AccountPersonRecord::PES_STATUS_STAGE_1,
+      AccountPersonRecord::PES_STATUS_STAGE_2,
+      AccountPersonRecord::PES_STATUS_MOVER
     );
 
-    static public $pesAuditableStatus = array(AccountPersonRecord::PES_STATUS_CLEARED,AccountPersonRecord::PES_STATUS_PROVISIONAL,AccountPersonRecord::PES_STATUS_RECHECK_REQ);
+    static public $pesAuditableStatus = array(
+      AccountPersonRecord::PES_STATUS_CLEARED,
+      AccountPersonRecord::PES_STATUS_PROVISIONAL,
+      AccountPersonRecord::PES_STATUS_RECHECK_REQ
+    );
 
 //     PES PRocessing
 //     Starter Requested
@@ -121,8 +137,12 @@ class AccountPersonRecord extends DbRecord
 //     Stage 2 compelte
 
     static public $alertIfLeaving = array(
-        AccountPersonRecord::PES_STATUS_PES_PROGRESSING,AccountPersonRecord::PES_STATUS_STARTER_REQUESTED,AccountPersonRecord::PES_STATUS_PROVISIONAL
-       ,AccountPersonRecord::PES_STATUS_RECHECK_REQ,AccountPersonRecord::PES_STATUS_STAGE_1,AccountPersonRecord::PES_STATUS_STAGE_2
+      AccountPersonRecord::PES_STATUS_PES_PROGRESSING,
+      AccountPersonRecord::PES_STATUS_STARTER_REQUESTED,
+      AccountPersonRecord::PES_STATUS_PROVISIONAL,
+      AccountPersonRecord::PES_STATUS_RECHECK_REQ,
+      AccountPersonRecord::PES_STATUS_STAGE_1,
+      AccountPersonRecord::PES_STATUS_STAGE_2
     );
 
     static public $pesEvents = array('Consent Form','Right to Work','Proof of Id','Residency','Credit Check','Financial Sanctions','Criminal Records Check','Activity','Qualifications','Directors','Media','Membership');
@@ -169,10 +189,10 @@ class AccountPersonRecord extends DbRecord
         $allCountries = $loader->load('COUNTRY',AllTables::$COUNTRY);
         ?>
         <form id='accountPersonForm' class="form-horizontal" method='post'>
-        <div class="form-group" >
+        <div class="form-group required">
             <label for='UPES_REF' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Email Address'>Email Address</label>
         	  <div class='col-md-3'>
-			      <select id='UPES_REF' class='form-group select2' name='UPES_REF'  >
+			      <select id='UPES_REF' class='form-group select2' name='UPES_REF' required >
         		<option value=''></option>
         		<?php
         		foreach ($allEmail as $upesRef => $emailAddress) {
@@ -230,7 +250,7 @@ class AccountPersonRecord extends DbRecord
         <div class="form-group required " >
             <label for='PES_REQUESTOR' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Requestor Name'>Requestor Name</label>
         	  <div class='col-md-3'>
-				    <input id='PES_REQUESTOR' name='PES_REQUESTOR' class='form-control' disabled value='<?=$_SESSION['ssoEmail']?>' />
+				    <input id='PES_REQUESTOR' name='PES_REQUESTOR' required class='form-control' value='<?=$_SESSION['ssoEmail']?>' />
             </div>
         </div>
 

@@ -55,17 +55,17 @@ function changePesLevels(dataCategory){
 };
 
 function checkIfEmailKnown(){
-		var newEmail = $('#EMAIL_ADDRESS').val().trim().toLowerCase();
-		var allreadyExists = ($.inArray(newEmail, knownEmail) >= 0 );
-		if(allreadyExists){ // comes back with Position in array(true) or false is it's NOT in the array.
-			$('#savePerson').attr('disabled',true);
-			$('#EMAIL_ADDRESS').css("background-color","LightPink");
-			alert('Person already defined to uPES. This does NOT mean they are PES Cleared for the account you want them to be cleared on. Simply, that they have been defined to uPES before.');
-			return false;
-		} else {
-			$('#EMAIL_ADDRESS').css("background-color","LightGreen");
-			$('#savePerson').attr('disabled',false);
-		}
+	var newEmail = $('#EMAIL_ADDRESS').val().trim().toLowerCase();
+	var allreadyExists = ($.inArray(newEmail, knownEmail) >= 0 );
+	if(allreadyExists){ // comes back with Position in array(true) or false is it's NOT in the array.
+		$('#savePerson').attr('disabled',true);
+		$('#EMAIL_ADDRESS').css("background-color","LightPink");
+		alert('Person already defined to uPES. This does NOT mean they are PES Cleared for the account you want them to be cleared on. Simply, that they have been defined to uPES before.');
+		return false;
+	} else {
+		$('#EMAIL_ADDRESS').css("background-color","LightGreen");
+		$('#savePerson').attr('disabled',false);
+	}
 }
 
 
@@ -147,11 +147,7 @@ $(document).ready(function(){
 	            $('#EMAIL_ADDRESS').val('');
 	            $('#EMAIL_ADDRESS').css('background-color','inherit');
 			}
-
-
-
 		}
-
 	});
 
 	$('#personForm').submit(function(e){
@@ -173,31 +169,26 @@ $(document).ready(function(){
 		  	context: document.body,
 	      	success: function(response) {
 	      		var responseObj = JSON.parse(response);
+				$(submitBtn).removeClass('spinning').attr('disabled',false);
+				$('#personForm').trigger("reset");
+				$('#COUNTRY').val('').trigger('change');
+				$('#IBM_STATUS').val('').trigger('change');
+				$('#CONTRACT_ID').val('').trigger('change');
+				$('#EMAIL_ADDRESS').css('background-color','White').trigger('change');
+				$("#PES_LEVEL").select2("destroy");
+				$("#PES_LEVEL").html("<option><option>");
+				$('#PES_LEVEL').select2({width: '100%'})
+					.attr('disabled',false)
+					.attr('required',true);
 	      		if(responseObj.success){
-		    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
-		    	    $('#personForm').trigger("reset");
-		    	    $('#COUNTRY').val('').trigger('change');
-		    	    $('#IBM_STATUS').val('').trigger('change');
-		    	    $('#CONTRACT_ID').val('').trigger('change');
-		    	    $('#EMAIL_ADDRESS').css('background-color','White').trigger('change');
-		            $("#PES_LEVEL").select2("destroy");
-		            $("#PES_LEVEL").html("<option><option>");
-		        	$('#PES_LEVEL').select2({width: '100%'})
-		        	    .attr('disabled',false)
-		                .attr('required',true);
-	                $('.modal-title').html('Message');
-		            $('.modal-body').html('<p>You have now ADDED a new IBMer to uPES<br/>The next step in getting them PES Cleared is to request they be "Boarded" to the appropriatge Account.<br/>You do this using the "Board to Contract" menu option, under the "Upes" drop down above.</p>');
-		            $('.modal-body').addClass('bg-success');
-		            $('#modalError').modal('show');
-
-
+					$('.modal-title').html('Message');
+					$('.modal-body').html('<p>You have now ADDED a new IBMer to uPES<br/>The next step in getting them PES Cleared is to request they be "Boarded" to the appropriatge Account.<br/>You do this using the "Board to Contract" menu option, under the "Upes" drop down above.</p>');
+					$('.modal-body').addClass('bg-success');
 		    	} else {
-     	    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
-		    	    $('#personForm').trigger("reset");
-	                $('.modal-body').html(responseObj.Messages);
-	                $('.modal-body').addClass('bg-danger');
-	                $('#modalError').modal('show');
+					$('.modal-body').html(responseObj.Messages);
+					$('.modal-body').addClass('bg-danger');
 				}
+				$('#modalError').modal('show');
           	},
 	      	fail: function(response){
 					console.log('Failed');

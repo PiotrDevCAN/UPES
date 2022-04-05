@@ -8,8 +8,7 @@ use itdq\slack;
 
 class PersonTable extends DbTable
 {
-
-   function returnAsArray($predicate=null,$withButtons=true){
+    function returnAsArray($predicate=null,$withButtons=true){
         $sql  = " SELECT '' as ACTION, P.*, PL.PES_LEVEL as PES_LEVEL_TXT, PL.PES_LEVEL_DESCRIPTION ";
         $sql .= " FROM  " . $GLOBALS['Db2Schema'] . "." . $this->tableName. " as P ";
         $sql .= " LEFT JOIN " .  $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
@@ -80,7 +79,8 @@ class PersonTable extends DbTable
         }
 
         $row = db2_fetch_assoc($resultSet);
-        return $row['EMAIL_ADDRESS'];
+
+        return $row ? trim($row['EMAIL_ADDRESS']) : false;
     }
 
     static function getNamesFromUpesref($upesref){
@@ -100,6 +100,38 @@ class PersonTable extends DbTable
         return $names;
     }
 
+    static function getUpesrefFromCNUM($cnum){
+        $sql = " SELECT UPES_REF FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON;
+        $sql.= " WHERE UPPER(CNUM) = '" . db2_escape_string(strtoupper(trim($cnum))) . "' ";
+        $sql.= " FETCH FIRST 1 ROW ONLY ";
+
+        $resultSet = db2_exec($GLOBALS['conn'], $sql);
+        if(!$resultSet){
+            DbTable::displayErrorMessage($resultSet, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+
+        $row = db2_fetch_assoc($resultSet);
+
+        return $row ? trim($row['UPES_REF']) : false;
+    }
+
+    static function getUpesrefFromEmail($email){
+        $sql = " SELECT UPES_REF FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON;
+        $sql.= " WHERE LOWER(EMAIL_ADDRESS) = '" . db2_escape_string(strtolower(trim($email))) . "' ";
+        $sql.= " FETCH FIRST 1 ROW ONLY ";
+
+        $resultSet = db2_exec($GLOBALS['conn'], $sql);
+        if(!$resultSet){
+            DbTable::displayErrorMessage($resultSet, __CLASS__, __METHOD__, $sql);
+            return false;
+        }
+
+        $row = db2_fetch_assoc($resultSet);
+
+        return $row ? trim($row['UPES_REF']) : false;
+    }
+
     function setPesPassportNames($upesref,$passportFirstname=null,$passportSurname=null){
 
         $sql = " UPDATE " . $GLOBALS['Db2Schema'] . "." . $this->tableName;
@@ -113,12 +145,11 @@ class PersonTable extends DbTable
 
         if(!$rs){
             DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, 'prepared sql');
-            throw new \Exception("Failed to update Passport Names: $passportFirstname  / $passportSurname for $cnum");
+            throw new \Exception("Failed to update Passport Names: $passportFirstname  / $passportSurname for $upesref");
         }
 
         return true;
     }
-
 
     static function setCnumsToFound($arrayOfCnum){
         $cnumString = implode("','", $arrayOfCnum);
