@@ -55,7 +55,7 @@ var accountTable;
 
 $(document).ready(function(){
 
-console.log(accounts);
+	console.log(accounts);
 
 	$('#accountsForm').submit(function(e){
 		console.log(e);
@@ -109,7 +109,8 @@ console.log(accounts);
 	        		console.log('--- saved resource request ---');
 	      		}
 			});
-		});
+		}
+	);
 
 	accountTable = $('#accountTable').DataTable({
     	ajax: {
@@ -136,7 +137,6 @@ console.log(accounts);
                     data: "TASKID"
                   }]
 	});
-
 
 	$(document).on('click','.deleteAccount',function(e){
 		console.log(e);
@@ -202,15 +202,11 @@ console.log(accounts);
 	        		console.log('--- saved resource request ---');
 	      		}
 			});
-
-
-
 	});
 
 	$('#ACCOUNT').on('keyup',function(e){
 		var newAccount = $(this).val().trim().toLowerCase();
 		var allreadyExists = ($.inArray(newAccount, accounts) >= 0 );
-
 
 		if(allreadyExists){ // comes back with Position in array(true) or false is it's NOT in the array.
 			$('#Submit').attr('disabled',true);
@@ -222,15 +218,24 @@ console.log(accounts);
 		};
 	});
 
+	$('#TASKID').on('keyup change',function(e){
+		var emailAddress = $('#TASKID').val();
+		var emailReg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
+		console.log(emailAddress);
 
+		if(emailAddress==''){
+			$('#TASKID').css('background-color','inherit');
+		} else {
+			if(emailReg.test(emailAddress)){
+				$('#TASKID').css('background-color','LightGreen');
+			} else {
+				$('#TASKID').css('background-color','LightPink');
+			};
+		}
+	});
 });
 </script>
-
-
-
-
-
 
 <?php
 Trace::pageLoadComplete($_SERVER['PHP_SELF']);

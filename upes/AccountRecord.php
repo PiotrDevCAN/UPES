@@ -32,7 +32,7 @@ class AccountRecord extends DbRecord
         <div class="form-group required" id="AccountGroup">
             <label for='ACCOUNT' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Account Name'>Account Name</label>
         	<div class='col-md-3'>
-				<input id='ACCOUNT' name='ACCOUNT' class='form-control' <?=$notEditable;?> />
+				<input id='ACCOUNT' name='ACCOUNT' class='form-control' <?=$notEditable;?> required='required'>
 				<input id='ACCOUNT_ID' name='ACCOUNT_ID' type='hidden' value='0' />
             </div>
         </div>
@@ -40,7 +40,7 @@ class AccountRecord extends DbRecord
         <div class="form-group required" id="taskidGroup">
             <label for='ACCOUNT_TYPE' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Account Type'>Account Type</label>
         	<div class='col-md-3'>
-                <select id='ACCOUNT_TYPE' class='select2 form-control' name='ACCOUNT_TYPE' <?=$notEditable?> >
+                <select id='ACCOUNT_TYPE' class='select2 form-control' name='ACCOUNT_TYPE' <?=$notEditable?> required='required'>
         		<option value=''></option>
         		<?php
         		foreach (self::$accountTypes as $accountType) {
@@ -54,7 +54,7 @@ class AccountRecord extends DbRecord
         <div class="form-group required" id="taskidGroup">
             <label for='TASKID' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='PES Taskid'>PES Taskid</label>
         	<div class='col-md-3'>
-				<input id='TASKID' name='TASKID' class='form-control' />
+				<input id='TASKID' name='TASKID' type='email' class='form-control' required='required'/>
             </div>
         </div>
 

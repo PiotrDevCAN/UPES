@@ -22,7 +22,7 @@ class ContractRecord extends DbRecord
         <div class="form-group required">
             <label for='ACCOUNT_ID' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Account Name'>Account Name</label>
         	<div class='col-md-3'>
-        		<select id='ACCOUNT_ID' class='form-group select2' name='ACCOUNT_ID' <?=$notEditable?> >
+        		<select id='ACCOUNT_ID' class='form-group select2' name='ACCOUNT_ID' <?=$notEditable?> required='required'>
         		<option value=''></option>
         		<?php
         		foreach ($allAccounts as $accountId => $account) {
@@ -36,7 +36,7 @@ class ContractRecord extends DbRecord
          <div class="form-group required" >
             <label for='CONTRACT' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract Name'>Contract Name</label>
         	<div class='col-md-3'>
-				<input id='CONTRACT' name='CONTRACT' class='form-control' <?=$notEditable;?> />
+				<input id='CONTRACT' name='CONTRACT' class='form-control' <?=$notEditable;?> required='required'/>
 				<input id='CONTRACT_ID' name='CONTRACT_ID' type='hidden' value='0' />
             </div>
         </div>

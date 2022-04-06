@@ -95,7 +95,6 @@ $(document).ready(function(){
 		width: '100%'
 	});
 
-
 	$('#CONTRACT_ID').change(function(e){
 		console.log(e);
 		var contractId = $('#CONTRACT_ID').val();
@@ -103,7 +102,6 @@ $(document).ready(function(){
         $("#PES_LEVEL").html("<option><option>");
         changePesLevels(pesLevelByAccount[accountContractLookup[contractId]]);
 	});
-
 
 	$('.typeahead').bind('typeahead:select', function(ev, suggestion) {
 		console.log(suggestion);
@@ -114,7 +112,6 @@ $(document).ready(function(){
  		$('#COUNTRY').val(suggestion.country).trigger('change');
 		checkIfEmailKnown();
 	});
-
 
 	$('#EMAIL_ADDRESS').on('keyup change',function(e){
 		var emailAddress = $('#EMAIL_ADDRESS').val();

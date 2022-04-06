@@ -27,7 +27,7 @@ class PesLevelRecord extends DbRecord
         <div class="form-group required">
             <label for='ACCOUNT_ID' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Account Name'>Account Name</label>
         	<div class='col-md-3'>
-        		<select id='ACCOUNT_ID' class='form-group select2' name='ACCOUNT_ID' <?=$notEditable?> >
+        		<select id='ACCOUNT_ID' class='form-group select2' name='ACCOUNT_ID' <?=$notEditable?> required='required'>
         		<option value=''></option>
         		<?php
         		foreach ($allAccounts as $accountId => $account) {
@@ -40,20 +40,20 @@ class PesLevelRecord extends DbRecord
          <div class="form-group required" >
             <label for='PES_LEVEL' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract Name'>PES Level</label>
         	<div class='col-md-3'>
-				<input id='PES_LEVEL' name='PES_LEVEL' class='form-control' maxlength="25" <?=$notEditable;?> />
+				<input id='PES_LEVEL' name='PES_LEVEL' class='form-control' maxlength="25" <?=$notEditable;?> required='required'/>
 				<input id='PES_LEVE_REF' name='PES_LEVEL_REF' type='hidden' value='0' />
             </div>
         </div>
         <div class="form-group required" >
             <label for='PES_LEVEL_DESCRIPTION' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract Name'>Pes Level Description</label>
         	<div class='col-md-3'>
-				<input id='PES_LEVEL_DESCRIPTION' name='PES_LEVEL_DESCRIPTION' class='form-control' maxlength="50" <?=$notEditable;?> />
+				<input id='PES_LEVEL_DESCRIPTION' name='PES_LEVEL_DESCRIPTION' class='form-control' maxlength="50" <?=$notEditable;?> required='required'/>
             </div>
         </div>
         <div class="form-group required" >
             <label for='RECHECK_YEARS' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract Name'>Pes Recheck Period(Years)</label>
         	<div class='col-md-3'>
-				<input id='RECHECK_YEARS' name='RECHECK_YEARS' class='form-control' type="number" <?=$notEditable;?> />
+				<input id='RECHECK_YEARS' name='RECHECK_YEARS' class='form-control' type="number" <?=$notEditable;?> required='required'/>
             </div>
         </div>
 

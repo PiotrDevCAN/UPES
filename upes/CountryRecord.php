@@ -34,14 +34,14 @@ class CountryRecord extends DbRecord
         <div class="form-group required">
             <label for='COUNTRY' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Country Name'>Country Name</label>
         	<div class='col-md-3'>
-				<input id='COUNTRY' name='COUNTRY' class='form-control' <?=$notEditable;?> />
+				<input id='COUNTRY' name='COUNTRY' class='form-control' <?=$notEditable;?> required='required'/>
             </div>
         </div>
 
          <div class="form-group required" >
             <label for='EMAIL_BODY_NAME' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Prefix of file holding email body'>Email Body Name</label>
         	<div class='col-md-3'>
-				<select id='EMAIL_BODY_NAME' name='EMAIL_BODY_NAME' >
+				<select id='EMAIL_BODY_NAME' name='EMAIL_BODY_NAME' required='required'>
 				<option value=''></option>
 					<?php
 					foreach (self::EMAIL_BODY_NAMES as $emailBody){
@@ -56,7 +56,7 @@ class CountryRecord extends DbRecord
         <div class="form-group required" >
             <label for='ADDITIONAL_APPLICATION_FORM' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Additional Application Form'>Additional Application Form</label>
         	<div class='col-md-3'>
-				<select id='ADDITIONAL_APPLICATION_FORM'  name='ADDITIONAL_APPLICATION_FORM' >
+				<select id='ADDITIONAL_APPLICATION_FORM'  name='ADDITIONAL_APPLICATION_FORM' required='required'>
 				<option value=''></option>
 					<?php
 					foreach (self::ADDITIONAL_APPLICATION_FORM_NAMES as $form){

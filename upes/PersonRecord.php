@@ -73,7 +73,7 @@ class PersonRecord extends DbRecord
         <div class="form-group required " >
             <label for='EMAIL_ADDRESS' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Email Address'>Email Address</label>
         	<div class='col-md-4'>
-				<input id='EMAIL_ADDRESS' name='EMAIL_ADDRESS' class='form-control' value='<?=!empty($this->EMAIL_ADDRESS) ? $this->EMAIL_ADDRESS :null ; ?>' required='required' />
+				<input id='EMAIL_ADDRESS' name='EMAIL_ADDRESS' type='email' class='form-control' value='<?=!empty($this->EMAIL_ADDRESS) ? $this->EMAIL_ADDRESS :null ; ?>' required='required' />
             </div>
         </div>
         <div class="form-group required " >
