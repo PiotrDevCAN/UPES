@@ -10,11 +10,9 @@ $emailBody = <<<endOfEmailBody
 </ul>
 <p><b>The Certification MUST be done by a Kynryl/IBM'er<b>, to confirm that they have seen the original document. Either physically by another Kydryl/IBM’er or Virtually (over webex) by your Manager.<p> For Physical - The following statement should be added on each document, on the same side as the image.</p>
 <h4><span style='color:red'><center>True & Certified Copy<br/>Name of certifier in BLOCK CAPITALS<br/>Kyndryl/IBM Serial number of certifier<br/>Certification Date<br/>Signature of certifier</center></span></h4>
-<p>or Virtual - an email can be sent directly to the PES team by your certifier <b>to confirm which original documents have been viewed, over video conferencing, along with the date and time they were viewed.<b><p>
+<p>or Virtual - an email can be sent directly to the PES team by your certifier <b>to confirm that they have seen the original document. Either physically or Virtually (over webex).<p> For Virtual - an email can be sent directly to the PES team, by your certifier <b>to confirm each original documents/screens (in a list) which have been viewed, over video conferencing, along with the date and time they were viewed.<b> OR Physical - The following statement should be added on each document, on the same side as the image.</p>
+<h4><span style='color:red'><center>True & Certified Copy<br/>Name of certifier in BLOCK CAPITALS<br/>IBM Serial number of certifier<br/>Certification Date<br/>Signature of certifier</center></span></h4>
 <p>If you have any questions, you do not have any of the listed documents or are unsure about the process please contact the PES Team.</p>
-<p><b>Please Note</b></p>
-<p>If you are unable to get your documents certified (physically or virtually), we do have a provisional clearance process and will accept documents without certification - however these documents will need to be certified as soon as the restrictions are lifted or as soon as you can.</p>
-<p>This will not give you full PES clearance for the account, so if you can get them certified correctly please do so.</p>
 <p>Many Thanks for your cooperation,</p>
 <p>&&account_name&& &nbsp; PES Team</p>
 <p>Rachele Smith - Global PES Compliance Officer<br/>Zoe O'Flaherty - Global PES compliance Officer<br/>Jean Dover - Global PES Team Leader<br/>Carra Booth - Global PES SME</p>
