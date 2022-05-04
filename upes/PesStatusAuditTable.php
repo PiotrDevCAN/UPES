@@ -1,7 +1,6 @@
 <?php
 namespace upes;
 
-
 use itdq\DbTable;
 use itdq\Loader;
 
@@ -9,8 +8,6 @@ use itdq\Loader;
  *
  *
  */
-
-
 
 class PesStatusAuditTable extends DbTable
 {

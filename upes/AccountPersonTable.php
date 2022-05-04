@@ -720,11 +720,11 @@ public $lastSelectSql;
         // in_array($upesref, $cnums) ? $cnum = $cnums[$upesref] : $cnum = '';
         array_key_exists($upesref, $cnums) ? $cnum = $cnums[$upesref] : $cnum = '';
 
-        in_array($status,AccountPersonRecord::$pesAuditableStatus) ? PesStatusAuditTable::insertRecord($cnum, $emails[$upesref], $accounts[$accountid], $status, $dateToUse) : null;
-        /*
-        $now = new \DateTime();
-        $updateDate = $now->format('Y-m-d');
+        // in_array($status,AccountPersonRecord::$pesAuditableStatus) ? PesStatusAuditTable::insertRecord($cnum, $emails[$upesref], $accounts[$accountid], $status, $dateToUse) : null;
+        
         if(in_array($status,AccountPersonRecord::$pesAuditableStatus)) {
+            $now = new \DateTime();
+            $updateDate = $now->format('Y-m-d H:i:s.u');
             $pesStatusAuditRecord = new PesStatusAuditRecord();
             $pesStatusAuditRecord->setFromArray(
                 array(
@@ -740,7 +740,6 @@ public $lastSelectSql;
             $pesStatusAuditTable = new PesStatusAuditTable(AllTables::$PES_STATUS_AUDIT);
             $pesStatusAuditTable->saveRecord($pesStatusAuditRecord);
         }
-        */
         db2_commit($GLOBALS['conn']);
         db2_autocommit($GLOBALS['conn'],$db2AutoCommit);
 

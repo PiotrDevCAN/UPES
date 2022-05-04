@@ -216,7 +216,7 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
+	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -224,7 +224,7 @@ $(document).ready(function(){
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -294,7 +294,7 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
+	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -302,7 +302,7 @@ $(document).ready(function(){
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -421,7 +421,7 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
+	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -429,7 +429,7 @@ $(document).ready(function(){
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -462,21 +462,16 @@ $(document).ready(function(){
 	      	success: function(response) {
 	      		var responseObj = JSON.parse(response);
 	      		if(responseObj.success){
-		    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
+					$(submitBtn).removeClass('spinning').attr('disabled',false);
 		    	    $('#personForm').trigger("reset");
-		    	    $('#COUNTRY').val('').trigger('change');
-		    	    $('#IBM_STATUS').val('').trigger('change');
-		    	    $('#CONTRACT_ID').val('').trigger('change');
+		    		$('#CNUM').val('');
 		    	    $('#EMAIL_ADDRESS').val('');
 		    	    $('#EMAIL_ADDRESS').css('background-color','White').trigger('change');
-		            $("#PES_LEVEL").select2("destroy");
-		            $("#PES_LEVEL").html("<option><option>");
-		        	$('#PES_LEVEL').select2({width: '100%'})
-		        	    .attr('disabled',false)
-		                .attr('required',true);
-	                $('#FULL_NAME').val('');
-	                $('#UPES_REF').val('');
-	                $('#modalEditPersonRecord').modal('hide');
+		            $('#FULL_NAME').val('');
+					$('#COUNTRY').val('').trigger('change');
+	                $('#IBM_STATUS').val('').trigger('change');
+		    	    $('#UPES_REF').val('');
+					$('#modalEditPersonRecord').modal('hide');
 	                userStatusTable.ajax.reload();
 		    	} else {
      	    	    $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -489,7 +484,7 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('.modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Rob");
+	                $('.modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Piotr");
 	                $('.modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -497,7 +492,7 @@ $(document).ready(function(){
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('.modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Rob");
+	                $('.modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Piotr");
 	                $('.modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -535,7 +530,7 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('#modalError .modal-body').html("<h2>Json call to toggle boarded status FAILED.</h2><br>Tell Rob(" + __FILE__ + __LINE__ + ")" );
+	                $('#modalError .modal-body').html("<h2>Json call to toggle boarded status FAILED.</h2><br>Tell Piotr(" + __FILE__ + __LINE__ + ")" );
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -543,7 +538,7 @@ $(document).ready(function(){
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('#modalError .modal-body').html("<h2>Json call to toggle boarded status Errord :<br/>" + error.statusText + "</h2>Tell Rob(" + __FILE__ + __LINE__ + ")" );
+	                $('#modalError .modal-body').html("<h2>Json call to toggle boarded status Errord :<br/>" + error.statusText + "</h2>Tell Piotr(" + __FILE__ + __LINE__ + ")" );
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
