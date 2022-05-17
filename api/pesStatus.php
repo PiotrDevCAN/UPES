@@ -8,9 +8,9 @@ if($_REQUEST['token']!= $token) {
     return;    
 }
 
-$sql = " select AP.ACCOUNT_ID, P.CNUM, P.EMAIL_ADDRESS, PROCESSING_STATUS, PROCESSING_STATUS_CHANGED, COMMENT ";
+$sql = " select AP.ACCOUNT_ID, P.CNUM, P.EMAIL_ADDRESS, PROCESSING_STATUS, PROCESSING_STATUS_CHANGED ";
 $sql.= ", PES_DATE_REQUESTED, PES_REQUESTOR, PES_DATE_RESPONDED, PES_STATUS_DETAILS, PES_STATUS";
-$sql.= ",PL.PES_LEVEL, PES_RECHECK_DATE, PES_CLEARED_DATE ";
+$sql.= ", PL.PES_LEVEL, PES_RECHECK_DATE, PES_CLEARED_DATE ";
 $sql.= "from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP "; 
 $sql.= "left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
 $sql.= "on AP.UPES_REF = P.UPES_REF ";
