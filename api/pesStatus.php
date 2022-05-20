@@ -8,15 +8,15 @@ if($_REQUEST['token']!= $token) {
     return;    
 }
 
-$sql = " select AP.ACCOUNT_ID, P.CNUM, P.EMAIL_ADDRESS, PROCESSING_STATUS, PROCESSING_STATUS_CHANGED ";
+$sql = " SELECT AP.ACCOUNT_ID, P.CNUM, P.EMAIL_ADDRESS, PROCESSING_STATUS, PROCESSING_STATUS_CHANGED ";
 $sql.= ", PES_DATE_REQUESTED, PES_REQUESTOR, PES_DATE_RESPONDED, PES_STATUS_DETAILS, PES_STATUS";
 $sql.= ", PL.PES_LEVEL, PES_RECHECK_DATE, PES_CLEARED_DATE ";
-$sql.= "from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP "; 
-$sql.= "left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
-$sql.= "on AP.UPES_REF = P.UPES_REF ";
-$sql.= "left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
-$sql.= "on AP.PES_LEVEL = PL.PES_LEVEL_REF and AP.ACCOUNT_ID = PL.ACCOUNT_ID ";
-$sql.= "where AP.account_id = '" . db2_escape_string($_GET['accountid']) . "' ";
+$sql.= "FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP "; 
+$sql.= "LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+$sql.= "ON AP.UPES_REF = P.UPES_REF ";
+$sql.= "LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " AS PL ";
+$sql.= "ON AP.PES_LEVEL = PL.PES_LEVEL_REF AND AP.ACCOUNT_ID = PL.ACCOUNT_ID ";
+$sql.= "WHERE AP.ACCOUNT_ID = '" . db2_escape_string($_GET['accountid']) . "' ";
 
 ob_start();
 
@@ -26,6 +26,8 @@ if (! $rs) {
     return false;
 }
 
+$endExec = microtime(true);
+$timeMeasurements['db_exec'] = (float)($endExec-$start);
 
 $data = array();
 $count = 1;
@@ -34,10 +36,17 @@ while(($row=db2_fetch_assoc($rs))==true){
     $data[] = $row;
 }
 
+$endDataTrim = microtime(true);
+$timeMeasurements['data_trim'] = (float)($endDataTrim-$start);
+
 $messages = ob_get_clean();
 
 $success = empty($messages);
 
 header('Content-Type: application/json');
-echo json_encode(array('success'=>$success,'data'=>$data,'messages'=>$messages));
-
+echo json_encode(array(
+    'success'=>$success,
+    'data'=>$data,
+    'messages'=>$messages,
+    'timing'=>$timeMeasurements
+));
