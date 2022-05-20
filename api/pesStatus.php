@@ -39,8 +39,7 @@ $startDataTrim = microtime(true);
 
 $data = array();
 $count = 1;
-// while(($row=db2_fetch_assoc($rs))==true){
-while(($row=db2_fetch_assoc($rs))){
+while(($row=db2_fetch_assoc($rs))==true){
     if ($noTrim === false) {
         $row = array_map('trim',$row);
     }
