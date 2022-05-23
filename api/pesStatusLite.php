@@ -41,7 +41,7 @@ if($_REQUEST['token']!= $token) {
 // $driver = new Adapter($config);
 // var_dump($adapter);
 
-$GLOBALS['Db2Schema'] = 'UPES_NEWCO';
+// $GLOBALS['Db2Schema'] = 'UPES_NEWCO';
 
 $noTrim = !empty($_REQUEST['noTrim']) ? true : false;
 
