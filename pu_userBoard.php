@@ -186,7 +186,7 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('.modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Piotr");
+	                $('.modal-body').html("<h2>Json call to save record Failed.</h2><br>tell Piotr");
 	                $('.modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -194,7 +194,7 @@ $(document).ready(function(){
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('.modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Piotr");
+	                $('.modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>tell Piotr");
 	                $('.modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);

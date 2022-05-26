@@ -24,7 +24,7 @@ body {
 			$label = stripos($_ENV['environment'], 'newco') ? $kyndrylerLabel : $ibmerLabel;
 		?>
 		<h1 id='welcomeJumotron'><p><?=$label?></p></h1>
-		</div> -->
+<!-- 	</div> -->
 </div>
 
 <?php

@@ -11,81 +11,68 @@ $.expr[":"].contains = $.expr.createPseudo(function(arg) {
 });
 
 function searchTable(){
-	var filter = $('#pesTrackerTableSearch').val().toUpperCase();
+
+	var filter = $('#pesTrackerTableSearch').val();
+	var table = $('#pesTrackerTable').DataTable();
 
 	if(filter.length > 3){
-		$('#pesTrackerTable tr').hide();
-		$('#pesTrackerTable th').parent('tr').show();
-		
-		$('#pesTrackerTable tbody tr').children('td').not('.nonSearchable').each(function(){
-			var text = $(this).text().trim().replace(/[\xA0]/gi, ' ').replace(/  /g,'').toUpperCase();
-			if(text.indexOf(filter) > -1){
-				var tr = $(this).parent('tr').show();
-			}
-		});		  
+		table.search( filter ).draw();
 	} else {
-		$('#pesTrackerTable tr').show	()
+		table.search('').draw();
 	}
 }
 
 function pesEvent() {
 
-  this.init = function(){
-    console.log('+++ Function +++ pesEvent.init');
-    
-    // $(document).on('ready',function(){
-    //     $('.pesDateLastChased').datepicker({
-    //     	dateFormat: 'dd M yy',
-    // 		maxDate:0,
-    //         onSelect: function(dateText) {
-    //         	var cnum = $(this).data('cnum');
-    //         	var pesevent = new pesEvent();
-    //         	pesevent.saveDateLastChased(dateText, cnum, this);
-    //           }		
-    // 		}
-    //     ).on("change", function() {
-    //         alert("Got change event from field");
-    //     });
-    // });
-    
-    console.log('--- Function --- pesEvent.init');
-  },   
+  	this.init = function(){
+    	console.log('+++ Function +++ pesEvent.init');
 
-  this.listenForBtnRecordSelection = function() {
-	  $(document).on('click','.btnRecordSelection', function(){
-		  $('.btnRecordSelection').removeClass('active');
-		  $(this).addClass('active');	  
-		  var pesevent = new pesEvent();
-		  pesevent.populatePesTracker($(this).data('pesrecords'));
-	  });
-  }, 
-  
-  this.listenForBtnChaser = function() {
-	  $(document).on('click','.btnChaser', function(){
-		  var chaser = $(this).data('chaser').trim();
-		  var details = $(this).parent('span').parents('tr.personDetails');
-		  var upesref = $(details).data('upesref');
-		  var accountid = $(details).data('accountid');
-		  var account   = $(details).data('account');
-		  var emailaddress   = $(details).data('emailaddress');
-		  var fullName = $(details).data('fullname');
-		  var requestor = $(details).data('requestor');
-		  
-		  var buttonObj = $(this);
-		  buttonObj.addClass('spinning');
-		  
-		  var dateField = buttonObj.parents('td').find('.pesDateLastChased').first();
-		  $.ajax({
+    	console.log('--- Function --- pesEvent.init');
+  	},   
+
+	this.listenForBtnRecordSelection = function() {
+		$(document).on('click','.btnRecordSelection', function(){
+			$('.btnRecordSelection').removeClass('active');
+			$(this).addClass('active');
+			// alert('listenForBtnRecordSelection function needs to be rebuilt ' + $(this).data('pesrecords'));
+
+			$('#pesTrackerTable').DataTable().ajax.reload(); // works
+			// $('#pesTrackerTable').dataTable().ajax.reload(); // does not work
+
+			// $('#pesTrackerTable').dataTable().api().ajax.reload(); // works
+			// $('#pesTrackerTable').DataTable().api().ajax.reload(); // does not work
+			
+			// var pesevent = new pesEvent();
+			// pesevent.populatePesTracker($(this).data('pesrecords'));
+		});
+	}, 
+
+	this.listenForBtnChaser = function() {
+		$(document).on('click','.btnChaser', function(){
+			var chaser  		= $(this).data('chaser').trim();
+			var personDetails 	= $(this).parent('span');
+			var upesref 		= $(personDetails).data('upesref');
+			var accountid 		= $(personDetails).data('accountid');
+			var account   		= $(personDetails).data('account');
+			var emailaddress   	= $(personDetails).data('emailaddress');
+			var fullName 		= $(personDetails).data('fullname');
+			var requestor 		= $(personDetails).data('requestor');
+			var buttonObj 		= $(this);
+			buttonObj.addClass('spinning');
+			
+			var dateField = buttonObj.parents('td').find('.pesDateLastChased').first();
+			$.ajax({
 			  	url: "ajax/sendPesEmailChaser.php",
 			  	type: 'POST',
-			  	data : { upesref: upesref,
-			  		     account:account,
-			  		     accountid:accountid,
-			  		     emailaddress:emailaddress, 
-			  		     chaser: chaser,
-			  		     fullName : fullName,
-			  		     requestor : requestor
-			  			},
+			  	data : {
+					upesref: upesref,
+					account:account,
+					accountid:accountid,
+					emailaddress:emailaddress, 
+					chaser: chaser,
+					fullName : fullName,
+					requestor : requestor
+			  	},
 			    success: function(result){
 			    	var resultObj = JSON.parse(result);
 			    	pesevent = new pesEvent();
@@ -98,213 +85,225 @@ function pesEvent() {
 			    		alert('error has occured');
 			    		alert(resultObj);
 			    	}
-
 			    }
 		  });
-
-		  
-//		  var pesevent = new pesEvent();
-//		  pesevent.populatePesTracker($(this).data('pesrecords'));
-	  });
-  },
-  
-  this.populatePesTracker = function(records){
- 
-	var buttons = $('.btnRecordSelection');	  
-
-	$('#pesTrackerTableDiv').html('<i class="fa fa-spinner fa-spin" style="font-size:68px"></i>');
-
-	pesTrackerTable = $.ajax({
-		url: "ajax/populatePesTrackerTable.php",
-		type: 'POST',
-		data : { records: records,
-				},
-		success: function(result){
-			var resultObj = JSON.parse(result);
-			if(resultObj.success){
-				$('#pesTrackerTableDiv').html(resultObj.table);	
-
-				$('#pesTrackerTable thead th').each( function () {
-					var title = $(this).text();
-					$(this).html(title + '<input class="secondInput" type="hidden"  />' );
-				} );		    		
-				
-				$('#pesTrackerTable thead td').not('.nonSearchable').not('.shortSearch').each( function () {
-					var title = $(this).text();
-					$(this).html('<input class="firstInput" type="text" size="10" placeholder="Search '+title+'" />' );
-				});
-
-				$('.shortSearch').each( function () {
-					var title = $(this).text();
-					$(this).html('<input class="firstInput" type="text" size="5" placeholder="Search '+title+'" />' );
-				});
-
-				$('.btnTogglePesTrackerStatusDetails').remove();
-
-				// $('.pesDateLastChased').datepicker({
-				// 	// dateFormat: 'dd M yy',
-				// 	dateFormat: 'dd/mm/y',
-				// 	maxDate:0,
-				// 	onSelect: function(dateText) {
-				// 		var cnum = $(this).data('cnum');
-				// 		var pesevent = new pesEvent();
-				// 		pesevent.saveDateLastChased(dateText, cnum, this);
-				// 		}		
-				// 	}
-				// ).on("change", function() {
-				// 	alert("Got change event from field");
-				// });
-
-			} else {
-				$('#pesTrackerTableDiv').html(resultObj.messages);
-			}		    	
-		}
-	});
-
-	// Apply the search
-	$(document).on( 'keyup change', '.firstInput', function (e) {
-		var searchFor = this.value;
-		var col = $(this).parent().index();      	
-		var searchCol = col + 1;
-		if(searchFor.length >= 3){
-			$('#pesTrackerTable tbody tr').hide();	        	
-			$('#pesTrackerTable tbody td:nth-child(' + searchCol + '):contains(' + searchFor + ')	').parent().show();	        		
-		} else {
-			$('#pesTrackerTable tbody tr').show();
-		}
-
-	} );
-  }
-  
-//   this.saveDateLastChased = function(date,cnum, field){
-// 	  var parentDiv = $(field).parent('div');
-// 	  $.ajax({
-// 		  	url: "ajax/savePesDateLastChased.php",
-// 		  	type: 'POST',
-// 		  	data : { cnum: cnum,
-// 		  		     date: date
-// 		  			},
-// 		    success: function(result){
-// 		    	var resultObj = JSON.parse(result);
-// 		    	pesevent = new pesEvent();
-// 		    	pesevent.getAlertClassForPesChasedDate(field);
-// 		    	buttonObj.parents('td').parent('tr').children('td.pesCommentsTd').children('div.pesComments').html(resultObj.comment);
-// 		    }
-// 	  });
-//   }
-  
-  this.listenForComment = function() {
-	  $('textarea').on('input', function(){	  
-	  });
-  }, 
-  
-  this.listenForSavePesComment = function() {
-	  $(document).on('click','.btnPesSaveComment', function(){
-		  
-		  var upesref   =  $(this).siblings('textarea').data('upesref');
-		  var accountid =  $(this).siblings('textarea').data('accountid');
-		  var comment   = $(this).siblings('textarea').val();
-		  var button    = $(this);
-	  
-		  button.addClass('spinning');
-		  $.ajax({
-			  	url: "ajax/savePesComment.php",
-			  	type: 'POST',
-			  	data : { upesref: upesref,
-			  		   accountid:accountid, 
-			  		     comment: comment,
-			  			},
-			  	success: function(result){
-			        var resultObj = JSON.parse(result);
-			  		button.removeClass('spinning');
-			  		button.siblings('div.pesComments').html(resultObj.comment);
-			  		button.siblings('textarea').val('');
-		      		}
-	        	});
 	  	});
-  }
+  	},
 
-  this.listenForPesStageValueChange = function(){
-	  $(document).on('click','.btnPesStageValueChange', function(){  
-		  var personDetails = $(this).parents('.personDetails');
-		  var setPesTo = $(this).data('setpesto');	
-		  var column   = $(this).parents('.columnDetails').first().data('pescolumn');		  
-		  var upesref  = $(personDetails).data('upesref');
-		  var accountid= $(personDetails).data('accountid');
+  	this.populatePesTracker = function(){
+		trackerTable = $('#pesTrackerTable').DataTable({
+			processing: true,
+			serverSide: true,
+			scrollColapse: false,
+	    	searchDelay: 1000,
+			ajax: {
+				url: 'ajax/populatePesTrackerTable.php',
+				dataType: 'json',
+				type: 'POST',
+				data: function (d) {
+					d.records = $('.btnRecordSelection.active').data('pesrecords');
+				},
+				dataSrc: function ( json ) {
+					console.log('dataSrc');
+					console.log(json);
+					console.log($('#pesTrackerTable_processing').is(":visible"));
 
-		  var pesevent = new pesEvent();
-		  var alertClass = pesevent.getAlertClassForPesStage(setPesTo);
-		  		  
-		  $(this).parents('div').prev('div.pesStageDisplay').html(setPesTo);
-		  $(this).parents('div').prev('div.pesStageDisplay').removeClass('alert-info').removeClass('alert-warning').removeClass('alert-success').addClass(alertClass);
-		  $(this).addClass('spinning');
-		  
-		  var buttonObj = $(this);
-		  
-		   $.ajax({
-			   url: "ajax/savePesStageValue.php",
-		       type: 'POST',
-		       data : {upesref:upesref,
-		    	   	   stageValue:setPesTo,
-		    	       accountid:accountid, 
-		    	   	   stage:column,
-		    	   	   },
-		       success: function(result){
-		           var resultObj = JSON.parse(result);
-		           if(resultObj.success==true){
-		        	   buttonObj.parents('td').parent('tr').children('td.pesCommentsTd').children('div.pesComments').html(resultObj.comment);
-		           } else {
-		       		  $(this).parents('div').prev('div.pesStageDisplay').html(resultObj.message);	 
-		           };
-		           buttonObj.removeClass('spinning');
-		       }
-		   });
-	  });
-  }
+					//Make your callback here.
+					if(json.error.length != 0){
+						$('#modalError .modal-body').html(json.error);
+						$('#modalError').modal('show');
+					}  
+					console.log(json.data);
+					return json.data;
+				},
+				beforeSend: function (jqXHR, settings) {	
+					console.log('before send');
+					console.log($('.dataTables_processing'));
+					console.log($('#pesTrackerTable_processing').is(":visible")); 
+					
+					$.each(xhrPool, function(idx, jqXHR) {
+						jqXHR.abort();  // basically, cancel any existing request, so this one is the only one running
+						xhrPool.splice(idx, 1);
+					});
+					xhrPool.push(jqXHR);
+				},
+			},
+			language: {
+				searchPlaceholder: "",
+				emptyTable: "No records found",
+				processing: "Processing<i class='fas fa-spinner fa-spin '></i>"
+	        },
+			autoWidth: true,
+			responsive: false,
+			// dom: 'Blfrtip',
+			dom: 'Blrtip',
+			paging: true,
+			pagingType: 'full_numbers',
+			pageLength: 50,
+			lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			buttons: [
+				// 'csvHtml5',
+				// 'excelHtml5',
+				// 'print'
+			],
+			columns:
+			[{
+				"searchable": true, data: "PERSON_DETAILS", render: { _:"display", sort:"sort" }
+			},{
+				data: "ACCOUNT_DETAILS", render: { _:"display", sort:"sort" }
+			},{
+				data: "REQUESTOR", render: { _:"display", sort:"sort" }
+			},{
+				data: "CONSENT", render: { _:"display", sort:"sort" }
+			},{
+				data: "RIGHT_TO_WORK", render: { _:"display", sort:"sort" }
+			},{ 
+				data: "PROOF_OF_ID", render: { _:"display", sort:"sort" }
+			},{
+				data: "PROOF_OF_RESIDENCY", render: { _:"display", sort:"sort" }
+			},{
+				data: "CREDIT_CHECK", render: { _:"display", sort:"sort" }
+			},{
+				data: "FINANCIAL_SANCTIONS", render: { _:"display", sort:"sort" }
+			},{
+				data: "CRIMINAL_RECORDS_CHECK", render: { _:"display", sort:"sort" }
+			},{ 
+				data: "PROOF_OF_ACTIVITY", render: { _:"display", sort:"sort" }
+			},{
+				data: "QUALIFICATIONS", render: { _:"display", sort:"sort" }
+			},{
+				data: "DIRECTORS", render: { _:"display", sort:"sort" }
+			},{
+				data: "MEDIA", render: { _:"display", sort:"sort" }
+			},{
+				data: "MEMBERSHIP", render: { _:"display", sort:"sort" }
+			},{
+				data: "NI_EVIDENCE", render: { _:"display", sort:"sort" }
+			},{
+				data: "PROCESS_STATUS", render: { _:"display", sort:"sort" }
+			},{
+				data: "PES_STATUS", render: { _:"display", sort:"sort" }
+			},{
+				data: "COMMENT", render: { _:"display", sort:"sort" }
+			}],
+		});
+	},
 
-  this.getAlertClassForPesStage = function(pesStageValue){
-      switch (pesStageValue) {
-      case 'Yes':
-          var alertClass = ' alert-success ';
-          break;
-      case 'Prov':
-          var alertClass = ' alert-warning ';
-          break;
-      case 'N/A':
-          var alertClass = ' alert-secondary ';
-          break; 
-      default:
-          var alertClass = ' alert-info ';
-          break;
-  	  }
-  	  return alertClass;
-	}
+	this.listenForComment = function() {
+		$('textarea').on('input', function(){	  
+		});
+	}, 
   
-  this.listenForPesProcessStatusChange = function(){
-	  $(document).on('click','.btnProcessStatusChange', function(){  
-		  var buttonObj = $(this);
-		  var processStatus = $(this).data('processstatus');	
-		  var dataDiv       = $(this).parents('tr.personDetails');
-		  var upesref       = $(dataDiv).data('upesref');
-		  var accountid     = $(dataDiv).data('accountid');
-		  var account       = $(dataDiv).data('account');
-		  var fullname      = $(dataDiv).data('fullname');
-		  var emailaddress  = $(dataDiv).data('emailaddress');
-		  var requestor     = $(dataDiv).data('requestor');
-//		  $(this).parents('div').prev('div.pesProcessStatusDisplay').html(processStatus);
-		  $(this).addClass('spinning');
-		   $.ajax({
-			   url: "ajax/savePesProcessStatus.php",
-		       type: 'POST',
-		       data : {      upesref:upesref,
-		    	           accountid:accountid,
-                             account: account, 
-		    	       processStatus:processStatus,
-		    	           fullname : fullname,
-		    	       emailaddress : emailaddress,
-		    	          requestor : requestor
-		    	   	   },
-		       success: function(result){
+  	this.listenForSavePesComment = function() {
+		$(document).on('click','.btnPesSaveComment', function(){
+		  
+			var upesref   = $(this).siblings('textarea').data('upesref');
+			var accountid = $(this).siblings('textarea').data('accountid');
+			var comment   = $(this).siblings('textarea').val();
+			var button    = $(this);
+		
+			button.addClass('spinning');
+			$.ajax({
+				url: "ajax/savePesComment.php",
+				type: 'POST',
+				data : { 
+					upesref: upesref,
+					accountid:accountid, 
+					comment: comment,
+				},
+				success: function(result){
+					var resultObj = JSON.parse(result);
+					button.removeClass('spinning');
+					button.siblings('div.pesComments').html(resultObj.comment);
+					button.siblings('textarea').val('');
+				}
+			});
+	  	});
+	},
+
+	this.listenForPesStageValueChange = function(){
+		$(document).on('click','.btnPesStageValueChange', function(){
+			var personDetails = $(this).parent('span');
+			var setPesTo 	  = $(this).data('setpesto');	
+			var column   	  = $(this).parents('.columnDetails').first().data('pescolumn');		  
+			var upesref  	  = $(personDetails).data('upesref');
+			var accountid	  = $(personDetails).data('accountid');
+
+			var pesevent = new pesEvent();
+			var alertClass = pesevent.getAlertClassForPesStage(setPesTo);
+					
+			$(this).parents('div').prev('div.pesStageDisplay').html(setPesTo);
+			$(this).parents('div').prev('div.pesStageDisplay').removeClass('alert-info').removeClass('alert-warning').removeClass('alert-success').addClass(alertClass);
+			$(this).addClass('spinning');
+			
+			var buttonObj = $(this);
+			
+			$.ajax({
+				url: "ajax/savePesStageValue.php",
+				type: 'POST',
+				data : {
+					upesref:upesref,
+					stageValue:setPesTo,
+					accountid:accountid, 
+					stage:column,
+				},
+				success: function(result){
+					var resultObj = JSON.parse(result);
+					if(resultObj.success==true){
+						buttonObj.parents('td').parent('tr').children('td.pesCommentsTd').children('div.pesComments').html(resultObj.comment);
+					} else {
+						$(this).parents('div').prev('div.pesStageDisplay').html(resultObj.message);	 
+					}
+					buttonObj.removeClass('spinning');
+				}
+			});
+	  	});
+ 	},
+
+  	this.getAlertClassForPesStage = function(pesStageValue){
+		var alertClass = '';
+		switch (pesStageValue) {
+			case 'Yes':
+				var alertClass = ' alert-success ';
+				break;
+			case 'Prov':
+				var alertClass = ' alert-warning ';
+				break;
+			case 'N/A':
+				var alertClass = ' alert-secondary ';
+				break; 
+			default:
+				var alertClass = ' alert-info ';
+				break;
+		}
+		return alertClass;
+	},
+
+  	this.listenForPesProcessStatusChange = function(){
+		$(document).on('click','.btnProcessStatusChange', function(){ 
+			var buttonObj = $(this);
+			var processStatus = $(this).data('processstatus');
+			var personDetails = $(this).parent('span');
+			var upesref       = $(personDetails).data('upesref');
+			var accountid     = $(personDetails).data('accountid');
+			var account       = $(personDetails).data('account');
+			var fullname      = $(personDetails).data('fullname');
+			var emailaddress  = $(personDetails).data('emailaddress');
+			var requestor     = $(personDetails).data('requestor');
+			$(this).addClass('spinning');
+		   	$.ajax({
+				url: "ajax/savePesProcessStatus.php",
+				type: 'POST',
+				data : {
+					upesref: upesref,
+					accountid: accountid,
+					account: account, 
+					processStatus: processStatus,
+					fullname: fullname,
+					emailaddress: emailaddress,
+					requestor: requestor
+				},
+		        success: function(result){
 			       console.log(result);
 		           var resultObj = JSON.parse(result);
 		           if(resultObj.success==true){
@@ -313,19 +312,18 @@ function pesEvent() {
 		           }
 		           $(buttonObj).removeClass('spinning');
 		       }
-		   });
-	  });
-  },
+		   	});
+	  	});
+  	},
   
-  this.listenForPesPriorityChange = function(){
+  	this.listenForPesPriorityChange = function(){
 	  $(document).on('click','.btnPesPriority', function(){  
-		  var buttonObj   = $(this);
-		  var pespriority = $(this).data('pespriority');					  
-		  var upesref     = $(this).data('upesref');
-		  var accountid   = $(this).data('accountid');
-//		  $(this).parents('div').prev('div.pesProcessStatusDisplay').html(processStatus);
-		  $(this).addClass('spinning');
-		   $.ajax({
+			var buttonObj   = $(this);
+			var pespriority = $(this).data('pespriority');					  
+			var upesref     = $(this).data('upesref');
+			var accountid   = $(this).data('accountid');
+			$(this).addClass('spinning');
+		   	$.ajax({
 			   url: "ajax/savePesPriority.php",
 		       type: 'POST',
 		       data : {    upesref:upesref,
@@ -345,9 +343,9 @@ function pesEvent() {
 		           }
 		           $(buttonObj).removeClass('spinning');
 		       }
-		   });
-	  });
-  },
+		   	});
+	  	});
+  	},
   
   this.setAlertClassForPesPriority = function(priorityField, priority){
 	  
@@ -370,108 +368,107 @@ function pesEvent() {
 			$(priorityField).addClass('alert-info');
 			break;
 		}			  
-	} ,
+	},
 
-  this.getAlertClassForPesChasedDate = function(dateField){
+  	this.getAlertClassForPesChasedDate = function(dateField){
 	  
-	  $(dateField).parent('div').removeClass('alert-success');
-	  $(dateField).parent('div').removeClass('alert-warning');
-	  $(dateField).parent('div').removeClass('alert-danger');
-	  $(dateField).parent('div').removeClass('alert-info');  
-	  
-	  var today = new Date();
-//	  var date1 = new Date("7/13/2010");  
-	  var dateValue = $(dateField).val();	  
-	  var lastChased = new Date(dateValue);	  
-	  
-	  if(typeof(lastChased)=='object'){
-		  var timeDiff = Math.abs(today.getTime() - lastChased.getTime());
-		  var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 	  
-		  
-		  switch(true){
-		  case diffDays < 7:
-			  $(dateField).parent('div').addClass('alert-success');	  
-			  break;
-		  case diffDays < 14:
-			  $(dateField).parent('div').addClass('alert-warning');
-			  break;
-		  default :
-			  $(dateField).parent('div').addClass('alert-danger');
-			  break;
-		  }		  
-		  
-	  } else {
-		  $(dateField).parent('div').removeClass('alert-info');		  
-		  return;
-	  } 
-  },
+		$(dateField).parent('div').removeClass('alert-success');
+		$(dateField).parent('div').removeClass('alert-warning');
+		$(dateField).parent('div').removeClass('alert-danger');
+		$(dateField).parent('div').removeClass('alert-info');  
+		
+		var today = new Date();
+		var dateValue = $(dateField).val();	  
+		var lastChased = new Date(dateValue);	  
+		
+		if(typeof(lastChased)=='object'){
+			var timeDiff = Math.abs(today.getTime() - lastChased.getTime());
+			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 	  
+			
+			switch(true){
+			case diffDays < 7:
+				$(dateField).parent('div').addClass('alert-success');	  
+				break;
+			case diffDays < 14:
+				$(dateField).parent('div').addClass('alert-warning');
+				break;
+			default :
+				$(dateField).parent('div').addClass('alert-danger');
+				break;
+			}		  
+			
+		} else {
+			$(dateField).parent('div').removeClass('alert-info');		  
+			return;
+		} 
+	},
+	
+	this.listenForFilterPriority = function(){
+		$(document).on('click','.btnSelectPriority', function(){
+			var priority = $(this).data('pespriority');
+			if(priority!=0){
+				$('tr').hide();
+				$(".priorityDiv:contains('" + priority + "')").parents('tr').show();
+				$('th').parent('tr').show();			  
+			} else {
+				$('tr').show();
+			}
+		});
+  	},
   
-  this.listenForFilterPriority = function(){
-	  $(document).on('click','.btnSelectPriority', function(){
-		  var priority = $(this).data('pespriority');
-		  if(priority!=0){
-			  $('tr').hide();
-			  $(".priorityDiv:contains('" + priority + "')").parents('tr').show();
-			  $('th').parent('tr').show();			  
-		  } else {
-			  $('tr').show();
-		  }
-	  });
-  },
+  	this.listenForFilterProcess = function(){
+		$(document).on('click','.btnSelectProcess', function(){
+			var pesprocess = $(this).data('pesprocess');
+			$('tr').hide();
+			$(".pesProcessStatusDisplay:contains('" + pesprocess + "')").parents('tr').show();
+			$('th').parent('tr').show();			  
+		});
+  	},
   
-  this.listenForFilterProcess = function(){
-	  $(document).on('click','.btnSelectProcess', function(){
-		  var pesprocess = $(this).data('pesprocess');
-		  $('tr').hide();
-		  $(".pesProcessStatusDisplay:contains('" + pesprocess + "')").parents('tr').show();
-		  $('th').parent('tr').show();			  
-	  });
-  },
-  
-  this.listenForEditPesStatus = function(){
+  	this.listenForEditPesStatus = function(){
 	    $(document).on('click','.btnPesStatus', function(e){  
 	    	console.log('btnPesStatus clicked');
-	           var upesref = ($(this).data('upesref'));
-	           var account = ($(this).data('account'));
-	           var accountid = ($(this).data('accountid'));
-	           var emailaddress = ($(this).data('emailaddress'));     
-           
-	           if(typeof($(this).data('passportfirst'))!='undefined'){
-	        	   var passportFirst = $(this).data('passportfirst');
-	        	   var passportSurname = $(this).data('passportsurname');
-	               $('#psm_passportFirst').val($.trim(passportFirst));
-	               $('#psm_passportSurname').val($.trim(passportSurname));
-	        	   $('#psm_passportFirst').prop('disabled',false);
-	        	   $('#psm_passportSurname').prop('disabled',false);
-	           } else {
-	        	   $('#passportNameDetails').hide();
-	        	   $('#psm_passportFirst').prop('disabled',true);
-	        	   $('#psm_passportSurname').prop('disabled',true);
-	           }
-	           
-	           var status  = ($(this).data('pesstatus'));
-	           
-	           $('#psm_accountid').val(accountid);
-	           $('#psm_account').val(account);
-	           $('#psm_upesref').val(upesref);
-	           $('#psm_emailaddress').val(emailaddress);
+			var upesref = ($(this).data('upesref'));
+			var account = ($(this).data('account'));
+			var accountid = ($(this).data('accountid'));
+			var emailaddress = ($(this).data('emailaddress'));     
+		
+			if(typeof($(this).data('passportfirst'))!='undefined'){
+				var passportFirst = $(this).data('passportfirst');
+				var passportSurname = $(this).data('passportsurname');
+				$('#psm_passportFirst').val($.trim(passportFirst));
+				$('#psm_passportSurname').val($.trim(passportSurname));
+				$('#psm_passportFirst').prop('disabled',false);
+				$('#psm_passportSurname').prop('disabled',false);
+			} else {
+				$('#passportNameDetails').hide();
+				$('#psm_passportFirst').prop('disabled',true);
+				$('#psm_passportSurname').prop('disabled',true);
+			}
+			
+			var status  = ($(this).data('pesstatus'));
+			
+			$('#psm_accountid').val(accountid);
+			$('#psm_account').val(account);
+			$('#psm_upesref').val(upesref);
+			$('#psm_emailaddress').val(emailaddress);
 
-	           $('#amendPesStatusModal').on('shown.bs.modal', { status: status}, function (e) {
-	               $('#psm_status').select2();
-	               $('#psm_status').val(e.data.status).trigger('change');
-	               $('#psm_detail').val('');
-	               $('#pes_date').datepicker('destroy');
-	               $('#pes_date').datepicker({ dateFormat: 'dd-mm-yy',
-	            	   						   altField:'#pes_date_db2',
-	            	   						   altFormat:'yy-mm-dd',
-	            	                           defaultDate: 0,
-	            	                           maxDate:0 } );
-	           });          
-	           $('#amendPesStatusModal').modal('show');
-	      });
-	  },
+			$('#amendPesStatusModal').on('shown.bs.modal', { status: status}, function (e) {
+				$('#psm_status').select2();
+				$('#psm_status').val(e.data.status).trigger('change');
+				$('#psm_detail').val('');
+				$('#pes_date').datepicker('destroy');
+				$('#pes_date').datepicker({ dateFormat: 'dd-mm-yy',
+											altField:'#pes_date_db2',
+											altFormat:'yy-mm-dd',
+											defaultDate: 0,
+											maxDate:0 } );
+			});          
+			$('#amendPesStatusModal').modal('show');
+		});
+	},
   
-  this.listenForSavePesStatus = function(){
+  	this.listenForSavePesStatus = function(){
 	    $(this).attr('disabled',true);
 	    $('#psmForm').submit(function(e){
 	    	
@@ -494,8 +491,7 @@ function pesEvent() {
 	                var resultObj = JSON.parse(result);
 	                $('#savePesStatus').attr('disabled',false).removeClass('spinning');	                
 	                var success = resultObj.success;
-	      		    var currentReportRecords = $('.btnRecordSelection.active').data('pesRecords');                
-	                // pesevent.populatePesTracker(currentReportRecords);
+	      		    var currentReportRecords = $('.btnRecordSelection.active').data('pesrecords');
 	                if(!success){
 	                	alert('Save PES Status, may not have been successful');
 	                	alert(resultObj.messages + resultObj.emailResponse);
@@ -511,13 +507,14 @@ function pesEvent() {
 	              }
 	            });
 
-	        };
+	        }
 	        return false;
-	      });
-	  }
+	    });
+	};
 }
 
 $( document ).ready(function() {	  
+	// var xhrPool = []; // to save the ajax calls, so they can be cancelled.
 	var Pesevent = new pesEvent();
 	Pesevent.init();
 });

@@ -27,16 +27,12 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 date_default_timezone_set('UTC');
 
-
-
-
 while(ob_get_level()>0){
     ob_end_clean();
 }
 ob_start();
 $GLOBALS['Db2Schema'] = strtoupper($_ENV['environment']);
 $https = (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == "on");
-
 
 // global var and config file
 include_once ('w3config.php');
@@ -68,7 +64,6 @@ function build_template($template, $vals) {
     return $tmpl;
 }
 
-
 # send the template footer
 function do_footer() {
     global $content, $w3nav;
@@ -77,8 +72,6 @@ function do_footer() {
     print $template;
     $GLOBALS['header_done'] = FALSE;
 }
-
-
 
 function do_result($page = array())
 {
@@ -90,7 +83,7 @@ function do_result($page = array())
             $page
         );
 
-        // default values
+    // default values
     $page += array(
         'result' => "Success",
         'message' => "Operation compleated succesfully",

@@ -108,7 +108,12 @@ $('.navbarMenu').not(':has(li)').remove();
 $('li[data-pagename="<?=$page;?>"]').addClass('active').closest('li.dropdown').addClass('active');
 <?php
 
-if($page != "index.php" && substr($page,0,3)!='cdi'){
+if($page != "index.php" 
+    && substr($page,0,3)!='cdi' 
+    && $page != "dn_pesTrackerEmail.php"
+    && $page != "dn_pesTrackerRecentEmail.php"
+    && $page != "dn_pesTrackerActivePlusEmail.php"
+){
 
     ?>
     var pageAllowed = $('li[data-pagename="<?=$page;?>"]').length;

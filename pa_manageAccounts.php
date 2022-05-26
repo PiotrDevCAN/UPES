@@ -92,7 +92,7 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>Tell Piotr");
+	                $('#modalError .modal-body').html("<h2>Json call to save record Failed.</h2><br>tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -100,7 +100,7 @@ $(document).ready(function(){
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>Tell Piotr");
+	                $('#modalError .modal-body').html("<h2>Json call to save record Errord :<br/>" + error.statusText + "</h2>tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -185,7 +185,7 @@ $(document).ready(function(){
 	      	fail: function(response){
 					console.log('Failed');
 					console.log(response);
-	                $('#modalError .modal-body').html("<h2>Json call to delete record Failed.</h2><br>Tell Piotr");
+	                $('#modalError .modal-body').html("<h2>Json call to delete record Failed.</h2><br>tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);
@@ -193,7 +193,7 @@ $(document).ready(function(){
 	      	error: function(error){
 	        		console.log('Ajax error');
 	        		console.log(error.statusText);
-	                $('#modalError .modal-body').html("<h2>Json call to delete record Errord :<br/>" + error.statusText + "</h2>Tell Piotr");
+	                $('#modalError .modal-body').html("<h2>Json call to delete record Errord :<br/>" + error.statusText + "</h2>tell Piotr");
 	                $('#modalError .modal-body').addClass('bg-warning');
 	                $('#modalError').modal('show');
 	                $(submitBtn).removeClass('spinning').attr('disabled',false);

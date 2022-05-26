@@ -43,7 +43,7 @@ try {
 
         ob_clean();
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="PES_Tracker_' . $fileNameSuffix . '.xlsx"');
+        header('Content-Disposition: attachment;filename="PES_Tracker_recent_' . $fileNameSuffix . '.xlsx"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');
@@ -55,9 +55,6 @@ try {
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save('php://output');
         exit;
-
-
-
 } catch (Exception $e) {
 
 //    ob_clean();

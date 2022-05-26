@@ -28,19 +28,17 @@ $person->amendPesStatusModal();
 $person->confirmSendPesEmailModal();
 include "includes/modalError.html";
 
-
-
 ?>
 </div>
 <script>
+
 var pesTrackerTable;
 var pesevent = new pesEvent();
 var person = new personRecord();
 
-
 $(document).ready(function(){
-
-	pesevent.populatePesTracker('<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>');
+	// pesevent.populatePesTracker('<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>');
+    pesevent.populatePesTracker();
  	pesevent.listenForBtnRecordSelection();
  	pesevent.listenForPesStageValueChange();
  	pesevent.listenForSavePesComment();
@@ -57,15 +55,10 @@ $(document).ready(function(){
 
     console.log($('button[name=pesRecordFilter]:checked'));
     console.log($('button[name=pesRecordFilter]:checked').val());
-    console.log($('button[name=pesRecordFilter]:checked').data('pesRecords'));
+    console.log($('button[name=pesRecordFilter]:checked').data('pesrecords'));
 
     console.log($('.btnRecordSelection'));
     console.log($('.btnRecordSelection:checked'));
-
-
-
-
-
 });
 </script>
 <style>
@@ -74,7 +67,6 @@ $(document).ready(function(){
 	background-color:light-grey;
 	color: black;
 }
-
 
 .pesComments {
 	overflow-y: auto;
@@ -85,19 +77,15 @@ $(document).ready(function(){
     color: #ffffff;
     background-color: #2c8d3a;
     border-color: #1a5322;
-
 }
 
 .btn-warning:focus, .btn-warning.focus {
-
     color: #ffffff;
     background-color: #e7a413;
     border-color: #a0720d;
-
 }
 
 .btn-default {
-
     color: #ffffff;
     background-color: #aea79f;
     border-color: #aea79f;
@@ -108,36 +96,30 @@ $(document).ready(function(){
     background-color: #d9edf7;
     border-color: #bce8f1;
     color: #3a87ad;
-
 }
 
 .alert-info {
     background-color: #d9edf7;
     border-color: #bce8f1;
     color: #3a87ad;
-
 }
 
 .alert-warning {
     background-color: #fcf8e3;
     border-color: #fbeed5;
     color: #c09853;
-
 }
-
 
 .alert-success {
     background-color: #dff0d8;
     border-color: #d6e9c6;
     color: #468847;
-
 }
 
 .alert-danger {
     background-color: #f2dede;
     border-color: #eed3d7;
     color: #b94a48;
-
 }
 
 td {
@@ -156,11 +138,18 @@ td {
     font-size: 12px;
 }
 
-
 .pesComments:hover {
     font-size: 12px;
 }
 
+table.dataTable thead th, table.dataTable thead td {
+    padding: 5px !important;
+    font-size: 11px;
+}
 
+table.dataTable tbody th, table.dataTable tbody td {
+    padding: 5px !important;
+    font-size: 8px;
+}
 
 </style>

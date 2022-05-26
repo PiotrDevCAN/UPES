@@ -73,8 +73,7 @@ const PROCESS_STATUS_UNKOWN = 'Unknown';
 
 public $lastSelectSql;
 
-    static function returnPesEventsTable($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null){
-
+    static function preparePesEventsStmt($records='Active', $upesRef=null, $accountId=null, $start=0, $length=10, $predicate=null){
         switch (trim($records)){
             case self::PES_TRACKER_RECORDS_ACTIVE :
                 $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ .  "','" . AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING .  "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "','" . AccountPersonRecord::PES_STATUS_MOVER. "') ";
@@ -148,9 +147,64 @@ public $lastSelectSql;
         $sql.= " WHERE 1=1 ";
         $sql.= " and (AP.UPES_REF is not null or ( AP.UPES_REF is null  AND AP.PES_STATUS_DETAILS is null )) "; // it has a tracker record
         $sql.= " AND " . $pesStatusPredicate;
+        $sql.= !empty($predicate) ? " $predicate " : null;
         $sql.= !empty($upesRef) ? " AND AP.UPES_REF='" . db2_escape_string($upesRef)  . "' " : null;
         $sql.= !empty($accountId) ? " AND AP.ACCOUNT_ID='" . db2_escape_string($accountId)  . "' " : null;
-        
+
+        if ($length != '-1') {
+            $sql.= " LIMIT " . $length . ' OFFSET ' . $start;
+        }
+        return $sql;
+    }
+
+    static function preparePesEventsCountStmt($records='Active', $upesRef=null, $accountId=null, $predicate=null){
+        switch (trim($records)){
+            case self::PES_TRACKER_RECORDS_ACTIVE :
+                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ .  "','" . AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING .  "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "','" . AccountPersonRecord::PES_STATUS_MOVER. "') ";
+                break;
+            case self::PES_TRACKER_RECORDS_ACTIVE_PLUS :
+                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ . "','" . AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "','" . AccountPersonRecord::PES_STATUS_RECHECK_REQ .  "','" . AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING . "','" . AccountPersonRecord::PES_STATUS_REMOVED. "','" . AccountPersonRecord::PES_STATUS_CLEARED. "','" . AccountPersonRecord::PES_STATUS_MOVER. "') ";
+                break;
+            case self::PES_TRACKER_RECORDS_ACTIVE_REQUESTED :
+                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_STAGE_1. "','" . AccountPersonRecord::PES_STATUS_STAGE_2. "','" . AccountPersonRecord::PES_STATUS_RECHECK_REQ . "','" . AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING .  "','" . AccountPersonRecord::PES_STATUS_MOVER. "') ";
+                break;
+            case self::PES_TRACKER_RECORDS_ACTIVE_PROVISIONAL :
+                $pesStatusPredicate = "  AP.PES_STATUS in('" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "') ";
+                break;
+            case self::PES_TRACKER_RECORDS_NOT_ACTIVE :
+                $pesStatusPredicate = " AP.PES_STATUS not in ('" . AccountPersonRecord::PES_STATUS_STARTER_REQUESTED . "','" . AccountPersonRecord::PES_STATUS_CANCEL_REQ .  "','" . AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING . "','" . AccountPersonRecord::PES_STATUS_PES_PROGRESSING. "','" . AccountPersonRecord::PES_STATUS_PROVISIONAL. "')  ";
+                $pesStatusPredicate.= " AND AP.PROCESSING_STATUS_CHANGED > current timestamp - 31 days  ";
+                break;
+            case self::PES_TRACKER_RECORDS_ALL :
+                $pesStatusPredicate = " 1=1 ";
+                break;
+            default:
+                $pesStatusPredicate = 'pass a parm muppet ';
+                break;
+        }
+      
+        $sql = " SELECT COUNT(*) AS COUNTER ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
+        $sql.= " ON P.UPES_REF = AP.UPES_REF ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
+        $sql.= " ON AP.PES_LEVEL = PL.PES_LEVEL_REF ";
+
+        $sql.= " WHERE 1=1 ";
+        $sql.= " and (AP.UPES_REF is not null or ( AP.UPES_REF is null  AND AP.PES_STATUS_DETAILS is null )) "; // it has a tracker record
+        $sql.= " AND " . $pesStatusPredicate;
+        $sql.= !empty($predicate) ? " $predicate " : null;
+        $sql.= !empty($upesRef) ? " AND AP.UPES_REF='" . db2_escape_string($upesRef)  . "' " : null;
+        $sql.= !empty($accountId) ? " AND AP.ACCOUNT_ID='" . db2_escape_string($accountId)  . "' " : null;
+        return $sql;
+    }
+
+    static function returnPesEventsTable($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null, $start=0, $length=10){
+
+        $sql = self::preparePesEventsStmt($records, $upesRef, $accountId, $start, $length);
+
         $rs = db2_exec($GLOBALS['conn'], $sql);
 
         if(!$rs){
@@ -172,14 +226,12 @@ public $lastSelectSql;
             default:
                 return false;
                 break;
-           }
         }
+    }
 
     function buildTable($records='Active'){
         $allRows = self::returnPesEventsTable($records,self::PES_TRACKER_RETURN_RESULTS_AS_ARRAY);
-        ob_start();
-        ?>
-        <table id='pesTrackerTable' class='table table-striped table-bordered table-condensed '  style='width:100%'>
+        $table = "<table id='pesTrackerTable' class='table table-striped table-bordered table-condensed '  style='width:100%'>
 		<thead>
 		<tr class='' ><th>Person Details</th><th>Account</th><th>Requestor</th>
 		<th >Consent Form</th>
@@ -195,7 +247,7 @@ public $lastSelectSql;
 		<th>Media</th>
 		<th>Membership</th>
 		<th>NI Evidence</th>
-		<th>Process Status</th><th width="15px">PES Status</th><th>Comment</th></tr>
+		<th>Process Status</th><th width='15px'>PES Status</th><th>Comment</th></tr>
 		<tr class='searchingRow wrap'>
 		<td>Email Address</td>
 		<td class='shortSearch'>Account</td>
@@ -215,98 +267,223 @@ public $lastSelectSql;
 		<td class='nonSearchable'>NI Evidence</td>
 		<td>Process Status</td><td class='shortSearch'>PES Status</td><td>Comment</td></tr>
 		</thead>
-		<tbody>
-		<?php
+		<tbody>";
+        $today = new \DateTime();
+        if (count($allRows)>0) {
+            foreach ($allRows as $row){
+                $row = array_map('trim', $row);
+                $date = \DateTime::createFromFormat('Y-m-d', $row['PES_DATE_REQUESTED']);
+                $age  = !empty($row['PES_DATE_REQUESTED']) ?  $date->diff($today)->format('%R%a days') : null ;
+                // $age = !empty($row['PES_DATE_REQUESTED']) ? $interval->format('%R%a days') : null;
+                $cnum = $row['CNUM'];
+                $upesref = $row['UPES_REF'];
+                $accountId = $row['ACCOUNT_ID'];
+                $accountType = $row['ACCOUNT_TYPE'];
+                $account = $row['ACCOUNT'];
+                $fullName = $row['FULL_NAME'];
+                $emailaddress = $row['EMAIL_ADDRESS'];
+                $requestor = $row['PES_REQUESTOR'];
+                $requested = $row['PES_DATE_REQUESTED'];
+                $requestedObj = \DateTime::createFromFormat('Y-m-d', $requested);
+                $requestedDisplay = $requestedObj ? $requestedObj->format('d-m-Y') : $requested;
 
-        foreach ($allRows as $row){
-            $row = array_map('trim', $row);
-            $today = new \DateTime();
-            $date = DateTime::createFromFormat('Y-m-d', $row['PES_DATE_REQUESTED']);
-            $age  = !empty($row['PES_DATE_REQUESTED']) ?  $date->diff($today)->format('%R%a days') : null ;
-            // $age = !empty($row['PES_DATE_REQUESTED']) ? $interval->format('%R%a days') : null;
-            $cnum = $row['CNUM'];
+                $formattedIdentityField = self::formatEmailFieldOnTracker($row);
+                $originalRequestor = $row['PES_REQUESTOR'];
+                $requestor = strlen($row['PES_REQUESTOR']) > 20 ? substr($row['PES_REQUESTOR'],0,20) . "....." : $row['PES_REQUESTOR'];
+                
+                $table .= "<tr class='".$upesref." personDetails' data-upesref='".$upesref."' data-accountid='".$accountId."' data-accounttype='".$accountType."' data-account='".$account."' data-fullname='".$fullName."' data-emailaddress='".$emailaddress."'  data-requestor='".$originalRequestor."'   >
+                <td class='formattedEmailTd'>
+                <div class='formattedEmailDiv'>".$formattedIdentityField."</div>
+                </td>
+                <td>".$row['ACCOUNT']."<br/>".$row['PES_LEVEL']."<br/>".$row['PES_LEVEL_DESCRIPTION']."</td>
+                <td>".$requestor."<br/><small>".$requestedDisplay."<br/>".$age."</small></td>";
+
+                foreach (self::PES_TRACKER_STAGES as $stage) {
+                    $stageValue         = !empty($row[$stage]) ? trim($row[$stage]) : 'TBD';
+                    $stageAlertValue    = self::getAlertClassForPesStage($stageValue);
+                    $table .= "<td class='nonSearchable'>".self::getButtonsForPesStage($stageValue, $stageAlertValue, $stage, $upesref, $accountId)."</td>";
+                }
+                $table .= "<td class='nonSearchable'>
+                <div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' data-upesacc='".$upesref.$accountId."' >".self::formatProcessingStatusCell($row)."</div>
+                <div class='text-center'>
+                <span style='white-space:nowrap' >
+                <a class='btn btn-xs btn-info btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_PES."' data-toggle='tooltip' data-placement='top' title='With PES Team' ><i class='fas fa-users'></i></a>
+                <a class='btn btn-xs btn-info btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_USER."' data-toggle='tooltip' data-placement='top' title='With Applicant' ><i class='fas fa-user'></i></a>
+                <a class='btn btn-xs btn-info btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_REQUESTOR."' data-toggle='tooltip' data-placement='top' title='With Requestor' ><i class='fas fa-male'></i><i class='fas fa-female'></i></a>
+                <a class='btn btn-xs btn-info btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_CRC."' data-toggle='tooltip' data-placement='top' title='Awaiting CRC'><i class='fas fa-gavel'></i></a>
+                <button class='btn btn-info btn-xs btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_UNKOWN."' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></span></button>
+                </span>";
+                
+                $dateLastChased = !empty($row['DATE_LAST_CHASED']) ? DateTime::createFromFormat('Y-m-d', $row['DATE_LAST_CHASED']) : null;
+                
+                // $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d M y') : null;
+                // $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $dateLastChasedFormatted . $this->extractLastChasedLevelFromComment($row['COMMENT']) : $dateLastChasedFormatted;
+                
+                $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d/m/y') : null;
+                $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $dateLastChasedFormatted . $this->extractLastChasedLevelAsNumberFromComment($row['COMMENT']) : $dateLastChasedFormatted;
+                
+                $dateLastChasedWithLevelText = !empty($dateLastChasedWithLevel) ? $dateLastChasedWithLevel : 'Last Chased';
+
+                $alertClass = !empty($row['DATE_LAST_CHASED']) ? self::getAlertClassForPesChasedDate($row['DATE_LAST_CHASED']) : 'alert-info';
+                
+                $table .= "<div class='alert ".$alertClass."'>
+                <p class='pesDateLastChased'>".$dateLastChasedWithLevelText."</p>
+                </div>
+                <span style='white-space:nowrap'>
+                <a class='btn btn-xs btn-info  btnChaser accessPes accessCdi' data-chaser='".self::CHASER_LEVEL_ONE."' data-toggle='tooltip' data-placement='top' title='Chaser One' ><i>1</i></a>
+                <a class='btn btn-xs btn-info  btnChaser accessPes accessCdi' data-chaser='".self::CHASER_LEVEL_TWO."' data-toggle='tooltip' data-placement='top' title='Chaser Two' ><i>2</i></a>
+                <a class='btn btn-xs btn-info  btnChaser accessPes accessCdi' data-chaser='".self::CHASER_LEVEL_THREE."' data-toggle='tooltip' data-placement='top' title='Chaser Three'><i>3</i></a>
+                </span>
+                </div>
+                </td>
+                <td class='nonSearchable pesStatusTd' data-upesacc='".$upesref.$accountId."' data-upesref='".$upesref."'>".AccountPersonRecord::getPesStatusWithButtons($row)."</td>
+                <td class='pesCommentsTd'><textarea rows='3' cols='20'  data-upesref='".$upesref."' data-accountid='".$accountId."' data-accounttype='".$accountType."'></textarea><br/>
+                <button class='btn btn-default btn-xs btnPesSaveComment accessPes accessCdi' data-setpesto='Yes' data-toggle='tooltip' data-placement='top' title='Save Comment' ><span class='glyphicon glyphicon-save' ></span></button>
+                <div class='pesComments' data-upesacc='".$upesref.$accountId."' data-upesref='".$upesref."'><small>".$row['COMMENT']."</small></div>
+                </td>
+                </tr>";
+            }
+        }
+        $table .= "</tbody></table>";
+		return $table;
+    }
+
+    static function recordsFiltered($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null, $predicate=null){
+        $sql = self::preparePesEventsCountStmt($records, $upesRef, $accountId, $predicate);
+
+        $rs = db2_exec($GLOBALS['conn'],$sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+        }
+
+        $row=db2_fetch_assoc($rs);
+
+        // return $row['RECORDSFILTERED'];
+        return $row['COUNTER'];
+    }
+
+    static function totalRows($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null){
+        $sql = self::preparePesEventsCountStmt($records, $upesRef, $accountId);
+
+        $rs = db2_exec($GLOBALS['conn'],$sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+        }
+
+        $row=db2_fetch_assoc($rs);
+
+        // return $row['TOTALROWS'];
+        return $row['COUNTER'];
+    }
+
+    function returnAsArray($records='Active',$returnResultsAs='array',$upesRef=null, $accountId=null, $start=0, $length=10, $predicate=null){
+        
+        $sql = self::preparePesEventsStmt($records, $upesRef, $accountId, $start, $length, $predicate);
+        
+        $resultSet = $this->execute($sql);
+        $resultSet ? null : die("SQL Failed");
+        $allData = array();
+
+        /*
+        while(($row = db2_fetch_assoc($resultSet))==true){
+            $testJson = json_encode($row);
+            if(!$testJson){
+                die('Failed JSON Encode');
+                break; // It's got invalid chars in it that will be a problem later.
+            }
+            $trimmedRow = array_map('trim', $row);
+            // if($withButtons){
+            //     $this->addGlyphicons($trimmedRow);
+            // }
+            $allData[]  = $trimmedRow;
+        }
+        */
+
+        $today = new \DateTime();
+        while(($row = db2_fetch_assoc($resultSet))==true){
+            $row = array_map('trim',$row);
+            
             $upesref = $row['UPES_REF'];
             $accountId = $row['ACCOUNT_ID'];
             $accountType = $row['ACCOUNT_TYPE'];
             $account = $row['ACCOUNT'];
             $fullName = $row['FULL_NAME'];
             $emailaddress = $row['EMAIL_ADDRESS'];
+
+            $formattedIdentityField = self::formatEmailFieldOnTracker($row);
+            $cellContent = "<td class='formattedEmailTd'>
+                <div class='formattedEmailDiv'>".$formattedIdentityField."</div>
+            </td>";
+            $row['PERSON_DETAILS'] = array('display'=>$cellContent, 'sort'=>false);
+
+            $cellContent = "<td>".$row['ACCOUNT']."<br/>".$row['PES_LEVEL']."<br/>".$row['PES_LEVEL_DESCRIPTION']."</td>";
+            $row['ACCOUNT_DETAILS'] = array('display'=>$cellContent, 'sort'=>false);
+
+            $originalRequestor = $row['PES_REQUESTOR'];
+            $requestor = strlen($row['PES_REQUESTOR']) > 20 ? substr($row['PES_REQUESTOR'],0,20) . "....." : $row['PES_REQUESTOR'];
+            
             $requestor = $row['PES_REQUESTOR'];
             $requested = $row['PES_DATE_REQUESTED'];
             $requestedObj = \DateTime::createFromFormat('Y-m-d', $requested);
             $requestedDisplay = $requestedObj ? $requestedObj->format('d-m-Y') : $requested;
 
-            $formattedIdentityField = self::formatEmailFieldOnTracker($row);
-            $originalRequestor = $row['PES_REQUESTOR'];
-            $requestor = strlen($row['PES_REQUESTOR']) > 20 ? substr($row['PES_REQUESTOR'],0,20) . "....." : $row['PES_REQUESTOR'];
+            $date = \DateTime::createFromFormat('Y-m-d', $row['PES_DATE_REQUESTED']);
+            $age  = !empty($row['PES_DATE_REQUESTED']) ?  $date->diff($today)->format('%R%a days') : null ;
             
-            ?>
-            <tr class='<?=$upesref;?> personDetails' data-upesref='<?=$upesref;?>' data-accountid='<?=$accountId;?>' data-accounttype='<?=$accountType;?>' data-account='<?=$account;?>' data-fullname='<?=$fullName;?>' data-emailaddress='<?=$emailaddress;?>'  data-requestor='<?=$originalRequestor;?>'   >
-            <td class='formattedEmailTd'>
-            <div class='formattedEmailDiv'><?=$formattedIdentityField;?></div>
-            </td>
-            <td><?=$row['ACCOUNT']?><br/><?=$row['PES_LEVEL']; ?><br/><?=$row['PES_LEVEL_DESCRIPTION']; ?></td>
-            
-            <td><?=$requestor?><br/><small><?=$requestedDisplay;?><br/><?=$age?></small></td>
+            $cellContent = "<td>".$requestor."<br/><small>".$requestedDisplay."<br/>".$age."</small></td>";
+            $row['REQUESTOR'] = array('display'=>$cellContent, 'sort'=>false);
 
-            <?php
             foreach (self::PES_TRACKER_STAGES as $stage) {
-                $stageValue         = !empty($row[$stage]) ? trim($row[$stage]) : 'TBD';
-                $stageAlertValue    = self::getAlertClassForPesStage($stageValue);
-                ?>
-                <td class='nonSearchable'>
-            	<?=self::getButtonsForPesStage($stageValue, $stageAlertValue, $stage, $upesref, $accountId);?>
-                </td>
-                <?php
+                $stageValue = !empty($row[$stage]) ? trim($row[$stage]) : 'TBD';
+                $stageAlertValue = self::getAlertClassForPesStage($stageValue);
+                $cellContent = "<td class='nonSearchable'>".self::getButtonsForPesStage($stageValue, $stageAlertValue, $stage, $upesref, $accountId, $accountType, $account, $fullName, $emailaddress, $originalRequestor)."</td>";
+                $row[$stage] = array('display'=>$cellContent, 'sort'=>false);
             }
-            ?>
-            <td class='nonSearchable'>
-            <div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' data-upesacc='<?=$upesref.$accountId;?>' ><?=self::formatProcessingStatusCell($row);?></div>
-            <div class='text-center'>
-            <span style='white-space:nowrap' >
-            <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='<?=self::PROCESS_STATUS_PES?>'       data-toggle="tooltip" data-placement="top" title="With PES Team" ><i class="fas fa-users"></i></a>
-            <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='<?=self::PROCESS_STATUS_USER?>'      data-toggle="tooltip" data-placement="top" title="With Applicant" ><i class="fas fa-user"></i></a>
-            <a class="btn btn-xs btn-info  btnProcessStatusChange accessPes accessCdi" 		data-processstatus='<?=self::PROCESS_STATUS_REQUESTOR?>' data-toggle="tooltip" data-placement="top" title="With Requestor" ><i class="fas fa-male"></i><i class="fas fa-female"></i></a>
-            <a class="btn btn-xs btn-info   btnProcessStatusChange accessPes accessCdi" 	data-processstatus='<?=self::PROCESS_STATUS_CRC?>'       data-toggle="tooltip" data-placement="top" title="Awaiting CRC"><i class="fas fa-gavel"></i></a>
-            <button class='btn btn-info btn-xs  btnProcessStatusChange accessPes accessCdi' data-processstatus='<?=self::PROCESS_STATUS_UNKOWN?>'    data-toggle="tooltip"  title="Unknown"><span class="glyphicon glyphicon-erase" ></span></button>
-            </span>
-            <?php
+
             $dateLastChased = !empty($row['DATE_LAST_CHASED']) ? DateTime::createFromFormat('Y-m-d', $row['DATE_LAST_CHASED']) : null;
-            
-            // $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d M y') : null;
-            // $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $dateLastChasedFormatted . $this->extractLastChasedLevelFromComment($row['COMMENT']) : $dateLastChasedFormatted;
             
             $dateLastChasedFormatted = !empty($row['DATE_LAST_CHASED']) ? $dateLastChased->format('d/m/y') : null;
             $dateLastChasedWithLevel = !empty($row['DATE_LAST_CHASED']) ? $dateLastChasedFormatted . $this->extractLastChasedLevelAsNumberFromComment($row['COMMENT']) : $dateLastChasedFormatted;
             
             $dateLastChasedWithLevelText = !empty($dateLastChasedWithLevel) ? $dateLastChasedWithLevel : 'Last Chased';
-
             $alertClass = !empty($row['DATE_LAST_CHASED']) ? self::getAlertClassForPesChasedDate($row['DATE_LAST_CHASED']) : 'alert-info';
-            ?>
-            <div class='alert <?=$alertClass;?>'>
-            <p class='pesDateLastChased'><?=$dateLastChasedWithLevelText?></p>
+            
+            $cellContent = "<td class='nonSearchable'>
+            <div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' data-upesacc='".$upesref.$accountId."' >".self::formatProcessingStatusCell($row)."</div>
+            <div class='text-center'>
+            <span style='white-space:nowrap' data-upesref='".$upesref."' data-accountid='".$accountId."' data-accounttype='".$accountType."' data-account='".$account."' data-fullname='".$fullName."' data-emailaddress='".$emailaddress."'  data-requestor='".$originalRequestor."'>
+            <a class='btn btn-xs btn-info btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_PES."' data-toggle='tooltip' data-placement='top' title='With PES Team' ><i class='fas fa-users'></i></a>
+            <a class='btn btn-xs btn-info btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_USER."' data-toggle='tooltip' data-placement='top' title='With Applicant' ><i class='fas fa-user'></i></a>
+            <a class='btn btn-xs btn-info btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_REQUESTOR."' data-toggle='tooltip' data-placement='top' title='With Requestor' ><i class='fas fa-male'></i><i class='fas fa-female'></i></a>
+            <a class='btn btn-xs btn-info btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_CRC."' data-toggle='tooltip' data-placement='top' title='Awaiting CRC'><i class='fas fa-gavel'></i></a>
+            <button class='btn btn-info btn-xs btnProcessStatusChange accessPes accessCdi' data-processstatus='".self::PROCESS_STATUS_UNKOWN."' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></span></button>
+            </span>
+            <div class='alert ".$alertClass."'>
+            <p class='pesDateLastChased'>".$dateLastChasedWithLevelText."</p>
             </div>
-            <span style='white-space:nowrap' >
-            <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='<?=self::CHASER_LEVEL_ONE;?>'  data-toggle="tooltip" data-placement="top" title="Chaser One" ><i>1</i></a>
-            <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='<?=self::CHASER_LEVEL_TWO;?>'  data-toggle="tooltip" data-placement="top" title="Chaser Two" ><i>2</i></a>
-            <a class="btn btn-xs btn-info  btnChaser accessPes accessCdi" data-chaser='<?=self::CHASER_LEVEL_THREE;?>' data-toggle="tooltip" data-placement="top" title="Chaser Three"><i>3</i></a>
+            <span style='white-space:nowrap' data-upesref='".$upesref."' data-accountid='".$accountId."' data-accounttype='".$accountType."' data-account='".$account."' data-fullname='".$fullName."' data-emailaddress='".$emailaddress."'  data-requestor='".$originalRequestor."'>
+            <a class='btn btn-xs btn-info  btnChaser accessPes accessCdi' data-chaser='".self::CHASER_LEVEL_ONE."' data-toggle='tooltip' data-placement='top' title='Chaser One' ><i>1</i></a>
+            <a class='btn btn-xs btn-info  btnChaser accessPes accessCdi' data-chaser='".self::CHASER_LEVEL_TWO."' data-toggle='tooltip' data-placement='top' title='Chaser Two' ><i>2</i></a>
+            <a class='btn btn-xs btn-info  btnChaser accessPes accessCdi' data-chaser='".self::CHASER_LEVEL_THREE."' data-toggle='tooltip' data-placement='top' title='Chaser Three'><i>3</i></a>
             </span>
             </div>
-            </td>
-            <td class='nonSearchable pesStatusTd' data-upesacc='<?=$upesref.$accountId;?>' data-upesref='<?=$upesref;?>'><?=AccountPersonRecord::getPesStatusWithButtons($row)?></td>
-            <td class='pesCommentsTd'><textarea rows="3" cols="20"  data-upesref='<?=$upesref?>' data-accountid='<?=$accountId?>' data-accounttype='<?=$accountType;?>'></textarea><br/>
-            <button class='btn btn-default btn-xs btnPesSaveComment accessPes accessCdi' data-setpesto='Yes' data-toggle="tooltip" data-placement="top" title="Save Comment" ><span class="glyphicon glyphicon-save" ></span></button>
-            <div class='pesComments' data-upesacc='<?=$upesref.$accountId;?>' data-upesref='<?=$upesref?>'><small><?=$row['COMMENT']?></small></div>
-            </td>
-            </tr>
-        <?php
+            </td>";
+            $row['PROCESS_STATUS'] = array('display'=>$cellContent, 'sort'=>false);
+		    
+            $cellContent = "<td class='nonSearchable pesStatusTd' data-upesacc='".$upesref.$accountId."' data-upesref='".$upesref."'>".AccountPersonRecord::getPesStatusWithButtons($row)."</td>";
+            $row['PES_STATUS'] = array('display'=>$cellContent, 'sort'=>false);
+		    
+            $cellContent = "<td class='pesCommentsTd'><textarea rows='3' cols='20'  data-upesref='".$upesref."' data-accountid='".$accountId."' data-accounttype='".$accountType."'></textarea><br/>
+            <button class='btn btn-default btn-xs btnPesSaveComment accessPes accessCdi' data-setpesto='Yes' data-toggle='tooltip' data-placement='top' title='Save Comment' ><span class='glyphicon glyphicon-save' ></span></button>
+            <div class='pesComments' data-upesacc='".$upesref.$accountId."' data-upesref='".$upesref."'><small>".$row['COMMENT']."</small></div>
+            </td>";
+            $row['COMMENT'] = array('display'=>$cellContent, 'sort'=>false);
+            $allData[] = $row;
         }
-        ?>
-        </tbody>
-		</table>
-		<?php
-		$table = ob_get_clean();
-		return $table;
+
+        return $allData;
     }
     
     function extractLastChasedLevelFromComment($comment){
@@ -330,13 +507,11 @@ public $lastSelectSql;
         <div class='col-sm-8 col-sm-offset-1'>
           <form class="form-horizontal">
   			<div class="form-group">
-    			<label class="control-label col-sm-1" for="pesTrackerTableSearch">Table Search:</label>
+    			<label class="control-label col-sm-1" for="pesTrackerTableSearch">Table Search:</label>                
     			<div class="col-sm-3" >
-      			<input type="text" id="pesTrackerTableSearch" placeholder="Search"  onkeyup=searchTable()  />
+                <input type="text" id="pesTrackerTableSearch" placeholder="Search" onkeyup=searchTable() />
       			<br/>
-
 				</div>
-
     			<label class="control-label col-sm-1" for="pesRecordFilter">Records:</label>
     			<div class="col-sm-4" >
     			<div class="btn-group" role="group" aria-label="Record Selection">
@@ -366,8 +541,13 @@ public $lastSelectSql;
               	<div class="col-sm-1"  >
               	<span style='white-space:nowrap' id='pesDownload' >
 				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTracker.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker</a>
-				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerRecent.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Recent)</a>
-				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerActivePlus.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Active+)</a>
+				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerEmail.php' target='_blank'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker via email</a>
+				
+                <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerRecent.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Recent)</a>
+				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerRecentEmail.php' target='_blank'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Recent) via email</a>
+				
+                <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerActivePlus.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Active+)</a>
+                <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerActivePlusEmail.php' target='_blank'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Active+) via email</a>
 
 				</span>
             	</div>
@@ -375,13 +555,48 @@ public $lastSelectSql;
 		  </form>
 		  </div>
 		</div>
-
 		<div id='pesTrackerTableDiv' class='center-block' width='100%'>
+            <table id='pesTrackerTable' class='table table-striped table-bordered table-condensed '  style='width:100%'>
+                <thead>
+                    <tr class='' ><th>Person Details</th><th>Account</th><th>Requestor</th>
+                    <th >Consent Form</th>
+                    <th>Proof or Right to Work</th>
+                    <th>Proof of ID</th>
+                    <th>Proof of Residence</th>
+                    <th>Credit Check</th>
+                    <th>Financial Sanctions</th>
+                    <th>Criminal Records Check</th>
+                    <th>Proof of Activity</th>
+                    <th>Qualifications</th>
+                    <th>Directors</th>
+                    <th>Media</th>
+                    <th>Membership</th>
+                    <th>NI Evidence</th>
+                    <th>Process Status</th><th width='15px'>PES Status</th><th>Comment</th></tr>
+                    <tr class='searchingRow wrap'>
+                        <td>Email Address</td>
+                        <td class='shortSearch'>Account</td>
+                        <td>Requestor</td>
+                        <td class='nonSearchable'>Consent</td>
+                        <td class='nonSearchable'>Right to Work</td>
+                        <td class='nonSearchable'>ID</td>
+                        <td class='nonSearchable'>Residence</td>
+                        <td class='nonSearchable'>Credit Check</td>
+                        <td class='nonSearchable'>Financial Sanctions</td>
+                        <td class='nonSearchable'>Criminal Records Check</td>
+                        <td class='nonSearchable'>Proof of Activity</td>
+                        <td class='nonSearchable'>Qualifications</td>
+                        <td class='nonSearchable'>Directors</td>
+                        <td class='nonSearchable'>Media</td>
+                        <td class='nonSearchable'>Membership</td>
+                        <td class='nonSearchable'>NI Evidence</td>
+                        <td>Process Status</td><td class='shortSearch'>PES Status</td><td>Comment</td>
+                    </tr>
+                </thead>
+            </table>
 		</div>
 		<?php
     }
-
-
 
     function setPesStageValue($upesref,$account_id, $stage,$stageValue){
         $preparedStmt = $this->prepareStageUpdate($stage);
@@ -533,29 +748,26 @@ public $lastSelectSql;
                 break;
         }
         
+        $emailAddress = strlen($row['EMAIL_ADDRESS']) > 20 ? substr($row['EMAIL_ADDRESS'],0,20) . "....." : $row['EMAIL_ADDRESS'];
 
+        $formattedField = $emailAddress . "<br/><small>";
+        $formattedField.= "<i>" . $row['PASSPORT_FIRST_NAME'] . "&nbsp;<b>" . $row['PASSPORT_LAST_NAME'] . "</b></i><br/>";
+        $formattedField.= $row['FULL_NAME'] . "</b></small><br/>Ref: " . $row['UPES_REF'];
+        $formattedField.= "<br/>CNUM: " . $row['CNUM'];
+        $formattedField.= "<br/>" . $row['IBM_STATUS'] . ":" . $row['COUNTRY'];
+        $formattedField.= "<br/>Resides:&nbsp;" . $row['COUNTRY_OF_RESIDENCE'];
+        $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
 
-       $emailAddress = strlen($row['EMAIL_ADDRESS']) > 20 ? substr($row['EMAIL_ADDRESS'],0,20) . "....." : $row['EMAIL_ADDRESS'];
-
-       $formattedField = $emailAddress . "<br/><small>";
-       $formattedField.= "<i>" . $row['PASSPORT_FIRST_NAME'] . "&nbsp;<b>" . $row['PASSPORT_LAST_NAME'] . "</b></i><br/>";
-       $formattedField.= $row['FULL_NAME'] . "</b></small><br/>Ref: " . $row['UPES_REF'];
-       $formattedField.= "<br/>CNUM: " . $row['CNUM'];
-       $formattedField.= "<br/>" . $row['IBM_STATUS'] . ":" . $row['COUNTRY'];
-       $formattedField.= "<br/>Resides:&nbsp;" . $row['COUNTRY_OF_RESIDENCE'];
-       $formattedField.= "<div class='alert $alertClass priorityDiv'>Priority:" . $priority . "</div>";
-
-       $formattedField.="<span style='white-space:nowrap' >
-           <button class='btn btn-xs btn-danger  btnPesPriority accessPes accessCdi' data-pespriority='1'  data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='High' ><span class='glyphicon glyphicon-king' ></button>
-           <button class='btn btn-xs btn-warning btnPesPriority accessPes accessCdi' data-pespriority='2' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='Medium' ><span class='glyphicon glyphicon-knight' ></button>
-           <button class='btn btn-xs btn-success btnPesPriority accessPes accessCdi' data-pespriority='3' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='Low'><span class='glyphicon glyphicon-pawn' ></button>
-           <button class='btn btn-xs btn-info    btnPesPriority accessPes accessCdi' data-pespriority='99'    data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></button>
-           </span>";
+        $formattedField.="<span style='white-space:nowrap' >
+            <button class='btn btn-xs btn-danger  btnPesPriority accessPes accessCdi' data-pespriority='1'  data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='High' ><span class='glyphicon glyphicon-king' ></button>
+            <button class='btn btn-xs btn-warning btnPesPriority accessPes accessCdi' data-pespriority='2' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='Medium' ><span class='glyphicon glyphicon-knight' ></button>
+            <button class='btn btn-xs btn-success btnPesPriority accessPes accessCdi' data-pespriority='3' data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='Low'><span class='glyphicon glyphicon-pawn' ></button>
+            <button class='btn btn-xs btn-info    btnPesPriority accessPes accessCdi' data-pespriority='99'    data-upesref='" . $row['UPES_REF'] ."' data-accountid='" . $row['ACCOUNT_ID'] . "' data-accounttype='" . $row['ACCOUNT_TYPE'] . "' data-toggle='tooltip'  title='Unknown'><span class='glyphicon glyphicon-erase' ></button>
+            </span>";
 
 
         return $formattedField;
     }
-
 
     static function getAlertClassForPesStage($pesStageValue=null){
         switch ($pesStageValue) {
@@ -594,19 +806,18 @@ public $lastSelectSql;
         return $alertClass;
     }
 
-    static function getButtonsForPesStage($value, $alertClass, $stage, $upesref, $accountid){
-        ?>
-        <div class='alert <?=$alertClass;?> text-center pesStageDisplay' role='alert' ><?=$value;?></div>
-        <div class='text-center columnDetails' data-pescolumn='<?=$stage?>' >
-        <span style='white-space:nowrap' >
-        <button class='btn btn-success btn-xs btnPesStageValueChange accessPes accessCdi'  data-setpesto='Yes' data-toggle="tooltip" data-placement="top" title="Cleared" ><span class="glyphicon glyphicon-ok-sign" ></span></button>
-  		<button class='btn btn-warning btn-xs btnPesStageValueChange accessPes accessCdi'  data-setpesto='Prov' data-toggle="tooltip"  title="Stage Cleared Provisionally"><span class="glyphicon glyphicon-alert" ></span></button>
+    static function getButtonsForPesStage($value, $alertClass, $stage, $upesref='', $accountId='', $accountType='', $account='', $fullName='', $emailaddress='', $originalRequestor=''){
+        $content = "<div class='alert ".$alertClass." text-center pesStageDisplay' role='alert' >".$value."</div>
+        <div class='text-center columnDetails' data-pescolumn='".$stage."' >
+        <span style='white-space:nowrap' data-upesref='".$upesref."' data-accountid='".$accountId."' data-accounttype='".$accountType."' data-account='".$account."' data-fullname='".$fullName."' data-emailaddress='".$emailaddress."'  data-requestor='".$originalRequestor."'>
+        <button class='btn btn-success btn-xs btnPesStageValueChange accessPes accessCdi' data-setpesto='Yes' data-toggle='tooltip' data-placement='top' title='Cleared' ><span class='glyphicon glyphicon-ok-sign'></span></button>
+  		<button class='btn btn-warning btn-xs btnPesStageValueChange accessPes accessCdi' data-setpesto='Prov' data-toggle='tooltip' title='Stage Cleared Provisionally'><span class='glyphicon glyphicon-alert'></span></button>
 	  	<br/>
-	  	<button class='btn btn-default btn-xs btnPesStageValueChange accessPes accessCdi' data-setpesto='N/A' data-toggle="tooltip"  title="Not applicable"><span class="glyphicon glyphicon-remove-sign" ></span></button>
-	  	<button class='btn btn-info btn-xs btnPesStageValueChange accessPes accessCdi'    data-setpesto='TBD' data-toggle="tooltip"  title="Clear Field"><span class="glyphicon glyphicon-erase" ></span></button>
+	  	<button class='btn btn-default btn-xs btnPesStageValueChange accessPes accessCdi' data-setpesto='N/A' data-toggle='tooltip' title='Not applicable'><span class='glyphicon glyphicon-remove-sign'></span></button>
+	  	<button class='btn btn-info btn-xs btnPesStageValueChange accessPes accessCdi' data-setpesto='TBD' data-toggle='tooltip' title='Clear Field'><span class='glyphicon glyphicon-erase'></span></button>
 	  	</span>
-	  	</div>
-        <?php
+	  	</div>";
+        return $content;
     }
 
     function prepareProcessStatusUpdate(){
@@ -720,11 +931,11 @@ public $lastSelectSql;
         // in_array($upesref, $cnums) ? $cnum = $cnums[$upesref] : $cnum = '';
         array_key_exists($upesref, $cnums) ? $cnum = $cnums[$upesref] : $cnum = '';
 
-        // in_array($status,AccountPersonRecord::$pesAuditableStatus) ? PesStatusAuditTable::insertRecord($cnum, $emails[$upesref], $accounts[$accountid], $status, $dateToUse) : null;
-        
+        in_array($status,AccountPersonRecord::$pesAuditableStatus) ? PesStatusAuditTable::insertRecord($cnum, $emails[$upesref], $accounts[$accountid], $status, $dateToUse) : null;
+        /*
+        $now = new \DateTime();
+        $updateDate = $now->format('Y-m-d');
         if(in_array($status,AccountPersonRecord::$pesAuditableStatus)) {
-            $now = new \DateTime();
-            $updateDate = $now->format('Y-m-d H:i:s.u');
             $pesStatusAuditRecord = new PesStatusAuditRecord();
             $pesStatusAuditRecord->setFromArray(
                 array(
@@ -740,6 +951,7 @@ public $lastSelectSql;
             $pesStatusAuditTable = new PesStatusAuditTable(AllTables::$PES_STATUS_AUDIT);
             $pesStatusAuditTable->saveRecord($pesStatusAuditRecord);
         }
+        */
         db2_commit($GLOBALS['conn']);
         db2_autocommit($GLOBALS['conn'],$db2AutoCommit);
 
@@ -820,8 +1032,7 @@ public $lastSelectSql;
 
     function getTracker($records=self::PES_TRACKER_RECORDS_ACTIVE, Spreadsheet $spreadsheet){
         $sheet = 1;
-
-        $rs = self::returnPesEventsTable($records, self::PES_TRACKER_RETURN_RESULTS_AS_RESULT_SET);
+        $rs = self::returnPesEventsTable($records, self::PES_TRACKER_RETURN_RESULTS_AS_RESULT_SET, null, null, 0, -1);
 
         if($rs){
             set_time_limit(62);
@@ -870,26 +1081,26 @@ public $lastSelectSql;
             case AccountPersonRecord::PES_STATUS_CANCEL_REQ:
             case AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED:
                 $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
-                                  <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
-                                </button>";
+                    <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
+                </button>";
                 $row['ACTION'].= "<br/>";
                 $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId  . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded .  "' data-toggle='tooltip' title='$onOrOffBoardingTitle' >
-                                  <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . "'></span>
-                                  </button>";
+                    <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . "'></span>
+                </button>";
                 break;
 
              default:
                  $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs editPerson accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-upesref='" . $upesref . "' data-toggle='tooltip' title='Edit Person' >
-                                  <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
-                                </button>";
+                    <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
+                </button>";
                 $row['ACTION'].= "&nbsp;";
                 $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "' data-toggle='tooltip' title='Cancel PES Request' >
-                                  <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
-                                  </button>";
+                    <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
+                </button>";
                 $row['ACTION'].= "<br/>";
                 $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded. "' data-toggle='tooltip' title='$onOrOffBoardingTitle' >
-                                  <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . $boarded . "'></span>
-                                  </button>";
+                    <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . $boarded . "'></span>
+                </button>";
                 break;
         }
 
@@ -915,8 +1126,8 @@ public $lastSelectSql;
         $pesLevel = $row['PES_LEVEL'];
         $pesLevelRef = $row['PES_LEVEL_REF'];
         $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "' data-plupesref='" . $upesref . "' data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "'  data-plRequestor='" . $requestor ."'  data-plClearedDate='" . $clearedDateDisplay ."'  data-plRecheckDate='" . $recheckDateDisplay ."' data-toggle='tooltip' title='Edit Request Details' >
-                          <span class='glyphicon glyphicon-edit aria-hidden='true' ></span>
-                          </button>&nbsp;" . $pesLevel;
+            <span class='glyphicon glyphicon-edit aria-hidden='true' ></span>
+        </button>&nbsp;" . $pesLevel;
 
         $processingStatus = $row['PROCESSING_STATUS'];
         $processingStatusChanged = $row['PROCESSING_STATUS_CHANGED'];
