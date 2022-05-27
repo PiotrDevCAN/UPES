@@ -498,7 +498,11 @@ public $lastSelectSql;
         $findChasedComment = strpos($comment, 'Automated PES Chaser Level');
         $level = substr($comment, $findChasedComment+27,6);
         $level = substr($level,0,strpos($level," "));
-        return " <b>(" . self::LEVEL_MAP_NUMBER[$level] . ")</b>";
+        if(array_key_exists($level, self::LEVEL_MAP_NUMBER)) {
+            return " <b>(" . self::LEVEL_MAP_NUMBER[$level] . ")</b>";
+        } else {
+            return " <b>Unknown</b>";
+        }
     }
 
     function displayTable($records='Active Initiated'){
