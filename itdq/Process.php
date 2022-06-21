@@ -24,6 +24,9 @@ class Process{
         $command = 'nohup '.$this->command.' > /dev/null 2>&1 & echo $!';
         $op = null;
         exec($command ,$op);
+        
+        error_log("Process runCom:" . print_r($op,true));
+
         $this->pid = (int)$op[0];
     }
 
