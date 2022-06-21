@@ -21,7 +21,8 @@ trigger_error("Fatal error", E_USER_ERROR);
 
 if (isset($argv[1])) {
 
-    $_SESSION['ssoEmail'] = trim($argv[1]);
+    $toEmail = trim($argv[1]);
+    // $_SESSION['ssoEmail'] = trim($argv[1]);
     $trackerType = strtolower(trim($argv[2]));
     switch ($trackerType) {
         case 'active_requested':
@@ -60,40 +61,40 @@ if (isset($argv[1])) {
         ->setDescription('uPES Tracker')
         ->setKeywords('office 2007 openxml php upes tracker')
         ->setCategory('uPES Tracker');
-    // Add some data
+        // Add some data
 
     $now = new DateTime();
 
     $pesTrackerTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 
     try {
-        $pesTrackerTable->getTracker($type, $spreadsheet);
-        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
-        $spreadsheet->setActiveSheetIndex(0);
-        // Redirect output to a client�s web browser (Xlsx)
-        DbTable::autoSizeColumns($spreadsheet);
-        $fileNameSuffix = $now->format('Ymd_His');
-        $fileNamePart = $title . $fileNameSuffix . '.xlsx';
-        $fileName = '../extracts/'.$fileNamePart;
+        // $pesTrackerTable->getTracker($type, $spreadsheet);
+        // // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        // $spreadsheet->setActiveSheetIndex(0);
+        // // Redirect output to a client�s web browser (Xlsx)
+        // DbTable::autoSizeColumns($spreadsheet);
+        // $fileNameSuffix = $now->format('Ymd_His');
+        // $fileNamePart = $title . $fileNameSuffix . '.xlsx';
+        // $fileName = '../extracts/'.$fileNamePart;
 
-        // ob_clean();
-        // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        // header('Content-Disposition: attachment;filename="PES_Tracker_' . $fileNameSuffix . '.xlsx"');
-        // header('Cache-Control: max-age=0');
-        // // If you're serving to IE 9, then the following may be needed
-        // header('Cache-Control: max-age=1');
-        // // If you're serving to IE over SSL, then the following may be needed
-        // header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        // header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-        // header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        // header('Pragma: public'); // HTTP/1.0
-        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-        // $writer->save('php://output');
-        $writer->save($fileName);
+        // // ob_clean();
+        // // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        // // header('Content-Disposition: attachment;filename="PES_Tracker_' . $fileNameSuffix . '.xlsx"');
+        // // header('Cache-Control: max-age=0');
+        // // // If you're serving to IE 9, then the following may be needed
+        // // header('Cache-Control: max-age=1');
+        // // // If you're serving to IE over SSL, then the following may be needed
+        // // header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        // // header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        // // header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        // // header('Pragma: public'); // HTTP/1.0
+        // $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        // // $writer->save('php://output');
+        // $writer->save($fileName);
 
         // $excelOutput = ob_get_clean();
 
-        $toEmail = array($_SESSION['ssoEmail']);
+        // $toEmail = array($_SESSION['ssoEmail']);
         $subject = 'The tracker report RAW extract';
         
         $extractRequestEmail = 'Hello &&requestor&&,
@@ -111,17 +112,18 @@ if (isset($argv[1])) {
 
         $pesTaskid = 'atm.pes.processing@uk.ibm.com';
 
-        $handle = fopen($fileName, "r", true);
-        $applicationForm = fread($handle, filesize($fileName));
-        fclose($handle);
-        $encodedAttachmentFile = base64_encode($applicationForm);
+        $pesAttachments = array();
+        // $handle = fopen($fileName, "r", true);
+        // $applicationForm = fread($handle, filesize($fileName));
+        // fclose($handle);
+        // $encodedAttachmentFile = base64_encode($applicationForm);
 
-        $pesAttachments[] = array(
-            'filename'=>$title . $fileNameSuffix . '.xlsx',
-            'content_type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'data'=>$encodedAttachmentFile,
-            'path'=>$fileName
-        );
+        // $pesAttachments[] = array(
+        //     'filename'=>$title . $fileNameSuffix . '.xlsx',
+        //     'content_type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        //     'data'=>$encodedAttachmentFile,
+        //     'path'=>$fileName
+        // );
 
         $sendResponse = BlueMail::send_mail($toEmail, $subject, $emailBody, $pesTaskid, array(), array(), false, $pesAttachments);
 
