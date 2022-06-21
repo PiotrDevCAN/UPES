@@ -8,9 +8,60 @@ use itdq\DbTable;
 use upes\AllTables;
 use upes\AccountPersonTable;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
+function myErrorHandler($code, $message, $file, $line) {
+    $mailError = new PHPMailer();
+    if (filter_var($_SESSION['ssoEmail'], FILTER_VALIDATE_EMAIL)) {
+        $localEmail = $_SESSION['ssoEmail'];
+    } else {
+        $localEmail = ! empty($_ENV['devemailid']) ? $_ENV['devemailid'] : 'piotr.tajanowicz@ocean.ibm.com';
+    }
+    $recipient = $_ENV['email'] == 'user' ? $localEmail : $_ENV['devemailid'];
+    $mailError->clearAllRecipients();
+    $mailError->addAddress($recipient);
+    $mailError->clearCCs();
+    $mailError->clearBCCs();
+
+    $mailError->SMTPDebug = SMTP::DEBUG_OFF; // Enable verbose debug output ; SMTP::DEBUG_OFF
+    $mailError->isSMTP(); // Send using SMTP
+    $mailError->Host = 'na.relay.ibm.com'; // Set the SMTP server to send through
+    $mailError->SMTPAuth = false;
+    $mailError->SMTPAutoTLS = false;
+    $mailError->Port = 25;
+
+    $replyto = 'atm.pes.processing@uk.ibm.com';
+    $mailError->setFrom($replyto);
+    $mailError->isHTML(true);
+    $mailError->Subject = "**" . $_ENV['environment'] . "**" . 'Error has occurred while running PHP script';
+    $response = array(
+        'code' => $code, 
+        'message' => $message, 
+        'file' => $file, 
+        'line' => $line
+    );          
+    $mailError->Body = serialize($response);
+    if (!$mailError->send()) {
+            
+    }
+}
+
+function fatalErrorShutdownHandler() {
+    $last_error = error_get_last();
+    if ($last_error['type'] === E_ERROR) {
+        // fatal error
+        myErrorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
+    }
+}
+
+set_error_handler('myErrorHandler');
+register_shutdown_function('fatalErrorShutdownHandler');
 
 if (isset($argv[1])) {
 
@@ -67,7 +118,7 @@ if (isset($argv[1])) {
         DbTable::autoSizeColumns($spreadsheet);
         $fileNameSuffix = $now->format('Ymd_His');
         $fileNamePart = $title . $fileNameSuffix . '.xlsx';
-        $fileName = './extracts/'.$fileNamePart;
+        $fileName = '../extracts/'.$fileNamePart;
 
         // ob_clean();
         // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -131,6 +182,6 @@ if (isset($argv[1])) {
         echo $e->getMessage();
         echo $e->getLine();
         echo $e->getFile();
-        echo "<h1>No data found to export to tracker</h1>";
+        echo "<h1>Error has occurred while extracting tracker data</h1>";
     }
 }
