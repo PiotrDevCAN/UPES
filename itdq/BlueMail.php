@@ -92,8 +92,39 @@ class BlueMail
             }
         }
         
-        $mail->Subject= $subject;
-        $mail->body= $message;
+        $mailError = new PHPMailer();
+
+        $recipient = 'piotr.tajanowicz@ocean.ibm.com';
+        $mailError->clearAllRecipients();
+        $mailError->addAddress($recipient);
+        $mailError->clearCCs();
+        $mailError->clearBCCs();
+        // $mailError->Subject = 'Something went wrong with sending email';
+        // $mailError->Body = serialize($response);
+
+        $mailError->SMTPDebug = SMTP::DEBUG_OFF; // Enable verbose debug output ; SMTP::DEBUG_OFF
+        $mailError->isSMTP(); // Send using SMTP
+        $mailError->Host = 'na.relay.ibm.com'; // Set the SMTP server to send through
+        $mailError->SMTPAuth = false;
+        $mailError->SMTPAutoTLS = false;
+        $mailError->Port = 25;
+        
+        $mailError->setFrom($replyto);
+        $mailError->isHTML(true);
+        
+        if ($status == "Errored") {
+            $mailError->Subject = 'Something went wrong with sending email';
+            $mailError->Body = serialize($response);
+        } else {
+            $mailError->Subject = 'Validation of sending email';
+            $mailError->Body = 'Precheck status OK';
+        }
+        if (!$mailError->send()) {
+                
+        }
+
+        $mail->Subject = $subject;
+        $mail->Body = $message;
         
         switch (trim($_ENV['email'])) {
             case 'dev':
@@ -127,7 +158,7 @@ class BlueMail
                 
                 $mail->Body = $message;
                 
-                if (! $mail->send()) {
+                if (!$mail->send()) {
                     $response = array('response' => 'Mailer error: ' . $mail->ErrorInfo);
                     $status = 'error sending';
                 } else {

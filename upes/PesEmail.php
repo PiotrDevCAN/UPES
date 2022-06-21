@@ -47,7 +47,10 @@ class PesEmail {
 
     const EMAIL_SUBJECT          = "IBM Confidential: URGENT - &&account_name&&  Pre Employment Screening- &&serial_number&& &&candidate_name&&";
 
-    static private $notifyPesEmailAddresses = array('to'=>array('carrabooth@uk.ibm.com'),'cc'=>array('Rsmith1@uk.ibm.com'));
+    static private $notifyPesEmailAddresses = array(
+        'to'=>array('carrabooth@uk.ibm.com'),
+        'cc'=>array('Rsmith1@uk.ibm.com')
+);
 
     static private function checkIfIsKyndryl(){
         $isKyndryl = stripos($_ENV['environment'], 'newco');
