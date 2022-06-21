@@ -110,7 +110,7 @@ if (isset($argv[1])) {
         $encodedAttachmentFile = base64_encode($applicationForm);
 
         $pesAttachments[] = array(
-            'filename'=>'PES_Tracker_' . $fileNameSuffix . '.xlsx',
+            'filename'=>$title . $fileNameSuffix . '.xlsx',
             'content_type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'data'=>$encodedAttachmentFile,
             'path'=>$fileName
