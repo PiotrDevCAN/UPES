@@ -513,7 +513,7 @@ public $lastSelectSql;
   			<div class="form-group">
     			<label class="control-label col-sm-1" for="pesTrackerTableSearch">Table Search:</label>                
     			<div class="col-sm-3" >
-                <input type="text" id="pesTrackerTableSearch" placeholder="Search" onkeyup=searchTable() />
+                <input type="text" id="pesTrackerTableSearch" placeholder="Search"/>
       			<br/>
 				</div>
     			<label class="control-label col-sm-1" for="pesRecordFilter">Records:</label>

@@ -161,6 +161,7 @@ class manageAccounts {
 			}
 		});
 	}
+	
 	listenForKeyUpAndChangeTaskId() {
 		$(document).on('keyup change', '#TASKID', function (e) {
 			var emailAddress = $('#TASKID').val();

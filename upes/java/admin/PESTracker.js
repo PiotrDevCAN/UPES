@@ -12,6 +12,12 @@ import cancelPES from '../modules/cancelPESRequestBox.js';
 import commentBox from '../modules/commentBox.js';
 import extractTrackerBox from '../modules/extractTrackerBox.js';
 
+$.expr[":"].contains = $.expr.createPseudo(function(arg) {
+    return function( elem ) {
+        return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+    };
+});
+
 class PESTracker {
 
     trackerTable;
@@ -23,6 +29,7 @@ class PESTracker {
         this.listenForBtnRecordSelection(); // PAGE filtering keep where it is now
         this.listenForFilterPriority(); // PAGE filtering keep where it is now
         this.listenForFilterProcess(); // PAGE filtering keep where it is now
+        this.listenForKeyUpPesTrackerTableSearch();
 
         console.log($('button[name=pesRecordFilter]:checked'));
         console.log($('button[name=pesRecordFilter]:checked').val());
@@ -32,6 +39,17 @@ class PESTracker {
         console.log($('.btnRecordSelection:checked'));
 
         console.log('--- Function --- PESTracker.constructor');
+    }
+
+    searchTable() {
+        var filter = $('#pesTrackerTableSearch').val();
+        var table = this.trackerTable;
+    
+        if(filter.length > 3){
+            table.search( filter ).draw();
+        } else {
+            table.search('').draw();
+        }
     }
 
     populatePesTracker() {
@@ -167,6 +185,13 @@ class PESTracker {
             $('th').parent('tr').show();
         });
     }
+
+    listenForKeyUpPesTrackerTableSearch() {
+        var $this = this;
+		$(document).on('keyup', '#pesTrackerTableSearch', function (e) {
+            $this.searchTable();
+		});
+	}
 }
 
 const PesTracker = new PESTracker();

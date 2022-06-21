@@ -16,49 +16,51 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-function myErrorHandler($code, $message, $file, $line) {
-    $mailError = new PHPMailer();
-    if (filter_var($_SESSION['ssoEmail'], FILTER_VALIDATE_EMAIL)) {
-        $localEmail = $_SESSION['ssoEmail'];
-    } else {
-        $localEmail = ! empty($_ENV['devemailid']) ? $_ENV['devemailid'] : 'piotr.tajanowicz@ocean.ibm.com';
-    }
-    $recipient = $_ENV['email'] == 'user' ? $localEmail : $_ENV['devemailid'];
-    $mailError->clearAllRecipients();
-    $mailError->addAddress($recipient);
-    $mailError->clearCCs();
-    $mailError->clearBCCs();
+require_once("../php/errorHandlers.php");
 
-    $mailError->SMTPDebug = SMTP::DEBUG_OFF; // Enable verbose debug output ; SMTP::DEBUG_OFF
-    $mailError->isSMTP(); // Send using SMTP
-    $mailError->Host = 'na.relay.ibm.com'; // Set the SMTP server to send through
-    $mailError->SMTPAuth = false;
-    $mailError->SMTPAutoTLS = false;
-    $mailError->Port = 25;
+// function myErrorHandler($code, $message, $file, $line) {
+//     $mailError = new PHPMailer();
+//     if (filter_var($_SESSION['ssoEmail'], FILTER_VALIDATE_EMAIL)) {
+//         $localEmail = $_SESSION['ssoEmail'];
+//     } else {
+//         $localEmail = ! empty($_ENV['devemailid']) ? $_ENV['devemailid'] : 'piotr.tajanowicz@ocean.ibm.com';
+//     }
+//     $recipient = $_ENV['email'] == 'user' ? $localEmail : $_ENV['devemailid'];
+//     $mailError->clearAllRecipients();
+//     $mailError->addAddress($recipient);
+//     $mailError->clearCCs();
+//     $mailError->clearBCCs();
 
-    $replyto = 'atm.pes.processing@uk.ibm.com';
-    $mailError->setFrom($replyto);
-    $mailError->isHTML(true);
-    $mailError->Subject = "**" . $_ENV['environment'] . "**" . 'Error has occurred while running PHP script';
-    $response = array(
-        'code' => $code, 
-        'message' => $message, 
-        'file' => $file, 
-        'line' => $line
-    );          
-    $mailError->Body = serialize($response);
-    if (!$mailError->send()) {
+//     $mailError->SMTPDebug = SMTP::DEBUG_OFF; // Enable verbose debug output ; SMTP::DEBUG_OFF
+//     $mailError->isSMTP(); // Send using SMTP
+//     $mailError->Host = 'na.relay.ibm.com'; // Set the SMTP server to send through
+//     $mailError->SMTPAuth = false;
+//     $mailError->SMTPAutoTLS = false;
+//     $mailError->Port = 25;
+
+//     $replyto = 'atm.pes.processing@uk.ibm.com';
+//     $mailError->setFrom($replyto);
+//     $mailError->isHTML(true);
+//     $mailError->Subject = "**" . $_ENV['environment'] . "**" . 'Error has occurred while running PHP script';
+//     $response = array(
+//         'code' => $code, 
+//         'message' => $message, 
+//         'file' => $file, 
+//         'line' => $line
+//     );          
+//     $mailError->Body = serialize($response);
+//     if (!$mailError->send()) {
             
-    }
-}
+//     }
+// }
 
-function fatalErrorShutdownHandler() {
-    $last_error = error_get_last();
-    if ($last_error['type'] === E_ERROR) {
-        // fatal error
-        myErrorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
-    }
-}
+// function fatalErrorShutdownHandler() {
+//     $last_error = error_get_last();
+//     if ($last_error['type'] === E_ERROR) {
+//         // fatal error
+//         myErrorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
+//     }
+// }
 
 set_error_handler('myErrorHandler');
 register_shutdown_function('fatalErrorShutdownHandler');
