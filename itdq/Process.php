@@ -55,8 +55,7 @@ class Process{
     }
 
     public function stop(){
-        // $command = 'kill '.$this->pid;
-        $command = '/var/www/htdocs/soiwapi/UMAP/perl/runSQLasSOIW '.$this->pid;
+        $command = 'kill '.$this->pid;
         exec($command);
         if ($this->status() == false) {
             return true;

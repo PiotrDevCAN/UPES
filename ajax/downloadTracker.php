@@ -1,8 +1,6 @@
 <?php
 use itdq\AuditTable;
 use itdq\Process;
-use upes\AccountPersonTable;
-use upes\AllTables;
 
 ob_start();
 AuditTable::audit("Invoked:<b>" . __FILE__ . "</b>Parms:<pre>" . print_r($_POST,true) . "</b>",AuditTable::RECORD_TYPE_DETAILS);
@@ -19,7 +17,13 @@ if (!empty($type)) {
         $process = new Process($cmd);
         $pid = $process->getPid();
         $success = true;
-        $messages = "<h4>Tracker Extract script has succeeded</h4>";
+        $messages = "<h4>Tracker Extract script has succeeded ".$pid."</h4>";
+        sleep(20);
+        if ($process->status()) {
+            $messages .= "<br.>Process is running";
+        } else {
+            $messages .= "<br.>Process is not running";        
+        }
         $messages .= "<br/>PES Tracker type: <b>" . $type . "</b>";
         $messages .= "<br/>An extract file will be sent to: <b>" . $email . "</b> shortly.";
     } catch (Exception $exception) {
