@@ -42,8 +42,8 @@ $tracker        = new NavBarOption('Tracker','pc_pesTracker.php','accessCdi acce
 $mailConvert    = new NavBarOption('Notes ID to Email','pa_mailConvert.php','accessCdi accessPesTeam');
 $manualStatus   = new NavBarOption('Manual Status update','pa_statusUpdate.php','accessCdi accessPesTeam');
 $pesStatusAudit = new NavBarOption('PES Status Change Log','pa_statusChangeLog.php','accessCdi accessPesTeam');
-$BPLookUp       = new NavbarOption('Blue Pages Lookup Form','pa_BPLookupForm.php','accessCdi accessPesTeam');
-$uploadPerson   = new NavbarOption('Person Data Update form','pc_otPersonDataUpload.php','accessCdi accessPesTeam');
+// $BPLookUp       = new NavbarOption('Blue Pages Lookup Form','pa_BPLookupForm.php','accessCdi accessPesTeam');
+$uploadPerson   = new NavbarOption('Person Data Update Form','pc_otPersonDataUpload.php','accessCdi accessPesTeam');
 $admin->addOption($accounts);
 $admin->addOption($contracts);
 $admin->addOption($pesLevels);
@@ -52,7 +52,7 @@ $admin->addOption($tracker);
 $admin->addOption($mailConvert);
 $admin->addOption($manualStatus);
 $admin->addOption($pesStatusAudit);
-$admin->addOption($BPLookUp);
+// $admin->addOption($BPLookUp);
 $admin->addOption($uploadPerson);
 
 $user          = new NavBarMenu("uPES",'accessCdi accessPesTeam accessUser ' );
@@ -101,7 +101,8 @@ $_SESSION['isUser']      = !empty($isUser)    ? true : false;
 $plannedOutagesId = str_replace(" ","_",$plannedOutagesLabel);
 
 ?>
-<script>
+<script type="text/javascript">
+
 $('.navbarMenuOption')<?=$isCdi?><?=$isPesTeam?><?=$isUser?>.remove();
 $('.navbarMenu').not(':has(li)').remove();
 
@@ -126,6 +127,10 @@ if($page != "index.php"
 }
 
 ?>
+
+var isCdi = '<?=$_SESSION['isCdi'];?>'; 
+var isPesTeam = '<?=$_SESSION['isPesTeam'];?>';
+var isUser = '<?=$_SESSION['isUser'];?>';
 
 $(document).ready(function () {
 

@@ -1,11 +1,7 @@
 <?php
-use itdq\Loader;
-use vbac\personRecord;
-use itdq\BluePages;
-use vbac\personTable;
-use vbac\allTables;
+
+use upes\AllTables;
 use itdq\AuditTable;
-use itdq\DbTable;
 use itdq\slack;
 use upes\AccountPersonTable;
 
@@ -16,7 +12,7 @@ $slack->sendMessageToChannel("PES Recheck email to PES Team - invoked.", slack::
 
 set_time_limit(60);
 
-$accountPersonTable = new AccountPersonTable(\upes\AllTables::$ACCOUNT_PERSON);
+$accountPersonTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 $accountPersonTable->notifyRecheckDateApproaching();
 
 AuditTable::audit("PES Recheck email to PES Team - completed.",AuditTable::RECORD_TYPE_DETAILS);

@@ -3,7 +3,6 @@ use PhpOffice\PhpSpreadsheet\Helper\Sample;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use itdq\DbTable;
-use itdq\Loader;
 use upes\AccountPersonTable;
 use upes\AllTables;
 // require_once __DIR__ . '/../../src/Bootstrap.php';
@@ -29,7 +28,7 @@ $spreadsheet->getProperties()->setCreator('vBAC')
 
 $now = new DateTime();
 
-$pesTrackerTable = new AccountPersonTable(\upes\AllTables::$ACCOUNT_PERSON);
+$pesTrackerTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 
 try {
     $pesTrackerTable->getTracker(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_PLUS, $spreadsheet);

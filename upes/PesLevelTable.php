@@ -67,7 +67,6 @@ class PesLevelTable extends DbTable
               </button>";
     }
 
-
     static function prepareJsonArraysForPesSelection(){
         $loader = new Loader();
         $pesLevels = $loader->loadIndexed('PES_LEVEL','PES_LEVEL_REF',AllTables::$PES_LEVELS);

@@ -9,6 +9,6 @@ Please return the following documents:
 </ul>
 <p>Please note, you may be required to submit further documention.
 <p>If you have any other questions, you do not have any of the listed documents or are unsure about the process please contact the PES Team.</p>
-<p>Many Thanks for your cooperation</p>
+<p>Many thanks for your cooperation</p>
 <h3>UKI FSS PES Team</h3>
 endOfEmailBody;

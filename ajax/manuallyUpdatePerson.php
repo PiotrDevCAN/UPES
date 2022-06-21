@@ -23,7 +23,7 @@ try {
     $upesRef = $references[0];
     $accountId = $references[1];
 
-    $accountPersonTable->setPesStatus($upesRef,$accountId,$_POST['status'],$_SESSION['ssoEmail'], null, $_POST['pes_date_db2']);
+    $accountPersonTable->setPesStatus($upesRef,$accountId,$_POST['status'],$_SESSION['ssoEmail'], null, $_POST['PES_DATE_RESPONDED']);
 
     if(trim($_POST['emailNotification'])!='suppress'){
         switch ($_POST['status']) {

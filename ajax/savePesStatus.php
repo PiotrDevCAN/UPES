@@ -94,6 +94,14 @@ try {
 
 $messages = ob_get_clean();
 $success = $success && empty($messages);
-$response = array('success'=>$success,'messages'=>$messages, "emailResponse"=>$notificationStatus,"upesref"=>$_POST['psm_upesref'],"account"=>$_POST['psm_account'],"accountid"=>$_POST['psm_accountid'],'pesStatus'=>$_POST['psm_status']);
+$response = array(
+    'success'=>$success,
+    'messages'=>$messages,
+    "emailResponse"=>$notificationStatus,
+    "upesref"=>$_POST['psm_upesref'],
+    "account"=>$_POST['psm_account'],
+    "accountid"=>$_POST['psm_accountid'],
+    'pesStatus'=>$_POST['psm_status']
+);
 $jse = json_encode($response);
 echo $jse ? $jse : json_encode(array('success'=>false,'messages'=>'Failed to json_encode : ' . json_last_error() . json_last_error_msg()));

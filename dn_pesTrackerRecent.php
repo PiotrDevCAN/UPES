@@ -3,7 +3,6 @@ use PhpOffice\PhpSpreadsheet\Helper\Sample;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use itdq\DbTable;
-use itdq\Loader;
 use upes\AllTables;
 use upes\AccountPersonTable;
 
@@ -31,13 +30,13 @@ $spreadsheet->getProperties()->setCreator('vBAC')
 
 $now = new DateTime();
 
-$pesTrackerTable = new AccountPersonTable(\upes\AllTables::$ACCOUNT_PERSON);
+$pesTrackerTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 
 try {
     $pesTrackerTable->getTracker(AccountPersonTable::PES_TRACKER_RECORDS_NOT_ACTIVE, $spreadsheet);
         // Set active sheet index to the first sheet, so Excel opens this as the first sheet
         $spreadsheet->setActiveSheetIndex(0);
-        // Redirect output to a client’s web browser (Xlsx)
+        // Redirect output to a clientï¿½s web browser (Xlsx)
         DbTable::autoSizeColumns($spreadsheet);
         $fileNameSuffix = $now->format('Ymd_His');
 

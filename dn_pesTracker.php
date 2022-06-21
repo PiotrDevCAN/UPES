@@ -4,9 +4,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use itdq\DbTable;
 use upes\AllTables;
-use itdq\Loader;
 use upes\AccountPersonTable;
-use upes\AccountPersonRecord;
 // require_once __DIR__ . '/../../src/Bootstrap.php';
 $helper = new Sample();
 if ($helper->isCli()) {
@@ -30,7 +28,7 @@ $spreadsheet->getProperties()->setCreator('uPES')
 
 $now = new DateTime();
 
-$pesTrackerTable = new AccountPersonTable(\upes\AllTables::$ACCOUNT_PERSON);
+$pesTrackerTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 
 try {
     $pesTrackerTable->getTracker(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED, $spreadsheet);

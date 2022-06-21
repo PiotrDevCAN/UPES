@@ -56,7 +56,7 @@ echo "</div>";
     </div>
   </div>
 </div>
-<script>
+<script type="text/javascript">
  $('#accordion').on('hidden.bs.collapse', function () {
  //do something...
  })

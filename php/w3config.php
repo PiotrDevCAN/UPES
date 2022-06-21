@@ -19,7 +19,7 @@ $site = array(
     'bread_crumbs' => TRUE,
 
     // url to send feedback too. See meta tags below as well
-    'feedback_uri' => 'mailto:daniero@uk.ibm.com',
+    'feedback_uri' => 'mailto:piotr.tajanowicz@ocean.ibm.com',
 
     // base location of css, js, and images
     'assets' => '/ui',

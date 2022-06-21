@@ -6,4 +6,4 @@ private static $pesClearedProvisionalEmail = 'Hello &&candidate&&,
 <p>ALL documents that you have sent to the PES team must be certified (ie, passport, address and activity/education evidences).
 <br/>If you need any more information regarding your PES clearance, please let me know.
 <br/>When sending your document please ONLY send to the PES team.
-<br/>Many Thanks for your cooperation,';
+<br/>Many thanks for your cooperation,';

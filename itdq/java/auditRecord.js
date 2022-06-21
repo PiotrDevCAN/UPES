@@ -91,10 +91,10 @@ function auditRecord() {
 	    });
 	    
 	    var searchAt = $.fn.dataTable.util.throttle(
-	      	    function ( val, col ) {
-	      	    	auditRecord.table.columns(col).search( val ).draw();
-	      	    },
-	       	    500
+			function ( val, col ) {
+				auditRecord.table.columns(col).search( val ).draw();
+			},
+			500
 	    );
 	    
 	    // Apply the search
@@ -198,10 +198,10 @@ function auditRecord() {
 	    });
 	    
 	    var searchAt = $.fn.dataTable.util.throttle(
-	      	    function ( val, col ) {
-	      	    	auditRecord.table.columns(col).search( val ).draw();
-	      	    },
-	       	    500
+			function ( val, col ) {
+				auditRecord.table.columns(col).search( val ).draw();
+			},
+			500
 	    );
 	    
 	    // Apply the search

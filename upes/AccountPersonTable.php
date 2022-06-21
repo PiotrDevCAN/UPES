@@ -3,8 +3,8 @@ namespace upes;
 
 use itdq\DbTable;
 use itdq\Loader;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 use \DateTime;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use itdq\xls;
 use itdq\AuditTable;
@@ -544,15 +544,14 @@ public $lastSelectSql;
               	</div>
               	<div class="col-sm-1"  >
               	<span style='white-space:nowrap' id='pesDownload' >
-				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTracker.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker</a>
-				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerEmail.php' target='_blank'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker via email</a>
-				
-                <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerRecent.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Recent)</a>
-				<a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerRecentEmail.php' target='_blank'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Recent) via email</a>
-				
-                <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerActivePlus.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Active+)</a>
-                <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerActivePlusEmail.php' target='_blank'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Active+) via email</a>
-
+                    <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi trackerExtract' data-trackertype='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>' href='/dn_pesTrackerEmail.php' target='_blank'><i class="glyphicon glyphicon-envelope"></i> PES Tracker</a>
+                    <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi trackerExtract' data-trackertype='<?=AccountPersonTable::PES_TRACKER_RECORDS_NOT_ACTIVE?>' href='/dn_pesTrackerRecentEmail.php' target='_blank'><i class="glyphicon glyphicon-envelope"></i> PES Tracker(Recent)</a>				
+                    <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi trackerExtract' data-trackertype='<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_PLUS?>' href='/dn_pesTrackerActivePlusEmail.php' target='_blank'><i class="glyphicon glyphicon-envelope"></i> PES Tracker(Active+)</a>
+				</span>
+                <span style='white-space:nowrap; display:none;' id='pesDownload2' >
+                    <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTracker.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker</a>
+                    <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerRecent.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Recent)</a>
+                    <a class='btn btn-sm btn-link accessBasedBtn accessPes accessCdi' href='/dn_pesTrackerActivePlus.php'><i class="glyphicon glyphicon-download-alt"></i> PES Tracker(Active+)</a>
 				</span>
             	</div>
   			</div>
@@ -1089,7 +1088,7 @@ public $lastSelectSql;
                 </button>";
                 $row['ACTION'].= "<br/>";
                 $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId  . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded .  "' data-toggle='tooltip' title='$onOrOffBoardingTitle' >
-                    <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . "'></span>
+                    <span class='glyphicon $onOrOffBoardingIcon'></span>
                 </button>";
                 break;
 
@@ -1098,12 +1097,12 @@ public $lastSelectSql;
                     <span class='glyphicon glyphicon-edit editPerson'  aria-hidden='true' data-upesref='" . $upesref . "'  ></span>
                 </button>";
                 $row['ACTION'].= "&nbsp;";
-                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest ' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "' data-toggle='tooltip' title='Cancel PES Request' >
-                    <span class='glyphicon glyphicon-ban-circle cancelPesRequest'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "'  data-upesref='" . $upesref . "'  ></span>
+                $row['ACTION'].= "<button type='button' class='btn btn-primary btn-xs cancelPesRequest' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-account='" . $account . "' data-upesref='" . $upesref . "' data-email='" . $email . "'  data-name='" . $fullname . "' data-toggle='tooltip' title='Cancel PES Request' >
+                    <span class='glyphicon glyphicon-ban-circle'></span>
                 </button>";
                 $row['ACTION'].= "<br/>";
                 $row['ACTION'].= "<button type='button' class='btn $onOrOffBoardingBtnClass btn-xs toggleBoarded accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref . "'  data-boarded='" . $boarded. "' data-toggle='tooltip' title='$onOrOffBoardingTitle' >
-                    <span class='glyphicon $onOrOffBoardingIcon toggleBoarded'  aria-hidden='true' data-accountid='" .$accountId . "' data-accounttype='" .$accountType  . "' data-upesref='" . $upesref  . "'  data-boarded='" . $boarded . "'></span>
+                    <span class='glyphicon $onOrOffBoardingIcon'></span>
                 </button>";
                 break;
         }
@@ -1351,10 +1350,10 @@ public $lastSelectSql;
     static function getEmailAddressAccountArray(){
         $data = array();
         $sql = " SELECT P.EMAIL_ADDRESS, A.ACCOUNT, P.UPES_REF, A.ACCOUNT_ID ";
-        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . \upes\AllTables::$PERSON . " as P ";
-        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
         $sql.= " ON P.UPES_REF = AP.UPES_REF ";
-        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . \upes\AllTables::$ACCOUNT . " AS A ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
         $sql.= " WHERE AP.ACCOUNT_ID is not null ";
         $sql.= " ORDER BY EMAIL_ADDRESS, ACCOUNT ";

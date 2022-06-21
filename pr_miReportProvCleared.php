@@ -3,7 +3,6 @@ use itdq\DbTable;
 use upes\AllTables;
 use upes\AccountPersonRecord;
 
-
 $months = array('','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
 
 $twelveMonthsAgo = new DateTime("first day of this month");
@@ -51,16 +50,16 @@ while ($row=db2_fetch_assoc($rs)) {
     $accountTotals[$row['ACCOUNT']] = 0;
 };
 
-
-krsort($byMonth[$maxYear]);
-krsort($byMonth[$minYear]);
-
-krsort($byMonth);
+if (count($byMonth) > 0) {
+    krsort($byMonth[$maxYear]);
+    krsort($byMonth[$minYear]);
+    krsort($byMonth);
+}
 
 ?>
 <div class='container'>
 <h3>Pes Provisionally Cleared per Month, by Account, Year To Date</h3>
-<table id='miReport' class='table table-responsive hover stripe'  data-page-length='25'>
+<table id='miReportProv' class='table table-responsive hover stripe'  data-page-length='25'>
 <thead>
 <tr><th>Month</th>
 <?php 
@@ -103,31 +102,3 @@ foreach ($allAccounts as $accountName){
 
 </table>
 </div>
-
-<script>
-var miReportTable;
-
-$(document).ready(function(){
-    // DataTable
-    miReportTable = $('#miReport').DataTable({
-    	order: [[ 0, 'desc' ]],
-        dom: 'Brti',
-        buttons: [
-                  'colvis',
-                  'excelHtml5',
-                  'csvHtml5',
-                  'print'
-              ],
-    });
-
-
-
-    
-});
-
-
-
-
-
-</script>
-

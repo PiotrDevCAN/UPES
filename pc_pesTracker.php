@@ -23,43 +23,17 @@ use upes\AccountPersonRecord;
 $pesTrackerTable = new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
 $pesTrackerTable->displayTable(AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE);
 
-$person = new AccountPersonRecord();
-$person->amendPesStatusModal();
-$person->confirmSendPesEmailModal();
-include "includes/modalError.html";
+include_once 'includes/modalAmendPesStatus.html';
+include_once 'includes/modalConfirmSendPesEmail.html';
+
+$allStatus = AccountPersonRecord::prepareJsonArraysForPesSelection();
 
 ?>
 </div>
-<script>
+<script type="text/javascript">
 
-var pesTrackerTable;
-var pesevent = new pesEvent();
-var person = new personRecord();
+var allStatus = <?=json_encode($allStatus);?>;
 
-$(document).ready(function(){
-	// pesevent.populatePesTracker('<?=AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED?>');
-    pesevent.populatePesTracker();
- 	pesevent.listenForBtnRecordSelection();
- 	pesevent.listenForPesStageValueChange();
- 	pesevent.listenForSavePesComment();
- 	pesevent.listenForPesProcessStatusChange();
- 	pesevent.listenForPesPriorityChange();
- 	pesevent.listenForFilterPriority();
- 	pesevent.listenForFilterProcess();
- 	pesevent.listenForBtnChaser();
- 	pesevent.listenForEditPesStatus();
- 	pesevent.listenForSavePesStatus();
-// 	person.listenForInitiatePesFromPortal();
- 	person.listenforSendPesEmail();
- 	person.listenforConfirmSendPesEmail();
-
-    console.log($('button[name=pesRecordFilter]:checked'));
-    console.log($('button[name=pesRecordFilter]:checked').val());
-    console.log($('button[name=pesRecordFilter]:checked').data('pesrecords'));
-
-    console.log($('.btnRecordSelection'));
-    console.log($('.btnRecordSelection:checked'));
-});
 </script>
 <style>
 

@@ -15,7 +15,7 @@ $emailBody = <<<endOfEmailBody
 <p><b>Please Note</b></p>
 <p>If you are unable to get your documents certified (physically or virtually), we do have a provisional clearance process and will accept documents without certification - however these documents will need to be certified as soon as the restrictions are lifted or as soon as you can.</p>
 <p>This will not give you full PES clearance for the account, so if you can get them certified correctly (ie another IBM'er seeing the document and signing) please do so.</p>
-<p>Many Thanks for your cooperation,</p>
+<p>Many thanks for your cooperation,</p>
 <p>&&account_name&& &nbsp; PES Team</p>
 <p>Rachele Smith - Global PES Compliance Officer<br/>Zoe O'Flaherty - Global PES compliance Officer<br/>Jean Dover - Global PES Team Leader<br/>Carra Booth - Global PES SME</p>
 <p><small>Phone: 44-131 656 0870 | Tie-Line: 37 580870<br/>E-mail: <a href='mailto:&&pestaskid&&'>&&pestaskid&&</a></small></p>

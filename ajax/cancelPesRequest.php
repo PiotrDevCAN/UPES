@@ -1,10 +1,6 @@
 <?php
 
-use itdq\DbTable;
-use itdq\FormClass;
 use itdq\Trace;
-use upes\AllTables;
-use upes\PersonRecord;
 use upes\AccountPersonTable;
 
 Trace::pageOpening($_SERVER['PHP_SELF']);

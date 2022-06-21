@@ -1,8 +1,6 @@
 <?php
+
 use itdq\BlueMail;
-use vbac\personTable;
-use vbac\allTables;
-use upes\PersonRecord;
 use upes\PesEmail;
 
 ob_clean();

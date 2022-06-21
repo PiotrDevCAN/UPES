@@ -1,12 +1,143 @@
 <?php
 
-//$hash = `git log -1 --pretty=%h`;
-$hash = rand(10,100);
+function get_page_mod_time() {
+    $incls = get_included_files();
+    $incls = array_filter($incls, "is_file");
+    $mod_times = array_map('filemtime', $incls);
+    $mod_time = max($mod_times);
+    
+    return $mod_time;
+}
+
+// $hash = `git log -1 --pretty=%h`;
+// $hash = rand(10,100);
+
+$hashMain = date("d F Y", get_page_mod_time());
+$hash = sha1($hashMain);
+$hash = substr($hash, 0, 7);
 ?>
 
 <script type="text/javascript">
     var xhrPool = [];
 </script>
 <script type="text/javascript" src="upes/java/typeahead.js?<?=$hash;?>"></script>
-<script type="text/javascript" src="upes/java/pesEvent.js?<?=$hash;?>"></script>
-<script type="text/javascript" src="upes/java/personRecord.js?<?=$hash;?>"></script>
+<script type="module" src="upes/java/modules/displayNavbar.js"></script>
+<script type="module" src="upes/java/modules/helper.js"></script>
+<?php
+
+$file = $_SERVER['PHP_SELF'];
+
+// uPES Admin section
+$isManageAccounts = strpos($file, 'pa_manageAccounts.php') !== false;
+$isManageContracts = strpos($file, 'pa_manageContracts.php') !== false;
+$isManagePesLevels = strpos($file, 'pa_managePesLevels.php') !== false;
+$isManageCountries = strpos($file, 'pa_manageCountries.php') !== false;
+$isPESTracker = strpos($file, 'pc_pesTracker.php') !== false;
+$isMailConvert = strpos($file, 'pa_mailConvert.php') !== false;
+$isStatusUpdate = strpos($file, 'pa_statusUpdate.php') !== false;
+$isStatusChangeLog = strpos($file, 'pa_statusChangeLog.php') !== false;
+$isPersonDataUpload = strpos($file, 'pc_otPersonDataUpload.php') !== false;
+
+// uPES section
+$isUserAdd = strpos($file, 'pu_userAdd.php') !== false;
+$isUserBoard = strpos($file, 'pu_userBoard.php') !== false;
+$isUserStatus = strpos($file, 'pa_userStatus.php') !== false;
+
+// Reports section
+$isByAccount = strpos($file, 'pr_byAccount.php') !== false;
+$isProcessStatus = strpos($file, 'pr_processStatus.php') !== false;
+$isUpcomingRechecks = strpos($file, 'pr_upcomingRechecks.php') !== false;
+$isMICleared = strpos($file, 'pr_miReportCleared.php') !== false;
+$isMIProvCleared = strpos($file, 'pr_miReportProvCleared.php') !== false;
+
+switch (true) {
+    case $isManageAccounts:
+        ?>
+            <script type="module" src="upes/java/admin/manageAccounts.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isManageContracts:
+        ?>
+            <script type="module" src="upes/java/admin/manageContracts.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isManagePesLevels:
+        ?>
+            <script type="module" src="upes/java/admin/managePESLevels.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isManageCountries:
+        ?>
+            <script type="module" src="upes/java/admin/manageCountries.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isPESTracker:
+        ?>
+            <script type="module" src="upes/java/admin/PESTracker.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isMailConvert:
+        ?>
+            <script type="module" src="upes/java/admin/mailConvert.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isStatusUpdate:
+        ?>
+            <script type="module" src="upes/java/admin/manualPESStatusUpdate.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isStatusChangeLog:
+        ?>
+            <script type="module" src="upes/java/admin/manualPESStatusLog.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isPersonDataUpload:
+        ?>
+            <script type="module" src="upes/java/admin/PersonDataUpdate.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isUserAdd:
+        ?>
+            <script type="module" src="upes/java/upes/userAdd.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isUserBoard:
+        ?>
+            <script type="module" src="upes/java/upes/userBoard.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isUserStatus:
+        ?>
+            <script type="module" src="upes/java/upes/userStatus.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isByAccount:
+        ?>
+            <script type="module" src="upes/java/reports/byAccount.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isProcessStatus:
+        ?>
+            <script type="module" src="upes/java/reports/processStatus.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isUpcomingRechecks:
+        ?>
+            <script type="module" src="upes/java/reports/upcomingRechecks.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isMICleared:
+        ?>
+            <script type="module" src="upes/java/reports/MICleared.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    case $isMIProvCleared:
+        ?>
+            <script type="module" src="upes/java/reports/MIProvCleared.js?<?=$hash;?>"></script>
+        <?php
+        break;
+    default:
+        break;
+}
+?>
+
