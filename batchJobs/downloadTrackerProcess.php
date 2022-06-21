@@ -17,6 +17,8 @@ require_once("../php/errorHandlers.php");
 set_error_handler('myErrorHandler');
 register_shutdown_function('fatalErrorShutdownHandler');
 
+error_log("download tracker process started");
+
 trigger_error("Fatal error", E_USER_ERROR);
 
 if (isset($argv[1])) {
