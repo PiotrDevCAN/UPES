@@ -7,11 +7,10 @@ ob_clean();
 
 $emailBody = "Testing 1 2 3";
 
-$sendResponse = BlueMail::send_mail(PesEmail::$notifyPesEmailAddresses['to'], "uPES Notification of Leavers"
-    , $emailBody,PesEmail::$notifyPesEmailAddresses['to'][0],PesEmail::$notifyPesEmailAddresses['cc']);
+$sendResponse = BlueMail::send_mail(array('piotr.tajanowicz@ocean.ibm.com'), "uPES Notification of Leavers"
+    , $emailBody,'piotr.tajanowicz@ocean.ibm.com');
 
 var_dump($sendResponse);
-
 
 $data_json = '   {
 	"contact": "piotr.tajanowicz@ocean.ibm.com",

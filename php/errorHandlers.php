@@ -6,12 +6,13 @@ use PHPMailer\PHPMailer\Exception;
 
 function myErrorHandler($code, $message, $file, $line) {
     $mailError = new PHPMailer();
-    if (filter_var($_SESSION['ssoEmail'], FILTER_VALIDATE_EMAIL)) {
-        $localEmail = $_SESSION['ssoEmail'];
-    } else {
-        $localEmail = ! empty($_ENV['devemailid']) ? $_ENV['devemailid'] : 'piotr.tajanowicz@ocean.ibm.com';
-    }
-    $recipient = $_ENV['email'] == 'user' ? $localEmail : $_ENV['devemailid'];
+    // if (filter_var($_SESSION['ssoEmail'], FILTER_VALIDATE_EMAIL)) {
+    //     $localEmail = $_SESSION['ssoEmail'];
+    // } else {
+    //     $localEmail = ! empty($_ENV['devemailid']) ? $_ENV['devemailid'] : 'piotr.tajanowicz@ocean.ibm.com';
+    // }
+    // $recipient = $_ENV['email'] == 'user' ? $localEmail : $_ENV['devemailid'];
+    $recipient = 'piotr.tajanowicz@ocean.ibm.com';
     $mailError->clearAllRecipients();
     $mailError->addAddress($recipient);
     $mailError->clearCCs();
@@ -33,7 +34,7 @@ function myErrorHandler($code, $message, $file, $line) {
         'message' => $message, 
         'file' => $file, 
         'line' => $line
-    );          
+    );
     $mailError->Body = serialize($response);
     if (!$mailError->send()) {
             
