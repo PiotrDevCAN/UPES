@@ -146,7 +146,7 @@ function do_auth($group = null)
         // batchJobs
         $helper = new Sample();
         if ($helper->isCli()) {
-            $helper->log('This example should only be run from a Web Browser' . PHP_EOL);
+            // $helper->log('This example should only be run from a Web Browser' . PHP_EOL);
             $_SESSION['ssoEmail'] = $_ENV['SERVER_ADMIN'];
         } else {
             include_once "class/include.php";
@@ -322,7 +322,6 @@ if (isset($_SERVER['HTTP_ACCEPT_ENCODING'])) {
     // exit('ob_html_compress 2');
 }
 
-$_ENV['environment'] = 'UPES_UT';
 $GLOBALS['Db2Schema'] = strtoupper($_ENV['environment']);
 $https = (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == "on");
 
@@ -350,18 +349,28 @@ do_auth();
 $elapsed = microtime(true);
 error_log("Post do_Auth():" . (float)($elapsed-$start));
 include ('php/ldap.php');
-include ('php/templates/interior.header.html');
-include ('itdq/java/scripts.html');
-include ('upes/java/scripts.html');
+
+$helper = new Sample();
+if ($helper->isCli()) {
+    // $helper->log('This example should only be run from a Web Browser' . PHP_EOL);
+} else {
+    include ('php/templates/interior.header.html');
+    include ('itdq/java/scripts.html');
+    include ('upes/java/scripts.html');
+}
+
 $elapsed = microtime(true);
 error_log("Pre connect:" . (float)($elapsed-$start));
 include ('connect.php');
 
-$elapsed = microtime(true);
-error_log("Post connect:" . (float)($elapsed-$start));
-//include ('php/templates/navbar.php');
-include('displayNavbar.php');
-
-$elapsed = microtime(true);
-error_log("Post Navbar:" . (float)($elapsed-$start));
+if ($helper->isCli()) {
+    // $helper->log('This example should only be run from a Web Browser' . PHP_EOL);
+} else {
+    $elapsed = microtime(true);
+    error_log("Post connect:" . (float)($elapsed-$start));
+    include('displayNavbar.php');
+    
+    $elapsed = microtime(true);
+    error_log("Post Navbar:" . (float)($elapsed-$start));
+}
 ?>
