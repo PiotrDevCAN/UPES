@@ -340,14 +340,6 @@ if ($w3php['debug']) {
     ini_set("display_errors", '1');
 }
 
-$elapsed = microtime(true);
-error_log("Pre do_Auth():" . (float)($elapsed-$start));
-
-do_auth();
-
-$elapsed = microtime(true);
-error_log("Post do_Auth():" . (float)($elapsed-$start));
-
 // CGI or CLI check
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -355,6 +347,14 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 } else {
     error_log("You are not using CGI PHP");
 }
+
+$elapsed = microtime(true);
+error_log("Pre do_Auth():" . (float)($elapsed-$start));
+
+do_auth();
+
+$elapsed = microtime(true);
+error_log("Post do_Auth():" . (float)($elapsed-$start));
 
 include ('php/ldap.php');
 
