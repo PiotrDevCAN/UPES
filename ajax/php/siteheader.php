@@ -30,6 +30,9 @@ $GLOBALS['Db2Schema'] = strtoupper($_ENV['environment']);
 // session_set_save_handler($handler, true);
 
 // session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 error_log(__FILE__ . "session:" . session_id());
 do_auth();
 include "connect.php";
