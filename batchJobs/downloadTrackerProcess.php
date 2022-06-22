@@ -77,7 +77,9 @@ if (isset($argv[1])) {
         DbTable::autoSizeColumns($spreadsheet);
         $fileNameSuffix = $now->format('Ymd_His');
         $fileNamePart = $title . $fileNameSuffix . '.xlsx';
-        $fileName = '../extracts/'.$fileNamePart;
+        // var_dump(dirname(__FILE__,2));
+        $scriptsDirectory = '/var/www/html/extracts/';
+        $fileName = $scriptsDirectory.$fileNamePart;
 
         // ob_clean();
         // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
