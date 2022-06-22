@@ -1,5 +1,5 @@
 <?php
-use itdq\JwtSecureSession;
+// use itdq\JwtSecureSession;
 
 function do_auth($group = null)
 {
@@ -22,14 +22,14 @@ include ('splClassLoader.php');
 
 $GLOBALS['Db2Schema'] = strtoupper($_ENV['environment']);
 
-$sessionConfig = (new \ByJG\Session\SessionConfig($_SERVER['SERVER_NAME']))
-->withTimeoutMinutes(120)
-->withSecret($_ENV['jwt_token']);
+// $sessionConfig = (new \ByJG\Session\SessionConfig($_SERVER['SERVER_NAME']))
+// ->withTimeoutMinutes(120)
+// ->withSecret($_ENV['jwt_token']);
 
-$handler = new JwtSecureSession($sessionConfig);
-session_set_save_handler($handler, true);
+// $handler = new JwtSecureSession($sessionConfig);
+// session_set_save_handler($handler, true);
 
-session_start();
+// session_start();
 error_log(__FILE__ . "session:" . session_id());
 do_auth();
 include "connect.php";
