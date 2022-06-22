@@ -142,7 +142,6 @@ function do_auth($group = null)
     if(stripos($_ENV['environment'], 'dev')) {
         $_SESSION['ssoEmail'] = $_ENV['SERVER_ADMIN'];
     } else {
-
         // batchJobs
         $helper = new Sample();
         if ($helper->isCli()) {
@@ -348,6 +347,15 @@ do_auth();
 
 $elapsed = microtime(true);
 error_log("Post do_Auth():" . (float)($elapsed-$start));
+
+// CGI or CLI check
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    error_log("You are using CGI PHP");
+} else {
+    error_log("You are not using CGI PHP");
+}
+
 include ('php/ldap.php');
 
 $helper = new Sample();

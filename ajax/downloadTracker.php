@@ -18,12 +18,6 @@ if (!empty($type)) {
         $pid = $process->getPid();
         $success = true;
         $messages = "<h4>Tracker Extract script has succeeded ".$pid."</h4>";
-        if ($process->status()) {
-            $messages .= "<br.>Process is running";
-        } else {
-            $messages .= "<br.>Process is not running";        
-        }
-        $messages .= "<br/>Command: ".$cmd;
         $messages .= "<br/>PES Tracker type: <b>" . $type . "</b>";
         $messages .= "<br/>An extract file will be sent to: <b>" . $email . "</b> shortly.";
     } catch (Exception $exception) {
