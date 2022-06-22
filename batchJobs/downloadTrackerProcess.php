@@ -12,14 +12,14 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once("php/errorHandlers.php");
+// require_once("php/errorHandlers.php");
 
-set_error_handler('myErrorHandler');
-register_shutdown_function('fatalErrorShutdownHandler');
+// set_error_handler('myErrorHandler');
+// register_shutdown_function('fatalErrorShutdownHandler');
 
 error_log("download tracker process started");
 
-trigger_error("Fatal error", E_USER_ERROR);
+// trigger_error("Fatal error", E_USER_ERROR);
 
 if (isset($argv[1])) {
 
@@ -144,4 +144,6 @@ if (isset($argv[1])) {
         echo $e->getFile();
         echo "<h1>Error has occurred while extracting tracker data</h1>";
     }
+
+    error_log("download tracker process ended");
 }
