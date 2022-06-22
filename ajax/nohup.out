@@ -1,0 +1,29 @@
+PHP Notice:  Undefined index: SERVER_NAME in /var/www/html/ajax/php/siteheader.php on line 44
+
+Notice: Undefined index: SERVER_NAME in /var/www/html/ajax/php/siteheader.php on line 44
+PHP Warning:  ini_set(): Headers already sent. You cannot change the session module's ini settings at this time in /var/www/html/vendor/byjg/jwt-session/src/JwtSession.php on line 25
+
+Warning: ini_set(): Headers already sent. You cannot change the session module's ini settings at this time in /var/www/html/vendor/byjg/jwt-session/src/JwtSession.php on line 25
+PHP Warning:  session_set_save_handler(): Cannot change save handler when headers already sent in /var/www/html/ajax/php/siteheader.php on line 49
+
+Warning: session_set_save_handler(): Cannot change save handler when headers already sent in /var/www/html/ajax/php/siteheader.php on line 49
+PHP Warning:  session_start(): Cannot start session when headers already sent in /var/www/html/ajax/php/siteheader.php on line 51
+
+Warning: session_start(): Cannot start session when headers already sent in /var/www/html/ajax/php/siteheader.php on line 51
+/var/www/html/ajax/php/siteheader.phpsession:
+DRIVER={IBM DB2 ODBC DRIVER};DATABASE=BLUDB;HOSTNAME=541923aa-a2a2-40a4-9e67-94eb6e88d5f5.bs2io90l08kqb1od8lcg.databases.appdomain.cloud;PORT=30725;PROTOCOL=TCPIP;UID=iae2chzk;PWD=voJchMHqPNqo3mVk;Security=SSL;
+Attempting Pconnect to DB2 from Pod:38514693141b:DRIVER={IBM DB2 ODBC DRIVER};DATABASE=BLUDB;HOSTNAME=541923aa-a2a2-40a4-9e67-94eb6e88d5f5.bs2io90l08kqb1od8lcg.databases.appdomain.cloud;PORT=30725;PROTOCOL=TCPIP;UID=iae2chzk;PWD=voJchMHqPNqo3mVk;Security=SSL;
+Db2 Pconnect took:1.073264837265
+Db2 Pconnection:Resource id #76
+download tracker process started
+<pre>PHP Fatal error:  Uncaught TypeError: Argument 1 passed to itdq\BlueMail::send_mail() must be of the type array, string given, called in /var/www/html/batchJobs/downloadTrackerProcess.php on line 130 and defined in /var/www/html/itdq/BlueMail.php:19
+Stack trace:
+#0 /var/www/html/batchJobs/downloadTrackerProcess.php(130): itdq\BlueMail::send_mail()
+#1 {main}
+  thrown in /var/www/html/itdq/BlueMail.php on line 19
+
+Fatal error: Uncaught TypeError: Argument 1 passed to itdq\BlueMail::send_mail() must be of the type array, string given, called in /var/www/html/batchJobs/downloadTrackerProcess.php on line 130 and defined in /var/www/html/itdq/BlueMail.php:19
+Stack trace:
+#0 /var/www/html/batchJobs/downloadTrackerProcess.php(130): itdq\BlueMail::send_mail()
+#1 {main}
+  thrown in /var/www/html/itdq/BlueMail.php on line 19

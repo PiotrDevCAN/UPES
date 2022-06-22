@@ -12,7 +12,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once("../php/errorHandlers.php");
+require_once("php/errorHandlers.php");
 
 set_error_handler('myErrorHandler');
 register_shutdown_function('fatalErrorShutdownHandler');
@@ -96,7 +96,7 @@ if (isset($argv[1])) {
 
         // $excelOutput = ob_get_clean();
 
-        // $toEmail = array($_SESSION['ssoEmail']);
+        $toEmail = array($_SESSION['ssoEmail']);
         $subject = 'The tracker report RAW extract';
         
         $extractRequestEmail = 'Hello &&requestor&&,
