@@ -21,7 +21,8 @@ class Process{
     }
 
     private function runCom(){
-        $command = 'nohup '.$this->command.' > /dev/null 2>&1 & echo $!';
+        // $command = 'nohup '.$this->command.' > /dev/null 2>&1 & echo $!';
+        $command = 'nohup '.$this->command;
         $op = null;
         exec($command ,$op, $retval);
         
