@@ -10,7 +10,7 @@ import confirmPES from '../modules/confirmPESEmailBox.js';
 import amendPES from '../modules/amendPESStatusBox.js';
 import cancelPES from '../modules/cancelPESRequestBox.js';
 import commentBox from '../modules/commentBox.js';
-import extractTrackerBox from '../modules/extractTrackerBox.js';
+import togglePesTrackerStatusDetailsBox from '../modules/togglePesTrackerStatusDetailsBox.js';
 
 $.expr[":"].contains = $.expr.createPseudo(function(arg) {
     return function( elem ) {

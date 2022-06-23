@@ -305,8 +305,8 @@ class AccountPersonRecord extends DbRecord
 
         $pesStatusWithButton = '';
         $pesStatusWithButton.= "<span class='pesStatusField' data-upesref='" . $upesRef . "' data-account='" . $account . "' data-accountid='" . $accountid . "'  >" .  $status . "</span><br/>";
-        // switch (true) {
-            // case $status == AccountPersonRecord::PES_STATUS_TBD && !$_SESSION['isPesTeam']:
+        switch (true) {
+            case $status == AccountPersonRecord::PES_STATUS_TBD && !$_SESSION['isPesTeam']:
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesInitiate accessRestrict accessPmo accessFm' ";
                 $pesStatusWithButton.= " aria-label='Left Align' ";
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
@@ -318,9 +318,9 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= " > ";
                 $pesStatusWithButton.= "<span class='glyPesInitiate glyphicon glyphicon-plane ' aria-hidden='true'></span>";
                 $pesStatusWithButton.= "</button>&nbsp;";
-            //     break;
-            // case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
-            // case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && $_SESSION['isPesTeam'] ;
+                break;
+            case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && $_SESSION['isPesTeam'] ;
               
                 $recheck      = ($status==AccountPersonRecord::PES_STATUS_RECHECK_REQ) ? 'yes' : 'no' ;
                 $aeroplaneColor= ($status==AccountPersonRecord::PES_STATUS_RECHECK_REQ)? 'yellow' : 'green' ;
@@ -352,23 +352,23 @@ class AccountPersonRecord extends DbRecord
 
                 $pesStatusWithButton.= "</button>&nbsp;";
                 
-//             case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_CANCEL_REQ && $_SESSION['isPesTeam'] :
-// //            case $status == AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_CLEARED && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_EXCEPTION && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_DECLINED && $_SESSION['isPesTeam'] ;
-//             case $status == AccountPersonRecord::PES_STATUS_FAILED && $_SESSION['isPesTeam'] ;
-//             case $status == AccountPersonRecord::PES_STATUS_REMOVED && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_REVOKED && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_LEFT_IBM && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_PROVISIONAL && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_TBD && $_SESSION['isPesTeam'] :
-//           //  case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_STAGE_1 && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_STAGE_2 && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_MOVER && $_SESSION['isPesTeam'] :
-//             case $status == AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_CANCEL_REQ && $_SESSION['isPesTeam'] :
+//            case $status == AccountPersonRecord::PES_STATUS_CLEARED_PERSONAL && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_CLEARED && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_EXCEPTION && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_DECLINED && $_SESSION['isPesTeam'] ;
+            case $status == AccountPersonRecord::PES_STATUS_FAILED && $_SESSION['isPesTeam'] ;
+            case $status == AccountPersonRecord::PES_STATUS_REMOVED && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_REVOKED && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_LEFT_IBM && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_PROVISIONAL && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_TBD && $_SESSION['isPesTeam'] :
+          //  case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_STAGE_1 && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_STAGE_2 && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_MOVER && $_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING && $_SESSION['isPesTeam'] :
                 
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesStatus' aria-label='Left Align' ";
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
@@ -385,11 +385,11 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= " > ";
                 $pesStatusWithButton.= "<span class='glyphicon glyphicon-edit ' aria-hidden='true'></span>";
                 $pesStatusWithButton.= "</button>";
-            //     break;
-            // case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && !$_SESSION['isPesTeam'] :
-            // case $status == AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING && !$_SESSION['isPesTeam'] ;
-            // case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && !$_SESSION['isPesTeam'] :
-            // case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && !$_SESSION['isPesTeam'] ;          
+                break;
+            case $status == AccountPersonRecord::PES_STATUS_RECHECK_REQ && !$_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_RECHECK_PROGRESSING && !$_SESSION['isPesTeam'] ;
+            case $status == AccountPersonRecord::PES_STATUS_PES_PROGRESSING && !$_SESSION['isPesTeam'] :
+            case $status == AccountPersonRecord::PES_STATUS_STARTER_REQUESTED && !$_SESSION['isPesTeam'] ;          
                 $pesStatusWithButton.= "<button type='button' class='btn btn-default btn-xs btnPesCancel accessRestrict accessFm' aria-label='Left Align' ";
                 $pesStatusWithButton.= " data-upesref='" .$upesRef . "' ";
                 $pesStatusWithButton.= " data-emailaddress='" . $emailAddress . "' ";
@@ -405,22 +405,22 @@ class AccountPersonRecord extends DbRecord
                 $pesStatusWithButton.= " > ";
                 $pesStatusWithButton.= "<span class='glyphicon glyphicon-erase ' aria-hidden='true' ></span>";
                 $pesStatusWithButton.= "</button>";
-            //     break;
-            // case $status == AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED && $_SESSION['isPesTeam'] :
-            // default:
-            //     break;
-        // }
+                break;
+            case $status == AccountPersonRecord::PES_STATUS_CANCEL_CONFIRMED && $_SESSION['isPesTeam'] :
+            default:
+                break;
+        }
 
-//         if(isset($row['PROCESSING_STATUS']) && ( $row['PES_STATUS']== AccountPersonRecord::PES_STATUS_PES_PROGRESSING || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_STARTER_REQUESTED || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_RECHECK_REQ ) ){
-// //             $pesStatusWithButton .= "&nbsp;<button type='button' class='btn btn-default btn-xs btnTogglePesTrackerStatusDetails' aria-label='Left Align' data-toggle='tooltip' data-placement='top' title='See PES Tracker Status' >";
-// //             $pesStatusWithButton .= !empty($row['PROCESSING_STATUS']) ? "&nbsp;<small>" . $row['PROCESSING_STATUS'] . "</small>&nbsp;" : null;
-// //             $pesStatusWithButton .= "<span class='glyphicon glyphicon-search  ' aria-hidden='true' ></span>";
-// //             $pesStatusWithButton .= "</button>";
+    //     if(isset($row['PROCESSING_STATUS']) && ( $row['PES_STATUS']== AccountPersonRecord::PES_STATUS_PES_PROGRESSING || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_STARTER_REQUESTED || $row['PES_STATUS']==AccountPersonRecord::PES_STATUS_RECHECK_REQ ) ){
+    //         $pesStatusWithButton .= "&nbsp;<button type='button' class='btn btn-default btn-xs btnTogglePesTrackerStatusDetails' aria-label='Left Align' data-toggle='tooltip' data-placement='top' title='See PES Tracker Status' >";
+    //         $pesStatusWithButton .= !empty($row['PROCESSING_STATUS']) ? "&nbsp;<small>" . $row['PROCESSING_STATUS'] . "</small>&nbsp;" : null;
+    //         $pesStatusWithButton .= "<span class='glyphicon glyphicon-search  ' aria-hidden='true' ></span>";
+    //         $pesStatusWithButton .= "</button>";
 
-//             $pesStatusWithButton .= "<div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' style='display:none' >";
-//             $pesStatusWithButton .= AccountPersonTable::formatProcessingStatusCell($row);
-//             $pesStatusWithButton .= "</div>";
-//        }
+    //         $pesStatusWithButton .= "<div class='alert alert-info text-center pesProcessStatusDisplay' role='alert' style='display:none' >";
+    //         $pesStatusWithButton .= AccountPersonTable::formatProcessingStatusCell($row);
+    //         $pesStatusWithButton .= "</div>";
+    //    }
 
         return $pesStatusWithButton;
     }
