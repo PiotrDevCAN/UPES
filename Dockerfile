@@ -25,6 +25,7 @@ RUN chown -R 1001:0 /run
 RUN chown -R 1001:0 /etc/httpd/run
 RUN chmod -R 777 /run
 RUN chmod -R 777 /etc/httpd/run
+RUN chmod -R 777 /var/www/html/extracts
 USER 1001
 RUN composer install --no-interaction
 
