@@ -124,23 +124,19 @@ if (isset($argv[1])) {
             // throw new \Exception("The file $fileName does not exist");
         }
 
+        $pesAttachments = array();
         $handle = fopen($fileName, "r", true);
         if ($handle !== false) {
             $applicationForm = fread($handle, filesize($fileName));
             fclose($handle);
             $encodedAttachmentFile = base64_encode($applicationForm);
-        } else {
-            $encodedAttachmentFile = '';
-            $fileName = '';
+            $pesAttachments[] = array(
+                'filename'=>$title . $fileNameSuffix . '.xlsx',
+                'content_type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'data'=>$encodedAttachmentFile,
+                'path'=>$fileName
+            );
         }
-
-        $pesAttachments = array();
-        $pesAttachments[] = array(
-            'filename'=>$title . $fileNameSuffix . '.xlsx',
-            'content_type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'data'=>$encodedAttachmentFile,
-            'path'=>$fileName
-        );
 
         $sendResponse = BlueMail::send_mail($toEmail, $subject, $emailBody, $pesTaskid, array(), array(), false, $pesAttachments);
 
