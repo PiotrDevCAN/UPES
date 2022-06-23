@@ -6,8 +6,7 @@ use upes\PesEmail;
 
 ob_start();
 $pesEmailObj = new PesEmail();
-echo $_SESSION['ssoEmail'];
-exit;
+
 try {
     
     $recheck = $_POST['recheck']=='yes';

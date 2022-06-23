@@ -2,7 +2,7 @@
 use itdq\Trace;
 
 Trace::pageOpening($_SERVER['PHP_SELF']);
-var_dump($_SERVER['SERVER_NAME']);
+
 ?>
 <style type="text/css" class="init">
 body {
