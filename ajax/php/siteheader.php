@@ -5,8 +5,10 @@ function do_auth($group = null)
 {
     if(stripos($_ENV['environment'], 'dev')) {
         $_SESSION['ssoEmail'] = $_ENV['SERVER_ADMIN'];
+        echo 'test 1';
     } else {
         $_SESSION['ssoEmail'] = $_SESSION['ssoEmail'];
+        echo 'test 2';
     }
 }
 
@@ -31,6 +33,11 @@ session_set_save_handler($handler, true);
 // session_start();
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
+    session_start();
+    session_start();
+    echo 'test 3';
+} else {
+    echo 'test 4';
 }
 error_log(__FILE__ . "session:" . session_id());
 do_auth();
