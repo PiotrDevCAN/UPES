@@ -21,6 +21,8 @@ error_log("download tracker process started");
 
 // trigger_error("Fatal error", E_USER_ERROR);
 
+$GLOBALS['Db2Schema'] = 'UPES_NEWCO';
+
 if (isset($argv[1])) {
 
     $toEmail = trim($argv[1]);
@@ -96,12 +98,6 @@ if (isset($argv[1])) {
         // $writer->save('php://output');
         $writer->save($fileName);
 
-        if (file_exists($fileName)) {
-            throw new \Exception("The file $fileName exists");
-        } else {
-            throw new \Exception("The file $fileName does not exist");
-        }
-
         // $excelOutput = ob_get_clean();
 
         $toEmail = array($_SESSION['ssoEmail']);
@@ -122,10 +118,21 @@ if (isset($argv[1])) {
 
         $pesTaskid = 'atm.pes.processing@uk.ibm.com';
 
+        if (file_exists($fileName)) {
+            // throw new \Exception("The file $fileName exists");
+        } else {
+            // throw new \Exception("The file $fileName does not exist");
+        }
+
         $handle = fopen($fileName, "r", true);
-        $applicationForm = fread($handle, filesize($fileName));
-        fclose($handle);
-        $encodedAttachmentFile = base64_encode($applicationForm);
+        if ($handle !== false) {
+            $applicationForm = fread($handle, filesize($fileName));
+            fclose($handle);
+            $encodedAttachmentFile = base64_encode($applicationForm);
+        } else {
+            $encodedAttachmentFile = '';
+            $fileName = '';
+        }
 
         $pesAttachments = array();
         $pesAttachments[] = array(
