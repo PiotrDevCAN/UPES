@@ -84,7 +84,8 @@ class BlueMail
             if(!$resp){
                 $status = "Errored";
                 $currentResponse = is_array($response) ?  $response['response'] : null;
-                $response = array('response'=>"$currentResponse : Did not try to send email.  Attachment $attachment not found");
+                $response = array('response'=>"$currentResponse : Did not try to send email.  Attachment " . $attachment['filename'] . " not found");
+                $responseObject = json_encode($response);
                 if ($emailLogRecordID) {
                     self::updatelog($emailLogRecordID, $responseObject);
                 }                  

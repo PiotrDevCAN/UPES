@@ -147,7 +147,9 @@ if (isset($argv[1])) {
 
         var_dump($sendResponse);
 
-        unlink($fileName);
+        if ($handle !== false) {
+            unlink($fileName);
+        }
 
     } catch (Exception $e) {
 

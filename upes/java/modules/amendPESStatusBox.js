@@ -27,7 +27,6 @@ class amendPESStatusBox {
 			var accountid = ($(this).data('accountid'));
 			var emailaddress = ($(this).data('emailaddress'));
 			var status = ($(this).data('pesstatus'));
-			alert(status);
 
 			if (typeof ($(this).data('passportfirst')) != 'undefined') {
 				var passportFirst = $(this).data('passportfirst');
@@ -59,8 +58,6 @@ class amendPESStatusBox {
 			var nowDate = new DateObject().get(['dayPadded', 'monthPadded', 'year']);
 			var nowDB2Date = new DateObject().get(['year', 'monthPadded', 'dayPadded']);
 
-			alert(nowDate + ' = ' + nowDB2Date);
-			
 			// var now = new Date();
 			// var nowDate = now.getDate() + '-' + (now.getMonth()+1) + '-' + now.getFullYear();
 			// var nowDB2Date = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
