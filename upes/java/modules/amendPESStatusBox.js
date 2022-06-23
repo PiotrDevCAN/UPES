@@ -11,7 +11,7 @@ class amendPESStatusBox {
 	constructor() {
 		console.log('+++ Function +++ amendPESStatusBox.constructor');
 
-		// this.listenForAmendPesStatusModalShown();
+		this.listenForAmendPesStatusModalShown();
 		this.listenForEditPesStatus();
 		this.listenForSavePesStatus();
 
@@ -20,8 +20,6 @@ class amendPESStatusBox {
 
 	listenForEditPesStatus() {
 		$(document).on('click', '.btnPesStatus', function (e) {
-			console.log('btnPesStatus clicked');
-
 			var upesref = ($(this).data('upesref'));
 			var account = ($(this).data('account'));
 			var accountid = ($(this).data('accountid'));
@@ -41,20 +39,20 @@ class amendPESStatusBox {
 				$('#psm_passportSurname').prop('disabled', true);
 			}
 
-			// var status = ($(this).data('pesstatus'));
-
 			$('#psm_accountid').val(accountid);
 			$('#psm_account').val(account);
 			$('#psm_upesref').val(upesref);
 			$('#psm_emailaddress').val(emailaddress);
-			// alert(status);
-			// $('#psm_status').val(status);
-			
+			$("#psm_status").select2({
+				data: allStatus
+			});
+			$('#psm_status').val(status);
+
 			$('#psm_detail').val('');
 
 			// var now = new Date();
 			// $('#pes_date').val(now.toLocaleDateString('en-US'));
-			
+
 			var nowDate = new DateObject().get(['dayPadded', 'monthPadded', 'year']);
 			var nowDB2Date = new DateObject().get(['year', 'monthPadded', 'dayPadded']);
 
@@ -74,21 +72,6 @@ class amendPESStatusBox {
 			// 	maxDate: 0
 			// });
 
-			$("#amendPesStatusModal").on(
-				"shown.bs.modal",
-				{ status: status },
-				function (e) {
-				  $("#psm_status").select2();
-				  $("#psm_status").val(e.data.status).trigger("change");
-				  $("#psm_detail").val("");
-				  $("#pes_date").datepicker({
-					dateFormat: "dd-mm-yy",
-					altField: "#pes_date_db2",
-					altFormat: "yy-mm-dd",
-					maxDate: 0,
-				  });
-				}
-			  );
 			$('#amendPesStatusModal').modal('show');
 		});
 	}
@@ -96,10 +79,6 @@ class amendPESStatusBox {
 	listenForSavePesStatus() {
 		$(this).attr('disabled', true);
 		$(document).on('submit', '#psmForm', function (e) {
-
-			console.log($('#pes_date').val());
-			console.log($('#pes_date_db2').val());
-
 			$('#savePesStatus').attr('disabled', true).addClass('spinning');
 			var form = document.getElementById('psmForm');
 			var formValid = form.checkValidity();
@@ -136,6 +115,19 @@ class amendPESStatusBox {
 				});
 			}
 			return false;
+		});
+	}
+
+	listenForAmendPesStatusModalShown() {
+		$(document).on('shown.bs.modal', '#amendPesStatusModal', function (e) {
+			$("#psm_status").select2();
+			$("#psm_detail").val("");
+			$("#pes_date").datepicker({
+				dateFormat: "dd-mm-yy",
+				altField: "#pes_date_db2",
+				altFormat: "yy-mm-dd",
+				maxDate: 0,
+			});
 		});
 	}
 }

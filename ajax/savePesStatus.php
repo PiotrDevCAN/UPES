@@ -16,7 +16,7 @@ $formattedEmailField= null;
 try {
     $accountPersonTable= new AccountPersonTable(AllTables::$ACCOUNT_PERSON);
     $accountPersonRecord = new AccountPersonRecord();
-    $accountPersonTable->setPesStatus($_POST['psm_upesref'],$_POST['psm_accountid'],$_POST['psm_status'],$_SESSION['ssoEmail'], $_POST['psm_detail'],$_POST['pes_date_db2']);
+    $accountPersonTable->setPesStatus($_POST['psm_upesref'],$_POST['psm_accountid'],$_POST['psm_status'],$_SESSION['ssoEmail'], $_POST['psm_detail'],$_POST['PES_DATE_RESPONDED']);
 //     $accountPersonRecord->setFromArray(array('UPES_REF'=>$_POST['psm_upesref'], 'ACCOUNT_ID'=>$_POST['psm_accountid']));
 //     $accountPersonData = $accountPersonTable->getRecord($accountPersonRecord);
 
