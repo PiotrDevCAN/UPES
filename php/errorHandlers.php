@@ -43,8 +43,10 @@ function myErrorHandler($code, $message, $file, $line) {
 
 function fatalErrorShutdownHandler() {
     $last_error = error_get_last();
-    if ($last_error['type'] === E_ERROR) {
-        // fatal error
-        myErrorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
+    if (!is_null($last_error)) {
+        if ($last_error['type'] === E_ERROR) {
+            // fatal error
+            myErrorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
+        }    
     }
 }
