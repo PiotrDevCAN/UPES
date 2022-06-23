@@ -96,6 +96,12 @@ if (isset($argv[1])) {
         // $writer->save('php://output');
         $writer->save($fileName);
 
+        if (file_exists($filename)) {
+            throw new \Exception("The file $filename exists");
+        } else {
+            throw new \Exception("The file $filename does not exist");
+        }
+
         // $excelOutput = ob_get_clean();
 
         $toEmail = array($_SESSION['ssoEmail']);
