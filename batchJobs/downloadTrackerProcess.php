@@ -96,10 +96,10 @@ if (isset($argv[1])) {
         // $writer->save('php://output');
         $writer->save($fileName);
 
-        if (file_exists($filename)) {
-            throw new \Exception("The file $filename exists");
+        if (file_exists($fileName)) {
+            throw new \Exception("The file $fileName exists");
         } else {
-            throw new \Exception("The file $filename does not exist");
+            throw new \Exception("The file $fileName does not exist");
         }
 
         // $excelOutput = ob_get_clean();
