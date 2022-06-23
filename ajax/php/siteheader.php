@@ -6,7 +6,7 @@ function do_auth($group = null)
     if(stripos($_ENV['environment'], 'dev')) {
         $_SESSION['ssoEmail'] = $_ENV['SERVER_ADMIN'];
     } else {
-        $_SESSION['ssoEmail'] = $_SESSION['ssoEmail'];
+        // $_SESSION['ssoEmail'] = $_SESSION['ssoEmail'];
     }
 }
 
