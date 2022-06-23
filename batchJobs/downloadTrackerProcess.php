@@ -21,8 +21,6 @@ error_log("download tracker process started");
 
 // trigger_error("Fatal error", E_USER_ERROR);
 
-$GLOBALS['Db2Schema'] = 'UPES_NEWCO';
-
 if (isset($argv[1])) {
 
     $toEmail = trim($argv[1]);
