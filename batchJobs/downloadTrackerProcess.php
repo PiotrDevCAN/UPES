@@ -29,7 +29,15 @@ if (isset($argv[1])) {
     switch ($trackerType) {
         case 'active_requested':
             $type = AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_REQUESTED;
-            $title = 'PES_Tracker_';
+            $title = 'PES_Tracker_requested_';
+            break;
+        case 'active_provisional':
+            $type = AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_PROVISIONAL;
+            $title = 'PES_Tracker_active_provisional_';
+            break;
+        case 'active':
+            $type = AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE;
+            $title = 'PES_Tracker_active_';
             break;
         case 'active_plus':
             $type = AccountPersonTable::PES_TRACKER_RECORDS_ACTIVE_PLUS;
