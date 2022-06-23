@@ -23,8 +23,7 @@ error_log("download tracker process started");
 
 if (isset($argv[1])) {
 
-    $toEmail = trim($argv[1]);
-    // $_SESSION['ssoEmail'] = trim($argv[1]);
+    $toEmailParam = trim($argv[1]);
     $trackerType = strtolower(trim($argv[2]));
     switch ($trackerType) {
         case 'active_requested':
@@ -106,7 +105,7 @@ if (isset($argv[1])) {
 
         // $excelOutput = ob_get_clean();
 
-        $toEmail = array($_SESSION['ssoEmail']);
+        $toEmail = array($toEmailParam);
         $subject = 'The tracker report RAW extract';
         
         $extractRequestEmail = 'Hello &&requestor&&,
@@ -119,7 +118,7 @@ if (isset($argv[1])) {
         
         $extractRequestEmailPattern = array('/&&requestor&&/','/&&fileName&&/');
 
-        $replacements = array($_SESSION['ssoEmail'], $fileNamePart);
+        $replacements = array($toEmailParam, $fileNamePart);
         $emailBody = preg_replace($extractRequestEmailPattern, $replacements, $extractRequestEmail);
 
         $pesTaskid = 'atm.pes.processing@uk.ibm.com';

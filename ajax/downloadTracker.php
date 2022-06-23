@@ -13,6 +13,8 @@ if (!empty($type)) {
     $processFile = 'downloadTrackerProcess.php';
 
     try {
+        // exec('cd /patto/scripts && ./script.sh');
+        chdir($scriptsDirectory);
         $cmd = 'php -f ' . $scriptsDirectory . $processFile . ' ' . $email . ' ' . str_replace(" ", "_", $type);
         $process = new Process($cmd);
         $pid = $process->getPid();
