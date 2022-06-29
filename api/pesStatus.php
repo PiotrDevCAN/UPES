@@ -15,7 +15,34 @@ if($_REQUEST['token']!= $token) {
 $noTrim = !empty($_REQUEST['noTrim']) ? true : false;
 $schema = !empty($_REQUEST['schema']) ? $_REQUEST['schema'] : strtoupper($_ENV['environment']);
 
-$GLOBALS['Db2Schema'] = $schema;
+// $GLOBALS['Db2Schema'] = $schema;
+$GLOBALS['Db2Schema'] = 'UPES_NEWCO';
+
+ob_start();
+
+$data = array(
+    $_GET['accountid']  
+);
+
+$countSql = " SELECT COUNT(*) AS COUNTER ";
+$countSql.= "FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP "; 
+$countSql.= "LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+$countSql.= "ON AP.UPES_REF = P.UPES_REF ";
+$countSql.= "LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " AS PL ";
+$countSql.= "ON AP.PES_LEVEL = PL.PES_LEVEL_REF AND AP.ACCOUNT_ID = PL.ACCOUNT_ID ";
+$countSql.= "WHERE AP.ACCOUNT_ID = ? ";
+
+$preparedCountStatement = db2_prepare($GLOBALS['conn'], $countSql);
+$rs = db2_execute($preparedCountStatement, $data);
+if (! $rs) {
+    DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+    return false;
+}
+
+$counter = 0;
+while($row = db2_fetch_assoc($preparedCountStatement)){
+    $counter = $row['COUNTER'];
+}
 
 $sql = " SELECT AP.ACCOUNT_ID, P.CNUM, P.EMAIL_ADDRESS, PROCESSING_STATUS, PROCESSING_STATUS_CHANGED ";
 $sql.= ", PES_DATE_REQUESTED, PES_REQUESTOR, PES_DATE_RESPONDED, PES_STATUS_DETAILS, PES_STATUS";
@@ -26,26 +53,15 @@ $sql.= "ON AP.UPES_REF = P.UPES_REF ";
 $sql.= "LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " AS PL ";
 $sql.= "ON AP.PES_LEVEL = PL.PES_LEVEL_REF AND AP.ACCOUNT_ID = PL.ACCOUNT_ID ";
 $sql.= "WHERE AP.ACCOUNT_ID = ? ";
+$sql.= "OPTIMIZE FOR " . $counter . " ROWS";
 // $sql.= "WHERE AP.ACCOUNT_ID = '" . db2_escape_string($_GET['accountid']) . "' ";
 
-ob_start();
-
-$data = array(
-    $_GET['accountid']
-);
 $preparedStatement = db2_prepare($GLOBALS['conn'], $sql);
-
 $rs = db2_execute($preparedStatement, $data);
 if (! $rs) {
     DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
     return false;
 }
-
-// $rs = DB2_EXEC($GLOBALS['conn'], $sql);
-// if (! $rs) {
-//     self::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
-//     return false;
-// }
 
 $endExec = microtime(true);
 $timeMeasurements['db_exec'] = (float)($endExec-$start);
@@ -53,14 +69,6 @@ $timeMeasurements['db_exec'] = (float)($endExec-$start);
 $startDataTrim = microtime(true);
 
 $data = array();
-// $count = 1;
-// while(($row=db2_fetch_assoc($rs))==true){
-//     if ($noTrim === false) {
-//         $row = array_map('trim',$row);
-//     }
-//     $data[] = $row;
-//     $count++;
-// }
 
 $count = 1;
 while($row = db2_fetch_assoc($preparedStatement)){
