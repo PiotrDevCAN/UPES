@@ -15,8 +15,7 @@ if($_REQUEST['token']!= $token) {
 $noTrim = !empty($_REQUEST['noTrim']) ? true : false;
 $schema = !empty($_REQUEST['schema']) ? $_REQUEST['schema'] : strtoupper($_ENV['environment']);
 
-// $GLOBALS['Db2Schema'] = $schema;
-$GLOBALS['Db2Schema'] = 'UPES_NEWCO';
+$GLOBALS['Db2Schema'] = $schema;
 
 ob_start();
 
