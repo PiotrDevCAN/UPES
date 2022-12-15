@@ -52,6 +52,4 @@ class PESStatusBox {
 	}
 }
 
-const PesStatusBox = new PESStatusBox();
-
-export { PesStatusBox as default };
+export { PESStatusBox as default };

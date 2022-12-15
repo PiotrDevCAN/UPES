@@ -2,24 +2,21 @@
  *
  */
 
-class PersonOffBoardBox {
+import box from "./box.js";
 
-    table;
+class PersonOffBoardBox extends box {
 
-    constructor() {
+    constructor(parent) {
         console.log('+++ Function +++ PersonOffBoardBox.constructor');
 
+        super(parent);
         this.listenForToggleBoarded();
 
         console.log('--- Function --- PersonOffBoardBox.constructor');
     }
 
-    joinDataTable(DataTable) {
-        this.table = DataTable;
-    }
-
     listenForToggleBoarded() {
-        var $this = this; 
+        var $this = this;
         $(document).on('click', '.toggleBoarded', function (e) {
             $(this).addClass('spinning').attr('disabled', false);
             var upesref = $(this).data('upesref');
@@ -50,6 +47,4 @@ class PersonOffBoardBox {
     }
 }
 
-const personOffBoardBox = new PersonOffBoardBox();
-
-export { personOffBoardBox as default };
+export { PersonOffBoardBox as default };

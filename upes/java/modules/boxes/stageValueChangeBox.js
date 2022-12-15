@@ -72,6 +72,4 @@ class stageValueChangeBox {
 	}
 }
 
-const StageValueChangeBox = new stageValueChangeBox();
-
-export { StageValueChangeBox as default };
+export { stageValueChangeBox as default };

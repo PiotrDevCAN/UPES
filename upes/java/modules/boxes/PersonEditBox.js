@@ -2,23 +2,29 @@
  *
  */
 
-class PersonEditBox {
+import sleep from "../functions/sleep.js";
+import box from "./box.js";
 
-	table;
+class PersonEditBox extends box {
 
-	constructor() {
+	countryCodes;
+	saveCountry;
+	saveStatus;
+
+	constructor(parent) {
 		console.log('+++ Function +++ PersonEditBox.constructor');
+
+		super(parent);
+		
+		this.countryCodes = countryCodes;
 
 		this.listenForPersonFormSubmit();
 		this.listenForEditPerson();
 		this.listenForEditPersonRecordModalShown();
+		this.listenForEditPersonRecordModalHidden();
 
 		console.log('--- Function --- PersonEditBox.constructor');
 	}
-
-    joinDataTable(DataTable) {
-        this.table = DataTable;
-    }
 
 	listenForPersonFormSubmit() {
 		var $this = this;
@@ -69,6 +75,7 @@ class PersonEditBox {
 	}
 
 	listenForEditPerson() {
+		var $this = this;
 		$(document).on('click', '.editPerson', function (e) {
 			$(this).addClass('spinning').attr('disabled', true);
 			var upesRef = $(this).data('upesref');
@@ -82,11 +89,9 @@ class PersonEditBox {
 					if (responseObj.success) {
 						$('.spinning').removeClass('spinning').attr('disabled', false);
 						$('#editPersonRecordModalBody').html(responseObj.form);
+						$this.saveCountry = responseObj.country;
+						$this.saveStatus = responseObj.status;
 						$('#modalEditPersonRecord').modal('show');
-						$('#saveCountry').val(responseObj.country);
-						$('#saveStatus').val(responseObj.status);
-						$('#saveCnum').val(responseObj.cnum);
-						$('#saveUpesref').val(upesRef);
 					} else {
 						$('.spinning').removeClass('spinning').attr('disabled', false);
 						$('#errorMessageBody').html(responseObj.Messages);
@@ -99,29 +104,43 @@ class PersonEditBox {
 	}
 
 	listenForEditPersonRecordModalShown() {
-		$(document).on('shown.bs.modal','#modalEditPersonRecord',function(e){
-			$('#COUNTRY').select2({
-				placeholder: 'Select Country',
-				width: '100%',
-				data: countryCodes,
-				dataType: 'json'
-			});
-			$('#COUNTRY').val($('#saveCountry').val()).trigger('change');
+		var $this = this;
+		$(document).on('shown.bs.modal', '#modalEditPersonRecord', function (e) {
+			var promise = sleep(10);
+			promise.then(function (result) {
+				$('#COUNTRY').select2({
+					placeholder: 'Select Country',
+					width: '100%',
+					data: $this.countryCodes,
+					dataType: 'json'
+				});
+				$('#COUNTRY').val($this.saveCountry).trigger('change');
 
-			$('#IBM_STATUS').select2({
-				placeholder: 'Select Status',
-				width: '100%'
+				$('#IBM_STATUS').select2({
+					placeholder: 'Select Status',
+					width: '100%'
+				});
+				$('#IBM_STATUS').val($this.saveStatus).trigger('change');
+
+				if (isPesTeam != '' || isCdi != '') {
+					$('#FULL_NAME').attr('disabled', false);
+				} else {
+					$('#FULL_NAME').attr('title', 'Only PES Team can edit a person\'s name');
+				}
 			});
-			$('#IBM_STATUS').val($('#saveStatus').val()).trigger('change');
-			if (isPesTeam != '' || isCdi != '') {
-				$('#FULL_NAME').attr('disabled', false);
-			} else {
-				$('#FULL_NAME').attr('title', 'Only PES Team can edit a person\'s name');
-			}
+		});
+	}
+
+	listenForEditPersonRecordModalHidden() {
+		$(document).on('hidden.bs.modal', '#modalEditPersonRecord', function (e) {
+			if ($("#COUNTRY").data("select2")) {
+                $("#COUNTRY").select2("destroy");
+            }
+			if ($("#IBM_STATUS").data("select2")) {
+                $("#IBM_STATUS").select2("destroy");
+            }
 		});
 	}
 }
 
-const personEditBox = new PersonEditBox();
-
-export { personEditBox as default };
+export { PersonEditBox as default };

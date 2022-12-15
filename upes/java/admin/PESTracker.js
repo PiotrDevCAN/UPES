@@ -1,17 +1,17 @@
 /**
  *
  */
-import PesPriorityBox from '../modules/PESPriorityBox.js';
-import stageValueChangeBox from '../modules/stageValueChangeBox.js';
-import PESStatusBox from '../modules/PESStatusBox.js';
-import chaserBox from '../modules/chaserBox.js';
-import initiatePES from '../modules/initiatePESRequestBox.js';
-import confirmPES from '../modules/confirmPESEmailBox.js';
-import amendPES from '../modules/amendPESStatusBox.js';
-import cancelPES from '../modules/cancelPESRequestBox.js';
-import commentBox from '../modules/commentBox.js';
-import extractTrackerBox from '../modules/extractTrackerBox.js';
-import togglePesTrackerStatusDetailsBox from '../modules/togglePesTrackerStatusDetailsBox.js';
+import PESPriorityBox from '../modules/boxes/PESPriorityBox.js';
+import stageValueChangeBox from '../modules/boxes/stageValueChangeBox.js';
+import PESStatusBox from '../modules/boxes/PESStatusBox.js';
+import chaserBox from '../modules/boxes/chaserBox.js';
+import initiatePES from '../modules/boxes/initiatePESRequestBox.js';
+import confirmPES from '../modules/boxes/confirmPESEmailBox.js';
+import amendPES from '../modules/boxes/amendPESStatusBox.js';
+import cancelPES from '../modules/boxes/cancelPESRequestBox.js';
+import commentBox from '../modules/boxes/commentBox.js';
+import extractTrackerBox from '../modules/boxes/extractTrackerBox.js';
+import togglePESTrackerStatusDetailsBox from '../modules/boxes/togglePesTrackerStatusDetailsBox.js';
 
 $.expr[":"].contains = $.expr.createPseudo(function(arg) {
     return function( elem ) {
@@ -21,7 +21,7 @@ $.expr[":"].contains = $.expr.createPseudo(function(arg) {
 
 class PESTracker {
 
-    trackerTable;
+    table;
 
     constructor() {
         console.log('+++ Function +++ PESTracker.constructor');
@@ -44,7 +44,7 @@ class PESTracker {
 
     searchTable() {
         var filter = $('#pesTrackerTableSearch').val();
-        var table = this.trackerTable;
+        var table = this.table;
     
         if(filter.length > 3){
             table.search( filter ).draw();
@@ -55,7 +55,7 @@ class PESTracker {
 
     populatePesTracker() {
         if ($('#pesTrackerTable').length != 0) {
-            this.trackerTable = $('#pesTrackerTable').DataTable({
+            this.table = $('#pesTrackerTable').DataTable({
                 processing: true,
                 serverSide: true,
                 scrollColapse: false,
@@ -161,7 +161,7 @@ class PESTracker {
         $(document).on('click', '.btnRecordSelection', function () {
             $('.btnRecordSelection').removeClass('active');
             $(this).addClass('active');
-            $this.trackerTable.ajax.reload();
+            $this.table.ajax.reload();
         });
     }
 
@@ -197,6 +197,16 @@ class PESTracker {
 
 const PesTracker = new PESTracker();
 
-cancelPES.joinDataTable(PesTracker.trackerTable);
+const PesPriorityBox = new PESPriorityBox();
+const StageValueChangeBox = new stageValueChangeBox();
+const PesStatusBox = new PESStatusBox();
+const ChaserBox = new chaserBox();
+const InitiatePes = new initiatePES();
+const ConfirmPes = new confirmPES();
+const AmendPes = new amendPES();
+const CancelPes = new cancelPES(PesTracker);
+const CommentBox = new commentBox();
+const ExtractTrackerBox = new extractTrackerBox();
+const TogglePesTrackerStatusDetailsBox = new togglePESTrackerStatusDetailsBox();
 
 export { PesTracker as default };

@@ -1,0 +1,6 @@
+<filesMatch ".(js|css)$">
+    Header set Cache-Control: "no-cache"
+    # Header set Cache-Control: "max-age=84600, public"
+    # Header set Cache-Control: "stale-while-revalidate=3600"
+    # Header set Cache-Control: "max-age=300, stale-while-revalidate=60, stale-if-error=86400"
+</filesMatch>

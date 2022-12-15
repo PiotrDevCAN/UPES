@@ -10,8 +10,9 @@ $(document).ready(function(){
 			//	http://w3-services1.w3-969.ibm.com
 			//  https://w3-services1.w3-969.ibm.com/myw3/unified-profile/v1/search/user
 			//	https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search
-			url: 'https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search?query=%QUERY&searchConfig=optimized_search',
-		    wildcard: '%QUERY',
+			//  https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search?query=%QUERY&searchConfig=optimized_search
+		    url: 'https://w3-unifiedprofile-search.dal1a.cirrus.ibm.com/search?query=%QUERY&searchConfig=optimized_search',
+			wildcard: '%QUERY',
 		    filter: function(data) {
 
 		        var dataObject = $.map(data.results, function(obj) {
@@ -32,8 +33,9 @@ $(document).ready(function(){
 			//	http://w3-services1.w3-969.ibm.com
 			//  https://w3-services1.w3-969.ibm.com/myw3/unified-profile/v1/search/user
 			//	https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search
-			url: 'https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search?query=%QUERY&searchConfig=optimized_search',
-		    wildcard: '%QUERY',
+			//  https://unified-profile-search-service.us-south-k8s.intranet.ibm.com/search?query=%QUERY&searchConfig=optimized_search
+		    url: 'https://w3-unifiedprofile-search.dal1a.cirrus.ibm.com/search?query=%QUERY&searchConfig=optimized_search',
+			wildcard: '%QUERY',
 		    filter: function(data) {
 
 		        var dataObject = $.map(data.results, function(obj) {

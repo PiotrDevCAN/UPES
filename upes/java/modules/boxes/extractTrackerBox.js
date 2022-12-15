@@ -39,6 +39,4 @@ class extractTrackerBox {
 	}
 }
 
-const ExtractTrackerBox = new extractTrackerBox();
-
-export { ExtractTrackerBox as default };
+export { extractTrackerBox as default };

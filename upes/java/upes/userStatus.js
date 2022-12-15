@@ -2,14 +2,14 @@
  *
  */
 import buttonCommon from '../modules/buttonCommon.js';
-import PersonEditBox from '../modules/PersonEditBox.js';
-import PersonOffBoardBox from '../modules/PersonOffBoardBox.js';
-import PESLevelEditBox from '../modules/PESLevelEditBox.js';
-import cancelPESRequestBox from '../modules/cancelPESRequestModalBox.js';
+import personEditBox from '../modules/boxes/PersonEditBox.js';
+import personOffBoardBox from '../modules/boxes/PersonOffBoardBox.js';
+import PESLevelEditBox from '../modules/boxes/PESLevelEditBox.js';
+import cancelPESRequestBox from '../modules/boxes/cancelPESRequestModalBox.js';
 
 class userStatus {
 
-    userStatusTable;
+    table;
 
     constructor() {
         console.log('+++ Function +++ userStatus.constructor');
@@ -32,7 +32,7 @@ class userStatus {
         }
         var selectorsStr = selectors.join(',');
 
-        this.userStatusTable = $('#userStatusTable').DataTable({
+        this.table = $('#userStatusTable').DataTable({
             ajax: {
                 url: 'ajax/populateUserStatusTable.php',
             },
@@ -116,9 +116,9 @@ class userStatus {
 
 const UserStatus = new userStatus();
 
-PersonEditBox.joinDataTable(UserStatus.userStatusTable);
-PersonOffBoardBox.joinDataTable(UserStatus.userStatusTable);
-PESLevelEditBox.joinDataTable(UserStatus.userStatusTable);
-cancelPESRequestBox.joinDataTable(UserStatus.userStatusTable);
+const PersonEditBox = new personEditBox(UserStatus);
+const PersonOffBoardBox = new personOffBoardBox(UserStatus);
+const PesLevelEditBox = new PESLevelEditBox(UserStatus);
+const CancelPesRequestBox = new cancelPESRequestBox(UserStatus);
 
 export { UserStatus as default };

@@ -94,6 +94,4 @@ class confirmPESEmailBox {
 	}
 }
 
-const confirmPesEmailBox = new confirmPESEmailBox();
-
-export { confirmPesEmailBox as default };
+export { confirmPESEmailBox as default };

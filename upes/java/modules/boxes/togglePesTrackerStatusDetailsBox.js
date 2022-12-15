@@ -25,6 +25,4 @@ class togglePesTrackerStatusDetailsBox {
 	}
 }
 
-const TogglePesTrackerStatusDetailsBox = new togglePesTrackerStatusDetailsBox();
-
-export { TogglePesTrackerStatusDetailsBox as default };
+export { togglePesTrackerStatusDetailsBox as default };

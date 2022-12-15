@@ -22,6 +22,4 @@ class initiatePESRequestBox {
 	}
 }
 
-const initiatePesRequestBox = new initiatePESRequestBox();
-
-export { initiatePesRequestBox as default };
+export { initiatePESRequestBox as default };

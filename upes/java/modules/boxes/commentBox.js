@@ -48,6 +48,4 @@ class commentBox {
 	}
 }
 
-const CommentBox = new commentBox();
-
-export { CommentBox as default };
+export { commentBox as default };

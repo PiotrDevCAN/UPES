@@ -3,6 +3,12 @@ use itdq\Trace;
 
 Trace::pageOpening($_SERVER['PHP_SELF']);
 
+// echo '<pre>';
+// // print_r(db2_server_info($GLOBALS['conn']));
+// print_r(db2_client_info($GLOBALS['conn']));
+// echo '</pre>';
+// exit;
+
 ?>
 <style type="text/css" class="init">
 body {
@@ -14,7 +20,6 @@ body {
 	background-size: cover;
 }
 </style>
-
 
 <div class="container">
 <!-- 	<div class="jumbotron"> -->

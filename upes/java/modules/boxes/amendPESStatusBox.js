@@ -4,7 +4,7 @@
  *
  */
 
-import DateObject from "./DateObject.js";
+import DateObject from "../DateObject.js";
 
 class amendPESStatusBox {
 
@@ -132,6 +132,4 @@ class amendPESStatusBox {
 	}
 }
 
-const amendPesStatusBox = new amendPESStatusBox();
-
-export { amendPesStatusBox as default };
+export { amendPESStatusBox as default };

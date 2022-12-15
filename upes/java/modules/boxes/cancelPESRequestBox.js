@@ -4,21 +4,18 @@
  *
  */
 
-class cancelPESRequestBox {
+import box from "./box.js";
 
-	table;
+class cancelPESRequestBox extends box {
 
-	constructor() {
+	constructor(parent) {
 		console.log('+++ Function +++ cancelPESRequestBox.constructor');
 
+		super(parent);
 		this.listenForCancelPes();
 
 		console.log('--- Function --- cancelPESRequestBox.constructor');
 	}
-
-    joinDataTable(DataTable) {
-        this.table = DataTable;
-    }
 
 	listenForCancelPes() {
 		var $this = this;
@@ -52,6 +49,4 @@ class cancelPESRequestBox {
 	}
 }
 
-const cancelPesRequestBox = new cancelPESRequestBox();
-
-export { cancelPesRequestBox as default };
+export { cancelPESRequestBox as default };

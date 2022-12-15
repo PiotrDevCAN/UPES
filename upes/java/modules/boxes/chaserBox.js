@@ -91,6 +91,4 @@ class chaserBox {
 	}
 }
 
-const ChaserBox = new chaserBox();
-
-export { ChaserBox as default };
+export { chaserBox as default };

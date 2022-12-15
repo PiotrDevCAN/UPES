@@ -2,24 +2,20 @@
  *
  */
 
-import changePesLevels from '../modules/changePesLevels.js';
+import changePesLevels from '../../modules/changePesLevels.js';
+import box from "./box.js";
 
-class PESLevelEditBox {
+class PESLevelEditBox extends box {
 
-    table;
-
-    constructor() {
+    constructor(parent) {
         console.log('+++ Function +++ PESLevelEditBox.constructor');
 
+        super(parent);
         this.listenForEditPesLevelFormSubmit();
         this.listenForEditPesLevel();
         this.listenForEditPesLevelModalShown();
 
         console.log('--- Function --- PESLevelEditBox.constructor');
-    }
-
-    joinDataTable(DataTable) {
-        this.table = DataTable;
     }
 
     listenForEditPesLevelFormSubmit() {
@@ -139,6 +135,4 @@ class PESLevelEditBox {
     }
 }
 
-const PesLevelEditBox = new PESLevelEditBox();
-
-export { PesLevelEditBox as default };
+export { PESLevelEditBox as default };

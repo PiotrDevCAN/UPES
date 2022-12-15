@@ -67,6 +67,4 @@ class PESPriorityBox {
 	}
 }
 
-const PesPriorityBox = new PESPriorityBox();
-
-export { PesPriorityBox as default };
+export { PESPriorityBox as default };
