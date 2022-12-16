@@ -61,7 +61,7 @@ $(document).ready(function(){
 		        'unable to find any IBMers that match the current query',
 		      '</div>'
 		    	].join('\n'),
-		  	suggestion: Handlebars.compile('<div> <img src="https://unified-profile-api.us-south-k8s.intranet.ibm.com/v3/image/{{cnum}}?type=bp&def=blue&s=50" alt="Profile" height="42" width="42"> <strong>{{value}}</strong><br/><small>{{preferredIdentity}}<br/>{{role}}</small></div>')
+		  	suggestion: Handlebars.compile('<div> <img src="https://w3-unifiedprofile-api.dal1a.cirrus.ibm.com/v3/image/{{cnum}}?type=bp&def=blue&s=50" alt="Profile" height="42" width="42"> <strong>{{value}}</strong><br/><small>{{preferredIdentity}}<br/>{{role}}</small></div>')
 		  }
 		});
 	
@@ -77,7 +77,7 @@ $(document).ready(function(){
 		        'unable to find any IBMers that match the current query',
 		      '</div>'
 		    	].join('\n'),
-		  	suggestion: Handlebars.compile('<div> <img src="https://unified-profile-api.us-south-k8s.intranet.ibm.com/v3/image/{{cnum}}?type=bp&def=blue&s=50" alt="Profile" height="42" width="42"> <strong>{{value}}</strong><br/><small>{{preferredIdentity}}<br/>{{role}}</small></div>')
+		  	suggestion: Handlebars.compile('<div> <img src="https://w3-unifiedprofile-api.dal1a.cirrus.ibm.com/v3/image/{{cnum}}?type=bp&def=blue&s=50" alt="Profile" height="42" width="42"> <strong>{{value}}</strong><br/><small>{{preferredIdentity}}<br/>{{role}}</small></div>')
 		  }
 		});
 	
