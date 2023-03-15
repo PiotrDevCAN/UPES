@@ -45,10 +45,15 @@ $isUserStatus = strpos($file, 'pa_userStatus.php') !== false;
 
 // Reports section
 $isByAccount = strpos($file, 'pr_byAccount.php') !== false;
+$isByContract = strpos($file, 'pr_byContract.php') !== false;
 $isProcessStatus = strpos($file, 'pr_processStatus.php') !== false;
+$isProcessStatusByContract = strpos($file, 'pr_processStatusByContract.php') !== false; //
 $isUpcomingRechecks = strpos($file, 'pr_upcomingRechecks.php') !== false;
+$isUpcomingRechecksByContract = strpos($file, 'pr_upcomingRechecksByContract.php') !== false; //
 $isMICleared = strpos($file, 'pr_miReportCleared.php') !== false;
+$isMIClearedByContract = strpos($file, 'pr_miReportClearedByContract.php') !== false; //
 $isMIProvCleared = strpos($file, 'pr_miReportProvCleared.php') !== false;
+$isMIProvClearedByContract = strpos($file, 'pr_miReportProvClearedByContract.php') !== false; //
 
 switch (true) {
     case $isManageAccounts:
@@ -112,26 +117,31 @@ switch (true) {
         <?php
         break;
     case $isByAccount:
+    case $isByContract:
         ?>
             <script type="module" src="upes/java/reports/byAccount.js?<?=$hash;?>"></script>
         <?php
         break;
     case $isProcessStatus:
+    case $isProcessStatusByContract:
         ?>
             <script type="module" src="upes/java/reports/processStatus.js?<?=$hash;?>"></script>
         <?php
         break;
     case $isUpcomingRechecks:
+    case $isUpcomingRechecksByContract:
         ?>
             <script type="module" src="upes/java/reports/upcomingRechecks.js?<?=$hash;?>"></script>
         <?php
         break;
     case $isMICleared:
+    case $isMIClearedByContract:
         ?>
             <script type="module" src="upes/java/reports/MICleared.js?<?=$hash;?>"></script>
         <?php
         break;
     case $isMIProvCleared:
+    case $isMIProvClearedByContract:
         ?>
             <script type="module" src="upes/java/reports/MIProvCleared.js?<?=$hash;?>"></script>
         <?php

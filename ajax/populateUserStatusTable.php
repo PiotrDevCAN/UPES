@@ -22,16 +22,17 @@ $sqlToAllowPeopleToSeeRequestsForTheirAccounts.= "     SELECT DISTINCT ACCOUNT_I
 $sqlToAllowPeopleToSeeRequestsForTheirAccounts.= "     WHERE AP.PES_REQUESTOR='" . db2_escape_string($_SESSION['ssoEmail']) . "' ) " ;
 $sqlToAllowPeopleToSeeRequestsForTheirAccounts.= " OR P.EMAIL_ADDRESS = '" . db2_escape_string($_SESSION['ssoEmail']) . "' ";
 
-
-$sql = " SELECT '' AS ACTION, P.EMAIL_ADDRESS,P.CNUM,  P.FULL_NAME, A.ACCOUNT, PL.PES_LEVEL, PL.PES_LEVEL_DESCRIPTION, PL.PES_LEVEL_REF ";
+$sql = " SELECT '' AS ACTION, P.EMAIL_ADDRESS, P.CNUM,  P.FULL_NAME, A.ACCOUNT, PL.PES_LEVEL, PL.PES_LEVEL_DESCRIPTION, PL.PES_LEVEL_REF ";
 $sql.= " , AP.PES_STATUS,AP.PES_CLEARED_DATE, AP.ACCOUNT_ID, A.ACCOUNT_TYPE, AP.UPES_REF, AP.PES_REQUESTOR, AP.PES_DATE_REQUESTED,AP.COUNTRY_OF_RESIDENCE, AP.PROCESSING_STATUS, ADD_HOURS(AP.PROCESSING_STATUS_CHANGED, 1) AS PROCESSING_STATUS_CHANGED, AP.PES_RECHECK_DATE ";
 $sql.= " , AP.DATE_LAST_CHASED ";
-$sql.= " , AP.OFFBOARDED_DATE, AP.OFFBOARDED_BY ";
+$sql.= " , AP.OFFBOARDED_DATE, AP.OFFBOARDED_BY, C.CONTRACT, AP.CONTRACT_ID ";
 $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " as P ";
 $sql.= " LEFT JOIN  " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
 $sql.= " ON P.UPES_REF = AP.UPES_REF ";
 $sql.= " LEFT JOIN  " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
 $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+$sql.= " LEFT JOIN  " . $GLOBALS['Db2Schema'] . "." . AllTables::$CONTRACT . " as C ";
+$sql.= " ON AP.CONTRACT_ID = C.CONTRACT_ID ";
 $sql.= " LEFT JOIN  " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
 $sql.= " ON AP.PES_LEVEL = PL.PES_LEVEL_REF ";
 $sql.= " WHERE A.ACCOUNT is not null and AP.UPES_REF is not null ";
@@ -39,7 +40,6 @@ $sql.= $_SESSION['isPesTeam'] ? null : $sqlToAllowPeopleToSeeRequestsForTheirAcc
 
 error_log(__FILE__ . __LINE__ . $_SESSION['ssoEmail']);
 error_log($sql);
-
 
 $rs = db2_exec($GLOBALS['conn'], $sql);
 

@@ -16,6 +16,11 @@ class MICleared {
 
     populateDataTable() {
         this.miReportTable = $('#miReport').DataTable({
+            autoWidth: false,
+            deferRender: true,
+            processing: true,
+            responsive: true,
+            colReorder: true,
             order: [[0, 'desc']],
             dom: 'Brti',
             buttons: [

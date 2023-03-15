@@ -14,7 +14,7 @@ class userBoard {
         this.listenForContractIdChange();
         this.listenForUpesRefChange();
 
-        $('#contract_id').select2({
+        $('#CONTRACT_ID').select2({
             placeholder: 'Select Contract',
             width: '100%',
             ajax: {
@@ -35,8 +35,8 @@ class userBoard {
 
         $('#UPES_REF').on('select2:open', function () {
             console.log('select2:open');
-            $('#contract_id').select2('data', null);
-            $('#contract_id').val('').trigger('change');
+            $('#CONTRACT_ID').select2('data', null);
+            $('#CONTRACT_ID').val('').trigger('change');
         });
 
         $('#PES_LEVEL').select2({
@@ -79,7 +79,7 @@ class userBoard {
                     if (responseObj.success) {
                         $(submitBtn).removeClass('spinning').attr('disabled', false);
                         $('#accountPersonForm').trigger("reset");
-                        $("#contract_id").trigger("change");
+                        $("#CONTRACT_ID").trigger("change");
                         $("#UPES_REF").trigger("change");
                         $('#COUNTRY_OF_RESIDENCE').val('').trigger('change');
                         $('#ACCOUNT_ID').val('');
@@ -95,7 +95,7 @@ class userBoard {
                     } else {
                         $(submitBtn).removeClass('spinning').attr('disabled', false);
                         $('#accountPersonForm').trigger("reset");
-                        $("#contract_id").trigger("change");
+                        $("#CONTRACT_ID").trigger("change");
                         $("#UPES_REF").trigger("change");
                         $('#COUNTRY_OF_RESIDENCE').val('').trigger('change');
                         $('#ACCOUNT_ID').val('');
@@ -134,9 +134,9 @@ class userBoard {
     }
 
     listenForContractIdChange() {
-        $(document).on('change', '#contract_id', function (e) {
+        $(document).on('change', '#CONTRACT_ID', function (e) {
             console.log(e);
-            var contractId = $('#contract_id').val();
+            var contractId = $('#CONTRACT_ID').val();
             console.log(contractId);
 
             $('#ACCOUNT_ID').val(accountContractLookup[contractId]);
@@ -152,9 +152,9 @@ class userBoard {
             var fullName = upesrefToNameMapping[upesRef];
             $('#FULL_NAME').val(fullName);
             if ($('#UPES_REF').val() != '') {
-                $('#contract_id').attr('disabled', false).trigger('change');
+                $('#CONTRACT_ID').attr('disabled', false).trigger('change');
             } else {
-                $('#contract_id').attr('disabled', true).trigger('change');
+                $('#CONTRACT_ID').attr('disabled', true).trigger('change');
             }
         });
     }

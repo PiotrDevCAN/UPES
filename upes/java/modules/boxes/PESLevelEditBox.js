@@ -68,10 +68,11 @@ class PESLevelEditBox extends box {
             $('#plUPES_REF').val($(this).data('plupesref'));
             $('#plACCOUNT').val($(this).data('placcount'));
             $('#plACCOUNT_ID').val($(this).data('placcountid'));
-            $('#plCountry').val($(this).data('plcountry'));
+            $('#plCOUNTRY').val($(this).data('plcountry'));
             $('#plFULL_NAME').val($(this).data('plfullname'));
-            $('#plPesLevel').val($(this).data('plpeslevelref'));
-            $('#plContractId').val($(this).data('plcontractid'));
+            $('#plPES_LEVEL').val($(this).data('plpeslevelref'));
+            $('#plCONTRACT').val($(this).data('plcontract'));
+            $('#plCONTRACT_ID').val($(this).data('plcontractid'));
             $('#plPES_REQUESTOR').val($(this).data('plrequestor'));
             $('#plPES_CLEARED_DATE').val($(this).data('plcleareddate'));
             $('#plPES_RECHECK_DATE').val($(this).data('plrecheckdate'));
@@ -119,11 +120,11 @@ class PESLevelEditBox extends box {
                 width: '100%'
             });
 
-            var country = $('#plCountry').val();
+            var country = $('#plCOUNTRY').val();
             $('#plCOUNTRY_OF_RESIDENCE').val(country).trigger('change');
 
             var accountId = $('#plACCOUNT_ID').val();
-            var pesLevel = $('#plPesLevel').val();
+            var pesLevel = $('#plPES_LEVEL').val();
             $("#PES_LEVEL").select2("destroy");
             $("#PES_LEVEL").html("<option><option>");
             changePesLevels(pesLevelByAccount[accountId]);

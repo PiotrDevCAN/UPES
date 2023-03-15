@@ -71,6 +71,8 @@ class AccountPersonRecord extends DbRecord
     protected $OFFBOARDED_DATE;
     protected $OFFBOARDED_BY;
 
+    protected $CONTRACT_ID;
+
     const PES_EVENT_CONSENT        = 'Consent Form';
     const PES_EVENT_WORK           = 'Right to Work';
     const PES_EVENT_ID             = 'Proof of Id';
@@ -219,9 +221,9 @@ class AccountPersonRecord extends DbRecord
         </div>
 
         <div class="form-group required">
-            <label for='contract_id' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract'>Contract</label>
+            <label for='CONTRACT_ID' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract'>Contract</label>
         	  <div class='col-md-3'>
-        		<select id='contract_id' class='form-group select2' name='contract_id' disabled >
+        		<select id='CONTRACT_ID' class='form-group select2' name='CONTRACT_ID' disabled >
         		<option value=''></option>
         		</select>
         		<input id='ACCOUNT_ID' name='ACCOUNT_ID' type='hidden'>

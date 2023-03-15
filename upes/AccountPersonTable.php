@@ -105,6 +105,7 @@ public $lastSelectSql;
         $sql.= ", A.ACCOUNT ";
         $sql.= ", A.ACCOUNT_ID ";
         $sql.= ", A.ACCOUNT_TYPE ";
+        $sql.= ", C.CONTRACT";
         $sql.= ", P.PASSPORT_FIRST_NAME ";
         $sql.= ", P.PASSPORT_LAST_NAME ";
         $sql.= ", case when P.PASSPORT_FIRST_NAME is null then P.FULL_NAME else P.PASSPORT_FIRST_NAME CONCAT ' ' CONCAT P.PASSPORT_LAST_NAME end as FULL_NAME  ";
@@ -141,6 +142,8 @@ public $lastSelectSql;
         $sql.= " ON P.UPES_REF = AP.UPES_REF ";
         $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A ";
         $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$CONTRACT . " as C ";
+        $sql.= " ON AP.CONTRACT_ID = C.CONTRACT_ID ";
         $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$PES_LEVELS . " as PL ";
         $sql.= " ON AP.PES_LEVEL = PL.PES_LEVEL_REF ";
 
@@ -421,6 +424,9 @@ public $lastSelectSql;
             $cellContent = "<td>".$row['ACCOUNT']."<br/>".$row['PES_LEVEL']."<br/>".$row['PES_LEVEL_DESCRIPTION']."</td>";
             $row['ACCOUNT_DETAILS'] = array('display'=>$cellContent, 'sort'=>false);
 
+            $cellContent = "<td>".$row['CONTRACT']."</td>";
+            $row['CONTRACT_DETAILS'] = array('display'=>$cellContent, 'sort'=>false);
+
             $originalRequestor = $row['PES_REQUESTOR'];
             $requestor = strlen($row['PES_REQUESTOR']) > 20 ? substr($row['PES_REQUESTOR'],0,20) . "....." : $row['PES_REQUESTOR'];
             
@@ -563,7 +569,11 @@ public $lastSelectSql;
 		<div id='pesTrackerTableDiv' class='center-block' width='100%'>
             <table id='pesTrackerTable' class='table table-striped table-bordered table-condensed '  style='width:100%'>
                 <thead>
-                    <tr class='' ><th>Person Details</th><th>Account</th><th>Requestor</th>
+                    <tr class='' >
+                    <th>Person Details</th>
+                    <th>Account</th>
+                    <th>Contract</th>
+                    <th>Requestor</th>
                     <th >Consent Form</th>
                     <th>Proof or Right to Work</th>
                     <th>Proof of ID</th>
@@ -581,6 +591,7 @@ public $lastSelectSql;
                     <tr class='searchingRow wrap'>
                         <td>Email Address</td>
                         <td class='shortSearch'>Account</td>
+                        <td class='shortSearch'>Contract</td>
                         <td>Requestor</td>
                         <td class='nonSearchable'>Consent</td>
                         <td class='nonSearchable'>Right to Work</td>
@@ -1066,6 +1077,8 @@ public $lastSelectSql;
         $account = $row['ACCOUNT'];
         $accountId = $row['ACCOUNT_ID'];
         $accountType = $row['ACCOUNT_TYPE'];
+        $contract = $row['CONTRACT'];
+        $contractId = $row['CONTRACT_ID'];
         $upesref = $row['UPES_REF'];
         $email = $row['EMAIL_ADDRESS'];
         $fullname = $row['FULL_NAME'];
@@ -1080,7 +1093,6 @@ public $lastSelectSql;
         $onOrOffBoardingBtnClass = empty($row['OFFBOARDED_DATE']) ? "btn-warning" : "btn-info";
         $boarded = empty($row['OFFBOARDED_DATE']) ? 'yes' : 'no';
         
-
         switch ($row['PES_STATUS']) {
             case AccountPersonRecord::PES_STATUS_CLEARED:
             case AccountPersonRecord::PES_STATUS_CANCEL_REQ:
@@ -1114,7 +1126,6 @@ public $lastSelectSql;
         $requestedObj = \DateTime::createFromFormat('Y-m-d', $requested);
         $requestedDisplay = $requestedObj ? $requestedObj->format('d-m-Y') : $requested;
 
-
         $row['REQUESTED'] = array('display'=> "<small>" .  $requestor . "<br/>" . $requestedDisplay . "</small>", 'sort'=>$row['PES_DATE_REQUESTED']);
 
         $clearedDateObj = \DateTime::createFromFormat('Y-m-d', $row['PES_CLEARED_DATE']);
@@ -1130,7 +1141,7 @@ public $lastSelectSql;
 
         $pesLevel = $row['PES_LEVEL'];
         $pesLevelRef = $row['PES_LEVEL_REF'];
-        $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "' data-plupesref='" . $upesref . "' data-plAccountId='" . $accountId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "'  data-plRequestor='" . $requestor ."'  data-plClearedDate='" . $clearedDateDisplay ."'  data-plRecheckDate='" . $recheckDateDisplay ."' data-toggle='tooltip' title='Edit Request Details' >
+        $row['PES_LEVEL']= "<button type='button' class='btn btn-primary btn-xs editPesLevel accessRestrict accessPesTeam accessCdi' aria-label='Left Align' data-plEmailAddress='" . $email . "' data-plFullName='" . $fullname . "' data-plAccount='" . $account . "' data-plContract='" . $contract . "' data-plupesref='" . $upesref . "' data-plAccountId='" . $accountId . "' data-plContractId='" . $contractId . "' data-plPesLevelRef='" . $pesLevelRef . "'  data-plCountry='" . $countryOfResidence . "'  data-plRequestor='" . $requestor ."'  data-plClearedDate='" . $clearedDateDisplay ."'  data-plRecheckDate='" . $recheckDateDisplay ."' data-toggle='tooltip' title='Edit Request Details' >
             <span class='glyphicon glyphicon-edit aria-hidden='true' ></span>
         </button>&nbsp;" . $pesLevel;
 
@@ -1292,6 +1303,36 @@ public $lastSelectSql;
         return $report;
     }
 
+    static function statusByContract(){
+        $sql = " SELECT A.ACCOUNT, C.CONTRACT, AP.PES_STATUS, count(*) as RESOURCES ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$CONTRACT . " AS C ";
+        $sql.= " ON AP.CONTRACT_ID = C.CONTRACT_ID ";
+
+//         $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+//         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
+//         $sql.= " WHERE P.BLUEPAGES = 'found' or P.BLUEPAGES is null ";
+
+        $sql.= " GROUP by ACCOUNT, CONTRACT, PES_STATUS ";
+        $sql.= " ORDER by ACCOUNT ";
+
+        $rs = db2_exec($GLOBALS['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception('Unable to produce StatusByAccount result set');
+        }
+        $report = false;
+        while(($row=db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim', $row);
+            $report[] = $trimmedRow;
+        }
+
+        return $report;
+    }
+
     static function processStatusByAccount(){
         $sql = " SELECT A.ACCOUNT, AP.PROCESSING_STATUS, count(*) as RESOURCES ";
         $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
@@ -1303,6 +1344,36 @@ public $lastSelectSql;
         //         $sql.= " WHERE P.BLUEPAGES = 'found' or P.BLUEPAGES is null ";
 
         $sql.= " GROUP by ACCOUNT, PROCESSING_STATUS ";
+        $sql.= " ORDER by ACCOUNT ";
+
+        $rs = db2_exec($GLOBALS['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception('Unable to produce ProcessStatusByAccount result set');
+        }
+        $report = false;
+        while(($row=db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim', $row);
+            $report[] = $trimmedRow;
+        }
+
+        return $report;
+    }
+
+    static function processStatusByContract(){
+        $sql = " SELECT A.ACCOUNT, C.CONTRACT, AP.PROCESSING_STATUS, count(*) as RESOURCES ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$CONTRACT . " AS C ";
+        $sql.= " ON AP.CONTRACT_ID = C.CONTRACT_ID ";
+
+        //         $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        //         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
+        //         $sql.= " WHERE P.BLUEPAGES = 'found' or P.BLUEPAGES is null ";
+
+        $sql.= " GROUP by ACCOUNT, CONTRACT, PROCESSING_STATUS ";
         $sql.= " ORDER by ACCOUNT ";
 
         $rs = db2_exec($GLOBALS['conn'], $sql);
@@ -1347,6 +1418,92 @@ public $lastSelectSql;
 
         return $report;
 
+    }
+
+    static function upcomingRechecksByContract(){
+        $sql = " SELECT A.ACCOUNT, C.CONTRACT, YEAR(PES_RECHECK_DATE) as YEAR, MONTH(PES_RECHECK_DATE) as MONTH, count(*) as RESOURCES ";
+        $sql.= " FROM " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " AS AP ";
+        $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " AS A ";
+        $sql.= " ON AP.ACCOUNT_ID = A.ACCOUNT_ID ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$CONTRACT . " as C ";
+        $sql.= " ON AP.CONTRACT_ID = C.CONTRACT_ID ";
+
+        //         $sql.= " LEFT JOIN " . $GLOBALS['Db2Schema'] . "." . AllTables::$PERSON . " AS P ";
+        //         $sql.= " ON AP.UPES_REF = P.UPES_REF ";
+        $sql.= " WHERE DATE(PES_RECHECK_DATE) >= CURRENT DATE - 1 month ";
+        $sql.= " AND DATE(PES_RECHECK_DATE) <= CURRENT DATE + 5 MONTHS ";
+        $sql.= " GROUP by ACCOUNT, CONTRACT, YEAR(PES_RECHECK_DATE), MONTH(PES_RECHECK_DATE) ";
+        $sql.= " ORDER by ACCOUNT ";
+
+        $rs = db2_exec($GLOBALS['conn'], $sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception('Unable to produce upcomingRechecksByAccount result set');
+        }
+        $report = false;
+        while(($row=db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim', $row);
+            $report[] = $trimmedRow;
+        }
+
+        return $report;
+    }
+
+    static function miClearedByAccount(){
+        $twelveMonthsAgo = new DateTime("first day of this month");
+
+        $sql = "";
+        $sql.= " select trim(A.ACCOUNT) as ACCOUNT, YEAR(PES_CLEARED_DATE) as YEAR, MONTH(PES_CLEARED_DATE) as MONTH, count(*) as Cleared ";
+        $sql.= " from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A  ";
+        $sql.= " on AP.ACCOUNT_ID = A.ACCOUNT_ID "; 
+        $sql.= " where PES_CLEARED_DATE >= date('" . $twelveMonthsAgo->format('Y-m-d') . "') - 11 Months ";
+        $sql.= " AND A.ACCOUNT is not null ";
+        $sql.= " group by ACCOUNT, YEAR(PES_CLEARED_DATE), MONTH(PES_CLEARED_DATE)";
+        $sql.= " ORDER BY 1, 2 desc, 3 desc ";
+
+        $rs = db2_exec($GLOBALS['conn'],$sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception('Unable to produce miClearedByAccount result set');
+        }
+        $report = false;
+        while(($row=db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim', $row);
+            $report[] = $trimmedRow;
+        }
+
+        return $report;
+    }
+
+    static function miClearedByContract(){
+        $twelveMonthsAgo = new DateTime("first day of this month");
+
+        $sql = "";
+        $sql.= " select trim(A.ACCOUNT) as ACCOUNT, YEAR(PES_CLEARED_DATE) as YEAR, MONTH(PES_CLEARED_DATE) as MONTH, count(*) as Cleared ";
+        $sql.= " from " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT_PERSON . " as AP ";
+        $sql.= " left join " . $GLOBALS['Db2Schema'] . "." . AllTables::$ACCOUNT . " as A  ";
+        $sql.= " on AP.ACCOUNT_ID = A.ACCOUNT_ID "; 
+        $sql.= " where PES_CLEARED_DATE >= date('" . $twelveMonthsAgo->format('Y-m-d') . "') - 11 Months ";
+        $sql.= " AND A.ACCOUNT is not null ";
+        $sql.= " group by ACCOUNT, YEAR(PES_CLEARED_DATE), MONTH(PES_CLEARED_DATE)";
+        $sql.= " ORDER BY 1, 2 desc, 3 desc ";
+
+        $rs = db2_exec($GLOBALS['conn'],$sql);
+
+        if(!$rs){
+            DbTable::displayErrorMessage($rs, __CLASS__, __METHOD__, $sql);
+            throw new \Exception('Unable to produce miClearedByContract result set');
+        }
+        $report = false;
+        while(($row=db2_fetch_assoc($rs))==true){
+            $trimmedRow = array_map('trim', $row);
+            $report[] = $trimmedRow;
+        }
+
+        return $report;
     }
 
     static function getEmailAddressAccountArray(){

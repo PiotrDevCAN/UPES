@@ -1,6 +1,9 @@
 <?php
 use itdq\DbTable;
+use upes\AccountPersonTable;
 use upes\AllTables;
+
+$GLOBALS['Db2Schema'] = 'UPES';
 
 $months = array('','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
 

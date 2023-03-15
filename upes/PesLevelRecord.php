@@ -38,20 +38,20 @@ class PesLevelRecord extends DbRecord
             </div>
         </div>
          <div class="form-group required" >
-            <label for='PES_LEVEL' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract Name'>PES Level</label>
+            <label for='PES_LEVEL' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='PES Level'>PES Level</label>
         	<div class='col-md-3'>
 				<input id='PES_LEVEL' name='PES_LEVEL' class='form-control' maxlength="25" <?=$notEditable;?> required='required'/>
 				<input id='PES_LEVE_REF' name='PES_LEVEL_REF' type='hidden' value='0' />
             </div>
         </div>
         <div class="form-group required" >
-            <label for='PES_LEVEL_DESCRIPTION' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract Name'>Pes Level Description</label>
+            <label for='PES_LEVEL_DESCRIPTION' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Pes Level Description'>Pes Level Description</label>
         	<div class='col-md-3'>
 				<input id='PES_LEVEL_DESCRIPTION' name='PES_LEVEL_DESCRIPTION' class='form-control' maxlength="50" <?=$notEditable;?> required='required'/>
             </div>
         </div>
         <div class="form-group required" >
-            <label for='RECHECK_YEARS' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Contract Name'>Pes Recheck Period(Years)</label>
+            <label for='RECHECK_YEARS' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='Pes Recheck Period(Years)'>Pes Recheck Period(Years)</label>
         	<div class='col-md-3'>
 				<input id='RECHECK_YEARS' name='RECHECK_YEARS' class='form-control' type="number" <?=$notEditable;?> required='required'/>
             </div>

@@ -81,6 +81,8 @@ class userStatus {
             }, {
                 data: "ACCOUNT", render: { _: 'display', sort: 'sort' },
             }, {
+                data: "CONTRACT"
+            }, {
                 data: "COUNTRY_OF_RESIDENCE", visible: false
             }, {
                 data: "PES_REQUESTOR", visible: false

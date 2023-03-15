@@ -24,7 +24,6 @@ try {
     $accountPersonRecordData = array_map('trim', $_POST);
     $accountPersonRecord->setFromArray($accountPersonRecordData);
     $emailResponse = $accountPersonRecord->sendNotificationToPesTaskid();
-
     $saveRecord = $accountPersonTable->insert($accountPersonRecord, false, false); // Only used to save NEW accountPersonRecords
 
 } catch (Exception $e) {

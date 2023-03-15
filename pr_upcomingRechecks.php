@@ -29,7 +29,7 @@ foreach ($db2Report as $row) {
 <div class='col-sm-2'>
 </div>
 <div class='col-sm-6'>
-<h1 id='portalTitle' class='text-centre' >Upcoming Rechecks</h1>
+<h1 id='portalTitle' class='text-centre' >Upcoming Rechecks By Account</h1>
 </div>
 <div class='col-sm-4'>
 </div>

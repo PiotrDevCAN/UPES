@@ -61,7 +61,6 @@ class PersonRecord extends DbRecord
 
         ?>
         <form id='personForm' class="form-horizontal" method='post'>
-        <hr>
         <div class="form-group required " >
             <label for='CNUM' class='col-sm-2 control-label ceta-label-left' data-toggle='tooltip' data-placement='top' title='<?=$cnumTitle?>'><?=$cnumLabel?></label>
         	<div class='col-md-4'>

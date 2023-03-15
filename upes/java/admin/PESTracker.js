@@ -116,6 +116,8 @@ class PESTracker {
                     }, {
                         data: "ACCOUNT_DETAILS", render: { _: "display", sort: "sort" }
                     }, {
+                        data: "CONTRACT_DETAILS", render: { _: "display", sort: "sort" }
+                    }, {
                         data: "REQUESTOR", render: { _: "display", sort: "sort" }
                     }, {
                         data: "CONSENT", render: { _: "display", sort: "sort" }
